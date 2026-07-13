@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, forwardRef, useImperativeHandle } from "react";
+import { useRef, forwardRef, useImperativeHandle, useMemo } from "react";
+import { QRCodeSVG } from "qrcode.react";
 import type { Venda } from "@/types";
 import { useERPStore } from "@/hooks/use-erp-store";
 import { formatarMoeda, obterChavePixLimpa } from "@/lib/utils-erp";
-import { Badge } from "@/components/ui/badge";
 
 export interface CupomFiscalHandle {
   capturarImagem: () => Promise<HTMLCanvasElement>;
@@ -15,18 +15,81 @@ interface CupomFiscalProps {
   venda?: Venda | null;
 }
 
+function gerarPixPayloadEMV(chave: string, valor: number, nome: string): string {
+  // Gera payload PIX estático simplificado (EMV) para QR Code
+  // Formato: 00 02 01 - Payload Format Indicator
+  // 26 - Merchant Account Information (PIX)
+  //   00 14 br.gov.bcb.pix
+  //   01 XX chave pix
+  // 52 XX - Merchant Category Code
+  // 53 03 986 - Transaction Currency (BRL)
+  // 54 XX - Transaction Amount
+  // 58 02 BR - Country Code
+  // 59 XX - Merchant Name
+  // 60 XX - Merchant City
+  // 62 XX - Additional Data Field (txid)
+  // 63 04 CRC16
+
+  const valorStr = valor.toFixed(2);
+  const merchantName = nome.substring(0, 25).padEnd(25);
+  const merchantCity = "Brasil".padEnd(15);
+  const txid = "***".padEnd(25);
+
+  function tlv(id: string, value: string): string {
+    const len = value.length.toString().padStart(2, "0");
+    return `${id}${len}${value}`;
+  }
+
+  function addCrc16(payload: string): string {
+    let crc = 0xFFFF;
+    for (let i = 0; i < payload.length; i++) {
+      crc ^= payload.charCodeAt(i) << 8;
+      for (let j = 0; j < 8; j++) {
+        if (crc & 0x8000) crc = (crc << 1) ^ 0x1021;
+        else crc = crc << 1;
+        crc &= 0xFFFF;
+      }
+    }
+    return payload + "6304" + crc.toString(16).toUpperCase().padStart(4, "0");
+  }
+
+  const merchantAccountInfo =
+    tlv("00", "br.gov.bcb.pix") + tlv("01", chave);
+  const mai = tlv("26", merchantAccountInfo);
+
+  let payload =
+    tlv("00", "01") +
+    mai +
+    tlv("52", "0000") +
+    tlv("53", "986") +
+    tlv("54", valorStr) +
+    tlv("58", "BR") +
+    tlv("59", merchantName) +
+    tlv("60", merchantCity) +
+    tlv("62", txid);
+
+  payload = addCrc16(payload);
+  return payload;
+}
+
 const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
   ({ venda }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const vendaRef = useRef<Venda | null>(venda || null);
 
-    // Keep vendaRef updated
     if (venda) vendaRef.current = venda;
+
+    const pixPayload = useMemo(() => {
+      if (!venda || venda.formaPagamento !== "PIX") return "";
+      const chaveLimpa = obterChavePixLimpa(venda.chavePix);
+      if (!chaveLimpa) return "";
+      return gerarPixPayloadEMV(chaveLimpa, venda.total, venda.empresa || "ZapFacil");
+    }, [venda]);
 
     useImperativeHandle(ref, () => ({
       capturarImagem: async () => {
         const html2canvas = (await import("html2canvas")).default;
-        if (!containerRef.current) throw new Error("Cupom não encontrado");
+        if (!containerRef.current) throw new Error("Cupom nao encontrado");
         return html2canvas(containerRef.current, {
           scale: 2,
           useCORS: true,
@@ -46,7 +109,7 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
             <p className="text-2xl mb-2">📄</p>
             <p>Nenhum comprovante gerado ainda.</p>
             <p className="text-[10px] mt-1">
-              Preencha o formulário e processe uma venda.
+              Preencha o formulario e processe uma venda.
             </p>
           </div>
         </div>
@@ -67,7 +130,7 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
             isPago ? "bg-emerald-600" : "bg-amber-500 text-amber-950"
           }`}
         >
-          {isPago ? "COMPROVANTE DE PAGAMENTO" : "FATURA DE SERVIÇO"}
+          {isPago ? "COMPROVANTE DE PAGAMENTO" : "FATURA DE SERVICO"}
         </div>
 
         {/* Logo */}
@@ -122,7 +185,7 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
 
         {/* Itens */}
         <div className="grid grid-cols-12 font-bold mb-1 gap-1 text-[9px]">
-          <div className="col-span-7">DESCRIÇÃO</div>
+          <div className="col-span-7">DESCRICAO</div>
           <div className="col-span-2 text-center">QTD</div>
           <div className="col-span-3 text-right">VALOR</div>
         </div>
@@ -154,7 +217,7 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
           )}
           {venda.acrescimo > 0 && (
             <div className="flex justify-between text-blue-600">
-              <span>(+) ACRÉSCIMO</span>
+              <span>(+) ACRESCIMO</span>
               <span>+ {formatarMoeda(venda.acrescimo)}</span>
             </div>
           )}
@@ -163,17 +226,6 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
             <span>{formatarMoeda(venda.total)}</span>
           </div>
 
-          {venda.formaPagamento === "PIX" && chavePixLimpa && (
-            <div className="bg-emerald-50 text-emerald-800 p-2 rounded border border-emerald-200 my-1.5 text-[10px]">
-              <span className="font-bold block text-[8px] text-emerald-600">
-                CHAVE PIX:
-              </span>
-              <span className="font-mono break-all font-bold tracking-tight">
-                {chavePixLimpa}
-              </span>
-            </div>
-          )}
-
           <div className="border-t border-dashed border-gray-300 my-1" />
           <div className="flex justify-between text-xs font-black text-gray-900 pt-0.5">
             <span>TOTAL GERAL</span>
@@ -181,11 +233,36 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
           </div>
         </div>
 
+        {/* PIX: Chave + QR Code */}
+        {venda.formaPagamento === "PIX" && chavePixLimpa && (
+          <>
+            <div className="border-b border-dashed border-gray-400 my-2" />
+            <div className="bg-emerald-50 text-emerald-800 p-3 rounded border border-emerald-200 text-center space-y-2">
+              <span className="font-bold block text-[9px] text-emerald-600">
+                PAGUE VIA PIX
+              </span>
+              <div className="flex justify-center">
+                <QRCodeSVG
+                  value={pixPayload}
+                  size={140}
+                  level="M"
+                  bgColor="#ffffff"
+                  fgColor="#000000"
+                  includeMargin={false}
+                />
+              </div>
+              <div className="text-[8px] text-emerald-700 font-mono break-all font-bold tracking-tight">
+                {chavePixLimpa}
+              </div>
+            </div>
+          </>
+        )}
+
         <div className="border-b border-dashed border-gray-400 my-2" />
         <div className="text-[9px] text-center text-gray-500 space-y-0.5">
-          <div>SISTEMA ZAPFÁCIL ERP PRO</div>
+          <div>SISTEMA ZAPFACIL ERP PRO</div>
           <div className="font-sans text-[7px] text-gray-400">
-            VERSÃO 11.0
+            VERSAO 11.0
           </div>
           <div className="font-bold text-gray-700 mt-1">
             *** OBRIGADO! ***

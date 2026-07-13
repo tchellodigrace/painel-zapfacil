@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
   Tooltip,
   TooltipContent,
@@ -22,10 +21,9 @@ import {
   Sun,
   Moon,
   FileText,
-  Users,
-  Wrench,
   BarChart3,
   Building2,
+  LayoutDashboard,
 } from "lucide-react";
 import { EmpresaPanel } from "@/components/erp/empresa-panel";
 import { CatalogoServicos } from "@/components/erp/catalogo-servicos";
@@ -33,6 +31,7 @@ import { CRMClientes } from "@/components/erp/crm-clientes";
 import { LancamentoForm } from "@/components/erp/lancamento-form";
 import { AcoesCupom } from "@/components/erp/acoes-cupom";
 import { Historico } from "@/components/erp/historico";
+import { DashboardGrafico } from "@/components/erp/dashboard-grafico";
 import type { Venda } from "@/types";
 
 export default function ZapFacilPage() {
@@ -64,10 +63,10 @@ export default function ZapFacilPage() {
             <Briefcase className="h-5 w-5" />
             <div>
               <h1 className="text-base font-bold tracking-tight">
-                ZapFácil ERP
+                ZapFacil ERP
               </h1>
               <p className="text-[9px] text-emerald-100">
-                Sistema Profissional de Gestão
+                Sistema Profissional de Gestao
               </p>
             </div>
           </div>
@@ -116,31 +115,42 @@ export default function ZapFacilPage() {
           onValueChange={setAbaAtiva}
           className="space-y-4"
         >
-          <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-white dark:bg-gray-900 border shadow-sm">
+          <TabsList className="grid w-full grid-cols-4 h-auto p-1 bg-white dark:bg-gray-900 border shadow-sm">
             <TabsTrigger
               value="lancamento"
               className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
             >
               <FileText className="h-3.5 w-3.5 mr-1.5" />
-              Lançar
+              <span className="hidden sm:inline">Lancar</span>
+              <span className="sm:hidden">Lanc.</span>
             </TabsTrigger>
             <TabsTrigger
               value="cadastros"
               className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
             >
               <Building2 className="h-3.5 w-3.5 mr-1.5" />
-              Cadastros
+              <span className="hidden sm:inline">Cadastros</span>
+              <span className="sm:hidden">Cad.</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="dashboard"
+              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+            >
+              <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
+              <span className="hidden sm:inline">Dashboard</span>
+              <span className="sm:hidden">Dash</span>
             </TabsTrigger>
             <TabsTrigger
               value="historico"
               className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
             >
               <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
-              Relatórios
+              <span className="hidden sm:inline">Relatorios</span>
+              <span className="sm:hidden">Rel.</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* Tab Lançamento */}
+          {/* Tab Lancamento */}
           <TabsContent value="lancamento" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <LancamentoForm onVendaCriada={handleVendaCriada} />
@@ -161,7 +171,12 @@ export default function ZapFacilPage() {
             </div>
           </TabsContent>
 
-          {/* Tab Relatórios */}
+          {/* Tab Dashboard */}
+          <TabsContent value="dashboard">
+            <DashboardGrafico />
+          </TabsContent>
+
+          {/* Tab Relatorios */}
           <TabsContent value="historico">
             <Historico onReemitir={handleReemitir} />
           </TabsContent>
@@ -170,7 +185,7 @@ export default function ZapFacilPage() {
 
       {/* Footer */}
       <footer className="bg-gray-800 dark:bg-gray-900 text-center py-3 text-[10px] text-gray-400 px-4 border-t border-gray-700 mt-auto">
-        <p>&copy; 2026 ZapFácil Mobile Ecosystem. Todos os direitos reservados.</p>
+        <p>&copy; 2026 ZapFacil Mobile Ecosystem. Todos os direitos reservados.</p>
       </footer>
     </div>
   );

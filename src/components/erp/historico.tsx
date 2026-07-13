@@ -33,6 +33,8 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
+  MessageCircle,
+  Send,
 } from "lucide-react";
 import { formatarMoeda, exportarParaCSV, filtrarVendasPorPeriodo } from "@/lib/utils-erp";
 import type { Venda } from "@/types";
@@ -113,6 +115,52 @@ export function Historico({ onReemitir }: HistoricoProps) {
     }));
     exportarParaCSV(dados);
     toast.success("CSV exportado!");
+  };
+
+  const handleCobrarPendente = (v: Venda) => {
+    const empresa = useERPStore.getState().empresa;
+    const msg = encodeURIComponent(
+      `Ola ${v.cliente}!\n\n` +
+        `Segue sua fatura de servico:\n\n` +
+        `Empresa: ${empresa.nome || "Prestador"}\n` +
+        `Data: ${v.data} as ${v.hora}\n\n` +
+        `Servico(s):\n${v.itens.map((i) => `  - ${i.servicoNome} (${i.quantidade}x) ${formatarMoeda(i.valorTotal)}`).join("\n")}\n\n` +
+        (v.desconto > 0 ? `Desconto: -${formatarMoeda(v.desconto)}\n` : "") +
+        (v.acrescimo > 0 ? `Acrescimo: +${formatarMoeda(v.acrescimo)}\n` : "") +
+        `TOTAL: ${formatarMoeda(v.total)}\n` +
+        `Forma de Pagamento: ${v.formaPagamento}\n\n` +
+        `Por favor, regularize o pagamento. Obrigado!`
+    );
+    window.open(`https://api.whatsapp.com/send?text=${msg}`, "_blank");
+    toast.success("Mensagem de cobranca aberta no WhatsApp!");
+  };
+
+  const handleCobrarTodosPendentes = () => {
+    const pendentes = vendasFiltradas.filter((v) => v.status === "PENDENTE");
+    if (pendentes.length === 0) {
+      toast.info("Nenhuma fatura pendente para cobrar.");
+      return;
+    }
+    const empresa = useERPStore.getState().empresa;
+    const msgs = pendentes.map((v) =>
+      `*${v.cliente}* - ${v.data}\n` +
+        `Servico: ${v.itens.map((i) => i.servicoNome).join(", ")}\n` +
+        `Total: *${formatarMoeda(v.total)}*`
+    ).join("\n\n");
+
+    const resumo = encodeURIComponent(
+      `*RELATORIO DE PENDENCIAS*\n` +
+        `Empresa: ${empresa.nome || "Prestador"}\n` +
+        `Data: ${new Date().toLocaleDateString("pt-BR")}\n\n` +
+        msgs +
+        `\n\nTotal Pendente: *${formatarMoeda(pendentes.reduce((s, v) => s + v.total, 0))}*\n` +
+        `Quantidade: ${pendentes.length} fatura(s)`
+    );
+    window.open(
+      `https://api.whatsapp.com/send?text=${resumo}`,
+      "_blank"
+    );
+    toast.success(`Resumo de ${pendentes.length} cobranca(s) aberto!`);
   };
 
   return (
@@ -230,6 +278,15 @@ export function Historico({ onReemitir }: HistoricoProps) {
             <Download className="h-3 w-3 mr-1" />
             CSV
           </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 text-xs bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
+            onClick={handleCobrarTodosPendentes}
+          >
+            <Send className="h-3 w-3 mr-1" />
+            Cobrar Pendentes
+          </Button>
         </div>
 
         {/* Tabela */}
@@ -293,6 +350,17 @@ export function Historico({ onReemitir }: HistoricoProps) {
                       <Eye className="h-3 w-3 mr-1" />
                       Ver
                     </Button>
+                    {v.status === "PENDENTE" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-amber-600 text-[10px]"
+                        onClick={() => handleCobrarPendente(v)}
+                        title="Cobrar via WhatsApp"
+                      >
+                        <MessageCircle className="h-3 w-3" />
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
