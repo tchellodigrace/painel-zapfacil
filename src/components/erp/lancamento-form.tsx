@@ -44,6 +44,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
     empresa,
     clientes,
     servicos,
+    colaboradores,
     obterChavePixAtiva,
   } = useERPStore();
 
@@ -55,6 +56,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
   const [itens, setItens] = useState<ItemVenda[]>([]);
   const [servicoSelId, setServicoSelId] = useState("");
   const [qtdItem, setQtdItem] = useState("1");
+  const [colaboradorId, setColaboradorId] = useState("");
   const [desconto, setDesconto] = useState("0");
   const [acrescimo, setAcrescimo] = useState("0");
 
@@ -105,6 +107,10 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
     setItens((prev) => prev.filter((i) => i.id !== id));
   }, []);
 
+  const colaboradorSel = colaboradorId
+    ? colaboradores.find((c) => c.id === colaboradorId)
+    : null;
+
   const handleSubmit = useCallback(() => {
     if (!nomeCliente.trim()) {
       toast.error("Informe o nome do cliente.");
@@ -120,6 +126,9 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
     const chavePixStr = chavePixAtiva
       ? `${chavePixAtiva.tipo}: ${chavePixAtiva.valor}`
       : "";
+    const col = colaboradorId
+      ? colaboradores.find((c) => c.id === colaboradorId)
+      : null;
 
     const venda: Venda = {
       id: gerarId(),
@@ -136,6 +145,8 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
       formaPagamento,
       status,
       chavePix: chavePixStr,
+      colaboradorId: col?.id || "",
+      colaboradorNome: col?.nome || "",
       data,
       hora,
       timestamp: Date.now(),
@@ -155,6 +166,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
     setClienteId("");
     setNomeCliente("");
     setDocCliente("");
+    setColaboradorId("");
     setItens([]);
     setDesconto("0");
     setAcrescimo("0");
@@ -175,6 +187,8 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
     formaPagamento,
     status,
     empresa,
+    colaboradorId,
+    colaboradores,
     onVendaCriada,
     obterChavePixAtiva,
   ]);
@@ -259,6 +273,27 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
               </SelectContent>
             </Select>
           </div>
+          {colaboradores.filter((c) => c.ativo).length > 0 && (
+            <div>
+              <Label className="text-[10px] font-bold text-muted-foreground uppercase mb-0.5 block">
+                Profissional (Opcional)
+              </Label>
+              <Select value={colaboradorId} onValueChange={setColaboradorId}>
+                <SelectTrigger className="text-xs h-9">
+                  <SelectValue placeholder="Selecionar profissional..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {colaboradores
+                    .filter((c) => c.ativo)
+                    .map((c) => (
+                      <SelectItem key={c.id} value={c.id} className="text-xs">
+                        {c.nome} {c.especialidade ? `(${c.especialidade})` : ""}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
 
         {/* Adicionar Itens */}

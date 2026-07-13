@@ -9,6 +9,10 @@ import type {
   Cliente,
   Venda,
   DadosBackup,
+  Agendamento,
+  Despesa,
+  Colaborador,
+  StatusAgendamento,
 } from "@/types";
 
 const STORAGE_PREFIX = "zapfacil_";
@@ -39,6 +43,9 @@ interface ERPState {
   servicos: Servico[];
   clientes: Cliente[];
   vendas: Venda[];
+  agendamentos: Agendamento[];
+  despesas: Despesa[];
+  colaboradores: Colaborador[];
 
   // --- Ações Empresa ---
   atualizarEmpresa: (dados: Partial<Empresa>) => void;
@@ -64,6 +71,23 @@ interface ERPState {
   adicionarVenda: (venda: Venda) => void;
   removerVenda: (id: string) => void;
 
+  // --- Ações Agendamentos ---
+  adicionarAgendamento: (agendamento: Agendamento) => void;
+  editarAgendamento: (id: string, dados: Partial<Agendamento>) => void;
+  alterarStatusAgendamento: (id: string, status: StatusAgendamento) => void;
+  removerAgendamento: (id: string) => void;
+
+  // --- Ações Despesas ---
+  adicionarDespesa: (despesa: Despesa) => void;
+  editarDespesa: (id: string, dados: Partial<Despesa>) => void;
+  removerDespesa: (id: string) => void;
+
+  // --- Ações Colaboradores ---
+  adicionarColaborador: (nome: string, telefone: string, especialidade: string, comissaoPercentual: number) => void;
+  editarColaborador: (id: string, nome: string, telefone: string, especialidade: string, comissaoPercentual: number) => void;
+  toggleColaboradorAtivo: (id: string) => void;
+  removerColaborador: (id: string) => void;
+
   // --- Ações Backup ---
   exportarBackup: () => string;
   importarBackup: (json: string) => boolean;
@@ -82,6 +106,9 @@ export const useERPStore = create<ERPState>((set, get) => ({
   servicos: carregar<Servico[]>("servicos", []),
   clientes: carregar<Cliente[]>("clientes", []),
   vendas: carregar<Venda[]>("vendas", []),
+  agendamentos: carregar<Agendamento[]>("agendamentos", []),
+  despesas: carregar<Despesa[]>("despesas", []),
+  colaboradores: carregar<Colaborador[]>("colaboradores", []),
 
   // --- Empresa ---
   atualizarEmpresa: (dados) => {
@@ -196,17 +223,102 @@ export const useERPStore = create<ERPState>((set, get) => ({
     set({ vendas: novaLista });
   },
 
+  // --- Agendamentos ---
+  adicionarAgendamento: (agendamento) => {
+    const novaLista = [agendamento, ...get().agendamentos];
+    salvar("agendamentos", novaLista);
+    set({ agendamentos: novaLista });
+  },
+  editarAgendamento: (id, dados) => {
+    const novaLista = get().agendamentos.map((a) =>
+      a.id === id ? { ...a, ...dados } : a
+    );
+    salvar("agendamentos", novaLista);
+    set({ agendamentos: novaLista });
+  },
+  alterarStatusAgendamento: (id, status) => {
+    const novaLista = get().agendamentos.map((a) =>
+      a.id === id ? { ...a, status } : a
+    );
+    salvar("agendamentos", novaLista);
+    set({ agendamentos: novaLista });
+  },
+  removerAgendamento: (id) => {
+    const novaLista = get().agendamentos.filter((a) => a.id !== id);
+    salvar("agendamentos", novaLista);
+    set({ agendamentos: novaLista });
+  },
+
+  // --- Despesas ---
+  adicionarDespesa: (despesa) => {
+    const novaLista = [despesa, ...get().despesas];
+    salvar("despesas", novaLista);
+    set({ despesas: novaLista });
+  },
+  editarDespesa: (id, dados) => {
+    const novaLista = get().despesas.map((d) =>
+      d.id === id ? { ...d, ...dados } : d
+    );
+    salvar("despesas", novaLista);
+    set({ despesas: novaLista });
+  },
+  removerDespesa: (id) => {
+    const novaLista = get().despesas.filter((d) => d.id !== id);
+    salvar("despesas", novaLista);
+    set({ despesas: novaLista });
+  },
+
+  // --- Colaboradores ---
+  adicionarColaborador: (nome, telefone, especialidade, comissaoPercentual) => {
+    const colaborador: Colaborador = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      nome: nome.trim(),
+      telefone: telefone.trim(),
+      especialidade: especialidade.trim(),
+      comissaoPercentual,
+      ativo: true,
+      criadoEm: new Date().toISOString(),
+    };
+    const novaLista = [...get().colaboradores, colaborador];
+    salvar("colaboradores", novaLista);
+    set({ colaboradores: novaLista });
+  },
+  editarColaborador: (id, nome, telefone, especialidade, comissaoPercentual) => {
+    const novaLista = get().colaboradores.map((c) =>
+      c.id === id
+        ? { ...c, nome: nome.trim(), telefone: telefone.trim(), especialidade: especialidade.trim(), comissaoPercentual }
+        : c
+    );
+    salvar("colaboradores", novaLista);
+    set({ colaboradores: novaLista });
+  },
+  toggleColaboradorAtivo: (id) => {
+    const novaLista = get().colaboradores.map((c) =>
+      c.id === id ? { ...c, ativo: !c.ativo } : c
+    );
+    salvar("colaboradores", novaLista);
+    set({ colaboradores: novaLista });
+  },
+  removerColaborador: (id) => {
+    const novaLista = get().colaboradores.filter((c) => c.id !== id);
+    salvar("colaboradores", novaLista);
+    set({ colaboradores: novaLista });
+  },
+
   // --- Backup ---
   exportarBackup: () => {
     const state = get();
     const dados: DadosBackup = {
-      versao: "11.0",
+      versao: "12.0",
       exportadoEm: new Date().toISOString(),
       empresa: state.empresa,
       chavesPix: state.chavesPix,
       servicos: state.servicos,
       clientes: state.clientes,
       vendas: state.vendas,
+      agendamentos: state.agendamentos,
+      despesas: state.despesas,
+      colaboradores: state.colaboradores,
     };
     return JSON.stringify(dados, null, 2);
   },
@@ -219,12 +331,18 @@ export const useERPStore = create<ERPState>((set, get) => ({
       salvar("servicos", dados.servicos || []);
       salvar("clientes", dados.clientes || []);
       salvar("vendas", dados.vendas || []);
+      salvar("agendamentos", dados.agendamentos || []);
+      salvar("despesas", dados.despesas || []);
+      salvar("colaboradores", dados.colaboradores || []);
       set({
         empresa: dados.empresa,
         chavesPix: dados.chavesPix || [],
         servicos: dados.servicos || [],
         clientes: dados.clientes || [],
         vendas: dados.vendas || [],
+        agendamentos: dados.agendamentos || [],
+        despesas: dados.despesas || [],
+        colaboradores: dados.colaboradores || [],
       });
       return true;
     } catch {

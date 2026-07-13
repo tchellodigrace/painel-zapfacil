@@ -24,6 +24,9 @@ import {
   BarChart3,
   Building2,
   LayoutDashboard,
+  CalendarDays,
+  Receipt,
+  Users,
 } from "lucide-react";
 import { EmpresaPanel } from "@/components/erp/empresa-panel";
 import { CatalogoServicos } from "@/components/erp/catalogo-servicos";
@@ -32,6 +35,9 @@ import { LancamentoForm } from "@/components/erp/lancamento-form";
 import { AcoesCupom } from "@/components/erp/acoes-cupom";
 import { Historico } from "@/components/erp/historico";
 import { DashboardGrafico } from "@/components/erp/dashboard-grafico";
+import { PainelAgendamento } from "@/components/erp/painel-agendamento";
+import { PainelDespesas } from "@/components/erp/painel-despesas";
+import { PainelColaboradores } from "@/components/erp/painel-colaboradores";
 import type { Venda } from "@/types";
 
 export default function ZapFacilPage() {
@@ -75,7 +81,7 @@ export default function ZapFacilPage() {
               variant="secondary"
               className="bg-emerald-500/30 text-emerald-100 text-[10px] border-emerald-400/30"
             >
-              V11.0 PRO
+              V12.0 PRO
             </Badge>
             <TooltipProvider>
               <Tooltip>
@@ -115,7 +121,7 @@ export default function ZapFacilPage() {
           onValueChange={setAbaAtiva}
           className="space-y-4"
         >
-          <TabsList className="grid w-full grid-cols-4 h-auto p-1 bg-white dark:bg-gray-900 border shadow-sm">
+          <TabsList className="grid w-full grid-cols-4 sm:grid-cols-7 h-auto p-1 bg-white dark:bg-gray-900 border shadow-sm">
             <TabsTrigger
               value="lancamento"
               className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
@@ -133,20 +139,41 @@ export default function ZapFacilPage() {
               <span className="sm:hidden">Cad.</span>
             </TabsTrigger>
             <TabsTrigger
-              value="dashboard"
+              value="agenda"
               className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
             >
+              <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
+              <span className="hidden sm:inline">Agenda</span>
+              <span className="sm:hidden">Ag.</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="financeiro"
+              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+            >
+              <Receipt className="h-3.5 w-3.5 mr-1.5" />
+              <span className="hidden sm:inline">Financeiro</span>
+              <span className="sm:hidden">Fin.</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="equipe"
+              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white hidden sm:inline-flex"
+            >
+              <Users className="h-3.5 w-3.5 mr-1.5" />
+              Equipe
+            </TabsTrigger>
+            <TabsTrigger
+              value="dashboard"
+              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white hidden sm:inline-flex"
+            >
               <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
-              <span className="hidden sm:inline">Dashboard</span>
-              <span className="sm:hidden">Dash</span>
+              Dashboard
             </TabsTrigger>
             <TabsTrigger
               value="historico"
-              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white hidden sm:inline-flex"
             >
               <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
-              <span className="hidden sm:inline">Relatorios</span>
-              <span className="sm:hidden">Rel.</span>
+              Relatorios
             </TabsTrigger>
           </TabsList>
 
@@ -168,6 +195,23 @@ export default function ZapFacilPage() {
               </div>
               <CatalogoServicos />
               <CRMClientes />
+            </div>
+          </TabsContent>
+
+          {/* Tab Agenda */}
+          <TabsContent value="agenda">
+            <PainelAgendamento />
+          </TabsContent>
+
+          {/* Tab Financeiro (Despesas) */}
+          <TabsContent value="financeiro">
+            <PainelDespesas />
+          </TabsContent>
+
+          {/* Tab Equipe */}
+          <TabsContent value="equipe">
+            <div className="max-w-2xl mx-auto">
+              <PainelColaboradores />
             </div>
           </TabsContent>
 

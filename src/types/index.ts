@@ -60,9 +60,66 @@ export interface Venda {
   formaPagamento: FormaPagamento;
   status: StatusPagamento;
   chavePix: string;
+  colaboradorId: string;
+  colaboradorNome: string;
   data: string;
   hora: string;
   timestamp: number;
+}
+
+// === AGENDAMENTO ===
+export type StatusAgendamento = "AGENDADO" | "CONFIRMADO" | "EM_ANDAMENTO" | "CONCLUIDO" | "CANCELADO";
+
+export interface Agendamento {
+  id: string;
+  clienteNome: string;
+  clienteTelefone: string;
+  servicoNome: string;
+  colaboradorId: string;
+  colaboradorNome: string;
+  data: string;
+  hora: string;
+  duracaoMinutos: number;
+  valor: number;
+  status: StatusAgendamento;
+  observacoes: string;
+  criadoEm: string;
+  timestamp: number;
+}
+
+// === DESPESAS ===
+export type CategoriaDespesa =
+  | "MATERIAL"
+  | "ALUGUEL"
+  | "ENERGIA"
+  | "INTERNET"
+  | "MARKETING"
+  | "TRANSPORTE"
+  | "IMPOSTOS"
+  | "SOFTWARE"
+  | "MANUTENCAO"
+  | "OUTROS";
+
+export interface Despesa {
+  id: string;
+  descricao: string;
+  categoria: CategoriaDespesa;
+  valor: number;
+  data: string;
+  recorrente: boolean;
+  observacoes: string;
+  timestamp: number;
+}
+
+// === COLABORADORES ===
+export interface Colaborador {
+  id: string;
+  nome: string;
+  telefone: string;
+  especialidade: string;
+  comissaoPercentual: number;
+  ativo: boolean;
+  criadoEm: string;
 }
 
 export interface DadosBackup {
@@ -73,6 +130,9 @@ export interface DadosBackup {
   servicos: Servico[];
   clientes: Cliente[];
   vendas: Venda[];
+  agendamentos: Agendamento[];
+  despesas: Despesa[];
+  colaboradores: Colaborador[];
 }
 
 // Estatísticas do Dashboard
@@ -97,4 +157,25 @@ export const TIPOS_CHAVE_PIX: TipoChavePix[] = [
   "Celular",
   "E-mail",
   "Aleatória",
+];
+
+export const CATEGORIAS_DESPESA: { valor: CategoriaDespesa; label: string }[] = [
+  { valor: "MATERIAL", label: "Material" },
+  { valor: "ALUGUEL", label: "Aluguel" },
+  { valor: "ENERGIA", label: "Energia" },
+  { valor: "INTERNET", label: "Internet" },
+  { valor: "MARKETING", label: "Marketing" },
+  { valor: "TRANSPORTE", label: "Transporte" },
+  { valor: "IMPOSTOS", label: "Impostos" },
+  { valor: "SOFTWARE", label: "Software" },
+  { valor: "MANUTENCAO", label: "Manutenção" },
+  { valor: "OUTROS", label: "Outros" },
+];
+
+export const STATUS_AGENDAMENTO: { valor: StatusAgendamento; label: string; cor: string }[] = [
+  { valor: "AGENDADO", label: "Agendado", cor: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" },
+  { valor: "CONFIRMADO", label: "Confirmado", cor: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200" },
+  { valor: "EM_ANDAMENTO", label: "Em Andamento", cor: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200" },
+  { valor: "CONCLUIDO", label: "Concluído", cor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200" },
+  { valor: "CANCELADO", label: "Cancelado", cor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" },
 ];

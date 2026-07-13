@@ -19,8 +19,8 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
-import { TrendingUp, Trophy, Users, DollarSign } from "lucide-react";
-import { formatarMoeda } from "@/lib/utils-erp";
+import { TrendingUp, Trophy, Users, DollarSign, CalendarDays, Receipt, UserCheck } from "lucide-react";
+import { formatarMoeda, filtrarVendasPorPeriodo } from "@/lib/utils-erp";
 
 const CORES_GRAFICO = [
   "hsl(142, 76%, 36%)",
@@ -32,7 +32,7 @@ const CORES_GRAFICO = [
 ];
 
 export function DashboardGrafico() {
-  const { vendas } = useERPStore();
+  const { vendas, despesas, agendamentos, colaboradores } = useERPStore();
 
   // === Dados do gráfico de receita por dia (últimos 7 dias) ===
   const receitaPorDia = useMemo(() => {
@@ -105,10 +105,43 @@ export function DashboardGrafico() {
     return vendas.reduce((s, v) => s + v.total, 0) / vendas.length;
   }, [vendas]);
 
+  // === Novas métricas ===
+  const lucroMes = useMemo(() => {
+    const vendasMes = filtrarVendasPorPeriodo(vendas, "mes") as typeof vendas;
+    const despesasMes = filtrarVendasPorPeriodo(despesas, "mes") as typeof despesas;
+    const receita = vendasMes.filter((v) => v.status === "PAGO").reduce((s, v) => s + v.total, 0);
+    const totalDespesas = despesasMes.reduce((s, d) => s + d.valor, 0);
+    return { receita, despesas: totalDespesas, lucro: receita - totalDespesas };
+  }, [vendas, despesas]);
+
+  const agendamentosHoje = useMemo(() => {
+    const hoje = new Date().toLocaleDateString("pt-BR");
+    return agendamentos.filter((a) => a.data === hoje);
+  }, [agendamentos]);
+
+  const totalComissoes = useMemo(() => {
+    return colaboradores.reduce((s, col) => {
+      const vendasCol = vendas.filter((v) => v.colaboradorId === col.id);
+      return s + vendasCol.reduce((vs, v) => vs + (v.total * col.comissaoPercentual) / 100, 0);
+    }, 0);
+  }, [vendas, colaboradores]);
+
+  const despesasPorCategoria = useMemo(() => {
+    const mapa: Record<string, number> = {};
+    const despesasMes = filtrarVendasPorPeriodo(despesas, "mes") as typeof despesas;
+    despesasMes.forEach((d) => {
+      mapa[d.categoria] = (mapa[d.categoria] || 0) + d.valor;
+    });
+    return Object.entries(mapa)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([cat, total]) => ({ categoria: cat, total }));
+  }, [despesas]);
+
   return (
     <div className="space-y-4">
       {/* Cards resumo rápido */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <Card className="p-4">
           <div className="flex items-center gap-2 mb-1">
             <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-950">
@@ -125,7 +158,7 @@ export function DashboardGrafico() {
             </div>
           </div>
           <p className="text-lg font-black">{formatarMoeda(ticketMedio)}</p>
-          <p className="text-[10px] text-muted-foreground font-medium">Ticket Médio</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Ticket Medio</p>
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-2 mb-1">
@@ -134,7 +167,7 @@ export function DashboardGrafico() {
             </div>
           </div>
           <p className="text-lg font-black">{topServicos[0]?.nome || "-"}</p>
-          <p className="text-[10px] text-muted-foreground font-medium">Serviço Top</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Servico Top</p>
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-2 mb-1">
@@ -144,6 +177,24 @@ export function DashboardGrafico() {
           </div>
           <p className="text-lg font-black">{topClientes[0]?.nome || "-"}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Cliente Top</p>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <div className={`p-1.5 rounded-md ${lucroMes.lucro >= 0 ? "bg-emerald-100 dark:bg-emerald-950" : "bg-red-100 dark:bg-red-950"}`}>
+              <Receipt className={`h-4 w-4 ${lucroMes.lucro >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`} />
+            </div>
+          </div>
+          <p className={`text-lg font-black ${lucroMes.lucro >= 0 ? "text-emerald-700" : "text-red-600"}`}>{formatarMoeda(lucroMes.lucro)}</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Lucro Liq. (Mes)</p>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-950">
+              <CalendarDays className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            </div>
+          </div>
+          <p className="text-lg font-black">{agendamentosHoje.length}</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Agend. Hoje</p>
         </Card>
       </div>
 
