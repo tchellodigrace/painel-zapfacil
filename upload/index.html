@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZapFácil Pro - ERP Mobile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* Força quebra de linha correta no cupom para evitar cortes */
+        .quebra-texto-cupom {
+            white-space: normal !important;
+            word-break: break-word !important;
+            overflow-wrap: anywher;
+        }
+        /* Bloqueio de Tela Cheia */
+        #bloqueioAssinatura {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.98);
+            z-index: 99999;
+            color: white;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col justify-between antialiased">
+
+    <div id="bloqueioAssinatura">
+        <div class="max-w-md p-6 bg-slate-900 rounded-2xl border border-red-500/30 shadow-2xl space-y-4">
+            <span class="text-5xl">⚠️</span>
+            <h1 class="text-xl font-bold text-red-400 uppercase tracking-wider">Aplicativo Bloqueado</h1>
+            <p class="text-sm text-gray-400">Sua licença de uso ou mensalidade expirou, ou o código de ativação é inválido.</p>
+            <div class="bg-slate-950 p-3 rounded-lg border border-gray-800">
+                <input id="inputChaveRenovacao" type="text" placeholder="Insira a nova Chave de Liberação" class="w-full text-center p-2 rounded bg-slate-900 text-white border border-gray-700 text-xs font-mono outline-none">
+                <button onclick="salvarNovaChave()" class="w-full bg-emerald-600 hover:bg-emerald-700 font-bold py-2 px-4 rounded mt-2 text-xs transition-all">Ativar Sistema</button>
+            </div>
+            <p class="text-[11px] text-gray-500">Solicite sua chave pix de renovação com o administrador do ZapFácil.</p>
+        </div>
+    </div>
+
+    <header class="bg-emerald-600 text-white shadow-md py-3.5 px-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-lg font-bold tracking-tight">💼 ZapFácil ERP</h1>
+                <p id="labelValidadeLicenca" class="text-[9px] text-emerald-100 font-mono"></p>
+            </div>
+            <span class="text-[10px] bg-emerald-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">V10.2 PRO</span>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 lg:col-span-4 gap-4 w-full">
+            
+            <section class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-3">
+                <h2 class="text-xs font-bold text-gray-700 border-b pb-1.5 flex items-center gap-1.5 uppercase">
+                    🏢 Empresa & Pix
+                </h2>
+                
+                <div>
+                    <label class="block text-[10px] font-semibold text-gray-500 uppercase mb-1">Logomarca</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold p-2 rounded-lg text-[10px] transition-all text-center cursor-pointer border border-emerald-200 shadow-sm">
+                            📁 Arquivo
+                            <input id="inputLogoFile" type="file" accept="image/*" onchange="processarImagemLogo(this)" class="hidden">
+                        </label>
+                        <label class="bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold p-2 rounded-lg text-[10px] transition-all text-center cursor-pointer border border-blue-200 shadow-sm">
+                            📸 Tirar Foto
+                            <input id="inputLogoCamera" type="file" accept="image/*" capture="environment" onchange="processarImagemLogo(this)" class="hidden">
+                        </label>
+                    </div>
+                    <button id="btnRemoverLogo" onclick="removerLogoSalva()" class="text-[9px] text-red-500 mt-1 hidden hover:underline">❌ Remover logo</button>
+                </div>
+
+                <div class="space-y-2">
+                    <input id="nomeEmpresa" type="text" placeholder="Nome da Empresa" class="w-full text-xs px-3 py-2 rounded-lg border border-gray-300 outline-none">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input id="enderecoEmpresa" type="text" placeholder="Endereço" class="w-full text-xs px-3 py-2 rounded-lg border border-gray-300 outline-none">
+                        <input id="telefoneEmpresa" type="text" placeholder="Telefone" class="w-full text-xs px-3 py-2 rounded-lg border border-gray-300 outline-none">
+                    </div>
+                </div>
+                
+                <div class="pt-2 border-t border-gray-100 space-y-2">
+                    <label class="block text-[10px] font-bold text-emerald-800 uppercase">🔑 Chaves PIX</label>
+                    <div class="flex gap-1">
+                        <select id="tipoChavePix" class="text-xs p-1.5 rounded-lg border border-gray-300 bg-white font-semibold outline-none w-20">
+                            <option value="CPF">CPF</option>
+                            <option value="Celular">Tel</option>
+                            <option value="E-mail">E-mail</option>
+                            <option value="CNPJ">CNPJ</option>
+                            <option value="Aleatória">Chave</option>
+                        </select>
+                        <input id="novaChavePixTxt" type="text" placeholder="Digite a Chave" class="flex-grow text-xs px-2 py-1.5 rounded-lg border border-gray-300 outline-none">
+                        <button onclick="adicionarChavePixColetor()" class="bg-emerald-600 text-white font-bold px-2.5 rounded-lg text-xs">➕</button>
+                    </div>
+                    <div class="flex gap-1 items-center">
+                        <select id="selectChavesPixSalvas" onchange="alternarChavePixAtiva()" class="w-full text-xs p-1.5 rounded-lg border border-emerald-300 bg-white font-medium"></select>
+                        <button onclick="removerChavePixSelecionada()" class="text-red-500 hover:bg-red-50 p-1.5 rounded border border-gray-200 text-xs">✕</button>
+                    </div>
+                </div>
+
+                <div class="pt-1">
+                    <input id="linkPagamentoBase" type="text" placeholder="Link Base Mercado Pago (Opcional)" class="w-full text-xs px-3 py-2 rounded-lg border border-amber-300 bg-amber-50/20 outline-none">
+                </div>
+                
+                <div class="pt-2 border-t border-gray-100 grid grid-cols-2 gap-2 text-center">
+                    <button onclick="exportarBackup()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-1.5 rounded-lg text-[10px]">📥 Exportar</button>
+                    <label class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-1.5 rounded-lg text-[10px] cursor-pointer block">
+                        📤 Importar
+                        <input type="file" id="fileBackup" accept=".json" onchange="importarBackup(event)" class="hidden">
+                    </label>
+                </div>
+            </section>
+
+            <div class="space-y-4">
+                <section class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-2">
+                    <h2 class="text-xs font-bold text-gray-700 border-b pb-1">🛠️ Catálogo de Serviços</h2>
+                    <div class="flex gap-1">
+                        <input id="catNome" type="text" placeholder="Serviço" class="w-1/2 text-xs px-2 py-1 rounded border outline-none">
+                        <input id="catValor" type="number" step="0.01" placeholder="R$" class="w-1/4 text-xs px-2 py-1 rounded border outline-none">
+                        <button onclick="cadastrarServicoCat()" class="w-1/4 bg-emerald-700 text-white text-[10px] font-bold rounded">➕</button>
+                    </div>
+                    <div id="listaServicosCat" class="space-y-1 max-h-24 overflow-y-auto"></div>
+                </section>
+
+                <section class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-2">
+                    <h2 class="text-xs font-bold text-gray-700 border-b pb-1">👥 CRM Clientes</h2>
+                    <div class="flex gap-1">
+                        <input id="crmNome" type="text" placeholder="Nome" class="w-1/2 text-xs px-2 py-1 rounded border outline-none">
+                        <input id="crmDoc" type="text" placeholder="CPF/CNPJ" class="w-1/4 text-xs px-2 py-1 rounded border outline-none">
+                        <button onclick="cadastrarClienteCRM()" class="w-1/4 bg-gray-800 text-white text-[10px] font-bold rounded">➕</button>
+                    </div>
+                    <div id="listaClientesCRM" class="space-y-1 max-h-24 overflow-y-auto"></div>
+                </section>
+            </div>
+        </div>
+
+        <section class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 lg:col-span-4 space-y-4 w-full">
+            <h2 class="text-xs font-bold text-gray-700 border-b pb-1.5 uppercase tracking-wide">📝 Lançar Atendimento</h2>
+
+            <div class="grid grid-cols-2 gap-2 bg-emerald-50/50 p-2 rounded-lg border border-emerald-100">
+                <div>
+                    <label class="block text-[9px] font-bold text-emerald-800 uppercase mb-0.5">👤 Atalhos CRM</label>
+                    <select id="selectClienteCRM" onchange="selecionarClienteDoCRM()" class="w-full text-xs p-1.5 rounded border border-emerald-200 bg-white"></select>
+                </div>
+                <div>
+                    <label class="block text-[9px] font-bold text-emerald-800 uppercase mb-0.5">🛠️ Atalhos Catálogo</label>
+                    <select id="selectServicoCat" onchange="selecionarServicoDoCat()" class="w-full text-xs p-1.5 rounded border border-emerald-200 bg-white"></select>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">Nome do Cliente</label>
+                    <input id="nomeCliente" type="text" placeholder="Consumidor Padrão" class="w-full text-xs px-3 py-2.5 rounded-lg border border-gray-300 outline-none focus:border-emerald-500">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">Doc. Cliente (Opcional)</label>
+                        <input id="docCliente" type="text" placeholder="CPF/CNPJ" class="w-full text-xs px-3 py-2.5 rounded-lg border border-gray-300 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">Forma de Pagto</label>
+                        <select id="formaPagamento" class="w-full text-xs px-3 py-2.5 rounded-lg border border-gray-300 bg-white outline-none">
+                            <option value="PIX">PIX</option>
+                            <option value="DINHEIRO">Dinheiro</option>
+                            <option value="CARTÃO DE CRÉDITO">Cartão de Crédito</option>
+                            <option value="CARTÃO DE DÉBITO">Cartão de Débito</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">Descrição do Serviço / Venda</label>
+                    <textarea id="nomeProduto" rows="2" placeholder="Descreva os serviços detalhadamente aqui..." class="w-full text-xs px-3 py-2 rounded-lg border border-gray-300 outline-none focus:border-emerald-500"></textarea>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="col-span-1">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">Valor (R$)</label>
+                        <input id="valorProduto" type="number" step="0.01" placeholder="0.00" class="w-full text-xs px-2 py-2.5 rounded-lg border border-gray-300 font-bold outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-red-600 uppercase mb-0.5">Desc. (R$)</label>
+                        <input id="descontoVenda" type="number" step="0.01" placeholder="0.00" class="w-full text-xs px-2 py-2.5 rounded-lg border border-gray-300 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-blue-600 uppercase mb-0.5">Taxa (R$)</label>
+                        <input id="acrescimoVenda" type="number" step="0.01" placeholder="0.00" class="w-full text-xs px-2 py-2.5 rounded-lg border border-gray-300 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">Situação Atual</label>
+                    <select id="statusPagamento" class="w-full text-xs px-3 py-2.5 rounded-lg border font-bold text-center bg-white border-gray-300 outline-none">
+                        <option value="PAGO">🟢 PAGO (Gerar Comprovante)</option>
+                        <option value="PENDENTE">🟡 PENDENTE (Gerar Fatura/Cobrança)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="gerarCupomAutomatizado()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md text-xs uppercase tracking-wider transition-all">
+                ⚙️ PROCESSAR E GERAR NOTA
+            </button>
+        </section>
+
+        <section class="lg:col-span-4 flex flex-col items-center w-full space-y-3">
+            
+            <div id="cupomFiscalContainer" class="bg-white p-4 sm:p-5 shadow-md border border-gray-300 w-full max-w-[340px] mx-auto text-gray-800 font-mono text-[11px] uppercase relative leading-relaxed text-left">
+                
+                <div id="cupomBadgeStatus" class="text-center font-sans font-black text-[10px] py-1 rounded mb-3 tracking-widest text-white bg-emerald-600">
+                    COMPROVANTE DE PAGAMENTO
+                </div>
+
+                <div id="cupomLogoContainer" class="hidden justify-center items-center w-full mb-3 text-center">
+                    <img id="cupomLogo" src="" class="max-h-14 max-w-[150px] object-contain mx-auto block">
+                </div>
+
+                <div id="cupomEmpresa" class="font-bold text-center text-xs tracking-wide">EMISSOR</div>
+                <div id="cupomEndereco" class="text-center text-[9px] text-gray-500 hidden"></div>
+                <div id="cupomTelefone" class="text-center text-[9px] text-gray-500 hidden"></div>
+                
+                <div class="border-b border-dashed border-gray-400 my-2"></div>
+                
+                <div class="flex justify-between text-[9px] text-gray-600">
+                    <span id="cupomData">DATA: --/--/----</span>
+                    <span id="cupomHora">HORA: --:--:--</span>
+                </div>
+                
+                <div class="border-b border-dashed border-gray-400 my-2"></div>
+                
+                <div class="bg-gray-50 p-2 rounded border border-gray-200 mb-2">
+                    <div class="text-[8px] text-gray-400">CLIENTE:</div>
+                    <div id="cupomCliente" class="font-black text-xs text-gray-900 tracking-wide quebra-texto-cupom">CONSUMIDOR PADRÃO</div>
+                    <div id="cupomDocCliente" class="text-[9px] text-gray-600 mt-0.5 hidden">--</div>
+                </div>
+
+                <div class="border-b border-dashed border-gray-400 my-2"></div>
+                
+                <div class="grid grid-cols-12 font-bold mb-1 gap-1">
+                    <div class="col-span-8">DESCRIÇÃO DO SERVIÇO</div>
+                    <div class="col-span-4 text-right">VALOR</div>
+                </div>
+                
+                <div class="grid grid-cols-12 items-start gap-1 my-1 pb-1">
+                    <div class="col-span-8 text-gray-900 quebra-texto-cupom font-medium">
+                        👉 <span id="cupomProduto">NENHUM SERVIÇO LANÇADO</span>
+                    </div>
+                    <div id="cupomValorItem" class="col-span-4 text-right font-bold text-gray-900 whitespace-nowrap">
+                        R$ 0,00
+                    </div>
+                </div>
+                
+                <div class="border-b border-dashed border-gray-400 my-2"></div>
+                
+                <div class="space-y-0.5 text-gray-600 text-[10px]">
+                    <div id="linhaSubtotal" class="flex justify-between hidden">
+                        <span>SUBTOTAL VALOR</span>
+                        <span id="cupomSubtotal">R$ 0,00</span>
+                    </div>
+                    <div id="linhaDesconto" class="flex justify-between text-red-600 hidden">
+                        <span>(-) DESCONTO</span>
+                        <span id="cupomDesconto">R$ 0,00</span>
+                    </div>
+                    <div id="linhaAcrescimo" class="flex justify-between text-blue-600 hidden">
+                        <span>(+) ACRÉSCIMO</span>
+                        <span id="cupomAcrescimo">R$ 0,00</span>
+                    </div>
+                    <div class="flex justify-between text-gray-800">
+                        <span id="cupomFormaPagto">PAGAMENTO: -</span>
+                        <span id="cupomValorPago">R$ 0,00</span>
+                    </div>
+                    
+                    <div id="linhaCupomPix" class="bg-emerald-50 text-emerald-800 p-2 rounded border border-emerald-200 my-1.5 hidden text-[10px]">
+                        <span class="font-bold block text-[8px] text-emerald-600">CHAVE PIX DA EMPRESA:</span>
+                        <span id="cupomChavePixTxt" class="font-mono break-all font-bold tracking-tight">--</span>
+                    </div>
+
+                    <div class="border-t border-dashed border-gray-300 my-1"></div>
+                    <div class="flex justify-between text-xs font-black text-gray-900 pt-0.5">
+                        <span>TOTAL GERAL</span>
+                        <span id="cupomTotal" class="text-sm">R$ 0,00</span>
+                    </div>
+                </div>
+                
+                <div class="border-b border-dashed border-gray-400 my-2"></div>
+                <div class="text-[9px] text-center text-gray-500 space-y-0.5">
+                    <div>SISTEMA ZAPFÁCIL ERP</div>
+                    <div class="font-sans text-[7px] text-gray-400">AUTENTICAÇÃO LOCAL PROTEGIDA</div>
+                    <div class="font-bold text-gray-700 mt-1">*** OBRIGADO! ***</div>
+                </div>
+            </div>
+
+            <div class="w-full max-w-[340px] space-y-2 mx-auto px-1">
+                <div id="containerPixExterno" class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center hidden">
+                    <span class="block text-[9px] font-bold text-emerald-700 uppercase mb-1">Chave Pix (Toque para copiar):</span>
+                    <div id="txtPixExterno" class="bg-white border border-emerald-300 rounded p-2 text-xs font-mono break-all select-all font-bold text-gray-800 cursor-pointer"></div>
+                </div>
+
+                <button id="btnCopiarPix" onclick="copiarChavePixDireta()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2 text-xs uppercase hidden shadow">
+                    🔑 Copiar Chave Pix Pura
+                </button>
+                <button id="btnLinkPagamento" onclick="copiarLinkPagamento()" class="w-full bg-amber-500 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2 text-xs uppercase hidden shadow">
+                    🔗 Copiar Link de Cobrança
+                </button>
+                <button id="btnEnviar" onclick="enviarDireto()" class="w-full bg-gray-300 text-gray-500 cursor-not-allowed font-bold py-4 rounded-xl flex justify-center items-center gap-2 text-xs uppercase tracking-wider" disabled>
+                    🚀 Enviar p/ WhatsApp
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <section class="max-w-7xl mx-auto px-4 md:px-6 w-full mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 space-y-3">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b pb-3">
+                <div>
+                    <h2 class="text-sm font-bold text-gray-800">📊 Movimentações e Faturamento</h2>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5 text-right w-full sm:w-auto flex justify-between sm:block items-center">
+                    <span class="text-[9px] font-bold text-emerald-800 uppercase tracking-wider block sm:inline">Total:</span>
+                    <p id="financeiroFaturamento" class="text-lg font-black text-emerald-700">R$ 0,00</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto w-full">
+                <table class="w-full text-left text-xs text-gray-600 min-w-[550px]">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-500 uppercase text-[9px] border-b">
+                            <th class="py-2 px-3">Data/Hora</th>
+                            <th class="py-2 px-3">Cliente</th>
+                            <th class="py-2 px-3">Serviço</th>
+                            <th class="py-2 px-3">Total</th>
+                            <th class="py-2 px-3 text-center">Status</th>
+                            <th class="py-2 px-3 text-right">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaHistoricoVendas" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-800 text-center py-3 text-[10px] text-gray-400 px-4 border-t border-gray-700">
+        <p>&copy; 2026 ZapFácil Mobile Ecosystem. Protegido por Licença.</p>
+    </footer>
+
+    <script>
+        // --- CHAVE DE SEGURANÇA ANTICALOTE ---
+        // Se a pessoa pagar, você gera um código e coloca no app dela ou manda para ela inserir.
+        // A lógica da chave decodifica a data de validade.
+        function checarLicencaValida() {
+            const chaveAtiva = localStorage.getItem('zap_licenca_chave') || "";
+            const telaBloqueio = document.getElementById('bloqueioAssinatura');
+            const labelValidade = document.getElementById('labelValidadeLicenca');
+
+            if (!chaveAtiva) {
+                telaBloqueio.style.display = "flex";
+                return false;
+            }
+
+            try {
+                // Decodificação simples base64 da chave para segurança básica contra leigos
+                const decodificada = atob(chaveAtiva); // Formato esperado: ZAPFACIL-AAAAMMDD
+                if (!decodificada.startsWith("ZAPFACIL-")) {
+                    telaBloqueio.style.display = "flex";
+                    return false;
+                }
+
+                const dataStr = decodificada.split("-")[1]; // Pega AAAAMMDD
+                const ano = parseInt(dataStr.substring(0,4));
+                const mes = parseInt(dataStr.substring(4,6)) - 1;
+                const dia = parseInt(dataStr.substring(6,8));
+
+                const dataValidade = new Date(ano, mes, dia, 23, 59, 59);
+                const hoje = new Date();
+
+                if (hoje > dataValidade) {
+                    telaBloqueio.style.display = "flex";
+                    return false;
+                } else {
+                    telaBloqueio.style.display = "none";
+                    labelValidade.innerText = `Licença ativa até: ${dia.toString().padStart(2,'0')}/${(mes+1).toString().padStart(2,'0')}/${ano}`;
+                    return true;
+                }
+            } catch (e) {
+                telaBloqueio.style.display = "flex";
+                return false;
+            }
+        }
+
+        function salvarNovaChave() {
+            const ch = document.getElementById('inputChaveRenovacao').value.trim();
+            if(!ch) return alert("Insira uma chave!");
+            localStorage.setItem('zap_licenca_chave', ch);
+            if(checarLicencaValida()) {
+                alert("Sistema ativado com absoluto sucesso!");
+                window.location.reload();
+            } else {
+                alert("Chave inválida ou já expirada!");
+            }
+        }
+
+        // --- SISTEMA CORE ---
+        let linkPagamentoAtual = "";
+        let chavePixAtual = "";
+
+        window.onload = function() {
+            // Verifica a trava de aluguel antes de qualquer coisa
+            checarLicencaValida();
+
+            if (localStorage.getItem('zap_nomeEmpresa')) document.getElementById('nomeEmpresa').value = localStorage.getItem('zap_nomeEmpresa');
+            if (localStorage.getItem('zap_enderecoEmpresa')) document.getElementById('enderecoEmpresa').value = localStorage.getItem('zap_enderecoEmpresa');
+            if (localStorage.getItem('zap_telefoneEmpresa')) document.getElementById('telefoneEmpresa').value = localStorage.getItem('zap_telefoneEmpresa');
+            if (localStorage.getItem('zap_linkBase')) document.getElementById('linkPagamentoBase').value = localStorage.getItem('zap_linkBase');
+            
+            if (localStorage.getItem('zap_logoEmpresa')) {
+                const logoBase64 = localStorage.getItem('zap_logoEmpresa');
+                document.getElementById('cupomLogo').src = logoBase64;
+                document.getElementById('cupomLogoContainer').classList.replace('hidden', 'flex');
+                document.getElementById('btnRemoverLogo').classList.remove('hidden');
+            }
+
+            renderizarCRM();
+            renderizarCatalogo();
+            renderizarHistorico();
+            atualizarSelectChavesPix('zap', 'selectChavesPixSalvas');
+        }
+
+        function obterChavesPixSalvas(prefix) { return JSON.parse(localStorage.getItem(prefix + '_listaPix') || '[]'); }
+        
+        function adicionarChavePixColetor() {
+            const tipo = document.getElementById('tipoChavePix').value;
+            const txt = document.getElementById('novaChavePixTxt').value.trim();
+            if(!txt) return alert("Insira a chave!");
+            const chaveFormatada = `${tipo}: ${txt}`;
+            let chaves = obterChavesPixSalvas('zap');
+            if(!chaves.includes(chaveFormatada)) {
+                chaves.push(chaveFormatada);
+                localStorage.setItem('zap_listaPix', JSON.stringify(chaves));
+            }
+            document.getElementById('novaChavePixTxt').value = "";
+            localStorage.setItem('zap_chaveAtiva', chaveFormatada);
+            atualizarSelectChavesPix('zap', 'selectChavesPixSalvas');
+        }
+
+        function atualizarSelectChavesPix(prefix, selectId) {
+            const chaves = obterChavesPixSalvas(prefix);
+            const select = document.getElementById(selectId);
+            select.innerHTML = chaves.length ? '' : '<option value="">Nenhum Pix Salvo</option>';
+            const ativaStr = localStorage.getItem(prefix + '_chaveAtiva') || "";
+            chaves.forEach(ch => {
+                const opt = document.createElement('option'); opt.value = ch; opt.innerText = ch;
+                if(ch === ativaStr) opt.selected = true;
+                select.appendChild(opt);
+            });
+            if(select.value) localStorage.setItem(prefix + '_chaveAtiva', select.value);
+        }
+
+        function alternarChavePixAtiva() {
+            localStorage.setItem('zap_chaveAtiva', document.getElementById('selectChavesPixSalvas').value);
+        }
+
+        function removerChavePixSelecionada() {
+            const val = document.getElementById('selectChavesPixSalvas').value;
+            if(!val) return;
+            if(confirm("Excluir esta chave?")) {
+                let chaves = obterChavesPixSalvas('zap');
+                chaves = chaves.filter(c => c !== val);
+                localStorage.setItem('zap_listaPix', JSON.stringify(chaves));
+                localStorage.removeItem('zap_chaveAtiva');
+                atualizarSelectChavesPix('zap', 'selectChavesPixSalvas');
+            }
+        }
+
+        function extrairChaveLimpa(stringPix) {
+            if (!stringPix) return "";
+            return stringPix.includes(': ') ? stringPix.split(': ')[1] : stringPix;
+        }
+
+        function copiarChavePixDireta() {
+            if (!chavePixAtual) return;
+            navigator.clipboard.writeText(extrairChaveLimpa(chavePixAtual)).then(() => alert("Chave Pix copiada!"));
+        }
+
+        function copiarLinkPagamento() {
+            if (!linkPagamentoAtual) return;
+            navigator.clipboard.writeText(linkPagamentoAtual).then(() => alert("Link de cobrança copiado!"));
+        }
+
+        function processarImagemLogo(inputElement) {
+            const file = inputElement.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    localStorage.setItem('zap_logoEmpresa', e.target.result);
+                    document.getElementById('cupomLogo').src = e.target.result;
+                    document.getElementById('cupomLogoContainer').classList.replace('hidden', 'flex');
+                    document.getElementById('btnRemoverLogo').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Administração de Dados locais
+        function removerLogoSalva() {
+            localStorage.removeItem('zap_logoEmpresa');
+            document.getElementById('cupomLogoContainer').classList.replace('flex', 'hidden');
+            document.getElementById('btnRemoverLogo').classList.add('hidden');
+        }
+
+        function exportarBackup() {
+            const dadosBackup = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const chave = localStorage.key(i);
+                if (chave.startsWith('zap_')) dadosBackup[chave] = localStorage.getItem(chave);
+            }
+            const blob = new Blob([JSON.stringify(dadosBackup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `zapfacil_backup.json`; a.click();
+        }
+
+        function importarBackup(event) {
+            const arquivo = event.target.files[0]; if (!arquivo) return;
+            const leitor = new FileReader();
+            leitor.onload = function(e) {
+                try {
+                    const dados = JSON.parse(e.target.result);
+                    Object.keys(dados).forEach(ch => localStorage.setItem(ch, dados[ch]));
+                    alert("Dados importados!"); window.location.reload();
+                } catch (err) { alert("Arquivo inválido."); }
+            };
+            leitor.readAsText(arquivo);
+        }
+
+        // Histórico, CRM e Catálogo
+        function obterHistorico() { return JSON.parse(localStorage.getItem('zap_historico') || '[]'); }
+        function salvarVendaNoHistorico(v) { let h = obterHistorico(); h.unshift(v); localStorage.setItem('zap_historico', JSON.stringify(h)); renderizarHistorico(); }
+        function deletarVenda(i) { if (confirm("Excluir registro?")) { let h = obterHistorico(); h.splice(i, 1); localStorage.setItem('zap_historico', JSON.stringify(h)); renderizarHistorico(); } }
+        function obterServicosCat() { return JSON.parse(localStorage.getItem('zap_servicos') || '[]'); }
+        function salvarServicosCat(s) { localStorage.setItem('zap_servicos', JSON.stringify(s)); renderizarCatalogo(); }
+        
+        function cadastrarServicoCat() {
+            const n = document.getElementById('catNome').value.trim(); const v = document.getElementById('catValor').value.trim();
+            if (!n) return; let s = obterServicosCat(); s.push({ nome: n, valor: v }); salvarServicosCat(s);
+            document.getElementById('catNome').value = ""; document.getElementById('catValor').value = "";
+        }
+        function deletarServicoCat(i) { if(confirm("Excluir?")) { let s = obterServicosCat(); s.splice(i,1); salvarServicosCat(s); } }
+        function obterClientesCRM() { return JSON.parse(localStorage.getItem('zap_clientes') || '[]'); }
+        function salvarClientesCRM(c) { localStorage.setItem('zap_clientes', JSON.stringify(c)); renderizarCRM(); }
+        function cadastrarClienteCRM() {
+            const n = document.getElementById('crmNome').value.trim(); const d = document.getElementById('crmDoc').value.trim();
+            if (!n) return; let c = obterClientesCRM(); c.push({ nome: n, doc: d }); salvarClientesCRM(c);
+            document.getElementById('crmNome').value = ""; document.getElementById('crmDoc').value = "";
+        }
+        function deletarClienteCRM(i) { if(confirm("Excluir?")) { let c = obterClientesCRM(); c.splice(i,1); salvarClientesCRM(c); } }
+
+        function renderizarCatalogo() {
+            const servicos = obterServicosCat(); const select = document.getElementById('selectServicoCat'); const lista = document.getElementById('listaServicosCat');
+            select.innerHTML = '<option value="">-- Catálogo --</option>'; lista.innerHTML = '';
+            servicos.forEach((s, idx) => {
+                const opt = document.createElement('option'); opt.value = idx; opt.innerText = s.nome; select.appendChild(opt);
+                lista.innerHTML += `<div class="flex justify-between p-1 bg-gray-50 border text-[10px] rounded">
+                    <span class="truncate"><b>${s.nome}</b> - R$ ${s.valor||'Var'}</span>
+                    <button onclick="deletarServicoCat(${idx})" class="text-red-500 font-bold px-1">✕</button>
+                </div>`;
+            });
+        }
+        function selecionarServicoDoCat() {
+            const idx = document.getElementById('selectServicoCat').value; if(idx === "") return;
+            const s = obterServicosCat()[idx]; document.getElementById('nomeProduto').value = s.nome; document.getElementById('valorProduto').value = s.valor || "";
+        }
+        function renderizarCRM() {
+            const clientes = obterClientesCRM(); const select = document.getElementById('selectClienteCRM'); const lista = document.getElementById('listaClientesCRM');
+            select.innerHTML = '<option value="">-- CRM --</option>'; lista.innerHTML = '';
+            clientes.forEach((c, idx) => {
+                const opt = document.createElement('option'); opt.value = idx; opt.innerText = c.nome; select.appendChild(opt);
+                lista.innerHTML += `<div class="flex justify-between p-1 bg-gray-50 border text-[10px] rounded">
+                    <span class="truncate"><b>${c.nome}</b></span>
+                    <button onclick="deletarClienteCRM(${idx})" class="text-red-500 font-bold px-1">✕</button>
+                </div>`;
+            });
+        }
+        function selecionarClienteDoCRM() {
+            const idx = document.getElementById('selectClienteCRM').value; if (idx === "") return;
+            const c = obterClientesCRM()[idx]; document.getElementById('nomeCliente').value = c.nome; document.getElementById('docCliente').value = c.doc || "";
+        }
+
+        function renderizarHistorico() {
+            const data = obterHistorico(); const tabela = document.getElementById('listaHistoricoVendas');
+            tabela.innerHTML = ''; let totalFaturamento = 0;
+            if(!data.length) { tabela.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-400 italic">Nenhum registro.</td></tr>`; return; }
+            data.forEach((v, idx) => {
+                totalFaturamento += parseFloat(v.total);
+                tabela.innerHTML += `<tr class="border-b text-[11px] hover:bg-gray-50">
+                    <td class="py-2 px-2 font-mono text-[10px]">${v.data}</td>
+                    <td class="py-2 px-2 font-bold max-w-[100px] truncate">${v.cliente}</td>
+                    <td class="py-2 px-2 max-w-[120px] truncate">${v.produto}</td>
+                    <td class="py-2 px-2 font-bold text-gray-900">R$ ${parseFloat(v.total).toFixed(2)}</td>
+                    <td class="py-2 px-2 text-center"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${v.status==='PAGO'?'bg-green-100 text-green-800':'bg-amber-100 text-amber-800'}">${v.status}</span></td>
+                    <td class="py-2 px-2 text-right"><button onclick="reemitirVenda(${idx})" class="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">Ver</button></td>
+                </tr>`;
+            });
+            document.getElementById('financeiroFaturamento').innerText = `R$ ${totalFaturamento.toFixed(2)}`;
+        }
+
+        function reemitirVenda(idx) { montarEstruturaCupom(obterHistorico()[idx]); destravarBotoes(obterHistorico()[idx].total, obterHistorico()[idx].formaPagto); }
+
+        function gerarCupomAutomatizado() {
+            if(!checarLicencaValida()) return; // Trava o processamento se estiver vencido
+
+            const empresa = document.getElementById('nomeEmpresa').value.trim() || "PRESTADOR DE SERVIÇOS";
+            const endereco = document.getElementById('enderecoEmpresa').value.trim();
+            const telefone = document.getElementById('telefoneEmpresa').value.trim();
+            const linkBase = document.getElementById('linkPagamentoBase').value.trim();
+            const chavePix = localStorage.getItem('zap_chaveAtiva') || "";
+            const cliente = document.getElementById('nomeCliente').value.trim() || "CONSUMIDOR PADRÃO";
+            const docCliente = document.getElementById('docCliente').value.trim();
+            const produto = document.getElementById('nomeProduto').value.trim();
+            const valor = document.getElementById('valorProduto').value.trim();
+            const formaPagto = document.getElementById('formaPagamento').value;
+            const desconto = parseFloat(document.getElementById('descontoVenda').value) || 0;
+            const acrescimo = parseFloat(document.getElementById('acrescimoVenda').value) || 0;
+            const status = document.getElementById('statusPagamento').value;
+
+            if (!produto || !valor) return alert("Preencha o Serviço e o Valor!");
+
+            localStorage.setItem('zap_nomeEmpresa', empresa);
+            localStorage.setItem('zap_enderecoEmpresa', endereco);
+            localStorage.setItem('zap_telefoneEmpresa', telefone);
+            localStorage.setItem('zap_linkBase', linkBase);
+
+            const totalGeral = parseFloat(valor) - desconto + acrescimo;
+            const v = {
+                empresa, endereco, telefone, linkBase, chavePix, cliente, docCliente,
+                produto, valor: parseFloat(valor), desconto, acrescimo, total: totalGeral,
+                formaPagto, status, data: new Date().toLocaleDateString('pt-BR'), hora: new Date().toLocaleTimeString('pt-BR')
+            };
+            salvarVendaNoHistorico(v); montarEstruturaCupom(v); destravarBotoes(totalGeral, formaPagto);
+        }
+
+        function destravarBotoes(total, forma) {
+            const btn = document.getElementById('btnEnviar');
+            btn.removeAttribute('disabled'); btn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow shadow-emerald-200 active:scale-[0.98] transition-all";
+            
+            const lb = document.getElementById('linkPagamentoBase').value.trim();
+            if(lb) {
+                linkPagamentoAtual = `${lb.replace(/^(https?:\/\/)?/, 'https://')}?amount=${parseFloat(total).toFixed(2)}`;
+                document.getElementById('btnLinkPagamento').classList.remove('hidden');
+            } else { document.getElementById('btnLinkPagamento').classList.add('hidden'); }
+
+            const cp = localStorage.getItem('zap_chaveAtiva') || "";
+            if(cp && forma === "PIX") {
+                chavePixAtual = cp; document.getElementById('btnCopiarPix').classList.remove('hidden');
+                document.getElementById('txtPixExterno').innerText = extrairChaveLimpa(cp);
+                document.getElementById('containerPixExterno').classList.remove('hidden');
+            } else {
+                document.getElementById('btnCopiarPix').classList.add('hidden'); document.getElementById('containerPixExterno').classList.add('hidden'); chavePixAtual = "";
+            }
+            document.getElementById('cupomFiscalContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function montarEstruturaCupom(v) {
+            document.getElementById('cupomEmpresa').innerText = v.empresa;
+            document.getElementById('cupomData').innerText = `DATA: ${v.data}`;
+            document.getElementById('cupomHora').innerText = `HORA: ${v.hora}`;
+            
+            const ce = document.getElementById('cupomEndereco'); if(v.endereco) { ce.innerText = v.endereco; ce.classList.remove('hidden'); } else ce.classList.add('hidden');
+            const ct = document.getElementById('cupomTelefone'); if(v.telefone) { ct.innerText = `TEL: ${v.telefone}`; ct.classList.remove('hidden'); } else ct.classList.add('hidden');
+            
+            document.getElementById('cupomCliente').innerText = v.cliente;
+            const cd = document.getElementById('cupomDocCliente'); if(v.docCliente) { cd.innerText = `DOC: ${v.docCliente}`; cd.classList.remove('hidden'); } else cd.classList.add('hidden');
+            
+            // Aqui entra a correção: Elemento recebe o texto livremente sem cortes horizontais
+            document.getElementById('cupomProduto').innerText = v.produto;
+            document.getElementById('cupomValorItem').innerText = `R$ ${parseFloat(v.valor).toFixed(2)}`;
+
+            if(v.desconto > 0 || v.acrescimo > 0) {
+                document.getElementById('linhaSubtotal').classList.remove('hidden');
+                document.getElementById('cupomSubtotal').innerText = `R$ ${parseFloat(v.valor).toFixed(2)}`;
+            } else document.getElementById('linhaSubtotal').classList.add('hidden');
+
+            if(v.desconto > 0) { document.getElementById('linhaDesconto').classList.remove('hidden'); document.getElementById('cupomDesconto').innerText = `-R$ ${v.desconto.toFixed(2)}`; } else document.getElementById('linhaDesconto').classList.add('hidden');
+            if(v.acrescimo > 0) { document.getElementById('linhaAcrescimo').classList.remove('hidden'); document.getElementById('cupomAcrescimo').innerText = `+R$ ${v.acrescimo.toFixed(2)}`; } else document.getElementById('linhaAcrescimo').classList.add('hidden');
+
+            document.getElementById('cupomFormaPagto').innerText = `PAGTO: ${v.formaPagto}`;
+            document.getElementById('cupomValorPago').innerText = `R$ ${v.total.toFixed(2)}`;
+            document.getElementById('cupomTotal').innerText = `R$ ${v.total.toFixed(2)}`;
+
+            const lPix = document.getElementById('linhaCupomPix');
+            if(v.formaPagto === "PIX" && v.chavePix) { document.getElementById('cupomChavePixTxt').innerText = v.chavePix; lPix.classList.remove('hidden'); } else lPix.classList.add('hidden');
+
+            const badge = document.getElementById('cupomBadgeStatus');
+            if(v.status === 'PAGO') {
+                badge.innerText = "COMPROVANTE DE PAGAMENTO"; badge.className = "text-center font-sans font-black text-[10px] py-1 rounded mb-3 tracking-widest text-white bg-emerald-600";
+                document.getElementById('btnEnviar').innerText = "🚀 Enviar Comprovante";
+            } else {
+                badge.innerText = "FATURA DE SERVIÇO"; badge.className = "text-center font-sans font-black text-[10px] py-1 rounded mb-3 tracking-widest text-amber-900 bg-amber-400";
+                document.getElementById('btnEnviar').innerText = "🚀 Enviar Cobrança";
+            }
+            if (!localStorage.getItem('zap_logoEmpresa')) document.getElementById('cupomLogoContainer').classList.add('hidden');
+        }
+
+        function enviarDireto() {
+            const cupom = document.getElementById('cupomFiscalContainer');
+            html2canvas(cupom, { scale: 2, useCORS: true }).then(canvas => {
+                canvas.toBlob(blob => {
+                    const file = new File([blob], 'comprovante.png', { type: 'image/png' });
+                    let legenda = "";
+                    if (chavePixAtual) legenda = `🔑 Segue chave Pix para cópia:\n\n${extrairChaveLimpa(chavePixAtual)}`;
+
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        let shareData = { files: [file], title: 'ZapFácil' };
+                        if (legenda) shareData.text = legenda;
+                        navigator.share(shareData).catch(() => {});
+                    } else {
+                        try {
+                            navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]).then(() => {
+                                alert("Imagem copiada!");
+                                if(legenda) window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(legenda)}`, '_blank');
+                                else window.open('https://web.whatsapp.com/', '_blank');
+                            });
+                        } catch (e) {
+                            const link = document.createElement('a'); link.download = 'comprovante.png'; link.href = canvas.toDataURL(); link.click();
+                        }
+                    }
+                }, 'image/png');
+            });
+        }
+    </script>
+</body>
+</html>
