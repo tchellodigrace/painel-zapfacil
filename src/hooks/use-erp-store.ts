@@ -83,8 +83,8 @@ interface ERPState {
   removerServico: (id: string) => void;
 
   // --- Ações Clientes ---
-  adicionarCliente: (nome: string, documento: string, telefone: string, email: string) => void;
-  editarCliente: (id: string, nome: string, documento: string, telefone: string, email: string) => void;
+  adicionarCliente: (nome: string, documento: string, telefone: string, email: string, senha: string) => void;
+  editarCliente: (id: string, nome: string, documento: string, telefone: string, email: string, senha: string) => void;
   removerCliente: (id: string) => void;
 
   // --- Ações Vendas ---
@@ -204,23 +204,24 @@ export const useERPStore = create<ERPState>((set, get) => ({
   },
 
   // --- Clientes ---
-  adicionarCliente: (nome, documento, telefone, email) => {
+  adicionarCliente: (nome, documento, telefone, email, senha) => {
     const cliente: Cliente = {
       id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       nome: nome.trim(),
       documento: documento.trim(),
       telefone: telefone.trim(),
       email: email.trim(),
+      senha: senha.trim(),
       criadoEm: new Date().toISOString(),
     };
     const novaLista = [...get().clientes, cliente];
     salvar("clientes", novaLista);
     set({ clientes: novaLista });
   },
-  editarCliente: (id, nome, documento, telefone, email) => {
+  editarCliente: (id, nome, documento, telefone, email, senha) => {
     const novaLista = get().clientes.map((c) =>
       c.id === id
-        ? { ...c, nome: nome.trim(), documento: documento.trim(), telefone: telefone.trim(), email: email.trim() }
+        ? { ...c, nome: nome.trim(), documento: documento.trim(), telefone: telefone.trim(), email: email.trim(), senha: senha.trim() }
         : c
     );
     salvar("clientes", novaLista);
