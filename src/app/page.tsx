@@ -65,21 +65,22 @@ export default function ZapFacilPage() {
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
       <InicializadorLogo />
       {/* Header */}
-      <header className="bg-emerald-600 text-white shadow-md py-3 px-4 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
           <div className="flex items-center">
             <img
               src="/logo-empresa.png"
               alt="Logo"
-              className="h-10 w-auto object-contain"
+              className="h-11 w-auto object-contain"
+              priority
             />
           </div>
           <div className="flex items-center gap-2">
             <Badge
-              variant="secondary"
-              className="bg-emerald-500/30 text-emerald-100 text-[10px] border-emerald-400/30"
+              variant="outline"
+              className="text-emerald-700 dark:text-emerald-400 text-[10px] border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950 font-semibold"
             >
-              V12.0 PRO
+              PRO
             </Badge>
             <TooltipProvider>
               <Tooltip>
@@ -87,7 +88,7 @@ export default function ZapFacilPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-white hover:bg-emerald-700"
+                    className="h-8 w-8 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                     onClick={() =>
                       setTheme(theme === "dark" ? "light" : "dark")
                     }
