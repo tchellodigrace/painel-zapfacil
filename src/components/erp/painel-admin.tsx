@@ -1923,11 +1923,9 @@ export function PainelAdmin() {
   const [autenticado, setAutenticado] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Garante que as credenciais padrão sempre existam
+    // Reseta credenciais para o padrao (remove versao anterior)
     const store = useAdminStore.getState();
-    if (!store.adminCredenciais) {
-      store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
-    }
+    store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
 
     const session = sessionStorage.getItem("zapfacil_admin_session");
     setAutenticado(session === "autenticado");
