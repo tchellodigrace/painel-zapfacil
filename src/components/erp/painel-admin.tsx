@@ -2023,7 +2023,7 @@ function PainelAdminConteudo() {
         ) : abaAtiva === "zapbot" ? (
           <PainelZapBot />
         ) : (
-          <>
+          <div className="space-y-6">
             {/* Cards de estatísticas - Sistemas */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               <Card className="border-0 shadow-sm">
@@ -2363,7 +2363,7 @@ function PainelAdminConteudo() {
             <div className="text-center text-[10px] text-gray-400 pb-4">
               {sistemasFiltrados.length} de {sistemas.length} sistema{sistemas.length !== 1 ? "s" : ""}
             </div>
-          </>
+          </div>
         )}
         </div>
       </main>
