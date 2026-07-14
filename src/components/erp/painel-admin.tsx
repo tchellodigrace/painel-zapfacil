@@ -1762,6 +1762,17 @@ function SecaoSistemas({
   onWhatsApp: (tel: string) => void;
 }) {
   const { sistemas, getCobrancasBySistema } = useAdminStore();
+  const [busca, setBusca] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState<string>("TODOS");
+  const [filtroPlano, setFiltroPlano] = useState<string>("TODOS");
+
+  const getStatusInfo = (status: StatusSistema) =>
+    STATUS_SISTEMA.find((s) => s.valor === status) || STATUS_SISTEMA[3];
+  const getPlanoInfo = (plano: PlanoSistema) =>
+    PLANOS.find((p) => p.valor === plano) || PLANOS[0];
+  const getTipoLicencaInfo = (tipo: TipoLicenca) =>
+    TIPOS_LICENCA.find((t) => t.valor === tipo) || TIPOS_LICENCA[0];
+
 
   const stats = useMemo(() => {
     const ativos = sistemas.filter((s) => s.status === "ATIVO").length;
@@ -1893,7 +1904,7 @@ function SecaoSistemas({
               </Select>
               <Button
                 className="h-9 bg-emerald-600 hover:bg-emerald-700 text-sm shrink-0"
-                onClick={() => setDialogNovo(true)}
+                onClick={onNovo}
               >
                 <Plus className="h-4 w-4 mr-1.5" />
                 Novo Sistema
@@ -1962,21 +1973,21 @@ function SecaoSistemas({
                           )}
                         </div>
                         <div className="flex gap-1.5 pt-1">
-                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-500" onClick={() => setDialogDetalhe(s)}>
+                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-500" onClick={() => onVerDetalhe(s)}>
                             <Eye className="h-3 w-3 mr-1" /> Ver
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-blue-600" onClick={() => setDialogForm(s)}>
+                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-blue-600" onClick={() => onEditar(s)}>
                             <Pencil className="h-3 w-3 mr-1" /> Editar
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-purple-600" onClick={() => setAbaAtiva("cobrancas")}>
+                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-purple-600" onClick={() => onMudarAba("cobrancas")}>
                             <Receipt className="h-3 w-3 mr-1" /> Cobrancas
                           </Button>
                           {s.telefone && (
-                            <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-600" onClick={() => handleWhatsApp(s.telefone)}>
+                            <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-600" onClick={() => onWhatsApp(s.telefone)}>
                               <MessageCircle className="h-3 w-3" />
                             </Button>
                           )}
-                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-red-500 ml-auto" onClick={() => setConfirmaRemover(s.id)}>
+                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-red-500 ml-auto" onClick={() => onRemover(s.id)}>
                             <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>
@@ -2072,7 +2083,7 @@ function SecaoSistemas({
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-gray-700" onClick={() => setDialogDetalhe(s)}>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-gray-700" onClick={() => onVerDetalhe(s)}>
                                         <Eye className="h-3.5 w-3.5" />
                                       </Button>
                                     </TooltipTrigger>
@@ -2082,7 +2093,7 @@ function SecaoSistemas({
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:text-blue-700" onClick={() => setDialogForm(s)}>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:text-blue-700" onClick={() => onEditar(s)}>
                                         <Pencil className="h-3.5 w-3.5" />
                                       </Button>
                                     </TooltipTrigger>
@@ -2092,7 +2103,7 @@ function SecaoSistemas({
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-purple-500 hover:text-purple-700" onClick={() => setAbaAtiva("cobrancas")}>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-purple-500 hover:text-purple-700" onClick={() => onMudarAba("cobrancas")}>
                                         <Receipt className="h-3.5 w-3.5" />
                                       </Button>
                                     </TooltipTrigger>
@@ -2103,7 +2114,7 @@ function SecaoSistemas({
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-500 hover:text-emerald-700" onClick={() => handleWhatsApp(s.telefone)}>
+                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-500 hover:text-emerald-700" onClick={() => onWhatsApp(s.telefone)}>
                                           <MessageCircle className="h-3.5 w-3.5" />
                                         </Button>
                                       </TooltipTrigger>
@@ -2114,7 +2125,7 @@ function SecaoSistemas({
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-600" onClick={() => setConfirmaRemover(s.id)}>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-600" onClick={() => onRemover(s.id)}>
                                         <Trash2 className="h-3.5 w-3.5" />
                                       </Button>
                                     </TooltipTrigger>

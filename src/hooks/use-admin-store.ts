@@ -487,8 +487,6 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       emailRecuperacao: carregar<string>("email_recuperacao", ""),
       primeiroAcesso: carregar<boolean>("primeiro_acesso", false),
       dadosGestor: carregar<{ nome: string; email: string; telefone: string } | null>("dados_gestor", null),
-  primeiroAcesso: carregar<boolean>("primeiro_acesso", false),
-  dadosGestor: carregar<{ nome: string; email: string; telefone: string } | null>("dados_gestor", null),
       sistemas: migrarSistemas(carregar<SistemaCliente[]>("sistemas", [])),
       cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
       pedidosRecuperacao: carregar<PedidoRecuperacao[]>("pedidos_recuperacao", []),
