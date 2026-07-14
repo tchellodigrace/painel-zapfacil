@@ -518,7 +518,7 @@ export function PainelCobranças() {
     .reduce((s, c) => s + c.valor, 0);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Cards de estatísticas */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <Card className="border-0 shadow-sm">

@@ -880,7 +880,7 @@ export function PainelZapBot() {
   const regrasAtivas = ativarBoasVindas ? totalRegras + 1 : totalRegras;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Header stats */}
       <div className="grid grid-cols-3 gap-2">
         <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
