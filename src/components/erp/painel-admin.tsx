@@ -44,7 +44,6 @@ import {
   ShieldCheck,
   LogOut,
   ArrowRight,
-  User,
   Lock,
   EyeOff,
 } from "lucide-react";
@@ -131,57 +130,76 @@ function TelaLoginAdmin({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 px-4">
-      <Card className="w-full max-w-sm border-0 shadow-xl">
-        <CardContent className="p-8 space-y-6">
-          <div className="text-center space-y-3">
-            <img
-              src="/logo-empresa.png"
-              alt="Logo"
-              className="h-14 w-auto mx-auto object-contain"
-            />
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-100 mb-2">
-              <ShieldCheck className="w-7 h-7 text-emerald-600" />
-            </div>
-            <h1 className="text-xl font-bold text-gray-900">
-              {ehPrimeiroAcesso ? "Configurar Admin" : "Painel Administrativo"}
-            </h1>
-            <p className="text-xs text-gray-500 leading-relaxed">
+    <div className="min-h-screen bg-white flex">
+      {/* Lado esquerdo */}
+      <div className="hidden lg:flex lg:w-[45%] bg-gray-900 p-12 flex-col justify-between relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-emerald-500/30 blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl" />
+        </div>
+        <div className="relative z-10">
+          <img src="/logo-empresa.png" alt="Logo" className="h-10 w-auto object-contain brightness-0 invert" />
+        </div>
+        <div className="relative z-10 space-y-4">
+          <h2 className="text-3xl font-bold text-white leading-tight">
+            Painel do Gestor.
+          </h2>
+          <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+            Gerencie todos os sistemas vendidos, acompanhe clientes, controle licencas e receita em um so lugar.
+          </p>
+        </div>
+        <div className="relative z-10 flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-gray-500" />
+          <span className="text-gray-600 text-[11px]">Acesso restrito ao administrador</span>
+        </div>
+      </div>
+
+      {/* Lado direito */}
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+        <div className="w-full max-w-sm space-y-8">
+          <div className="lg:hidden text-center space-y-4">
+            <img src="/logo-empresa.png" alt="Logo" className="h-12 w-auto mx-auto object-contain" />
+            <h2 className="text-xl font-bold text-gray-900">
+              {ehPrimeiroAcesso ? "Criar conta admin" : "Painel Admin"}
+            </h2>
+          </div>
+
+          <div className="hidden lg:block space-y-1">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {ehPrimeiroAcesso ? "Criar sua conta" : "Entrar"}
+            </h2>
+            <p className="text-sm text-gray-500">
               {ehPrimeiroAcesso
-                ? "Crie as credenciais do administrador master."
-                : "Acesso restrito ao gestor dos sistemas."}
+                ? "Configure o acesso do administrador master"
+                : "Acesso exclusivo do gestor do sistema"}
             </p>
           </div>
 
           <div className="space-y-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-gray-700">Usuario</Label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="admin"
-                  value={usuario}
-                  onChange={(e) => setUsuario(e.target.value)}
-                  className="pl-10 h-10 text-sm"
-                  onKeyDown={(e) =>
-                    e.key === "Enter" &&
-                    (ehPrimeiroAcesso ? handleCriar() : handleLogin())
-                  }
-                  autoFocus
-                />
-              </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">Usuario</Label>
+              <Input
+                placeholder="admin"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                className="h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
+                onKeyDown={(e) =>
+                  e.key === "Enter" &&
+                  (ehPrimeiroAcesso ? handleCriar() : handleLogin())
+                }
+                autoFocus
+              />
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-gray-700">Senha</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">Senha</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   type={mostrarSenha ? "text" : "password"}
                   placeholder="Sua senha"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
-                  className="pl-10 pr-10 h-10 text-sm"
+                  className="pr-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
                   onKeyDown={(e) =>
                     e.key === "Enter" &&
                     (ehPrimeiroAcesso ? handleCriar() : handleLogin())
@@ -190,38 +208,29 @@ function TelaLoginAdmin({
                 <button
                   type="button"
                   onClick={() => setMostrarSenha(!mostrarSenha)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {mostrarSenha ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
+                  {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
 
             {ehPrimeiroAcesso && (
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-gray-700">
-                  Confirmar Senha
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    type="password"
-                    placeholder="Repita a senha"
-                    value={confirmarSenha}
-                    onChange={(e) => setConfirmarSenha(e.target.value)}
-                    className="pl-10 h-10 text-sm"
-                    onKeyDown={(e) => e.key === "Enter" && handleCriar()}
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Confirmar senha</Label>
+                <Input
+                  type="password"
+                  placeholder="Repita a senha"
+                  value={confirmarSenha}
+                  onChange={(e) => setConfirmarSenha(e.target.value)}
+                  className="h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
+                  onKeyDown={(e) => e.key === "Enter" && handleCriar()}
+                />
               </div>
             )}
 
             <Button
-              className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold"
+              className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
               onClick={ehPrimeiroAcesso ? handleCriar : handleLogin}
               disabled={carregando}
             >
@@ -230,27 +239,26 @@ function TelaLoginAdmin({
                   <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Verificando...
                 </span>
+              ) : ehPrimeiroAcesso ? (
+                "Criar conta de admin"
               ) : (
-                <>
-                  {ehPrimeiroAcesso ? "Criar Admin" : "Entrar"}
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </>
+                "Entrar no painel"
               )}
             </Button>
-
-            {!ehPrimeiroAcesso && (
-              <p className="text-center">
-                <button
-                  className="text-[10px] text-gray-400 hover:text-gray-600"
-                  onClick={() => setEhPrimeiroAcesso(true)}
-                >
-                  Primeiro acesso? Clique aqui
-                </button>
-              </p>
-            )}
           </div>
-        </CardContent>
-      </Card>
+
+          {!ehPrimeiroAcesso && (
+            <p className="text-center">
+              <button
+                className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                onClick={() => setEhPrimeiroAcesso(true)}
+              >
+                Primeiro acesso? Clique aqui
+              </button>
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
