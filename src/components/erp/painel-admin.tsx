@@ -54,6 +54,7 @@ import {
   Phone,
   Users,
   Bot,
+  Mail,
 } from "lucide-react";
 import {
   Tooltip,
@@ -206,6 +207,14 @@ function TelaLoginAdmin({
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [carregando, setCarregando] = useState(false);
 
+  // Estado de recuperacao
+  const [dialogRecuperar, setDialogRecuperar] = useState(false);
+  const [recuperarEmail, setRecuperarEmail] = useState("");
+  const [etapaRecuperacao, setEtapaRecuperacao] = useState<"email" | "redefinir">("email");
+  const [novaSenhaRecuperacao, setNovaSenhaRecuperacao] = useState("");
+  const [confirmarSenhaRecuperacao, setConfirmarSenhaRecuperacao] = useState("");
+  const [carregandoRecuperacao, setCarregandoRecuperacao] = useState(false);
+
   const handleLogin = () => {
     if (!usuario.trim() || !senha.trim()) {
       toast.error("Preencha usuario e senha.");
@@ -213,7 +222,6 @@ function TelaLoginAdmin({
     }
     setCarregando(true);
     setTimeout(() => {
-      // Garante credenciais padrão antes de verificar
       const store = useAdminStore.getState();
       if (!store.adminCredenciais) {
         store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
@@ -234,106 +242,319 @@ function TelaLoginAdmin({
     }, 600);
   };
 
+  const handleVerificarEmail = () => {
+    if (!recuperarEmail.trim() || !recuperarEmail.includes("@")) {
+      toast.error("Informe um e-mail valido.");
+      return;
+    }
+    setCarregandoRecuperacao(true);
+    setTimeout(() => {
+      const store = useAdminStore.getState();
+      const emailCadastrado = store.emailRecuperacao || "";
+      if (emailCadastrado && emailCadastrado === recuperarEmail.trim().toLowerCase()) {
+        setEtapaRecuperacao("redefinir");
+        toast.success("E-mail verificado! Defina sua nova senha.");
+      } else if (!emailCadastrado) {
+        toast.error("Nenhum e-mail de recuperacao configurado. Contate o suporte.");
+      } else {
+        toast.error("E-mail nao corresponde ao cadastrado para recuperacao.");
+      }
+      setCarregandoRecuperacao(false);
+    }, 800);
+  };
+
+  const handleRedefinirSenha = () => {
+    if (!novaSenhaRecuperacao.trim() || novaSenhaRecuperacao.length < 6) {
+      toast.error("A nova senha deve ter pelo menos 6 caracteres.");
+      return;
+    }
+    if (novaSenhaRecuperacao !== confirmarSenhaRecuperacao) {
+      toast.error("As senhas nao conferem.");
+      return;
+    }
+    setCarregandoRecuperacao(true);
+    setTimeout(() => {
+      useAdminStore.getState().resetarSenhaAdmin(novaSenhaRecuperacao);
+      setCarregandoRecuperacao(false);
+      setDialogRecuperar(false);
+      setEtapaRecuperacao("email");
+      setRecuperarEmail("");
+      setNovaSenhaRecuperacao("");
+      setConfirmarSenhaRecuperacao("");
+      toast.success("Senha redefinida com sucesso! Faca login com a nova senha.");
+    }, 800);
+  };
+
+  const handleEnviarEmailRecuperacao = () => {
+    const store = useAdminStore.getState();
+    const emailCadastrado = store.emailRecuperacao;
+    if (!emailCadastrado) {
+      toast.error("Nenhum e-mail de recuperacao configurado.");
+      return;
+    }
+    const assunto = encodeURIComponent("Recuperacao de Senha - Painel Admin ZapFacil Pro");
+    const corpo = encodeURIComponent(
+      "Voce solicitou a recuperacao de senha do Painel Admin ZapFacil Pro.\n\n" +
+      "Para redefinir sua senha:\n" +
+      "1. Acesse o painel admin\n" +
+      "2. Clique em \"Esqueceu a senha?\"\n" +
+      "3. Informe este e-mail: " + emailCadastrado + "\n" +
+      "4. Defina sua nova senha\n\n" +
+      "Se nao foi voce, ignore este e-mail.\n\n" +
+      "Equipe ZapFacil Pro"
+    );
+    window.open("mailto:" + emailCadastrado + "?subject=" + assunto + "&body=" + corpo, "_self");
+  };
+
+  const fecharDialogRecuperar = () => {
+    setDialogRecuperar(false);
+    setEtapaRecuperacao("email");
+    setRecuperarEmail("");
+    setNovaSenhaRecuperacao("");
+    setConfirmarSenhaRecuperacao("");
+  };
+
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Lado esquerdo */}
-      <div className="hidden lg:flex lg:w-[45%] bg-gray-900 p-12 flex-col justify-between relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-emerald-500/30 blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl" />
+    <>
+      <div className="min-h-screen bg-white flex">
+        {/* Lado esquerdo */}
+        <div className="hidden lg:flex lg:w-[45%] bg-gray-900 p-12 flex-col justify-between relative overflow-hidden">
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-emerald-500/30 blur-3xl" />
+            <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl" />
+          </div>
+          <div className="relative z-10">
+            <img src="/logo-empresa.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
+          </div>
+          <div className="relative z-10 space-y-4">
+            <h2 className="text-3xl font-bold text-white leading-tight">
+              Painel do Gestor.
+            </h2>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+              Gerencie todos os sistemas vendidos, acompanhe clientes, controle licencas e receita em um so lugar.
+            </p>
+          </div>
+          <div className="relative z-10 flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-gray-500" />
+            <span className="text-gray-600 text-[11px]">Acesso restrito ao administrador</span>
+          </div>
         </div>
-        <div className="relative z-10">
-          <img src="/logo-empresa.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
-        </div>
-        <div className="relative z-10 space-y-4">
-          <h2 className="text-3xl font-bold text-white leading-tight">
-            Painel do Gestor.
-          </h2>
-          <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
-            Gerencie todos os sistemas vendidos, acompanhe clientes, controle licencas e receita em um so lugar.
-          </p>
-        </div>
-        <div className="relative z-10 flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-gray-500" />
-          <span className="text-gray-600 text-[11px]">Acesso restrito ao administrador</span>
+
+        {/* Lado direito */}
+        <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+          <div className="w-full max-w-sm space-y-8">
+            <div className="lg:hidden text-center space-y-4">
+              <img src="/logo-empresa.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
+              <h2 className="text-xl font-bold text-gray-900">Painel Admin</h2>
+            </div>
+
+            <div className="hidden lg:block space-y-1">
+              <h2 className="text-2xl font-bold text-gray-900">Entrar</h2>
+              <p className="text-sm text-gray-500">Acesso exclusivo do gestor do sistema</p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Usuario</Label>
+                <Input
+                  placeholder="admin"
+                  value={usuario}
+                  onChange={(e) => setUsuario(e.target.value)}
+                  className="h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
+                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                  autoFocus
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Senha</Label>
+                <div className="relative">
+                  <Input
+                    type={mostrarSenha ? "text" : "password"}
+                    placeholder="Sua senha"
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    className="pr-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
+                    onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarSenha(!mostrarSenha)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <Button
+                className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+                onClick={handleLogin}
+                disabled={carregando}
+              >
+                {carregando ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Verificando...
+                  </span>
+                ) : (
+                  "Entrar no painel"
+                )}
+              </Button>
+            </div>
+
+            {/* Link de recuperacao */}
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => setDialogRecuperar(true)}
+                className="text-sm text-gray-500 hover:text-gray-700 underline underline-offset-4 transition-colors"
+              >
+                Esqueceu a senha?
+              </button>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-3 space-y-1">
+              <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider text-center">Credenciais padrao</p>
+              <p className="text-center text-sm">
+                <span className="font-mono font-semibold text-gray-700">admin</span>
+                <span className="text-gray-300 mx-2">/</span>
+                <span className="font-mono font-semibold text-gray-700">zapfacil123</span>
+              </p>
+              <p className="text-[10px] text-gray-400 text-center">Troque a senha apos o primeiro acesso pelo icone de chave no painel</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Lado direito */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-sm space-y-8">
-          <div className="lg:hidden text-center space-y-4">
-            <img src="/logo-empresa.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
-            <h2 className="text-xl font-bold text-gray-900">Painel Admin</h2>
-          </div>
+      {/* Dialog de recuperacao de senha */}
+      <Dialog open={dialogRecuperar} onOpenChange={(v) => { if (!v) fecharDialogRecuperar(); else setDialogRecuperar(true); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <KeyRound className="h-5 w-5 text-amber-500" />
+              {etapaRecuperacao === "email" ? "Recuperar Senha" : "Redefinir Senha"}
+            </DialogTitle>
+          </DialogHeader>
 
-          <div className="hidden lg:block space-y-1">
-            <h2 className="text-2xl font-bold text-gray-900">Entrar</h2>
-            <p className="text-sm text-gray-500">Acesso exclusivo do gestor do sistema</p>
-          </div>
+          {etapaRecuperacao === "email" ? (
+            <div className="space-y-4">
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p className="text-xs text-amber-700 leading-relaxed">
+                  Informe o e-mail de recuperacao cadastrado nas configuracoes do painel admin. Se o e-mail corresponder, voce podera definir uma nova senha.
+                </p>
+              </div>
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">Usuario</Label>
-              <Input
-                placeholder="admin"
-                value={usuario}
-                onChange={(e) => setUsuario(e.target.value)}
-                className="h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                autoFocus
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">Senha</Label>
-              <div className="relative">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">E-mail de recuperacao</Label>
                 <Input
-                  type={mostrarSenha ? "text" : "password"}
-                  placeholder="Sua senha"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  className="pr-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
-                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={recuperarEmail}
+                  onChange={(e) => setRecuperarEmail(e.target.value)}
+                  className="h-11 text-sm rounded-xl"
+                  onKeyDown={(e) => e.key === "Enter" && handleVerificarEmail()}
                 />
-                <button
-                  type="button"
-                  onClick={() => setMostrarSenha(!mostrarSenha)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              </div>
+
+              <Button
+                className="w-full h-11 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+                onClick={handleVerificarEmail}
+                disabled={carregandoRecuperacao}
+              >
+                {carregandoRecuperacao ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Verificando...
+                  </span>
+                ) : (
+                  "Verificar E-mail"
+                )}
+              </Button>
+
+              <div className="flex items-center gap-2 pt-1">
+                <Separator className="flex-1" />
+                <span className="text-[10px] text-gray-400 uppercase tracking-wider">ou</span>
+                <Separator className="flex-1" />
+              </div>
+
+              <Button
+                variant="outline"
+                className="w-full h-10 text-sm rounded-xl"
+                onClick={handleEnviarEmailRecuperacao}
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Receber instrucoes por e-mail
+              </Button>
+              <p className="text-[11px] text-gray-400 text-center">
+                Abre seu cliente de e-mail com as instrucoes de recuperacao.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex items-start gap-2">
+                <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                <p className="text-xs text-emerald-700">
+                  E-mail verificado com sucesso! Defina sua nova senha abaixo.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Nova senha</Label>
+                <div className="relative">
+                  <Input
+                    type={mostrarSenha ? "text" : "password"}
+                    placeholder="Minimo 6 caracteres"
+                    value={novaSenhaRecuperacao}
+                    onChange={(e) => setNovaSenhaRecuperacao(e.target.value)}
+                    className="h-11 text-sm rounded-xl pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarSenha(!mostrarSenha)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Confirmar nova senha</Label>
+                <Input
+                  type="password"
+                  placeholder="Repita a nova senha"
+                  value={confirmarSenhaRecuperacao}
+                  onChange={(e) => setConfirmarSenhaRecuperacao(e.target.value)}
+                  className="h-11 text-sm rounded-xl"
+                  onKeyDown={(e) => e.key === "Enter" && handleRedefinirSenha()}
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button variant="outline" className="flex-1 h-11 text-sm rounded-xl" onClick={fecharDialogRecuperar}>
+                  Cancelar
+                </Button>
+                <Button
+                  className="flex-1 h-11 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+                  onClick={handleRedefinirSenha}
+                  disabled={carregandoRecuperacao}
                 >
-                  {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
+                  {carregandoRecuperacao ? (
+                    <span className="flex items-center gap-2">
+                      <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Redefinindo...
+                    </span>
+                  ) : (
+                    "Redefinir Senha"
+                  )}
+                </Button>
               </div>
             </div>
-
-            <Button
-              className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
-              onClick={handleLogin}
-              disabled={carregando}
-            >
-              {carregando ? (
-                <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Verificando...
-                </span>
-              ) : (
-                "Entrar no painel"
-              )}
-            </Button>
-          </div>
-
-          <div className="bg-gray-50 rounded-xl p-3 space-y-1">
-            <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider text-center">Credenciais padrao</p>
-            <p className="text-center text-sm">
-              <span className="font-mono font-semibold text-gray-700">admin</span>
-              <span className="text-gray-300 mx-2">/</span>
-              <span className="font-mono font-semibold text-gray-700">zapfacil123</span>
-            </p>
-            <p className="text-[10px] text-gray-400 text-center">Troque a senha apos o primeiro acesso pelo icone de chave no painel</p>
-          </div>
-        </div>
-      </div>
-    </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
@@ -1129,6 +1350,7 @@ function PainelAdminConteudo() {
   const [dialogDetalhe, setDialogDetalhe] = useState<SistemaCliente | null>(null);
   const [confirmaRemover, setConfirmaRemover] = useState<string | null>(null);
   const [dialogTrocarSenha, setDialogTrocarSenha] = useState(false);
+  const [dialogEmailRecuperacao, setDialogEmailRecuperacao] = useState(false);
 
   // Estatísticas
   const stats = useMemo(() => {
@@ -1249,6 +1471,21 @@ function PainelAdminConteudo() {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Alterar Senha</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-blue-500 hover:bg-blue-50"
+                    onClick={() => setDialogEmailRecuperacao(true)}
+                  >
+                    <Mail className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>E-mail de Recuperacao</TooltipContent>
               </Tooltip>
             </TooltipProvider>
             <TooltipProvider>

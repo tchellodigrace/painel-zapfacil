@@ -125,11 +125,14 @@ function atualizarAtrasados(cobrancas: Cobranca[]): Cobranca[] {
 interface AdminState {
   // Credenciais admin master
   adminCredenciais: { usuario: string; senha: string } | null;
+  emailRecuperacao: string;
   sistemas: SistemaCliente[];
   cobrancas: Cobranca[];
   pedidosRecuperacao: PedidoRecuperacao[];
 
   alterarSenha: (senhaAtual: string, novaSenha: string) => boolean;
+  resetarSenhaAdmin: (novaSenha: string) => void;
+  configurarEmailRecuperacao: (email: string) => void;
   recarregarDados: () => void;
 
   // Ações - Sistemas
@@ -181,6 +184,7 @@ function carregarCredenciais(): { usuario: string; senha: string } {
 
 export const useAdminStore = create<AdminState>((set, get) => ({
   adminCredenciais: carregarCredenciais(),
+  emailRecuperacao: carregar<string>("email_recuperacao", ""),
   sistemas: migrarSistemas(carregar<SistemaCliente[]>("sistemas", [])),
   cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
   pedidosRecuperacao: carregar<PedidoRecuperacao[]>("pedidos_recuperacao", []),
@@ -196,10 +200,23 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     const cred = get().adminCredenciais;
     if (!cred) return false;
     if (cred.senha !== senhaAtual) return false;
- const novaCred = { usuario: cred.usuario, senha: novaSenha };
+    const novaCred = { usuario: cred.usuario, senha: novaSenha };
     salvar("credenciais", novaCred);
     set({ adminCredenciais: novaCred });
     return true;
+  },
+
+  resetarSenhaAdmin: (novaSenha) => {
+    const cred = get().adminCredenciais;
+    const usuario = cred?.usuario || CREDENCIAIS_PADRAO.usuario;
+    const novaCred = { usuario, senha: novaSenha };
+    salvar("credenciais", novaCred);
+    set({ adminCredenciais: novaCred });
+  },
+
+  configurarEmailRecuperacao: (email) => {
+    salvar("email_recuperacao", email.trim().toLowerCase());
+    set({ emailRecuperacao: email.trim().toLowerCase() });
   },
 
   adicionarSistema: (dados) => {
@@ -441,6 +458,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
   recarregarDados: () => {
     set({
+      emailRecuperacao: carregar<string>("email_recuperacao", ""),
       sistemas: migrarSistemas(carregar<SistemaCliente[]>("sistemas", [])),
       cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
       pedidosRecuperacao: carregar<PedidoRecuperacao[]>("pedidos_recuperacao", []),
