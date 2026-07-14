@@ -1,5 +1,5 @@
 // ============================================
-// ZapFácil Pro - Admin Store (Controle de Sistemas Vendidos)
+// ZapFácil Pro - Admin Store (Controle de Sistemas Vendidos + Cobranças)
 // ============================================
 import { create } from "zustand";
 
@@ -24,9 +24,29 @@ function salvar(chave: string, valor: unknown): void {
   }
 }
 
+// === Tipos de Sistema ===
 export type StatusSistema = "ATIVO" | "EXPIRADO" | "CANCELADO" | "TRIAL";
 export type PlanoSistema = "BASIC" | "PRO" | "PREMIUM";
+export type TipoLicenca = "ALUGUEL" | "AQUISICAO";
 
+// === Tipos de Cobrança ===
+export type TipoCobranca =
+  | "MENSALIDADE"
+  | "AQUISICAO"
+  | "TAXA_INSTALACAO"
+  | "TAXA_SUPORTE"
+  | "OUTROS";
+
+export type StatusCobranca = "PAGO" | "PENDENTE" | "ATRASADO" | "CANCELADO";
+
+export type FormaPagamentoAdmin =
+  | "PIX"
+  | "CARTAO"
+  | "BOLETO"
+  | "TRANSFERENCIA"
+  | "DINHEIRO";
+
+// === Interfaces ===
 export interface DadosRegistroCliente {
   usuario: string;
   nomeEmpresa: string;
@@ -46,30 +66,91 @@ export interface SistemaCliente {
   dataVencimento: string;
   status: StatusSistema;
   plano: PlanoSistema;
+  tipoLicenca: TipoLicenca;
   valorMensal: number;
+  valorAquisicao: number;
+  taxaInstalacao: number;
   observacoes: string;
   criadoEm: string;
   dadosRegistro: DadosRegistroCliente | null;
+}
+
+export interface Cobranca {
+  id: string;
+  sistemaId: string;
+  sistemaNome: string;
+  tipo: TipoCobranca;
+  descricao: string;
+  valor: number;
+  dataVencimento: string;
+  dataPagamento: string | null;
+  status: StatusCobranca;
+  formaPagamento: FormaPagamentoAdmin | null;
+  observacoes: string;
+  criadoEm: string;
+}
+
+// === Migration: adiciona campos novos em sistemas antigos ===
+function migrarSistemas(lista: SistemaCliente[]): SistemaCliente[] {
+  return lista.map((s) => ({
+    ...s,
+    tipoLicenca: s.tipoLicenca || "ALUGUEL",
+    valorAquisicao: s.valorAquisicao ?? 0,
+    taxaInstalacao: s.taxaInstalacao ?? 0,
+  }));
+}
+
+// === Atualiza cobranças atrasadas ===
+function atualizarAtrasados(cobrancas: Cobranca[]): Cobranca[] {
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  return cobrancas.map((c) => {
+    if (c.status === "PENDENTE") {
+      const venc = new Date(c.dataVencimento + "T00:00:00");
+      if (venc < hoje) return { ...c, status: "ATRASADO" as StatusCobranca };
+    }
+    return c;
+  });
 }
 
 interface AdminState {
   // Credenciais admin master
   adminCredenciais: { usuario: string; senha: string } | null;
   sistemas: SistemaCliente[];
+  cobrancas: Cobranca[];
 
-  // Ações
+  // Ações - Sistemas
   configurarAdmin: (usuario: string, senha: string) => void;
   adicionarSistema: (dados: Omit<SistemaCliente, "id" | "criadoEm">) => void;
   editarSistema: (id: string, dados: Partial<SistemaCliente>) => void;
   removerSistema: (id: string) => void;
   alterarStatus: (id: string, status: StatusSistema) => void;
   salvarRegistroCliente: (dados: DadosRegistroCliente) => void;
+
+  // Ações - Cobranças
+  adicionarCobranca: (dados: Omit<Cobranca, "id" | "criadoEm">) => void;
+  editarCobranca: (id: string, dados: Partial<Cobranca>) => void;
+  removerCobranca: (id: string) => void;
+  registrarPagamento: (
+    id: string,
+    dataPagamento: string,
+    formaPagamento: FormaPagamentoAdmin
+  ) => void;
+  cancelarCobranca: (id: string) => void;
+  gerarCobrancaMensal: (sistemaId: string) => void;
+  gerarCobrancaAquisicao: (sistemaId: string) => void;
+  getCobrancasBySistema: (sistemaId: string) => Cobranca[];
 }
 
 export const useAdminStore = create<AdminState>((set, get) => ({
-  adminCredenciais: carregar<{ usuario: string; senha: string } | null>("credenciais", null),
-  sistemas: carregar<SistemaCliente[]>("sistemas", []),
+  adminCredenciais: carregar<{ usuario: string; senha: string } | null>(
+    "credenciais",
+    null
+  ),
+  sistemas: migrarSistemas(carregar<SistemaCliente[]>("sistemas", [])),
+  cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
 
+  // === Sistemas ===
   configurarAdmin: (usuario, senha) => {
     const cred = { usuario: usuario.trim().toLowerCase(), senha };
     salvar("credenciais", cred);
@@ -79,6 +160,9 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   adicionarSistema: (dados) => {
     const sistema: SistemaCliente = {
       ...dados,
+      tipoLicenca: dados.tipoLicenca || "ALUGUEL",
+      valorAquisicao: dados.valorAquisicao ?? 0,
+      taxaInstalacao: dados.taxaInstalacao ?? 0,
       id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       criadoEm: new Date().toISOString(),
     };
@@ -97,8 +181,10 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
   removerSistema: (id) => {
     const novaLista = get().sistemas.filter((s) => s.id !== id);
+    const novaCobrancas = get().cobrancas.filter((c) => c.sistemaId !== id);
     salvar("sistemas", novaLista);
-    set({ sistemas: novaLista });
+    salvar("cobrancas", novaCobrancas);
+    set({ sistemas: novaLista, cobrancas: novaCobrancas });
   },
 
   alterarStatus: (id, status) => {
@@ -110,7 +196,6 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   },
 
   salvarRegistroCliente: (dados) => {
-    // Procura sistema pelo telefone ou empresa
     const sistemas = get().sistemas;
     let atualizado = false;
     const novaLista = sistemas.map((s) => {
@@ -120,7 +205,11 @@ export const useAdminStore = create<AdminState>((set, get) => ({
           s.empresa.toLowerCase() === dados.nomeEmpresa.toLowerCase())
       ) {
         atualizado = true;
-        return { ...s, dadosRegistro: dados, responsavel: s.responsavel || dados.usuario };
+        return {
+          ...s,
+          dadosRegistro: dados,
+          responsavel: s.responsavel || dados.usuario,
+        };
       }
       return s;
     });
@@ -128,7 +217,6 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       salvar("sistemas", novaLista);
       set({ sistemas: novaLista });
     } else {
-      // Se nao encontrou, cria um novo registro pendente
       const novo: SistemaCliente = {
         id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
         empresa: dados.nomeEmpresa,
@@ -140,7 +228,10 @@ export const useAdminStore = create<AdminState>((set, get) => ({
         dataVencimento: "",
         status: "TRIAL",
         plano: "PRO",
+        tipoLicenca: "ALUGUEL",
         valorMensal: 0,
+        valorAquisicao: 0,
+        taxaInstalacao: 0,
         observacoes: "Registro automatico via link",
         criadoEm: dados.registradoEm,
         dadosRegistro: dados,
@@ -149,6 +240,125 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       salvar("sistemas", listaComNovo);
       set({ sistemas: listaComNovo });
     }
+  },
+
+  // === Cobranças ===
+  adicionarCobranca: (dados) => {
+    const cobranca: Cobranca = {
+      ...dados,
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      criadoEm: new Date().toISOString(),
+    };
+    const novaLista = [cobranca, ...get().cobrancas];
+    salvar("cobrancas", novaLista);
+    set({ cobrancas: novaLista });
+  },
+
+  editarCobranca: (id, dados) => {
+    const novaLista = get().cobrancas.map((c) =>
+      c.id === id ? { ...c, ...dados } : c
+    );
+    salvar("cobrancas", novaLista);
+    set({ cobrancas: novaLista });
+  },
+
+  removerCobranca: (id) => {
+    const novaLista = get().cobrancas.filter((c) => c.id !== id);
+    salvar("cobrancas", novaLista);
+    set({ cobrancas: novaLista });
+  },
+
+  registrarPagamento: (id, dataPagamento, formaPagamento) => {
+    const novaLista = get().cobrancas.map((c) =>
+      c.id === id
+        ? { ...c, status: "PAGO" as StatusCobranca, dataPagamento, formaPagamento }
+        : c
+    );
+    salvar("cobrancas", novaLista);
+    set({ cobrancas: novaLista });
+  },
+
+  cancelarCobranca: (id) => {
+    const novaLista = get().cobrancas.map((c) =>
+      c.id === id
+        ? { ...c, status: "CANCELADO" as StatusCobranca }
+        : c
+    );
+    salvar("cobrancas", novaLista);
+    set({ cobrancas: novaLista });
+  },
+
+  gerarCobrancaMensal: (sistemaId) => {
+    const sistema = get().sistemas.find((s) => s.id === sistemaId);
+    if (!sistema || sistema.tipoLicenca !== "ALUGUEL") return;
+
+    // Calcula próximo vencimento
+    const hoje = new Date();
+    const diaVenc = sistema.dataVencimento
+      ? parseInt(sistema.dataVencimento.split("-")[2], 10)
+      : hoje.getDate();
+
+    let proxVenc = new Date(hoje.getFullYear(), hoje.getMonth(), diaVenc);
+    if (proxVenc <= hoje) {
+      proxVenc.setMonth(proxVenc.getMonth() + 1);
+    }
+    const dataVencStr = proxVenc.toISOString().split("T")[0];
+
+    const mesRef = proxVenc.toLocaleString("pt-BR", {
+      month: "long",
+      year: "numeric",
+    });
+
+    const cobranca: Cobranca = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      sistemaId: sistema.id,
+      sistemaNome: sistema.empresa,
+      tipo: "MENSALIDADE",
+      descricao: `Mensalidade - ${mesRef}`,
+      valor: sistema.valorMensal,
+      dataVencimento: dataVencStr,
+      dataPagamento: null,
+      status: "PENDENTE",
+      formaPagamento: null,
+      observacoes: "",
+      criadoEm: new Date().toISOString(),
+    };
+
+    const novaLista = [cobranca, ...get().cobrancas];
+    salvar("cobrancas", novaLista);
+    set({ cobrancas: novaLista });
+  },
+
+  gerarCobrancaAquisicao: (sistemaId) => {
+    const sistema = get().sistemas.find((s) => s.id === sistemaId);
+    if (!sistema || sistema.tipoLicenca !== "AQUISICAO") return;
+
+    const hoje = new Date();
+    const vencDaqui30 = new Date(hoje);
+    vencDaqui30.setDate(vencDaqui30.getDate() + 30);
+
+    const cobranca: Cobranca = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      sistemaId: sistema.id,
+      sistemaNome: sistema.empresa,
+      tipo: "AQUISICAO",
+      descricao: "Aquisicao do sistema (licenca definitiva)",
+      valor: sistema.valorAquisicao,
+      dataVencimento: vencDaqui30.toISOString().split("T")[0],
+      dataPagamento: null,
+      status: "PENDENTE",
+      formaPagamento: null,
+      observacoes: "",
+      criadoEm: new Date().toISOString(),
+    };
+
+    const novaLista = [cobranca, ...get().cobrancas];
+    salvar("cobrancas", novaLista);
+    set({ cobrancas: novaLista });
+  },
+
+  getCobrancasBySistema: (sistemaId) => {
+    return get().cobrancas.filter((c) => c.sistemaId === sistemaId);
   },
 }));
 
@@ -170,15 +380,114 @@ export function destruirSessaoAdmin(): void {
   sessionStorage.removeItem(ADMIN_SESSION);
 }
 
-export const STATUS_SISTEMA: { valor: StatusSistema; label: string; cor: string }[] = [
-  { valor: "ATIVO", label: "Ativo", cor: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300" },
-  { valor: "TRIAL", label: "Trial", cor: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300" },
-  { valor: "EXPIRADO", label: "Expirado", cor: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300" },
-  { valor: "CANCELADO", label: "Cancelado", cor: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400" },
+// === Constantes ===
+export const STATUS_SISTEMA: {
+  valor: StatusSistema;
+  label: string;
+  cor: string;
+}[] = [
+  {
+    valor: "ATIVO",
+    label: "Ativo",
+    cor: "bg-emerald-100 text-emerald-700",
+  },
+  {
+    valor: "TRIAL",
+    label: "Trial",
+    cor: "bg-blue-100 text-blue-700",
+  },
+  {
+    valor: "EXPIRADO",
+    label: "Expirado",
+    cor: "bg-red-100 text-red-700",
+  },
+  {
+    valor: "CANCELADO",
+    label: "Cancelado",
+    cor: "bg-gray-100 text-gray-600",
+  },
 ];
 
 export const PLANOS: { valor: PlanoSistema; label: string; cor: string }[] = [
-  { valor: "BASIC", label: "Basic", cor: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400" },
-  { valor: "PRO", label: "Pro", cor: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300" },
-  { valor: "PREMIUM", label: "Premium", cor: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300" },
+  {
+    valor: "BASIC",
+    label: "Basic",
+    cor: "bg-gray-100 text-gray-600",
+  },
+  {
+    valor: "PRO",
+    label: "Pro",
+    cor: "bg-purple-100 text-purple-700",
+  },
+  {
+    valor: "PREMIUM",
+    label: "Premium",
+    cor: "bg-amber-100 text-amber-700",
+  },
+];
+
+export const TIPOS_LICENCA: {
+  valor: TipoLicenca;
+  label: string;
+  descricao: string;
+  cor: string;
+}[] = [
+  {
+    valor: "ALUGUEL",
+    label: "Aluguel",
+    descricao: "Mensalidade recorrente",
+    cor: "bg-blue-100 text-blue-700",
+  },
+  {
+    valor: "AQUISICAO",
+    label: "Aquisicao",
+    descricao: "Pagamento unico",
+    cor: "bg-emerald-100 text-emerald-700",
+  },
+];
+
+export const TIPOS_COBRANCA: { valor: TipoCobranca; label: string }[] = [
+  { valor: "MENSALIDADE", label: "Mensalidade" },
+  { valor: "AQUISICAO", label: "Aquisicao" },
+  { valor: "TAXA_INSTALACAO", label: "Taxa de Instalacao" },
+  { valor: "TAXA_SUPORTE", label: "Taxa de Suporte" },
+  { valor: "OUTROS", label: "Outros" },
+];
+
+export const STATUS_COBRANCA: {
+  valor: StatusCobranca;
+  label: string;
+  cor: string;
+}[] = [
+  {
+    valor: "PAGO",
+    label: "Pago",
+    cor: "bg-emerald-100 text-emerald-700",
+  },
+  {
+    valor: "PENDENTE",
+    label: "Pendente",
+    cor: "bg-amber-100 text-amber-700",
+  },
+  {
+    valor: "ATRASADO",
+    label: "Atrasado",
+    cor: "bg-red-100 text-red-700",
+  },
+  {
+    valor: "CANCELADO",
+    label: "Cancelado",
+    cor: "bg-gray-100 text-gray-500",
+  },
+];
+
+export const FORMAS_PAGAMENTO_ADMIN: {
+  valor: FormaPagamentoAdmin;
+  label: string;
+}[] = [
+  { valor: "PIX", label: "PIX" },
+  { valor: "CARTAO", label: "Cartao" },
+  { valor: "BOLETO", label: "Boleto" },
+  { valor: "TRANSFERENCIA", label: "Transferencia" },
+  { valor: "DINHEIRO", label: "Dinheiro" },
 ];

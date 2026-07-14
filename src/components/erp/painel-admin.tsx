@@ -5,9 +5,11 @@ import {
   useAdminStore,
   STATUS_SISTEMA,
   PLANOS,
+  TIPOS_LICENCA,
   type SistemaCliente,
   type StatusSistema,
   type PlanoSistema,
+  type TipoLicenca,
 } from "@/hooks/use-admin-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,9 +45,10 @@ import {
   TrendingUp,
   ShieldCheck,
   LogOut,
-  ArrowRight,
+  Receipt,
   Lock,
   EyeOff,
+  Check,
 } from "lucide-react";
 import {
   Tooltip,
@@ -53,6 +56,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { PainelCobranças } from "./admin-cobrancas";
 
 function formatarMoeda(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -264,7 +268,7 @@ function TelaLoginAdmin({
 }
 
 // =============================================
-// FORMULÁRIO DE SISTEMA
+// FORMULÁRIO DE SISTEMA (com tipo de licença)
 // =============================================
 function FormularioSistema({
   sistema,
@@ -291,8 +295,17 @@ function FormularioSistema({
   const [status, setStatus] = useState<StatusSistema>(
     sistema?.status || "TRIAL"
   );
+  const [tipoLicenca, setTipoLicenca] = useState<TipoLicenca>(
+    sistema?.tipoLicenca || "ALUGUEL"
+  );
   const [valorMensal, setValorMensal] = useState(
     sistema?.valorMensal?.toString() || ""
+  );
+  const [valorAquisicao, setValorAquisicao] = useState(
+    sistema?.valorAquisicao?.toString() || ""
+  );
+  const [taxaInstalacao, setTaxaInstalacao] = useState(
+    sistema?.taxaInstalacao?.toString() || ""
   );
   const [observacoes, setObservacoes] = useState(
     sistema?.observacoes || ""
@@ -323,8 +336,8 @@ function FormularioSistema({
       toast.error("Nome do responsavel e obrigatorio.");
       return;
     }
-    if (!dataVencimento) {
-      toast.error("Data de vencimento e obrigatoria.");
+    if (tipoLicenca === "ALUGUEL" && !dataVencimento) {
+      toast.error("Data de vencimento e obrigatoria para aluguel.");
       return;
     }
     onSalvar({
@@ -337,7 +350,10 @@ function FormularioSistema({
       dataVencimento,
       plano,
       status,
+      tipoLicenca,
       valorMensal: parseFloat(valorMensal) || 0,
+      valorAquisicao: parseFloat(valorAquisicao) || 0,
+      taxaInstalacao: parseFloat(taxaInstalacao) || 0,
       observacoes: observacoes.trim(),
       dadosRegistro: sistema?.dadosRegistro || null,
     });
@@ -347,7 +363,7 @@ function FormularioSistema({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="sm:col-span-2 space-y-1.5">
-          <Label className="text-xs">Empresa *</Label>
+          <Label className="text-xs font-medium">Empresa *</Label>
           <Input
             value={empresa}
             onChange={(e) => setEmpresa(e.target.value)}
@@ -356,7 +372,7 @@ function FormularioSistema({
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Responsavel *</Label>
+          <Label className="text-xs font-medium">Responsavel *</Label>
           <Input
             value={responsavel}
             onChange={(e) => setResponsavel(e.target.value)}
@@ -365,7 +381,7 @@ function FormularioSistema({
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Telefone</Label>
+          <Label className="text-xs font-medium">Telefone</Label>
           <Input
             value={telefone}
             onChange={(e) => setTelefone(e.target.value)}
@@ -374,7 +390,7 @@ function FormularioSistema({
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">E-mail</Label>
+          <Label className="text-xs font-medium">E-mail</Label>
           <Input
             type="email"
             value={email}
@@ -384,7 +400,7 @@ function FormularioSistema({
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Cidade</Label>
+          <Label className="text-xs font-medium">Cidade</Label>
           <Input
             value={cidade}
             onChange={(e) => setCidade(e.target.value)}
@@ -393,7 +409,7 @@ function FormularioSistema({
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Data Instalacao</Label>
+          <Label className="text-xs font-medium">Data Instalacao</Label>
           <Input
             type="date"
             value={dataInstalacao}
@@ -401,17 +417,37 @@ function FormularioSistema({
             className="text-sm h-9"
           />
         </div>
+        {tipoLicenca === "ALUGUEL" && (
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Vencimento *</Label>
+            <Input
+              type="date"
+              value={dataVencimento}
+              onChange={(e) => setDataVencimento(e.target.value)}
+              className="text-sm h-9"
+            />
+          </div>
+        )}
         <div className="space-y-1.5">
-          <Label className="text-xs">Vencimento *</Label>
-          <Input
-            type="date"
-            value={dataVencimento}
-            onChange={(e) => setDataVencimento(e.target.value)}
-            className="text-sm h-9"
-          />
+          <Label className="text-xs font-medium">Tipo de Licenca</Label>
+          <Select value={tipoLicenca} onValueChange={(v) => setTipoLicenca(v as TipoLicenca)}>
+            <SelectTrigger className="text-sm h-9">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TIPOS_LICENCA.map((t) => (
+                <SelectItem key={t.valor} value={t.valor}>
+                  <span className="flex flex-col">
+                    <span>{t.label}</span>
+                    <span className="text-[10px] text-gray-400">{t.descricao}</span>
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Plano</Label>
+          <Label className="text-xs font-medium">Plano</Label>
           <Select value={plano} onValueChange={(v) => setPlano(v as PlanoSistema)}>
             <SelectTrigger className="text-sm h-9">
               <SelectValue />
@@ -426,7 +462,7 @@ function FormularioSistema({
           </Select>
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Status</Label>
+          <Label className="text-xs font-medium">Status</Label>
           <Select value={status} onValueChange={(v) => setStatus(v as StatusSistema)}>
             <SelectTrigger className="text-sm h-9">
               <SelectValue />
@@ -440,19 +476,45 @@ function FormularioSistema({
             </SelectContent>
           </Select>
         </div>
+        {tipoLicenca === "ALUGUEL" && (
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Valor Mensal (R$)</Label>
+            <Input
+              type="number"
+              step="0.01"
+              value={valorMensal}
+              onChange={(e) => setValorMensal(e.target.value)}
+              placeholder="0,00"
+              className="text-sm h-9"
+            />
+          </div>
+        )}
+        {tipoLicenca === "AQUISICAO" && (
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Valor Aquisicao (R$)</Label>
+            <Input
+              type="number"
+              step="0.01"
+              value={valorAquisicao}
+              onChange={(e) => setValorAquisicao(e.target.value)}
+              placeholder="0,00"
+              className="text-sm h-9"
+            />
+          </div>
+        )}
         <div className="space-y-1.5">
-          <Label className="text-xs">Valor Mensal (R$)</Label>
+          <Label className="text-xs font-medium">Taxa Instalacao (R$)</Label>
           <Input
             type="number"
             step="0.01"
-            value={valorMensal}
-            onChange={(e) => setValorMensal(e.target.value)}
+            value={taxaInstalacao}
+            onChange={(e) => setTaxaInstalacao(e.target.value)}
             placeholder="0,00"
             className="text-sm h-9"
           />
         </div>
         <div className="sm:col-span-2 space-y-1.5">
-          <Label className="text-xs">Observacoes</Label>
+          <Label className="text-xs font-medium">Observacoes</Label>
           <Textarea
             value={observacoes}
             onChange={(e) => setObservacoes(e.target.value)}
@@ -495,11 +557,14 @@ function FormularioSistema({
 }
 
 // =============================================
-// PAINEL ADMIN PRINCIPAL (CLARO)
+// PAINEL ADMIN PRINCIPAL COM ABAS
 // =============================================
+type AbaAdmin = "sistemas" | "cobrancas";
+
 function PainelAdminConteudo() {
-  const { sistemas, adicionarSistema, editarSistema, removerSistema } =
+  const { sistemas, cobrancas, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema } =
     useAdminStore();
+  const [abaAtiva, setAbaAtiva] = useState<AbaAdmin>("sistemas");
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState<string>("TODOS");
   const [filtroPlano, setFiltroPlano] = useState<string>("TODOS");
@@ -514,7 +579,7 @@ function PainelAdminConteudo() {
     const trials = sistemas.filter((s) => s.status === "TRIAL").length;
     const expirados = sistemas.filter((s) => s.status === "EXPIRADO").length;
     const receitaMensal = sistemas
-      .filter((s) => s.status === "ATIVO" || s.status === "TRIAL")
+      .filter((s) => (s.status === "ATIVO" || s.status === "TRIAL") && s.tipoLicenca === "ALUGUEL")
       .reduce((s, v) => s + v.valorMensal, 0);
     const vencendo = sistemas.filter(
       (s) => s.status === "ATIVO" && diasRestantes(s.dataVencimento) <= 7 && diasRestantes(s.dataVencimento) > 0
@@ -584,6 +649,14 @@ function PainelAdminConteudo() {
     STATUS_SISTEMA.find((s) => s.valor === status) || STATUS_SISTEMA[3];
   const getPlanoInfo = (plano: PlanoSistema) =>
     PLANOS.find((p) => p.valor === plano) || PLANOS[0];
+  const getTipoLicencaInfo = (tipo: TipoLicenca) =>
+    TIPOS_LICENCA.find((t) => t.valor === tipo) || TIPOS_LICENCA[0];
+
+  // Cobranças pendentes/atrasadas para badge
+  const cobrancasEmAberto = useMemo(
+    () => cobrancas.filter((c) => c.status === "PENDENTE" || c.status === "ATRASADO").length,
+    [cobrancas]
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -620,288 +693,394 @@ function PainelAdminConteudo() {
       </header>
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
-        {/* Cards de estatísticas */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <Card className="border-0 shadow-sm">
-            <CardContent className="p-3.5">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Monitor className="w-3.5 h-3.5 text-gray-400" />
-                <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Total</span>
-              </div>
-              <p className="text-2xl font-black text-gray-900">{stats.total}</p>
-            </CardContent>
-          </Card>
-          <Card className="border-0 shadow-sm">
-            <CardContent className="p-3.5">
-              <div className="flex items-center gap-1.5 mb-1">
-                <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
-                <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Ativos</span>
-              </div>
-              <p className="text-2xl font-black text-emerald-600">{stats.ativos}</p>
-            </CardContent>
-          </Card>
-          <Card className="border-0 shadow-sm">
-            <CardContent className="p-3.5">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Monitor className="w-3.5 h-3.5 text-blue-500" />
-                <span className="text-[10px] text-blue-600 font-medium uppercase tracking-wider">Trial</span>
-              </div>
-              <p className="text-2xl font-black text-blue-600">{stats.trials}</p>
-            </CardContent>
-          </Card>
-          <Card className="border-0 shadow-sm">
-            <CardContent className="p-3.5">
-              <div className="flex items-center gap-1.5 mb-1">
-                <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
-                <span className="text-[10px] text-red-600 font-medium uppercase tracking-wider">Expirados</span>
-              </div>
-              <p className="text-2xl font-black text-red-600">{stats.expirados}</p>
-            </CardContent>
-          </Card>
-          <Card className="border-0 shadow-sm">
-            <CardContent className="p-3.5">
-              <div className="flex items-center gap-1.5 mb-1">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                <span className="text-[10px] text-amber-600 font-medium uppercase tracking-wider">Vencendo</span>
-              </div>
-              <p className="text-2xl font-black text-amber-600">{stats.vencendo}</p>
-            </CardContent>
-          </Card>
-          <Card className="border-0 shadow-sm">
-            <CardContent className="p-3.5">
-              <div className="flex items-center gap-1.5 mb-1">
-                <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
-                <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Receita/mes</span>
-              </div>
-              <p className="text-lg font-black text-emerald-600">{formatarMoeda(stats.receitaMensal)}</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Barra de ações */}
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Buscar por empresa, responsavel, cidade, telefone..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              className="pl-10 h-9 text-sm bg-white border-gray-200"
-            />
-          </div>
-          <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-            <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="TODOS">Todos Status</SelectItem>
-              {STATUS_SISTEMA.map((s) => (
-                <SelectItem key={s.valor} value={s.valor}>
-                  {s.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={filtroPlano} onValueChange={setFiltroPlano}>
-            <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="TODOS">Todos Planos</SelectItem>
-              {PLANOS.map((p) => (
-                <SelectItem key={p.valor} value={p.valor}>
-                  {p.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button
-            className="h-9 bg-emerald-600 hover:bg-emerald-700 text-sm shrink-0"
-            onClick={() => setDialogNovo(true)}
+        {/* Abas de navegação */}
+        <div className="flex gap-1 bg-white rounded-xl p-1 border border-gray-200 shadow-sm">
+          <button
+            onClick={() => setAbaAtiva("sistemas")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "sistemas"
+                ? "bg-emerald-600 text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
           >
-            <Plus className="h-4 w-4 mr-1.5" />
-            Novo Sistema
-          </Button>
+            <Monitor className="h-4 w-4" />
+            Sistemas
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+              abaAtiva === "sistemas"
+                ? "bg-white/20 text-white"
+                : "bg-gray-100 text-gray-500"
+            }`}>
+              {sistemas.length}
+            </span>
+          </button>
+          <button
+            onClick={() => setAbaAtiva("cobrancas")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "cobrancas"
+                ? "bg-emerald-600 text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Receipt className="h-4 w-4" />
+            Cobrancas
+            {cobrancasEmAberto > 0 && (
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+                abaAtiva === "cobrancas"
+                  ? "bg-white/20 text-white"
+                  : "bg-red-100 text-red-600"
+              }`}>
+                {cobrancasEmAberto}
+              </span>
+            )}
+          </button>
         </div>
 
-        {/* Tabela de sistemas */}
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-0">
-            {/* Mobile cards */}
-            <div className="sm:hidden divide-y divide-gray-100">
-              {sistemasFiltrados.length === 0 && (
-                <div className="p-8 text-center">
-                  <Monitor className="w-10 h-10 text-gray-200 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400">
-                    {busca || filtroStatus !== "TODOS" || filtroPlano !== "TODOS"
-                      ? "Nenhum sistema encontrado."
-                      : "Nenhum sistema cadastrado ainda."}
-                  </p>
-                </div>
-              )}
-              {sistemasFiltrados.map((s) => {
-                const dias = diasRestantes(s.dataVencimento);
-                const st = getStatusInfo(s.status);
-                const pl = getPlanoInfo(s.plano);
-                return (
-                  <div key={s.id} className="p-3 space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="font-semibold text-sm text-gray-900 truncate">{s.empresa}</p>
-                        <p className="text-xs text-gray-400">{s.responsavel}</p>
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
-                        <Badge className={`text-[10px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 text-[11px] text-gray-400">
-                      {s.cidade && <span>{s.cidade}</span>}
-                      {s.dadosRegistro && <span className="text-emerald-600 font-semibold">Cadastrado</span>}
-                      <span>Vence: {formatarData(s.dataVencimento)}</span>
-                      {s.status === "ATIVO" && (
-                        <span className={dias <= 7 ? "text-amber-600 font-semibold" : "text-emerald-600"}>
-                          {dias}d restantes
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex gap-1.5 pt-1">
-                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-500" onClick={() => setDialogDetalhe(s)}>
-                        <Eye className="h-3 w-3 mr-1" /> Ver
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-blue-600" onClick={() => setDialogForm(s)}>
-                        <Pencil className="h-3 w-3 mr-1" /> Editar
-                      </Button>
-                      {s.telefone && (
-                        <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-600" onClick={() => handleWhatsApp(s.telefone)}>
-                          <MessageCircle className="h-3 w-3" />
-                        </Button>
-                      )}
-                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-red-500 ml-auto" onClick={() => setConfirmaRemover(s.id)}>
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
+        {/* Conteúdo da aba ativa */}
+        {abaAtiva === "cobrancas" ? (
+          <PainelCobranças />
+        ) : (
+          <>
+            {/* Cards de estatísticas - Sistemas */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              <Card className="border-0 shadow-sm">
+                <CardContent className="p-3.5">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Monitor className="w-3.5 h-3.5 text-gray-400" />
+                    <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Total</span>
                   </div>
-                );
-              })}
+                  <p className="text-2xl font-black text-gray-900">{stats.total}</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-sm">
+                <CardContent className="p-3.5">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                    <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Ativos</span>
+                  </div>
+                  <p className="text-2xl font-black text-emerald-600">{stats.ativos}</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-sm">
+                <CardContent className="p-3.5">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Monitor className="w-3.5 h-3.5 text-blue-500" />
+                    <span className="text-[10px] text-blue-600 font-medium uppercase tracking-wider">Trial</span>
+                  </div>
+                  <p className="text-2xl font-black text-blue-600">{stats.trials}</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-sm">
+                <CardContent className="p-3.5">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
+                    <span className="text-[10px] text-red-600 font-medium uppercase tracking-wider">Expirados</span>
+                  </div>
+                  <p className="text-2xl font-black text-red-600">{stats.expirados}</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-sm">
+                <CardContent className="p-3.5">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                    <span className="text-[10px] text-amber-600 font-medium uppercase tracking-wider">Vencendo</span>
+                  </div>
+                  <p className="text-2xl font-black text-amber-600">{stats.vencendo}</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-sm">
+                <CardContent className="p-3.5">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
+                    <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Receita/mes</span>
+                  </div>
+                  <p className="text-lg font-black text-emerald-600">{formatarMoeda(stats.receitaMensal)}</p>
+                </CardContent>
+              </Card>
             </div>
 
-            {/* Desktop table */}
-            <div className="hidden sm:block overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-100 text-[10px] text-gray-400 uppercase tracking-wider bg-gray-50/50">
-                    <th className="text-left py-3 px-4 font-semibold">Empresa</th>
-                    <th className="text-left py-3 px-4 font-semibold">Responsavel</th>
-                    <th className="text-left py-3 px-4 font-semibold">Contato</th>
-                    <th className="text-left py-3 px-4 font-semibold">Plano</th>
-                    <th className="text-center py-3 px-4 font-semibold">Status</th>
-                    <th className="text-left py-3 px-4 font-semibold">Vencimento</th>
-                    <th className="text-right py-3 px-4 font-semibold">Valor/mes</th>
-                    <th className="text-center py-3 px-4 font-semibold">Acoes</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
+            {/* Barra de ações */}
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Buscar por empresa, responsavel, cidade, telefone..."
+                  value={busca}
+                  onChange={(e) => setBusca(e.target.value)}
+                  className="pl-10 h-9 text-sm bg-white border-gray-200"
+                />
+              </div>
+              <Select value={filtroStatus} onValueChange={setFiltroStatus}>
+                <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="TODOS">Todos Status</SelectItem>
+                  {STATUS_SISTEMA.map((s) => (
+                    <SelectItem key={s.valor} value={s.valor}>
+                      {s.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filtroPlano} onValueChange={setFiltroPlano}>
+                <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="TODOS">Todos Planos</SelectItem>
+                  {PLANOS.map((p) => (
+                    <SelectItem key={p.valor} value={p.valor}>
+                      {p.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                className="h-9 bg-emerald-600 hover:bg-emerald-700 text-sm shrink-0"
+                onClick={() => setDialogNovo(true)}
+              >
+                <Plus className="h-4 w-4 mr-1.5" />
+                Novo Sistema
+              </Button>
+            </div>
+
+            {/* Tabela de sistemas */}
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-0">
+                {/* Mobile cards */}
+                <div className="sm:hidden divide-y divide-gray-100">
                   {sistemasFiltrados.length === 0 && (
-                    <tr>
-                      <td colSpan={8} className="text-center py-12 text-gray-400 text-sm">
+                    <div className="p-8 text-center">
+                      <Monitor className="w-10 h-10 text-gray-200 mx-auto mb-2" />
+                      <p className="text-sm text-gray-400">
                         {busca || filtroStatus !== "TODOS" || filtroPlano !== "TODOS"
                           ? "Nenhum sistema encontrado."
-                          : "Nenhum sistema cadastrado. Clique em 'Novo Sistema' para comecar."}
-                      </td>
-                    </tr>
+                          : "Nenhum sistema cadastrado ainda."}
+                      </p>
+                    </div>
                   )}
                   {sistemasFiltrados.map((s) => {
                     const dias = diasRestantes(s.dataVencimento);
                     const st = getStatusInfo(s.status);
                     const pl = getPlanoInfo(s.plano);
+                    const tl = getTipoLicencaInfo(s.tipoLicenca);
+                    const cobrancasSistema = getCobrancasBySistema(s.id);
+                    const pendentesSistema = cobrancasSistema.filter(
+                      (c) => c.status === "PENDENTE" || c.status === "ATRASADO"
+                    ).length;
                     return (
-                      <tr key={s.id} className="hover:bg-gray-50/80 transition-colors">
-                        <td className="py-3 px-4">
-                          <p className="font-semibold text-gray-900">{s.empresa}</p>
-                          {s.cidade && <p className="text-[11px] text-gray-400">{s.cidade}</p>}
-                          {s.dadosRegistro && <p className="text-[10px] text-emerald-600 font-medium">Cadastrado</p>}
-                        </td>
-                        <td className="py-3 px-4 text-gray-600">{s.responsavel}</td>
-                        <td className="py-3 px-4">
-                          {s.telefone && <p className="text-gray-600 text-xs">{s.telefone}</p>}
-                          {s.email && <p className="text-[11px] text-gray-400">{s.email}</p>}
-                        </td>
-                        <td className="py-3 px-4">
-                          <Badge className={`text-[10px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
-                        </td>
-                        <td className="py-3 px-4 text-center">
-                          <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
-                          {s.status === "ATIVO" && (
-                            <p className={`text-[10px] mt-0.5 ${dias <= 7 ? "text-amber-600 font-semibold" : "text-gray-400"}`}>
-                              {dias > 0 ? `${dias}d` : "Vencido"}
-                            </p>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 text-gray-600 text-xs whitespace-nowrap">
-                          {formatarData(s.dataVencimento)}
-                        </td>
-                        <td className="py-3 px-4 text-right font-semibold text-emerald-600 whitespace-nowrap">
-                          {formatarMoeda(s.valorMensal)}
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center justify-center gap-1">
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-gray-700" onClick={() => setDialogDetalhe(s)}>
-                                    <Eye className="h-3.5 w-3.5" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>Detalhes</TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:text-blue-700" onClick={() => setDialogForm(s)}>
-                                    <Pencil className="h-3.5 w-3.5" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>Editar</TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                            {s.telefone && (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-500 hover:text-emerald-700" onClick={() => handleWhatsApp(s.telefone)}>
-                                      <MessageCircle className="h-3.5 w-3.5" />
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>WhatsApp</TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-600" onClick={() => setConfirmaRemover(s.id)}>
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>Remover</TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
+                      <div key={s.id} className="p-3 space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="font-semibold text-sm text-gray-900 truncate">{s.empresa}</p>
+                            <p className="text-xs text-gray-400">{s.responsavel}</p>
                           </div>
-                        </td>
-                      </tr>
+                          <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+                            <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
+                            <Badge className={`text-[10px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
+                            <Badge className={`text-[10px] font-semibold ${tl.cor}`}>{tl.label}</Badge>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 text-[11px] text-gray-400 flex-wrap">
+                          {s.cidade && <span>{s.cidade}</span>}
+                          {s.dadosRegistro && <span className="text-emerald-600 font-semibold">Cadastrado</span>}
+                          {s.tipoLicenca === "ALUGUEL" && (
+                            <>
+                              <span>Vence: {formatarData(s.dataVencimento)}</span>
+                              {s.status === "ATIVO" && (
+                                <span className={dias <= 7 ? "text-amber-600 font-semibold" : "text-emerald-600"}>
+                                  {dias}d restantes
+                                </span>
+                              )}
+                            </>
+                          )}
+                          {s.tipoLicenca === "AQUISICAO" && (
+                            <span className="text-emerald-600 font-semibold">
+                              Aquisicao: {formatarMoeda(s.valorAquisicao)}
+                            </span>
+                          )}
+                          {pendentesSistema > 0 && (
+                            <span className="text-amber-600 font-semibold">
+                              {pendentesSistema} cobranca(s)
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex gap-1.5 pt-1">
+                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-500" onClick={() => setDialogDetalhe(s)}>
+                            <Eye className="h-3 w-3 mr-1" /> Ver
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-blue-600" onClick={() => setDialogForm(s)}>
+                            <Pencil className="h-3 w-3 mr-1" /> Editar
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-purple-600" onClick={() => setAbaAtiva("cobrancas")}>
+                            <Receipt className="h-3 w-3 mr-1" /> Cobrancas
+                          </Button>
+                          {s.telefone && (
+                            <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-600" onClick={() => handleWhatsApp(s.telefone)}>
+                              <MessageCircle className="h-3 w-3" />
+                            </Button>
+                          )}
+                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-red-500 ml-auto" onClick={() => setConfirmaRemover(s.id)}>
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                </div>
 
-        <div className="text-center text-[10px] text-gray-400 pb-4">
-          {sistemasFiltrados.length} de {sistemas.length} sistema{sistemas.length !== 1 ? "s" : ""}
-        </div>
+                {/* Desktop table */}
+                <div className="hidden sm:block overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-100 text-[10px] text-gray-400 uppercase tracking-wider bg-gray-50/50">
+                        <th className="text-left py-3 px-4 font-semibold">Empresa</th>
+                        <th className="text-left py-3 px-4 font-semibold">Responsavel</th>
+                        <th className="text-left py-3 px-4 font-semibold">Contato</th>
+                        <th className="text-left py-3 px-4 font-semibold">Licenca</th>
+                        <th className="text-center py-3 px-4 font-semibold">Status</th>
+                        <th className="text-left py-3 px-4 font-semibold">Vencimento</th>
+                        <th className="text-right py-3 px-4 font-semibold">Valor</th>
+                        <th className="text-center py-3 px-4 font-semibold">Acoes</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {sistemasFiltrados.length === 0 && (
+                        <tr>
+                          <td colSpan={8} className="text-center py-12 text-gray-400 text-sm">
+                            {busca || filtroStatus !== "TODOS" || filtroPlano !== "TODOS"
+                              ? "Nenhum sistema encontrado."
+                              : "Nenhum sistema cadastrado. Clique em 'Novo Sistema' para comecar."}
+                          </td>
+                        </tr>
+                      )}
+                      {sistemasFiltrados.map((s) => {
+                        const dias = diasRestantes(s.dataVencimento);
+                        const st = getStatusInfo(s.status);
+                        const pl = getPlanoInfo(s.plano);
+                        const tl = getTipoLicencaInfo(s.tipoLicenca);
+                        const cobrancasSistema = getCobrancasBySistema(s.id);
+                        const pendentesSistema = cobrancasSistema.filter(
+                          (c) => c.status === "PENDENTE" || c.status === "ATRASADO"
+                        ).length;
+                        return (
+                          <tr key={s.id} className="hover:bg-gray-50/80 transition-colors">
+                            <td className="py-3 px-4">
+                              <p className="font-semibold text-gray-900">{s.empresa}</p>
+                              {s.cidade && <p className="text-[11px] text-gray-400">{s.cidade}</p>}
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                <Badge className={`text-[9px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
+                                {s.dadosRegistro && (
+                                  <span className="text-[9px] text-emerald-600 font-medium flex items-center gap-0.5">
+                                    <Check className="h-2.5 w-2.5" /> Cadastrado
+                                  </span>
+                                )}
+                                {pendentesSistema > 0 && (
+                                  <span className="text-[9px] text-amber-600 font-semibold">
+                                    {pendentesSistema} pend.
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="py-3 px-4 text-gray-600">{s.responsavel}</td>
+                            <td className="py-3 px-4">
+                              {s.telefone && <p className="text-gray-600 text-xs">{s.telefone}</p>}
+                              {s.email && <p className="text-[11px] text-gray-400">{s.email}</p>}
+                            </td>
+                            <td className="py-3 px-4">
+                              <Badge className={`text-[10px] font-semibold ${tl.cor}`}>{tl.label}</Badge>
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
+                              {s.status === "ATIVO" && s.tipoLicenca === "ALUGUEL" && (
+                                <p className={`text-[10px] mt-0.5 ${dias <= 7 ? "text-amber-600 font-semibold" : "text-gray-400"}`}>
+                                  {dias > 0 ? `${dias}d` : "Vencido"}
+                                </p>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 text-gray-600 text-xs whitespace-nowrap">
+                              {s.tipoLicenca === "ALUGUEL" ? formatarData(s.dataVencimento) : "N/A"}
+                            </td>
+                            <td className="py-3 px-4 text-right font-semibold text-emerald-600 whitespace-nowrap">
+                              {s.tipoLicenca === "ALUGUEL"
+                                ? formatarMoeda(s.valorMensal) + "/mes"
+                                : formatarMoeda(s.valorAquisicao)}
+                              {s.taxaInstalacao > 0 && (
+                                <p className="text-[10px] text-gray-400 font-normal">
+                                  + {formatarMoeda(s.taxaInstalacao)} inst.
+                                </p>
+                              )}
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex items-center justify-center gap-0.5">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-gray-700" onClick={() => setDialogDetalhe(s)}>
+                                        <Eye className="h-3.5 w-3.5" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Detalhes</TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:text-blue-700" onClick={() => setDialogForm(s)}>
+                                        <Pencil className="h-3.5 w-3.5" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Editar</TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-purple-500 hover:text-purple-700" onClick={() => setAbaAtiva("cobrancas")}>
+                                        <Receipt className="h-3.5 w-3.5" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Cobrancas</TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                {s.telefone && (
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-500 hover:text-emerald-700" onClick={() => handleWhatsApp(s.telefone)}>
+                                          <MessageCircle className="h-3.5 w-3.5" />
+                                        </Button>
+                                      </TooltipTrigger>
+                                      <TooltipContent>WhatsApp</TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-600" onClick={() => setConfirmaRemover(s.id)}>
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Remover</TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="text-center text-[10px] text-gray-400 pb-4">
+              {sistemasFiltrados.length} de {sistemas.length} sistema{sistemas.length !== 1 ? "s" : ""}
+            </div>
+          </>
+        )}
       </main>
 
       {/* Dialog Novo Sistema */}
@@ -941,7 +1120,7 @@ function PainelAdminConteudo() {
 
       {/* Dialog Detalhes */}
       <Dialog open={!!dialogDetalhe} onOpenChange={() => setDialogDetalhe(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
               <Eye className="h-5 w-5 text-emerald-600" />
@@ -956,12 +1135,15 @@ function PainelAdminConteudo() {
                     <p className="font-bold text-gray-900">{dialogDetalhe.empresa}</p>
                     <p className="text-sm text-gray-500">{dialogDetalhe.responsavel}</p>
                   </div>
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-1.5 flex-wrap justify-end">
                     <Badge className={`text-[10px] font-semibold ${getStatusInfo(dialogDetalhe.status).cor}`}>
                       {getStatusInfo(dialogDetalhe.status).label}
                     </Badge>
                     <Badge className={`text-[10px] font-semibold ${getPlanoInfo(dialogDetalhe.plano).cor}`}>
                       {getPlanoInfo(dialogDetalhe.plano).label}
+                    </Badge>
+                    <Badge className={`text-[10px] font-semibold ${getTipoLicencaInfo(dialogDetalhe.tipoLicenca).cor}`}>
+                      {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).label}
                     </Badge>
                   </div>
                 </div>
@@ -980,26 +1162,51 @@ function PainelAdminConteudo() {
                     <p className="text-gray-700">{dialogDetalhe.cidade || "-"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Mensal</p>
-                    <p className="text-emerald-600 font-bold">{formatarMoeda(dialogDetalhe.valorMensal)}</p>
+                    <p className="text-[10px] text-gray-400 uppercase font-medium">Tipo de Licenca</p>
+                    <p className="text-gray-700">
+                      {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).label}
+                      <span className="text-[10px] text-gray-400 block">
+                        {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).descricao}
+                      </span>
+                    </p>
                   </div>
+                  {dialogDetalhe.tipoLicenca === "ALUGUEL" ? (
+                    <>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Mensal</p>
+                        <p className="text-emerald-600 font-bold">{formatarMoeda(dialogDetalhe.valorMensal)}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase font-medium">Vencimento</p>
+                        <p className={dialogDetalhe.status === "ATIVO" && diasRestantes(dialogDetalhe.dataVencimento) <= 7 ? "text-amber-600 font-bold" : "text-gray-700"}>
+                          {formatarData(dialogDetalhe.dataVencimento)}
+                          {dialogDetalhe.status === "ATIVO" && (
+                            <span className="block text-[11px]">
+                              {diasRestantes(dialogDetalhe.dataVencimento) > 0
+                                ? `${diasRestantes(dialogDetalhe.dataVencimento)} dias restantes`
+                                : "Vencido!"}
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="col-span-2">
+                      <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Aquisicao</p>
+                      <p className="text-emerald-600 font-bold text-lg">{formatarMoeda(dialogDetalhe.valorAquisicao)}</p>
+                      <p className="text-[10px] text-gray-400">Pagamento unico - licenca definitiva</p>
+                    </div>
+                  )}
                   <div>
                     <p className="text-[10px] text-gray-400 uppercase font-medium">Instalacao</p>
                     <p className="text-gray-700">{formatarData(dialogDetalhe.dataInstalacao)}</p>
                   </div>
-                  <div>
-                    <p className="text-[10px] text-gray-400 uppercase font-medium">Vencimento</p>
-                    <p className={dialogDetalhe.status === "ATIVO" && diasRestantes(dialogDetalhe.dataVencimento) <= 7 ? "text-amber-600 font-bold" : "text-gray-700"}>
-                      {formatarData(dialogDetalhe.dataVencimento)}
-                      {dialogDetalhe.status === "ATIVO" && (
-                        <span className="block text-[11px]">
-                          {diasRestantes(dialogDetalhe.dataVencimento) > 0
-                            ? `${diasRestantes(dialogDetalhe.dataVencimento)} dias restantes`
-                            : "Vencido!"}
-                        </span>
-                      )}
-                    </p>
-                  </div>
+                  {dialogDetalhe.taxaInstalacao > 0 && (
+                    <div>
+                      <p className="text-[10px] text-gray-400 uppercase font-medium">Taxa Instalacao</p>
+                      <p className="text-gray-700">{formatarMoeda(dialogDetalhe.taxaInstalacao)}</p>
+                    </div>
+                  )}
                 </div>
                 {dialogDetalhe.observacoes && (
                   <>
@@ -1085,7 +1292,7 @@ function PainelAdminConteudo() {
             <DialogTitle className="text-base">Confirmar Remocao</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-gray-500">
-            Tem certeza que deseja remover este sistema? Esta acao nao pode ser desfeita.
+            Tem certeza que deseja remover este sistema e todas as suas cobrancas? Esta acao nao pode ser desfeita.
           </p>
           <div className="flex gap-2 justify-end pt-2">
             <Button
