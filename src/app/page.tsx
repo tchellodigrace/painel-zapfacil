@@ -17,7 +17,6 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import {
-  Briefcase,
   Sun,
   Moon,
   FileText,
@@ -39,12 +38,11 @@ import { PainelAgendamento } from "@/components/erp/painel-agendamento";
 import { PainelDespesas } from "@/components/erp/painel-despesas";
 import { PainelColaboradores } from "@/components/erp/painel-colaboradores";
 import { InicializadorLogo } from "@/components/erp/inicializador-logo";
-import { useERPStore } from "@/hooks/use-erp-store";
 import type { Venda } from "@/types";
 
 export default function ZapFacilPage() {
   const { theme, setTheme } = useTheme();
-  const logoBase64 = useERPStore((s) => s.empresa.logoBase64);
+
   const [vendaAtual, setVendaAtual] = useState<Venda | null>(null);
   const [abaAtiva, setAbaAtiva] = useState("lancamento");
 
@@ -69,24 +67,12 @@ export default function ZapFacilPage() {
       {/* Header */}
       <header className="bg-emerald-600 text-white shadow-md py-3 px-4 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            {logoBase64 ? (
-              <img
-                src={logoBase64}
-                alt="ZapFácil"
-                className="h-7 w-7 object-contain rounded"
-              />
-            ) : (
-              <Briefcase className="h-5 w-5" />
-            )}
-            <div>
-              <h1 className="text-base font-bold tracking-tight">
-                ZapFacil ERP
-              </h1>
-              <p className="text-[9px] text-emerald-100">
-                Sistema Profissional de Gestao
-              </p>
-            </div>
+          <div className="flex items-center">
+            <img
+              src="/logo-empresa.png"
+              alt="Logo"
+              className="h-10 w-auto object-contain"
+            />
           </div>
           <div className="flex items-center gap-2">
             <Badge
