@@ -16,6 +16,13 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAdminStore } from "@/hooks/use-admin-store";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Phone } from "lucide-react";
 
 const AUTH_KEY = "zapfacil_auth";
 const SESSION_KEY = "zapfacil_session";
@@ -70,6 +77,10 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
   const [carregando, setCarregando] = useState(false);
   const [etapaCadastro, setEtapaCadastro] = useState(0);
+  const [dialogRecuperar, setDialogRecuperar] = useState(false);
+  const [recuperarEmail, setRecuperarEmail] = useState("");
+  const [recuperarTelefone, setRecuperarTelefone] = useState("");
+  const [enviandoPedido, setEnviandoPedido] = useState(false);
 
   useEffect(() => {
     if (verificarSessao()) {
@@ -127,6 +138,27 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
     toast.success("Conta criada com sucesso!");
     onAutenticado();
   }, [email, senha, confirmarSenha, nomeEmpresa, nomeResponsavel, telefone, onAutenticado]);
+
+  const handleRecuperarSenha = useCallback(() => {
+    if (!recuperarEmail.trim() || !recuperarEmail.includes("@")) {
+      toast.error("Informe um e-mail valido.");
+      return;
+    }
+    setEnviandoPedido(true);
+    setTimeout(() => {
+      useAdminStore.getState().criarPedidoRecuperacao(
+        recuperarEmail.trim(),
+        recuperarTelefone.trim()
+      );
+      setEnviandoPedido(false);
+      setDialogRecuperar(false);
+      setRecuperarEmail("");
+      setRecuperarTelefone("");
+      toast.success(
+        "Pedido enviado ao administrador! Voce recebera seus dados de acesso pelo WhatsApp."
+      );
+    }, 800);
+  }, [recuperarEmail, recuperarTelefone]);
 
   const handleLogin = useCallback(() => {
     if (!email.trim() || !senha.trim()) {
@@ -498,7 +530,11 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium text-gray-700">Senha</Label>
-                <button className="text-xs text-emerald-600 hover:text-emerald-700 font-medium">
+                <button
+                  type="button"
+                  className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+                  onClick={() => setDialogRecuperar(true)}
+                >
                   Esqueceu a senha?
                 </button>
               </div>
@@ -543,6 +579,78 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
           </p>
         </div>
       </div>
+
+      {/* Dialog Esqueceu a Senha */}
+      <Dialog open={dialogRecuperar} onOpenChange={setDialogRecuperar}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Lock className="h-5 w-5 text-emerald-600" />
+              Recuperar acesso
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-500 leading-relaxed">
+              Informe o e-mail usado no cadastro. O administrador enviara seus dados de acesso pelo WhatsApp.
+            </p>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">E-mail cadastrado</Label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={recuperarEmail}
+                  onChange={(e) => setRecuperarEmail(e.target.value)}
+                  className="pl-11 h-11 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+                  onKeyDown={(e) => e.key === "Enter" && handleRecuperarSenha()}
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">WhatsApp (opcional)</Label>
+              <div className="relative">
+                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="(00) 00000-0000"
+                  value={recuperarTelefone}
+                  onChange={(e) => setRecuperarTelefone(e.target.value)}
+                  className="pl-11 h-11 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+                  onKeyDown={(e) => e.key === "Enter" && handleRecuperarSenha()}
+                />
+              </div>
+              <p className="text-[11px] text-gray-400">Se informado, o admin usara este numero para contato</p>
+            </div>
+            <div className="flex gap-2 pt-1">
+              <Button
+                variant="outline"
+                className="flex-1 h-11 rounded-xl text-sm"
+                onClick={() => setDialogRecuperar(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                className="flex-1 h-11 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+                onClick={handleRecuperarSenha}
+                disabled={enviandoPedido}
+              >
+                {enviandoPedido ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Enviando...
+                  </span>
+                ) : (
+                  <>
+                    <ArrowRight className="h-4 w-4 mr-1" />
+                    Solicitar
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

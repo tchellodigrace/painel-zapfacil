@@ -75,6 +75,15 @@ export interface SistemaCliente {
   dadosRegistro: DadosRegistroCliente | null;
 }
 
+export interface PedidoRecuperacao {
+  id: string;
+  email: string;
+  telefoneSolicitado: string;
+  dataPedido: string;
+  status: "PENDENTE" | "ENVIADO" | "IGNORADO";
+  dataResposta: string | null;
+}
+
 export interface Cobranca {
   id: string;
   sistemaId: string;
@@ -118,6 +127,7 @@ interface AdminState {
   adminCredenciais: { usuario: string; senha: string } | null;
   sistemas: SistemaCliente[];
   cobrancas: Cobranca[];
+  pedidosRecuperacao: PedidoRecuperacao[];
 
   alterarSenha: (senhaAtual: string, novaSenha: string) => boolean;
 
@@ -142,6 +152,11 @@ interface AdminState {
   gerarCobrancaMensal: (sistemaId: string) => void;
   gerarCobrancaAquisicao: (sistemaId: string) => void;
   getCobrancasBySistema: (sistemaId: string) => Cobranca[];
+
+  // Ações - Recuperação de senha
+  criarPedidoRecuperacao: (email: string, telefone: string) => void;
+  resolverPedidoRecuperacao: (id: string, status: "ENVIADO" | "IGNORADO") => void;
+  limparPedidosResolvidos: () => void;
 }
 
 // Credenciais padrão do gestor
@@ -167,6 +182,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   adminCredenciais: carregarCredenciais(),
   sistemas: migrarSistemas(carregar<SistemaCliente[]>("sistemas", [])),
   cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
+  pedidosRecuperacao: carregar<PedidoRecuperacao[]>("pedidos_recuperacao", []),
 
   // === Sistemas ===
   configurarAdmin: (usuario, senha) => {
@@ -387,6 +403,39 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
   getCobrancasBySistema: (sistemaId) => {
     return get().cobrancas.filter((c) => c.sistemaId === sistemaId);
+  },
+
+  // === Recuperação de Senha ===
+  criarPedidoRecuperacao: (email, telefone) => {
+    const pedido: PedidoRecuperacao = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      email: email.trim().toLowerCase(),
+      telefoneSolicitado: telefone.trim(),
+      dataPedido: new Date().toISOString(),
+      status: "PENDENTE",
+      dataResposta: null,
+    };
+    const novaLista = [pedido, ...get().pedidosRecuperacao];
+    salvar("pedidos_recuperacao", novaLista);
+    set({ pedidosRecuperacao: novaLista });
+  },
+
+  resolverPedidoRecuperacao: (id, status) => {
+    const novaLista = get().pedidosRecuperacao.map((p) =>
+      p.id === id
+        ? { ...p, status, dataResposta: new Date().toISOString() }
+        : p
+    );
+    salvar("pedidos_recuperacao", novaLista);
+    set({ pedidosRecuperacao: novaLista });
+  },
+
+  limparPedidosResolvidos: () => {
+    const novaLista = get().pedidosRecuperacao.filter(
+      (p) => p.status === "PENDENTE"
+    );
+    salvar("pedidos_recuperacao", novaLista);
+    set({ pedidosRecuperacao: novaLista });
   },
 }));
 

@@ -50,6 +50,8 @@ import {
   EyeOff,
   Check,
   KeyRound,
+  Clock,
+  Phone,
 } from "lucide-react";
 import {
   Tooltip,
@@ -622,12 +624,288 @@ function FormularioSistema({
 }
 
 // =============================================
+// SECAO RECUPERACOES DE SENHA
+// =============================================
+function SecaoRecuperacoes() {
+  const { pedidosRecuperacao, sistemas, resolverPedidoRecuperacao, limparPedidosResolvidos } =
+    useAdminStore();
+  const [mostrarResolvidos, setMostrarResolvidos] = useState(false);
+
+  const pendentes = pedidosRecuperacao.filter((p) => p.status === "PENDENTE");
+  const resolvidos = pedidosRecuperacao.filter((p) => p.status !== "PENDENTE");
+  const listaExibida = mostrarResolvidos ? [...pendentes, ...resolvidos] : pendentes;
+
+  function buscarCredenciaisCliente(email: string) {
+    // Procura o sistema que tem registro com esse email
+    const sistema = sistemas.find(
+      (s) =>
+        s.email.toLowerCase() === email.toLowerCase() ||
+        s.dadosRegistro?.email.toLowerCase() === email.toLowerCase()
+    );
+    if (sistema?.dadosRegistro) {
+      // Se o cliente se registrou, procura as credenciais no localStorage do ERP
+      // Como as credenciais ficam no dispositivo do cliente, o admin precisa informar manualmente
+      // Mas podemos retornar os dados do registro
+      return {
+        nome: sistema.dadosRegistro.usuario || sistema.responsavel,
+        empresa: sistema.dadosRegistro.nomeEmpresa || sistema.empresa,
+        telefone: sistema.dadosRegistro.telefone || sistema.telefone || "",
+        email: sistema.dadosRegistro.email || sistema.email,
+      };
+    }
+    // Fallback: busca pelo email nos sistemas
+    const s = sistemas.find((s) => s.email.toLowerCase() === email.toLowerCase());
+    if (s) {
+      return {
+        nome: s.responsavel,
+        empresa: s.empresa,
+        telefone: s.telefone,
+        email: s.email,
+      };
+    }
+    return null;
+  }
+
+  function enviarCredenciaisWhatsApp(pedido: (typeof pedidosRecuperacao)[0]) {
+    const cliente = buscarCredenciaisCliente(pedido.email);
+    const telefoneDestino = pedido.telefoneSolicitado || cliente?.telefone || "";
+
+    if (!telefoneDestino) {
+      toast.error("Nenhum telefone disponivel para enviar. Peça ao cliente o numero.");
+      return;
+    }
+
+    const telLimpo = telefoneDestino.replace(/\D/g, "");
+    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+    const nomeCliente = cliente?.nome || "Cliente";
+    const nomeEmpresa = cliente?.empresa || "sua empresa";
+
+    const msg = encodeURIComponent(
+      `Ola ${nomeCliente}! Aqui e o suporte do ZapFacil Pro.\n\nVoce solicitou a recuperacao dos seus dados de acesso ao sistema da ${nomeEmpresa}.\n\n*Link de acesso:*\nhttps://j1ewd51wcs60-d.space-z.ai/\n\nSeu e-mail de login: *${pedido.email}*\n\nCaso nao lembre a senha, podemos redefinir juntos. Responda esta mensagem.\n\nQualquer duvida, estou a disposicao!`
+    );
+
+    window.open(`https://wa.me/${numero}?text=${msg}`, "_blank");
+    resolverPedidoRecuperacao(pedido.id, "ENVIADO");
+    toast.success("WhatsApp aberto com as credenciais! Pedido marcado como enviado.");
+  }
+
+  function formatarDataISO(iso: string) {
+    try {
+      const d = new Date(iso);
+      return d.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return iso;
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Header da secao */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <KeyRound className="h-5 w-5 text-amber-500" />
+            Pedidos de Recuperacao de Acesso
+          </h2>
+          <p className="text-sm text-gray-500 mt-0.5">
+            Clientes que esqueceram a senha e pediram reenvio dos dados
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {resolvidos.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs"
+              onClick={() => setMostrarResolvidos(!mostrarResolvidos)}
+            >
+              {mostrarResolvidos ? "Ocultar resolvidos" : `Ver resolvidos (${resolvidos.length})`}
+            </Button>
+          )}
+          {resolvidos.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-red-500 hover:text-red-600"
+              onClick={() => {
+                limparPedidosResolvidos();
+                toast.success("Pedidos resolvidos removidos!");
+              }}
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-1" />
+              Limpar
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="bg-amber-50 border-amber-200">
+          <CardContent className="p-3 text-center">
+            <p className="text-xl font-bold text-amber-700">{pendentes.length}</p>
+            <p className="text-[10px] text-amber-600 uppercase tracking-wider font-medium">Pendentes</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-emerald-50 border-emerald-200">
+          <CardContent className="p-3 text-center">
+            <p className="text-xl font-bold text-emerald-700">
+              {pedidosRecuperacao.filter((p) => p.status === "ENVIADO").length}
+            </p>
+            <p className="text-[10px] text-emerald-600 uppercase tracking-wider font-medium">Enviados</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-gray-50 border-gray-200">
+          <CardContent className="p-3 text-center">
+            <p className="text-xl font-bold text-gray-700">{pedidosRecuperacao.length}</p>
+            <p className="text-[10px] text-gray-500 uppercase tracking-wider font-medium">Total</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Lista de pedidos */}
+      {listaExibida.length === 0 ? (
+        <Card>
+          <CardContent className="py-16 text-center">
+            <KeyRound className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+            <p className="text-sm text-gray-500 font-medium">Nenhum pedido de recuperacao</p>
+            <p className="text-xs text-gray-400 mt-1">
+              {mostrarResolvidos
+                ? "Todos os pedidos foram resolvidos e limpos."
+                : "Quando um cliente clicar em \"Esqueceu a senha\" na tela de login, o pedido aparecera aqui."}
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {listaExibida.map((pedido) => {
+            const cliente = buscarCredenciaisCliente(pedido.email);
+            const isPendente = pedido.status === "PENDENTE";
+
+            return (
+              <Card
+                key={pedido.id}
+                className={`overflow-hidden ${!isPendente ? "opacity-60" : ""}`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                    {/* Info */}
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-sm text-gray-900">
+                          {cliente?.nome || pedido.email}
+                        </span>
+                        {cliente?.empresa && (
+                          <Badge variant="outline" className="text-[10px]">
+                            {cliente.empresa}
+                          </Badge>
+                        )}
+                        <Badge
+                          className={`text-[10px] ${
+                            pedido.status === "PENDENTE"
+                              ? "bg-amber-100 text-amber-700"
+                              : pedido.status === "ENVIADO"
+                                ? "bg-emerald-100 text-emerald-700"
+                                : "bg-gray-100 text-gray-500"
+                          }`}
+                        >
+                          {pedido.status === "PENDENTE"
+                            ? "Pendente"
+                            : pedido.status === "ENVIADO"
+                              ? "Enviado"
+                              : "Ignorado"}
+                        </Badge>
+                      </div>
+
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <Mail className="h-3 w-3" />
+                          {pedido.email}
+                        </span>
+                        {pedido.telefoneSolicitado && (
+                          <span className="flex items-center gap-1">
+                            <Phone className="h-3 w-3" />
+                            {pedido.telefoneSolicitado}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {formatarDataISO(pedido.dataPedido)}
+                        </span>
+                      </div>
+
+                      {cliente && !cliente?.telefone && !pedido.telefoneSolicitado && isPendente && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 flex items-start gap-2">
+                          <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0 mt-0.5" />
+                          <p className="text-[11px] text-amber-700">
+                            Nenhum telefone cadastrado para este cliente. Voce precisara pedir o numero diretamente.
+                          </p>
+                        </div>
+                      )}
+
+                      {pedido.dataResposta && (
+                        <p className="text-[10px] text-gray-400">
+                          Respondido em {formatarDataISO(pedido.dataResposta)}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Acoes */}
+                    {isPendente && (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                          size="sm"
+                          className="bg-emerald-600 hover:bg-emerald-700 text-xs h-9"
+                          onClick={() => enviarCredenciaisWhatsApp(pedido)}
+                        >
+                          <MessageCircle className="h-3.5 w-3.5 mr-1" />
+                          Enviar WhatsApp
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-xs h-9 text-gray-500 hover:text-gray-700"
+                          onClick={() => {
+                            resolverPedidoRecuperacao(pedido.id, "IGNORADO");
+                            toast.info("Pedido marcado como ignorado.");
+                          }}
+                        >
+                          Ignorar
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Info */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+        <MessageCircle className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+        <div className="text-xs text-blue-700 leading-relaxed">
+          <strong>Como funciona:</strong> Quando um cliente clica em "Esqueceu a senha?" na tela de login, ele informa o e-mail e opcionalmente o WhatsApp. O pedido aparece aqui com status "Pendente". Clique em "Enviar WhatsApp" para abrir o WhatsApp com a mensagem contendo o link de acesso e o e-mail do cliente. O pedido e automaticamente marcado como "Enviado".
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================
 // PAINEL ADMIN PRINCIPAL COM ABAS
 // =============================================
-type AbaAdmin = "sistemas" | "cobrancas";
+type AbaAdmin = "sistemas" | "cobrancas" | "recuperacoes";
 
 function PainelAdminConteudo() {
-  const { sistemas, cobrancas, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema } =
+  const { sistemas, cobrancas, pedidosRecuperacao, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos } =
     useAdminStore();
   const [abaAtiva, setAbaAtiva] = useState<AbaAdmin>("sistemas");
   const [busca, setBusca] = useState("");
@@ -724,6 +1002,12 @@ function PainelAdminConteudo() {
     [cobrancas]
   );
 
+  // Pedidos de recuperacao pendentes
+  const pedidosPendentes = useMemo(
+    () => pedidosRecuperacao.filter((p) => p.status === "PENDENTE").length,
+    [pedidosRecuperacao]
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
@@ -814,11 +1098,33 @@ function PainelAdminConteudo() {
               </span>
             )}
           </button>
+          <button
+            onClick={() => setAbaAtiva("recuperacoes")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "recuperacoes"
+                ? "bg-amber-500 text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <KeyRound className="h-4 w-4" />
+            Recuperacoes
+            {pedidosPendentes > 0 && (
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+                abaAtiva === "recuperacoes"
+                  ? "bg-white/20 text-white"
+                  : "bg-amber-100 text-amber-600"
+              }`}>
+                {pedidosPendentes}
+              </span>
+            )}
+          </button>
         </div>
 
         {/* Conteúdo da aba ativa */}
         {abaAtiva === "cobrancas" ? (
           <PainelCobranças />
+        ) : abaAtiva === "recuperacoes" ? (
+          <SecaoRecuperacoes />
         ) : (
           <>
             {/* Cards de estatísticas - Sistemas */}
