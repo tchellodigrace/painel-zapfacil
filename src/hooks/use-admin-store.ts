@@ -126,6 +126,8 @@ interface AdminState {
   // Credenciais admin master
   adminCredenciais: { usuario: string; senha: string } | null;
   emailRecuperacao: string;
+  primeiroAcesso: boolean;
+  dadosGestor: { nome: string; email: string; telefone: string } | null;
   sistemas: SistemaCliente[];
   cobrancas: Cobranca[];
   pedidosRecuperacao: PedidoRecuperacao[];
@@ -133,6 +135,8 @@ interface AdminState {
   alterarSenha: (senhaAtual: string, novaSenha: string) => boolean;
   resetarSenhaAdmin: (novaSenha: string) => void;
   configurarEmailRecuperacao: (email: string) => void;
+  configurarPrimeiroAcesso: (dados: { usuario: string; senha: string; nome: string; email: string; telefone: string; emailRecuperacao: string }) => void;
+  resetarPrimeiroAcesso: () => void;
   recarregarDados: () => void;
 
   // Ações - Sistemas
@@ -185,6 +189,8 @@ function carregarCredenciais(): { usuario: string; senha: string } {
 export const useAdminStore = create<AdminState>((set, get) => ({
   adminCredenciais: carregarCredenciais(),
   emailRecuperacao: carregar<string>("email_recuperacao", ""),
+  primeiroAcesso: carregar<boolean>("primeiro_acesso", false),
+  dadosGestor: carregar<{ nome: string; email: string; telefone: string } | null>("dados_gestor", null),
   sistemas: migrarSistemas(carregar<SistemaCliente[]>("sistemas", [])),
   cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
   pedidosRecuperacao: carregar<PedidoRecuperacao[]>("pedidos_recuperacao", []),
@@ -217,6 +223,25 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   configurarEmailRecuperacao: (email) => {
     salvar("email_recuperacao", email.trim().toLowerCase());
     set({ emailRecuperacao: email.trim().toLowerCase() });
+  },
+
+  configurarPrimeiroAcesso: (dados) => {
+    const cred = { usuario: dados.usuario.trim().toLowerCase(), senha: dados.senha };
+    salvar("credenciais", cred);
+    salvar("email_recuperacao", dados.emailRecuperacao.trim().toLowerCase());
+    salvar("primeiro_acesso", true);
+    salvar("dados_gestor", { nome: dados.nome.trim(), email: dados.email.trim().toLowerCase(), telefone: dados.telefone.trim() });
+    set({
+      adminCredenciais: cred,
+      emailRecuperacao: dados.emailRecuperacao.trim().toLowerCase(),
+      primeiroAcesso: true,
+      dadosGestor: { nome: dados.nome.trim(), email: dados.email.trim().toLowerCase(), telefone: dados.telefone.trim() },
+    });
+  },
+
+  resetarPrimeiroAcesso: () => {
+    salvar("primeiro_acesso", false);
+    set({ primeiroAcesso: false });
   },
 
   adicionarSistema: (dados) => {
@@ -459,6 +484,10 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   recarregarDados: () => {
     set({
       emailRecuperacao: carregar<string>("email_recuperacao", ""),
+      primeiroAcesso: carregar<boolean>("primeiro_acesso", false),
+      dadosGestor: carregar<{ nome: string; email: string; telefone: string } | null>("dados_gestor", null),
+  primeiroAcesso: carregar<boolean>("primeiro_acesso", false),
+  dadosGestor: carregar<{ nome: string; email: string; telefone: string } | null>("dados_gestor", null),
       sistemas: migrarSistemas(carregar<SistemaCliente[]>("sistemas", [])),
       cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
       pedidosRecuperacao: carregar<PedidoRecuperacao[]>("pedidos_recuperacao", []),
