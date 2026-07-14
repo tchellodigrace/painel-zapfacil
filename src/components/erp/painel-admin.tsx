@@ -135,6 +135,11 @@ function TelaLoginAdmin({
       <Card className="w-full max-w-sm border-0 shadow-xl">
         <CardContent className="p-8 space-y-6">
           <div className="text-center space-y-3">
+            <img
+              src="/logo-empresa.png"
+              alt="Logo"
+              className="h-14 w-auto mx-auto object-contain"
+            />
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-100 mb-2">
               <ShieldCheck className="w-7 h-7 text-emerald-600" />
             </div>
@@ -285,6 +290,21 @@ function FormularioSistema({
     sistema?.observacoes || ""
   );
 
+  const LINK_SISTEMA = "https://j1ewd51wcs60-d.space-z.ai/";
+
+  const enviarWhatsApp = () => {
+    if (!telefone.trim()) {
+      toast.error("Preencha o telefone para enviar o link.");
+      return;
+    }
+    const telLimpo = telefone.replace(/\D/g, "");
+    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+    const msg = encodeURIComponent(
+      `Ola! Aqui e o suporte do ZapFacil Pro. Seu sistema esta pronto para uso. Acesse pelo link abaixo e faca seu cadastro:\n\n${LINK_SISTEMA}\n\nQualquer duvida, estou a disposicao!`
+    );
+    window.open(`https://wa.me/${numero}?text=${msg}`, "_blank");
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!empresa.trim()) {
@@ -311,6 +331,7 @@ function FormularioSistema({
       status,
       valorMensal: parseFloat(valorMensal) || 0,
       observacoes: observacoes.trim(),
+      dadosRegistro: sistema?.dadosRegistro || null,
     });
   };
 
@@ -433,6 +454,17 @@ function FormularioSistema({
         </div>
       </div>
       <div className="flex gap-2 justify-end pt-2">
+        {!sistema && (
+          <Button
+            type="button"
+            size="sm"
+            className="text-xs bg-green-600 hover:bg-green-700"
+            onClick={enviarWhatsApp}
+          >
+            <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+            Enviar Link via WhatsApp
+          </Button>
+        )}
         <Button
           type="button"
           variant="ghost"
@@ -717,6 +749,7 @@ function PainelAdminConteudo() {
                     </div>
                     <div className="flex items-center gap-3 text-[11px] text-gray-400">
                       {s.cidade && <span>{s.cidade}</span>}
+                      {s.dadosRegistro && <span className="text-emerald-600 font-semibold">Cadastrado</span>}
                       <span>Vence: {formatarData(s.dataVencimento)}</span>
                       {s.status === "ATIVO" && (
                         <span className={dias <= 7 ? "text-amber-600 font-semibold" : "text-emerald-600"}>
@@ -779,6 +812,7 @@ function PainelAdminConteudo() {
                         <td className="py-3 px-4">
                           <p className="font-semibold text-gray-900">{s.empresa}</p>
                           {s.cidade && <p className="text-[11px] text-gray-400">{s.cidade}</p>}
+                          {s.dadosRegistro && <p className="text-[10px] text-emerald-600 font-medium">Cadastrado</p>}
                         </td>
                         <td className="py-3 px-4 text-gray-600">{s.responsavel}</td>
                         <td className="py-3 px-4">
@@ -965,6 +999,45 @@ function PainelAdminConteudo() {
                     <div>
                       <p className="text-[10px] text-gray-400 uppercase font-medium mb-1">Observacoes</p>
                       <p className="text-sm text-gray-500">{dialogDetalhe.observacoes}</p>
+                    </div>
+                  </>
+                )}
+                {dialogDetalhe.dadosRegistro && (
+                  <>
+                    <Separator />
+                    <div>
+                      <p className="text-[10px] text-emerald-600 uppercase font-semibold mb-2 flex items-center gap-1">
+                        <Check className="h-3 w-3" />
+                        Dados do Cadastro do Cliente
+                      </p>
+                      <div className="grid grid-cols-2 gap-2 text-sm bg-emerald-50/50 rounded-lg p-3 border border-emerald-100">
+                        <div>
+                          <p className="text-[10px] text-gray-400">Usuario criado</p>
+                          <p className="text-gray-700 font-medium">{dialogDetalhe.dadosRegistro.usuario}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-gray-400">Empresa cadastrada</p>
+                          <p className="text-gray-700 font-medium">{dialogDetalhe.dadosRegistro.nomeEmpresa}</p>
+                        </div>
+                        {dialogDetalhe.dadosRegistro.telefone && (
+                          <div>
+                            <p className="text-[10px] text-gray-400">Telefone</p>
+                            <p className="text-gray-700">{dialogDetalhe.dadosRegistro.telefone}</p>
+                          </div>
+                        )}
+                        {dialogDetalhe.dadosRegistro.email && (
+                          <div>
+                            <p className="text-[10px] text-gray-400">E-mail</p>
+                            <p className="text-gray-700">{dialogDetalhe.dadosRegistro.email}</p>
+                          </div>
+                        )}
+                        <div className="col-span-2">
+                          <p className="text-[10px] text-gray-400">Registrado em</p>
+                          <p className="text-gray-700 text-xs">
+                            {new Date(dialogDetalhe.dadosRegistro.registradoEm).toLocaleString("pt-BR")}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </>
                 )}

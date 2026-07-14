@@ -27,6 +27,14 @@ function salvar(chave: string, valor: unknown): void {
 export type StatusSistema = "ATIVO" | "EXPIRADO" | "CANCELADO" | "TRIAL";
 export type PlanoSistema = "BASIC" | "PRO" | "PREMIUM";
 
+export interface DadosRegistroCliente {
+  usuario: string;
+  nomeEmpresa: string;
+  telefone: string;
+  email: string;
+  registradoEm: string;
+}
+
 export interface SistemaCliente {
   id: string;
   empresa: string;
@@ -41,6 +49,7 @@ export interface SistemaCliente {
   valorMensal: number;
   observacoes: string;
   criadoEm: string;
+  dadosRegistro: DadosRegistroCliente | null;
 }
 
 interface AdminState {
@@ -54,6 +63,7 @@ interface AdminState {
   editarSistema: (id: string, dados: Partial<SistemaCliente>) => void;
   removerSistema: (id: string) => void;
   alterarStatus: (id: string, status: StatusSistema) => void;
+  salvarRegistroCliente: (dados: DadosRegistroCliente) => void;
 }
 
 export const useAdminStore = create<AdminState>((set, get) => ({
@@ -97,6 +107,48 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     );
     salvar("sistemas", novaLista);
     set({ sistemas: novaLista });
+  },
+
+  salvarRegistroCliente: (dados) => {
+    // Procura sistema pelo telefone ou empresa
+    const sistemas = get().sistemas;
+    let atualizado = false;
+    const novaLista = sistemas.map((s) => {
+      if (
+        !s.dadosRegistro &&
+        (s.telefone === dados.telefone ||
+          s.empresa.toLowerCase() === dados.nomeEmpresa.toLowerCase())
+      ) {
+        atualizado = true;
+        return { ...s, dadosRegistro: dados, responsavel: s.responsavel || dados.usuario };
+      }
+      return s;
+    });
+    if (atualizado) {
+      salvar("sistemas", novaLista);
+      set({ sistemas: novaLista });
+    } else {
+      // Se nao encontrou, cria um novo registro pendente
+      const novo: SistemaCliente = {
+        id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        empresa: dados.nomeEmpresa,
+        responsavel: dados.usuario,
+        telefone: dados.telefone,
+        email: dados.email,
+        cidade: "",
+        dataInstalacao: new Date().toISOString().split("T")[0],
+        dataVencimento: "",
+        status: "TRIAL",
+        plano: "PRO",
+        valorMensal: 0,
+        observacoes: "Registro automatico via link",
+        criadoEm: dados.registradoEm,
+        dadosRegistro: dados,
+      };
+      const listaComNovo = [novo, ...get().sistemas];
+      salvar("sistemas", listaComNovo);
+      set({ sistemas: listaComNovo });
+    }
   },
 }));
 
