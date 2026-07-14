@@ -52,6 +52,7 @@ export interface DadosRegistroCliente {
   nomeEmpresa: string;
   telefone: string;
   email: string;
+  senha: string;
   registradoEm: string;
 }
 

@@ -137,6 +137,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
         nomeEmpresa: nomeEmpresa.trim(),
         telefone: telefone.trim(),
         email: email.trim(),
+        senha: senha,
         registradoEm: new Date().toISOString(),
       });
     } catch {

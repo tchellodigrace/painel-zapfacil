@@ -56,6 +56,7 @@ import {
   Bot,
   Mail,
   ArrowRight,
+  Copy,
 } from "lucide-react";
 import {
   Tooltip,
@@ -2477,6 +2478,90 @@ function PainelAdminConteudo() {
                     </div>
                   </>
                 )}
+
+                {/* Credenciais de Acesso do Cliente */}
+                <div className="bg-gray-900 rounded-xl p-4 text-white">
+                  <p className="text-[10px] text-gray-400 uppercase font-semibold mb-3 flex items-center gap-1.5">
+                    <KeyRound className="h-3.5 w-3.5" />
+                    Credenciais de Acesso do Cliente
+                  </p>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-[10px] text-gray-500 mb-1">E-mail de login (usuario)</p>
+                      <div className="bg-white/10 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+                        <p className="text-sm font-mono font-semibold text-white truncate">
+                          {dialogDetalhe.dadosRegistro?.email || dialogDetalhe.email || "-"}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const emailCopiar = dialogDetalhe.dadosRegistro?.email || dialogDetalhe.email || "";
+                            navigator.clipboard.writeText(emailCopiar);
+                            toast.success("E-mail copiado!");
+                          }}
+                          className="shrink-0 text-gray-400 hover:text-white transition-colors"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-gray-500 mb-1">Senha</p>
+                      <div className="bg-white/10 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+                        <p className="text-sm font-mono font-semibold text-white">
+                          {dialogDetalhe.dadosRegistro?.senha || "Nao registrada (cadastro antigo)"}
+                        </p>
+                        {dialogDetalhe.dadosRegistro?.senha && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(dialogDetalhe.dadosRegistro!.senha);
+                              toast.success("Senha copiada!");
+                            }}
+                            className="shrink-0 text-gray-400 hover:text-white transition-colors"
+                          >
+                            <Copy className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2">
+                      <span className="text-[10px] text-gray-500">Link de acesso:</span>
+                      <span className="text-[11px] text-gray-300 font-mono truncate flex-1">https://j1ewd51wcs60-d.space-z.ai/</span>
+                    </div>
+                    {dialogDetalhe.dadosRegistro?.senha && (
+                      <Button
+                        className="w-full h-9 bg-emerald-600 hover:bg-emerald-700 text-xs font-medium rounded-lg"
+                        onClick={() => {
+                          const emailLogin = dialogDetalhe.dadosRegistro?.email || dialogDetalhe.email || "";
+                          const senhaCliente = dialogDetalhe.dadosRegistro?.senha || "";
+                          const tel = dialogDetalhe.dadosRegistro?.telefone || dialogDetalhe.telefone || "";
+                          if (!tel) { toast.error("Sem telefone cadastrado."); return; }
+                          const telLimpo = tel.replace(/\D/g, "");
+                          const numero = telLimpo.startsWith("55") ? telLimpo : "55" + telLimpo;
+                          const nomeCliente = dialogDetalhe.dadosRegistro?.usuario || dialogDetalhe.responsavel;
+                          const msg = encodeURIComponent(
+                            "Ola " + nomeCliente + "! Aqui e o suporte do ZapFacil Pro.\n\n" +
+                            "Segue seus dados de acesso ao sistema:\n\n" +
+                            "Link: https://j1ewd51wcs60-d.space-z.ai/\n" +
+                            "Login (e-mail): " + emailLogin + "\n" +
+                            "Senha: " + senhaCliente + "\n\n" +
+                            "Salve esses dados! Qualquer duvida, estou a disposicao."
+                          );
+                          window.open("https://wa.me/" + numero + "?text=" + msg, "_blank");
+                        }}
+                      >
+                        <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+                        Enviar credenciais por WhatsApp
+                      </Button>
+                    )}
+                    {!dialogDetalhe.dadosRegistro?.senha && (
+                      <p className="text-[10px] text-amber-400 text-center">
+                        A senha nao foi salva no cadastro. Clientes cadastrados antes da atualizacao nao tem a senha registrada.
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="flex gap-2">
                 {dialogDetalhe.telefone && (
