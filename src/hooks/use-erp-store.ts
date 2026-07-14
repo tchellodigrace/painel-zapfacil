@@ -16,6 +16,26 @@ import type {
 } from "@/types";
 
 const STORAGE_PREFIX = "zapfacil_";
+const DEFAULT_LOGO_URL = "/logo.png";
+
+// Cache da logo padrão em base64
+let cachedDefaultLogo: string | null = null;
+
+async function obterLogoDefault(): Promise<string> {
+  if (cachedDefaultLogo) return cachedDefaultLogo;
+  try {
+    const res = await fetch(DEFAULT_LOGO_URL);
+    const blob = await res.blob();
+    cachedDefaultLogo = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
+    });
+    return cachedDefaultLogo || "";
+  } catch {
+    return "";
+  }
+}
 
 function carregar<T>(chave: string, padrao: T): T {
   if (typeof window === "undefined") return padrao;
@@ -92,6 +112,7 @@ interface ERPState {
   exportarBackup: () => string;
   importarBackup: (json: string) => boolean;
   obterChavePixAtiva: () => ChavePix | undefined;
+  inicializarLogoPadrao: () => Promise<void>;
 }
 
 export const useERPStore = create<ERPState>((set, get) => ({
@@ -351,5 +372,15 @@ export const useERPStore = create<ERPState>((set, get) => ({
   },
   obterChavePixAtiva: () => {
     return get().chavesPix.find((c) => c.ativa);
+  },
+  inicializarLogoPadrao: async () => {
+    const empresaAtual = get().empresa;
+    if (empresaAtual.logoBase64) return; // Já tem logo
+    const base64 = await obterLogoDefault();
+    if (base64) {
+      const nova = { ...empresaAtual, logoBase64: base64 };
+      salvar("empresa", nova);
+      set({ empresa: nova });
+    }
   },
 }));
