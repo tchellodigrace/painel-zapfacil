@@ -155,7 +155,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
   if (temCredenciais === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <img src="/logo-empresa.png" alt="" className="h-12 w-auto object-contain animate-pulse opacity-40" />
+        <img src="/logo-empresa.png" alt="" className="h-24 w-auto object-contain animate-pulse opacity-40" />
       </div>
     );
   }
@@ -174,7 +174,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
             <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
           </div>
           <div className="relative z-10">
-            <img src="/logo-empresa.png" alt="Logo" className="h-10 w-auto object-contain brightness-0 invert" />
+            <img src="/logo-empresa.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
           </div>
           <div className="relative z-10 space-y-6">
             <h2 className="text-3xl font-bold text-white leading-tight">
@@ -207,7 +207,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
           <div className="w-full max-w-md space-y-8">
             {/* Header mobile */}
             <div className="lg:hidden text-center space-y-4">
-              <img src="/logo-empresa.png" alt="Logo" className="h-12 w-auto mx-auto object-contain" />
+              <img src="/logo-empresa.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
               <div>
                 <h2 className="text-xl font-bold text-gray-900">Criar sua conta</h2>
                 <p className="text-sm text-gray-500 mt-1">Configure o sistema em poucos passos</p>
@@ -449,7 +449,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
           <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
         </div>
         <div className="relative z-10">
-          <img src="/logo-empresa.png" alt="Logo" className="h-10 w-auto object-contain brightness-0 invert" />
+          <img src="/logo-empresa.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
         </div>
         <div className="relative z-10 space-y-4">
           <h2 className="text-3xl font-bold text-white leading-tight">
@@ -469,7 +469,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-sm space-y-8">
           <div className="lg:hidden text-center space-y-4">
-            <img src="/logo-empresa.png" alt="Logo" className="h-12 w-auto mx-auto object-contain" />
+            <img src="/logo-empresa.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
             <h2 className="text-xl font-bold text-gray-900">Bem-vindo de volta</h2>
           </div>
 
