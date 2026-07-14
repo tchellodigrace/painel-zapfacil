@@ -1742,27 +1742,27 @@ function DialogEmailRecuperacaoForm() {
   );
 }
 
-// =============================================
-// PAINEL ADMIN PRINCIPAL COM ABAS
-// =============================================
-type AbaAdmin = "sistemas" | "cobrancas" | "recuperacoes" | "zapbot";
 
-function PainelAdminConteudo() {
-  const { sistemas, cobrancas, pedidosRecuperacao, adminCredenciais, dadosGestor, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos } =
-    useAdminStore();
-  const [abaAtiva, setAbaAtiva] = useState<AbaAdmin>("sistemas");
-  const [busca, setBusca] = useState("");
-  const [filtroStatus, setFiltroStatus] = useState<string>("TODOS");
-  const [filtroPlano, setFiltroPlano] = useState<string>("TODOS");
-  const [dialogForm, setDialogForm] = useState<SistemaCliente | null>(null);
-  const [dialogNovo, setDialogNovo] = useState(false);
-  const [dialogDetalhe, setDialogDetalhe] = useState<SistemaCliente | null>(null);
-  const [confirmaRemover, setConfirmaRemover] = useState<string | null>(null);
-  const [dialogTrocarSenha, setDialogTrocarSenha] = useState(false);
-  const [dialogEmailRecuperacao, setDialogEmailRecuperacao] = useState(false);
-  const [mostrarCredenciaisAdmin, setMostrarCredenciaisAdmin] = useState(false);
+// =============================================
+// SECAO SISTEMAS (aba principal)
+// =============================================
+function SecaoSistemas({
+  onNovo,
+  onVerDetalhe,
+  onEditar,
+  onRemover,
+  onMudarAba,
+  onWhatsApp,
+}: {
+  onNovo: () => void;
+  onVerDetalhe: (s: SistemaCliente) => void;
+  onEditar: (s: SistemaCliente) => void;
+  onRemover: (id: string) => void;
+  onMudarAba: (aba: AbaAdmin) => void;
+  onWhatsApp: (tel: string) => void;
+}) {
+  const { sistemas, getCobrancasBySistema } = useAdminStore();
 
-  // Estatísticas
   const stats = useMemo(() => {
     const ativos = sistemas.filter((s) => s.status === "ATIVO").length;
     const trials = sistemas.filter((s) => s.status === "TRIAL").length;
@@ -1776,7 +1776,6 @@ function PainelAdminConteudo() {
     return { ativos, trials, expirados, receitaMensal, vencendo, total: sistemas.length };
   }, [sistemas]);
 
-  // Filtragem
   const sistemasFiltrados = useMemo(() => {
     let lista = sistemas;
     if (filtroStatus !== "TODOS") lista = lista.filter((s) => s.status === filtroStatus);
@@ -1795,235 +1794,8 @@ function PainelAdminConteudo() {
     return lista;
   }, [sistemas, filtroStatus, filtroPlano, busca]);
 
-  const handleSalvarNovo = useCallback(
-    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
-      adicionarSistema(dados);
-      setDialogNovo(false);
-      toast.success("Sistema cadastrado!");
-    },
-    [adicionarSistema]
-  );
-
-  const handleSalvarEdicao = useCallback(
-    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
-      if (!dialogForm) return;
-      editarSistema(dialogForm.id, dados);
-      setDialogForm(null);
-      toast.success("Sistema atualizado!");
-    },
-    [dialogForm, editarSistema]
-  );
-
-  const handleRemover = useCallback(
-    (id: string) => {
-      removerSistema(id);
-      setConfirmaRemover(null);
-      toast.success("Sistema removido.");
-    },
-    [removerSistema]
-  );
-
-  const handleWhatsApp = (telefone: string) => {
-    const telLimpo = telefone.replace(/\D/g, "");
-    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
-    window.open(`https://wa.me/${numero}`, "_blank");
-  };
-
-  const handleLogout = () => {
-    sessionStorage.removeItem("zapfacil_admin_session");
-    window.location.reload();
-  };
-
-  const getStatusInfo = (status: StatusSistema) =>
-    STATUS_SISTEMA.find((s) => s.valor === status) || STATUS_SISTEMA[3];
-  const getPlanoInfo = (plano: PlanoSistema) =>
-    PLANOS.find((p) => p.valor === plano) || PLANOS[0];
-  const getTipoLicencaInfo = (tipo: TipoLicenca) =>
-    TIPOS_LICENCA.find((t) => t.valor === tipo) || TIPOS_LICENCA[0];
-
-  // Cobranças pendentes/atrasadas para badge
-  const cobrancasEmAberto = useMemo(
-    () => cobrancas.filter((c) => c.status === "PENDENTE" || c.status === "ATRASADO").length,
-    [cobrancas]
-  );
-
-  // Pedidos de recuperacao pendentes
-  const pedidosPendentes = useMemo(
-    () => pedidosRecuperacao.filter((p) => p.status === "PENDENTE").length,
-    [pedidosRecuperacao]
-  );
-
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
-          <div className="flex items-center">
-            <img
-              src="/logo-admin.png"
-              alt="Logo Admin"
-              className="h-11 w-auto object-contain"
-              priority
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Dados do admin logado - estilo cliente */}
-            <button
-              type="button"
-              onClick={() => setMostrarCredenciaisAdmin(!mostrarCredenciaisAdmin)}
-              className="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
-            >
-              <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold">
-                {(dadosGestor?.nome || adminCredenciais?.usuario || "A").charAt(0).toUpperCase()}
-              </div>
-              <div className="text-left hidden md:block">
-                <p className="text-xs font-semibold text-gray-800 leading-tight">
-                  {dadosGestor?.nome || adminCredenciais?.usuario || "Admin"}
-                </p>
-                <p className="text-[10px] text-gray-400 leading-tight flex items-center gap-1">
-                  {mostrarCredenciaisAdmin ? (
-                    <span className="font-mono text-gray-500">
-                      {adminCredenciais?.usuario} / {adminCredenciais?.senha}
-                    </span>
-                  ) : (
-                    <><Mail className="h-2.5 w-2.5 shrink-0" />{dadosGestor?.email || adminCredenciais?.usuario}</>
-                  )}
-                </p>
-              </div>
-            </button>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-gray-600 hover:bg-gray-100"
-                    onClick={() => setDialogTrocarSenha(true)}
-                  >
-                    <KeyRound className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Alterar Senha</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-blue-500 hover:bg-blue-50"
-                    onClick={() => setDialogEmailRecuperacao(true)}
-                  >
-                    <Mail className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>E-mail de Recuperacao</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-red-500 hover:bg-red-50"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Sair</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
-        {/* Abas de navegação */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 bg-white rounded-xl p-1 border border-gray-200 shadow-sm">
-          <button
-            onClick={() => setAbaAtiva("sistemas")}
-            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              abaAtiva === "sistemas"
-                ? "bg-emerald-600 text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <Monitor className="h-4 w-4 shrink-0" />
-            <span className="truncate text-xs sm:text-sm">Sistemas</span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
-              abaAtiva === "sistemas"
-                ? "bg-white/20 text-white"
-                : "bg-gray-100 text-gray-500"
-            }`}>
-              {sistemas.length}
-            </span>
-          </button>
-          <button
-            onClick={() => setAbaAtiva("cobrancas")}
-            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              abaAtiva === "cobrancas"
-                ? "bg-emerald-600 text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <Receipt className="h-4 w-4 shrink-0" />
-            <span className="truncate text-xs sm:text-sm">Cobrancas</span>
-            {cobrancasEmAberto > 0 && (
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
-                abaAtiva === "cobrancas"
-                  ? "bg-white/20 text-white"
-                  : "bg-red-100 text-red-600"
-              }`}>
-                {cobrancasEmAberto}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => setAbaAtiva("recuperacoes")}
-            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              abaAtiva === "recuperacoes"
-                ? "bg-amber-500 text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <KeyRound className="h-4 w-4 shrink-0" />
-            <span className="truncate text-xs sm:text-sm">Recuperacoes</span>
-            {pedidosPendentes > 0 && (
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
-                abaAtiva === "recuperacoes"
-                  ? "bg-white/20 text-white"
-                  : "bg-amber-100 text-amber-600"
-              }`}>
-                {pedidosPendentes}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => setAbaAtiva("zapbot")}
-            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              abaAtiva === "zapbot"
-                ? "bg-purple-600 text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <Bot className="h-4 w-4 shrink-0" />
-            <span className="truncate text-xs sm:text-sm">ZapBot</span>
-          </button>
-        </div>
-
-        {/* Conteúdo da aba ativa */}
-        <div className="w-full">
-        {abaAtiva === "cobrancas" ? (
-          <PainelCobranças />
-        ) : abaAtiva === "recuperacoes" ? (
-          <SecaoRecuperacoes />
-        ) : abaAtiva === "zapbot" ? (
-          <PainelZapBot />
-        ) : (
-          <div className="space-y-6">
+    <div className="space-y-6">
             {/* Cards de estatísticas - Sistemas */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               <Card className="border-0 shadow-sm">
@@ -2363,9 +2135,263 @@ function PainelAdminConteudo() {
             <div className="text-center text-[10px] text-gray-400 pb-4">
               {sistemasFiltrados.length} de {sistemas.length} sistema{sistemas.length !== 1 ? "s" : ""}
             </div>
+    </div>
+  );
+}
+
+// =============================================
+// PAINEL ADMIN PRINCIPAL COM ABAS
+// =============================================
+type AbaAdmin = "sistemas" | "cobrancas" | "recuperacoes" | "zapbot";
+
+function PainelAdminConteudo() {
+  const { sistemas, cobrancas, pedidosRecuperacao, adminCredenciais, dadosGestor, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos } =
+    useAdminStore();
+  const [abaAtiva, setAbaAtiva] = useState<AbaAdmin>("sistemas");
+  const [dialogForm, setDialogForm] = useState<SistemaCliente | null>(null);
+  const [dialogNovo, setDialogNovo] = useState(false);
+  const [dialogDetalhe, setDialogDetalhe] = useState<SistemaCliente | null>(null);
+  const [confirmaRemover, setConfirmaRemover] = useState<string | null>(null);
+  const [dialogTrocarSenha, setDialogTrocarSenha] = useState(false);
+  const [dialogEmailRecuperacao, setDialogEmailRecuperacao] = useState(false);
+  const [mostrarCredenciaisAdmin, setMostrarCredenciaisAdmin] = useState(false);
+
+const handleSalvarNovo = useCallback(
+    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
+      adicionarSistema(dados);
+      setDialogNovo(false);
+      toast.success("Sistema cadastrado!");
+    },
+    [adicionarSistema]
+  );
+
+  const handleSalvarEdicao = useCallback(
+    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
+      if (!dialogForm) return;
+      editarSistema(dialogForm.id, dados);
+      setDialogForm(null);
+      toast.success("Sistema atualizado!");
+    },
+    [dialogForm, editarSistema]
+  );
+
+  const handleRemover = useCallback(
+    (id: string) => {
+      removerSistema(id);
+      setConfirmaRemover(null);
+      toast.success("Sistema removido.");
+    },
+    [removerSistema]
+  );
+
+  const handleWhatsApp = (telefone: string) => {
+    const telLimpo = telefone.replace(/\D/g, "");
+    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+    window.open(`https://wa.me/${numero}`, "_blank");
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("zapfacil_admin_session");
+    window.location.reload();
+  };
+
+  const getStatusInfo = (status: StatusSistema) =>
+    STATUS_SISTEMA.find((s) => s.valor === status) || STATUS_SISTEMA[3];
+  const getPlanoInfo = (plano: PlanoSistema) =>
+    PLANOS.find((p) => p.valor === plano) || PLANOS[0];
+  const getTipoLicencaInfo = (tipo: TipoLicenca) =>
+    TIPOS_LICENCA.find((t) => t.valor === tipo) || TIPOS_LICENCA[0];
+
+  // Cobranças pendentes/atrasadas para badge
+  const cobrancasEmAberto = useMemo(
+    () => cobrancas.filter((c) => c.status === "PENDENTE" || c.status === "ATRASADO").length,
+    [cobrancas]
+  );
+
+  // Pedidos de recuperacao pendentes
+  const pedidosPendentes = useMemo(
+    () => pedidosRecuperacao.filter((p) => p.status === "PENDENTE").length,
+    [pedidosRecuperacao]
+  );
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
+          <div className="flex items-center">
+            <img
+              src="/logo-admin.png"
+              alt="Logo Admin"
+              className="h-11 w-auto object-contain"
+              priority
+            />
           </div>
-        )}
+          <div className="flex items-center gap-2">
+            {/* Dados do admin logado - estilo cliente */}
+            <button
+              type="button"
+              onClick={() => setMostrarCredenciaisAdmin(!mostrarCredenciaisAdmin)}
+              className="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
+            >
+              <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold">
+                {(dadosGestor?.nome || adminCredenciais?.usuario || "A").charAt(0).toUpperCase()}
+              </div>
+              <div className="text-left hidden md:block">
+                <p className="text-xs font-semibold text-gray-800 leading-tight">
+                  {dadosGestor?.nome || adminCredenciais?.usuario || "Admin"}
+                </p>
+                <p className="text-[10px] text-gray-400 leading-tight flex items-center gap-1">
+                  {mostrarCredenciaisAdmin ? (
+                    <span className="font-mono text-gray-500">
+                      {adminCredenciais?.usuario} / {adminCredenciais?.senha}
+                    </span>
+                  ) : (
+                    <><Mail className="h-2.5 w-2.5 shrink-0" />{dadosGestor?.email || adminCredenciais?.usuario}</>
+                  )}
+                </p>
+              </div>
+            </button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-gray-600 hover:bg-gray-100"
+                    onClick={() => setDialogTrocarSenha(true)}
+                  >
+                    <KeyRound className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Alterar Senha</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-blue-500 hover:bg-blue-50"
+                    onClick={() => setDialogEmailRecuperacao(true)}
+                  >
+                    <Mail className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>E-mail de Recuperacao</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-red-500 hover:bg-red-50"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Sair</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
+      </header>
+
+      <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
+        {/* Abas de navegação */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 bg-white rounded-xl p-1 border border-gray-200 shadow-sm">
+          <button
+            onClick={() => setAbaAtiva("sistemas")}
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "sistemas"
+                ? "bg-emerald-600 text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Monitor className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">Sistemas</span>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
+              abaAtiva === "sistemas"
+                ? "bg-white/20 text-white"
+                : "bg-gray-100 text-gray-500"
+            }`}>
+              {sistemas.length}
+            </span>
+          </button>
+          <button
+            onClick={() => setAbaAtiva("cobrancas")}
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "cobrancas"
+                ? "bg-emerald-600 text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Receipt className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">Cobrancas</span>
+            {cobrancasEmAberto > 0 && (
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
+                abaAtiva === "cobrancas"
+                  ? "bg-white/20 text-white"
+                  : "bg-red-100 text-red-600"
+              }`}>
+                {cobrancasEmAberto}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setAbaAtiva("recuperacoes")}
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "recuperacoes"
+                ? "bg-amber-500 text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <KeyRound className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">Recuperacoes</span>
+            {pedidosPendentes > 0 && (
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
+                abaAtiva === "recuperacoes"
+                  ? "bg-white/20 text-white"
+                  : "bg-amber-100 text-amber-600"
+              }`}>
+                {pedidosPendentes}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setAbaAtiva("zapbot")}
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "zapbot"
+                ? "bg-purple-600 text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Bot className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">ZapBot</span>
+          </button>
+        </div>
+
+        {/* Conteúdo da aba ativa */}
+        {abaAtiva === "cobrancas" ? (
+          <PainelCobranças />
+        ) : abaAtiva === "recuperacoes" ? (
+          <SecaoRecuperacoes />
+        ) : abaAtiva === "zapbot" ? (
+          <PainelZapBot />
+        ) : (
+          <SecaoSistemas
+            onNovo={() => setDialogNovo(true)}
+            onVerDetalhe={setDialogDetalhe}
+            onEditar={setDialogForm}
+            onRemover={setConfirmaRemover}
+            onMudarAba={setAbaAtiva}
+            onWhatsApp={handleWhatsApp}
+          />
+        )}
       </main>
 
       {/* Dialog Novo Sistema */}
