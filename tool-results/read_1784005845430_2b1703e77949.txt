@@ -1,0 +1,920 @@
+     1→"use client";
+     2→
+     3→import { useState, useMemo } from "react";
+     4→import { useZapBotStore } from "@/hooks/use-zapbot-store";
+     5→import { useERPStore } from "@/hooks/use-erp-store";
+     6→import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+     7→import { Button } from "@/components/ui/button";
+     8→import { Input } from "@/components/ui/input";
+     9→import { Label } from "@/components/ui/label";
+    10→import { Textarea } from "@/components/ui/textarea";
+    11→import { Badge } from "@/components/ui/badge";
+    12→import { Switch } from "@/components/ui/switch";
+    13→import { Separator } from "@/components/ui/separator";
+    14→import {
+    15→  Dialog,
+    16→  DialogContent,
+    17→  DialogHeader,
+    18→  DialogTitle,
+    19→} from "@/components/ui/dialog";
+    20→import {
+    21→  Bot,
+    22→  Wifi,
+    23→  WifiOff,
+    24→  Plus,
+    25→  Trash2,
+    26→  Pencil,
+    27→  Power,
+    28→  PowerOff,
+    29→  MessageSquare,
+    30→  Settings,
+    31→  List,
+    32→  Send,
+    33→  Zap,
+    34→  Eye,
+    35→  EyeOff,
+    36→  Copy,
+    37→  RefreshCw,
+    38→  Clock,
+    39→  Globe,
+    40→  Key,
+    41→  Server,
+    42→  CheckCircle2,
+    43→  AlertCircle,
+    44→  XCircle,
+    45→  MousePointerClick,
+    46→} from "lucide-react";
+    47→import { toast } from "sonner";
+    48→
+    49→function gerarId() {
+    50→  return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    51→}
+    52→
+    53→// =============================================
+    54→// Sub-componentes
+    55→// =============================================
+    56→
+    57→function SecaoConexao() {
+    58→  const {
+    59→    apiUrl, instanceName, apiKey, conectado,
+    60→    configurarConexao, setConectado,
+    61→  } = useZapBotStore();
+    62→  const [editUrl, setEditUrl] = useState(apiUrl);
+    63→  const [editInstance, setEditInstance] = useState(instanceName);
+    64→  const [editKey, setEditKey] = useState(apiKey);
+    65→  const [mostrarKey, setMostrarKey] = useState(false);
+    66→  const [salvo, setSalvo] = useState(!!apiUrl);
+    67→
+    68→  const handleSalvar = () => {
+    69→    if (!editUrl.trim() || !editInstance.trim()) {
+    70→      toast.error("Preencha a URL e o nome da instancia.");
+    71→      return;
+    72→    }
+    73→    configurarConexao(
+    74→      editUrl.trim().replace(/\/$/, ""),
+    75→      editInstance.trim(),
+    76→      editKey.trim()
+    77→    );
+    78→    setSalvo(true);
+    79→    toast.success("Configuracao salva!");
+    80→  };
+    81→
+    82→  const handleConectar = async () => {
+    83→    if (!apiUrl || !instanceName) {
+    84→      toast.error("Configure a conexao primeiro.");
+    85→      return;
+    86→    }
+    87→    toast.loading("Conectando ao WhatsApp...");
+    88→    try {
+    89→      const resp = await fetch(
+    90→        `${apiUrl}/instance/connect/${instanceName}?apikey=${apiKey}`,
+    91→        { method: "POST" }
+    92→      );
+    93→      const data = await resp.json();
+    94→      if (data.code === 200 || data.connected) {
+    95→        setConectado(true);
+    96→        toast.dismiss();
+    97→        toast.success("WhatsApp conectado com sucesso!");
+    98→      } else if (data.base64) {
+    99→        toast.dismiss();
+   100→        toast.info("Escaneie o QR Code no WhatsApp para conectar.");
+   101→        setConectado(true);
+   102→      } else {
+   103→        setConectado(false);
+   104→        toast.dismiss();
+   105→        toast.error("Erro ao conectar. Verifique os dados.");
+   106→      }
+   107→    } catch {
+   108→      // Demo mode - conexao simulada
+   109→      toast.dismiss();
+   110→      setConectado(true);
+   111→      toast.success("Modo demonstracao ativo! (Conexao simulada)");
+   112→    }
+   113→  };
+   114→
+   115→  const handleDesconectar = async () => {
+   116→    try {
+   117→      await fetch(
+   118→        `${apiUrl}/instance/logout/${instanceName}?apikey=${apiKey}`,
+   119→        { method: "DELETE" }
+   120→      );
+   121→    } catch { /* demo */ }
+   122→    setConectado(false);
+   123→    toast.info("WhatsApp desconectado.");
+   124→  };
+   125→
+   126→  return (
+   127→    <Card className="border-2 border-dashed border-emerald-200 dark:border-emerald-800">
+   128→      <CardHeader className="pb-3">
+   129→        <CardTitle className="flex items-center gap-2 text-sm">
+   130→          <Server className="h-4 w-4 text-emerald-600" />
+   131→          Conexao Evolution API
+   132→          {conectado ? (
+   133→            <Badge className="ml-auto bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 text-[10px]">
+   134→              <Wifi className="h-3 w-3 mr-1" /> Online
+   135→            </Badge>
+   136→          ) : (
+   137→            <Badge variant="secondary" className="ml-auto text-[10px]">
+   138→              <WifiOff className="h-3 w-3 mr-1" /> Offline
+   139→            </Badge>
+   140→          )}
+   141→        </CardTitle>
+   142→      </CardHeader>
+   143→      <CardContent className="space-y-3">
+   144→        {!salvo ? (
+   145→          <>
+   146→            <div className="space-y-2">
+   147→              <Label className="text-xs font-semibold flex items-center gap-1.5">
+   148→                <Globe className="h-3 w-3" /> URL da API
+   149→              </Label>
+   150→              <Input
+   151→                placeholder="https://seu-servidor.com:8080"
+   152→                value={editUrl}
+   153→                onChange={(e) => setEditUrl(e.target.value)}
+   154→                className="text-xs h-9"
+   155→              />
+   156→              <p className="text-[10px] text-muted-foreground">
+   157→                URL do servidor onde a Evolution API esta rodando
+   158→              </p>
+   159→            </div>
+   160→            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+   161→              <div className="space-y-1.5">
+   162→                <Label className="text-xs font-semibold flex items-center gap-1.5">
+   163→                  <Bot className="h-3 w-3" /> Nome da Instancia
+   164→                </Label>
+   165→                <Input
+   166→                  placeholder="minha-empresa"
+   167→                  value={editInstance}
+   168→                  onChange={(e) => setEditInstance(e.target.value)}
+   169→                  className="text-xs h-9"
+   170→                />
+   171→              </div>
+   172→              <div className="space-y-1.5">
+   173→                <Label className="text-xs font-semibold flex items-center gap-1.5">
+   174→                  <Key className="h-3 w-3" /> API Key
+   175→                </Label>
+   176→                <div className="relative">
+   177→                  <Input
+   178→                    type={mostrarKey ? "text" : "password"}
+   179→                    placeholder="Sua API Key"
+   180→                    value={editKey}
+   181→                    onChange={(e) => setEditKey(e.target.value)}
+   182→                    className="text-xs h-9 pr-9"
+   183→                  />
+   184→                  <button
+   185→                    type="button"
+   186→                    onClick={() => setMostrarKey(!mostrarKey)}
+   187→                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+   188→                  >
+   189→                    {mostrarKey ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+   190→                  </button>
+   191→                </div>
+   192→              </div>
+   193→            </div>
+   194→            <Button
+   195→              className="w-full h-9 bg-emerald-600 hover:bg-emerald-700 text-xs font-bold"
+   196→              onClick={handleSalvar}
+   197→            >
+   198→              <Settings className="h-3.5 w-3.5 mr-1.5" />
+   199→              Salvar Configuracao
+   200→            </Button>
+   201→          </>
+   202→        ) : (
+   203→          <div className="space-y-3">
+   204→            <div className="bg-muted/50 rounded-lg p-3 space-y-1.5">
+   205→              <div className="flex justify-between items-center">
+   206→                <span className="text-[10px] text-muted-foreground uppercase font-bold">URL</span>
+   207→                <Button
+   208→                  variant="ghost"
+   209→                  size="sm"
+   210→                  className="h-6 text-[10px]"
+   211→                  onClick={() => { navigator.clipboard.writeText(apiUrl); toast.success("URL copiada!"); }}
+   212→                >
+   213→                  <Copy className="h-3 w-3 mr-1" /> Copiar
+   214→                </Button>
+   215→              </div>
+   216→              <p className="text-xs font-mono break-all">{apiUrl}</p>
+   217→              <div className="flex gap-4">
+   218→                <div>
+   219→                  <span className="text-[10px] text-muted-foreground uppercase font-bold">Instancia</span>
+   220→                  <p className="text-xs font-mono">{instanceName}</p>
+   221→                </div>
+   222→              </div>
+   223→            </div>
+   224→            <div className="grid grid-cols-2 gap-2">
+   225→              <Button
+   226→                className={`h-10 text-xs font-bold ${conectado ? "bg-red-500 hover:bg-red-600" : "bg-emerald-600 hover:bg-emerald-700"}`}
+   227→                onClick={conectado ? handleDesconectar : handleConectar}
+   228→              >
+   229→                {conectado ? (
+   230→                  <><PowerOff className="h-3.5 w-3.5 mr-1.5" /> Desconectar</>
+   231→                ) : (
+   232→                  <><Power className="h-3.5 w-3.5 mr-1.5" /> Conectar</>
+   233→                )}
+   234→              </Button>
+   235→              <Button
+   236→                variant="outline"
+   237→                className="h-10 text-xs"
+   238→                onClick={() => setSalvo(false)}
+   239→              >
+   240→                <Settings className="h-3.5 w-3.5 mr-1.5" />
+   241→                Editar
+   242→              </Button>
+   243→            </div>
+   244→          </div>
+   245→        )}
+   246→      </CardContent>
+   247→    </Card>
+   248→  );
+   249→}
+   250→
+   251→function SecaoBoasVindas() {
+   252→  const {
+   253→    mensagemBoasVindas, ativarBoasVindas,
+   254→    mensagemForaHorario, ativarForaHorario,
+   255→    horarioInicio, horarioFim,
+   256→    setMensagemBoasVindas, setAtivarBoasVindas,
+   257→    setMensagemForaHorario, setAtivarForaHorario,
+   258→    setHorarioInicio, setHorarioFim,
+   259→  } = useZapBotStore();
+   260→  const { empresa } = useERPStore();
+   261→
+   262→  const preview = mensagemBoasVindas
+   263→    .replace("{empresa}", empresa.nome || "sua empresa")
+   264→    .replace(/\*/g, "")
+   265→    .replace(/_/g, "");
+   266→
+   267→  return (
+   268→    <Card>
+   269→      <CardHeader className="pb-3">
+   270→        <CardTitle className="flex items-center gap-2 text-sm">
+   271→          <MessageSquare className="h-4 w-4 text-emerald-600" />
+   272→          Mensagens Automaticas
+   273→        </CardTitle>
+   274→      </CardHeader>
+   275→      <CardContent className="space-y-4">
+   276→        {/* Boas-vindas */}
+   277→        <div className="space-y-2">
+   278→          <div className="flex items-center justify-between">
+   279→            <Label className="text-xs font-semibold">Mensagem de Boas-vindas</Label>
+   280→            <div className="flex items-center gap-2">
+   281→              <span className="text-[10px] text-muted-foreground">{ativarBoasVindas ? "Ativo" : "Inativo"}</span>
+   282→              <Switch checked={ativarBoasVindas} onCheckedChange={setAtivarBoasVindas} />
+   283→            </div>
+   284→          </div>
+   285→          <Textarea
+   286→            value={mensagemBoasVindas}
+   287→            onChange={(e) => setMensagemBoasVindas(e.target.value)}
+   288→            rows={4}
+   289→            className="text-xs resize-none"
+   290→            disabled={!ativarBoasVindas}
+   291→          />
+   292→          <p className="text-[10px] text-muted-foreground">
+   293→            Use {"{empresa}"} para inserir o nome da empresa automaticamente. Use *texto* para negrito.
+   294→          </p>
+   295→          {/* Preview */}
+   296→          {ativarBoasVindas && (
+   297→            <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
+   298→              <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase mb-1.5">Preview:</p>
+   299→              <p className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-line">{preview}</p>
+   300→            </div>
+   301→          )}
+   302→        </div>
+   303→
+   304→        <Separator />
+   305→
+   306→        {/* Fora de horario */}
+   307→        <div className="space-y-2">
+   308→          <div className="flex items-center justify-between">
+   309→            <Label className="text-xs font-semibold">Mensagem Fora de Horario</Label>
+   310→            <div className="flex items-center gap-2">
+   311→              <span className="text-[10px] text-muted-foreground">{ativarForaHorario ? "Ativo" : "Inativo"}</span>
+   312→              <Switch checked={ativarForaHorario} onCheckedChange={setAtivarForaHorario} />
+   313→            </div>
+   314→          </div>
+   315→          {ativarForaHorario && (
+   316→            <>
+   317→              <div className="grid grid-cols-2 gap-2">
+   318→                <div className="space-y-1">
+   319→                  <Label className="text-[10px] text-muted-foreground flex items-center gap-1">
+   320→                    <Clock className="h-3 w-3" /> Inicio
+   321→                  </Label>
+   322→                  <Input
+   323→                    type="time"
+   324→                    value={horarioInicio}
+   325→                    onChange={(e) => setHorarioInicio(e.target.value)}
+   326→                    className="text-xs h-9"
+   327→                  />
+   328→                </div>
+   329→                <div className="space-y-1">
+   330→                  <Label className="text-[10px] text-muted-foreground flex items-center gap-1">
+   331→                    <Clock className="h-3 w-3" /> Fim
+   332→                  </Label>
+   333→                  <Input
+   334→                    type="time"
+   335→                    value={horarioFim}
+   336→                    onChange={(e) => setHorarioFim(e.target.value)}
+   337→                    className="text-xs h-9"
+   338→                  />
+   339→                </div>
+   340→              </div>
+   341→              <Textarea
+   342→                value={mensagemForaHorario}
+   343→                onChange={(e) => setMensagemForaHorario(e.target.value)}
+   344→                rows={3}
+   345→                className="text-xs resize-none"
+   346→              />
+   347→              <p className="text-[10px] text-muted-foreground">
+   348→                Use {"{inicio}"} e {"{fim}"} para os horarios.
+   349→              </p>
+   350→            </>
+   351→          )}
+   352→        </div>
+   353→      </CardContent>
+   354→    </Card>
+   355→  );
+   356→}
+   357→
+   358→function SecaoRespostas() {
+   359→  const { respostas, adicionarResposta, editarResposta, toggleResposta, removerResposta } = useZapBotStore();
+   360→  const [novoGatilho, setNovoGatilho] = useState("");
+   361→  const [novaResposta, setNovaResposta] = useState("");
+   362→  const [editId, setEditId] = useState<string | null>(null);
+   363→  const [editGatilho, setEditGatilho] = useState("");
+   364→  const [editRespostaVal, setEditRespostaVal] = useState("");
+   365→
+   366→  const handleAdicionar = () => {
+   367→    if (!novoGatilho.trim() || !novaResposta.trim()) {
+   368→      toast.error("Preencha o gatilho e a resposta.");
+   369→      return;
+   370→    }
+   371→    adicionarResposta(novoGatilho, novaResposta);
+   372→    setNovoGatilho("");
+   373→    setNovaResposta("");
+   374→    toast.success("Resposta adicionada!");
+   375→  };
+   376→
+   377→  const handleEditar = (id: string) => {
+   378→    if (!editGatilho.trim() || !editRespostaVal.trim()) return;
+   379→    editarResposta(id, editGatilho, editRespostaVal);
+   380→    setEditId(null);
+   381→    toast.success("Resposta atualizada!");
+   382→  };
+   383→
+   384→  const ativas = useMemo(() => respostas.filter((r) => r.ativo), [respostas]);
+   385→
+   386→  return (
+   387→    <Card>
+   388→      <CardHeader className="pb-3">
+   389→        <CardTitle className="flex items-center gap-2 text-sm">
+   390→          <Zap className="h-4 w-4 text-amber-500" />
+   391→          Respostas Automaticas
+   392→          <Badge variant="secondary" className="ml-auto text-[10px]">
+   393→            {ativas.length} ativa{ativas.length !== 1 ? "s" : ""}
+   394→          </Badge>
+   395→        </CardTitle>
+   396→      </CardHeader>
+   397→      <CardContent className="space-y-3">
+   398→        {/* Form novo */}
+   399→        <div className="space-y-2">
+   400→          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+   401→            <Input
+   402→              placeholder="Gatilho (ex: horario)"
+   403→              value={novoGatilho}
+   404→              onChange={(e) => setNovoGatilho(e.target.value)}
+   405→              className="text-xs h-9 sm:col-span-1"
+   406→              onKeyDown={(e) => e.key === "Enter" && handleAdicionar()}
+   407→            />
+   408→            <Input
+   409→              placeholder="Resposta automatica..."
+   410→              value={novaResposta}
+   411→              onChange={(e) => setNovaResposta(e.target.value)}
+   412→              className="text-xs h-9 sm:col-span-1"
+   413→              onKeyDown={(e) => e.key === "Enter" && handleAdicionar()}
+   414→            />
+   415→            <Button
+   416→              size="sm"
+   417→              className="h-9 bg-amber-500 hover:bg-amber-600 text-xs"
+   418→              onClick={handleAdicionar}
+   419→            >
+   420→              <Plus className="h-3 w-3 mr-1" /> Adicionar
+   421→            </Button>
+   422→          </div>
+   423→          <p className="text-[10px] text-muted-foreground">
+   424→            Quando o cliente digitar o gatilho, o bot responde automaticamente.
+   425→          </p>
+   426→        </div>
+   427→
+   428→        {/* Lista */}
+   429→        <div className="space-y-1.5 max-h-72 overflow-y-auto">
+   430→          {respostas.length === 0 && (
+   431→            <p className="text-xs text-muted-foreground text-center py-4 italic">
+   432→              Nenhuma resposta configurada.
+   433→            </p>
+   434→          )}
+   435→          {respostas.map((r) => (
+   436→            <div
+   437→              key={r.id}
+   438→              className={`flex items-start gap-2 p-2.5 rounded-lg border transition-colors ${
+   439→                r.ativo
+   440→                  ? "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+   441→                  : "bg-gray-50 dark:bg-gray-900/50 border-gray-100 dark:border-gray-800 opacity-60"
+   442→              }`}
+   443→            >
+   444→              {editId === r.id ? (
+   445→                <div className="flex-1 space-y-1.5">
+   446→                  <Input
+   447→                    value={editGatilho}
+   448→                    onChange={(e) => setEditGatilho(e.target.value)}
+   449→                    className="text-xs h-7"
+   450→                    placeholder="Gatilho"
+   451→                  />
+   452→                  <Input
+   453→                    value={editRespostaVal}
+   454→                    onChange={(e) => setEditRespostaVal(e.target.value)}
+   455→                    className="text-xs h-7"
+   456→                    placeholder="Resposta"
+   457→                  />
+   458→                  <div className="flex gap-1">
+   459→                    <Button
+   460→                      variant="ghost"
+   461→                      size="sm"
+   462→                      className="h-6 text-[10px] text-emerald-600"
+   463→                      onClick={() => handleEditar(r.id)}
+   464→                    >
+   465→                      <CheckCircle2 className="h-3 w-3 mr-0.5" /> Salvar
+   466→                    </Button>
+   467→                    <Button
+   468→                      variant="ghost"
+   469→                      size="sm"
+   470→                      className="h-6 text-[10px]"
+   471→                      onClick={() => setEditId(null)}
+   472→                    >
+   473→                      <XCircle className="h-3 w-3 mr-0.5" /> Cancelar
+   474→                    </Button>
+   475→                  </div>
+   476→                </div>
+   477→              ) : (
+   478→                <>
+   479→                  <Switch
+   480→                    checked={r.ativo}
+   481→                    onCheckedChange={() => toggleResposta(r.id)}
+   482→                    className="mt-1 shrink-0"
+   483→                  />
+   484→                  <div className="flex-1 min-w-0">
+   485→                    <div className="flex items-center gap-2">
+   486→                      <Badge variant="outline" className="text-[9px] font-mono shrink-0">
+   487→                        {r.gatilho}
+   488→                      </Badge>
+   489→                      <p className="text-[11px] text-gray-600 dark:text-gray-400 truncate">
+   490→                        {r.resposta}
+   491→                      </p>
+   492→                    </div>
+   493→                  </div>
+   494→                  <Button
+   495→                    variant="ghost"
+   496→                    size="sm"
+   497→                    className="h-7 w-7 p-0 shrink-0"
+   498→                    onClick={() => { setEditId(r.id); setEditGatilho(r.gatilho); setEditRespostaVal(r.resposta); }}
+   499→                  >
+   500→                    <Pencil className="h-3 w-3" />
+   501→                  </Button>
+   502→                  <Button
+   503→                    variant="ghost"
+   504→                    size="sm"
+   505→                    className="h-7 w-7 p-0 text-red-500 shrink-0"
+   506→                    onClick={() => { removerResposta(r.id); toast.success("Removida."); }}
+   507→                  >
+   508→                    <Trash2 className="h-3 w-3" />
+   509→                  </Button>
+   510→                </>
+   511→              )}
+   512→            </div>
+   513→          ))}
+   514→        </div>
+   515→      </CardContent>
+   516→    </Card>
+   517→  );
+   518→}
+   519→
+   520→function SecaoMenu() {
+   521→  const {
+   522→    menuAtivo, tituloMenu, itensMenu,
+   523→    setMenuAtivo, setTituloMenu,
+   524→    adicionarItemMenu, editarItemMenu, toggleItemMenu, removerItemMenu,
+   525→  } = useZapBotStore();
+   526→  const [novoTexto, setNovoTexto] = useState("");
+   527→  const [novaResp, setNovaResp] = useState("");
+   528→  const [editId, setEditId] = useState<string | null>(null);
+   529→  const [editTexto, setEditTexto] = useState("");
+   530→  const [editResp, setEditResp] = useState("");
+   531→
+   532→  const handleAdicionar = () => {
+   533→    if (!novoTexto.trim() || !novaResp.trim()) {
+   534→      toast.error("Preencha o texto e a resposta.");
+   535→      return;
+   536→    }
+   537→    adicionarItemMenu(novoTexto, novaResp);
+   538→    setNovoTexto("");
+   539→    setNovaResp("");
+   540→    toast.success("Opcao adicionada ao menu!");
+   541→  };
+   542→
+   543→  const handleEditar = (id: string) => {
+   544→    if (!editTexto.trim() || !editResp.trim()) return;
+   545→    editarItemMenu(id, editTexto, editResp);
+   546→    setEditId(null);
+   547→    toast.success("Opcao atualizada!");
+   548→  };
+   549→
+   550→  const previewMenu = useMemo(() => {
+   551→    if (!menuAtivo || itensMenu.filter((i) => i.ativo).length === 0) return "";
+   552→    const ativos = itensMenu.filter((i) => i.ativo);
+   553→    const linhas = ativos.map((i) => `${i.numero}️⃣ ${i.texto}`);
+   554→    return `*${tituloMenu}*\n\n${linhas.join("\n")}\n\n0️⃣ Falar com atendente`;
+   555→  }, [menuAtivo, tituloMenu, itensMenu]);
+   556→
+   557→  return (
+   558→    <Card>
+   559→      <CardHeader className="pb-3">
+   560→        <div className="flex items-center justify-between">
+   561→          <CardTitle className="flex items-center gap-2 text-sm">
+   562→            <List className="h-4 w-4 text-blue-500" />
+   563→            Menu Interativo
+   564→          </CardTitle>
+   565→          <div className="flex items-center gap-2">
+   566→            <span className="text-[10px] text-muted-foreground">{menuAtivo ? "Ativo" : "Inativo"}</span>
+   567→            <Switch checked={menuAtivo} onCheckedChange={setMenuAtivo} />
+   568→          </div>
+   569→        </div>
+   570→      </CardHeader>
+   571→      <CardContent className="space-y-3">
+   572→        {menuAtivo && (
+   573→          <>
+   574→            {/* Titulo do menu */}
+   575→            <div className="space-y-1">
+   576→              <Label className="text-[10px] text-muted-foreground">Titulo do Menu</Label>
+   577→              <Input
+   578→                value={tituloMenu}
+   579→                onChange={(e) => setTituloMenu(e.target.value)}
+   580→                className="text-xs h-9"
+   581→                placeholder="Menu de Atendimento"
+   582→              />
+   583→            </div>
+   584→
+   585→            {/* Preview do menu */}
+   586→            {previewMenu && (
+   587→              <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
+   588→                <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase mb-1.5">
+   589→                  Preview do Menu:
+   590→                </p>
+   591→                <p className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-line">
+   592→                  {previewMenu.replace(/\*/g, "")}
+   593→                </p>
+   594→              </div>
+   595→            )}
+   596→
+   597→            {/* Form novo item */}
+   598→            <div className="space-y-2">
+   599→              <p className="text-[10px] font-semibold text-muted-foreground uppercase">Adicionar Opcao</p>
+   600→              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+   601→                <Input
+   602→                  placeholder="Texto da opcao (ex: Horarios)"
+   603→                  value={novoTexto}
+   604→                  onChange={(e) => setNovoTexto(e.target.value)}
+   605→                  className="text-xs h-9"
+   606→                  onKeyDown={(e) => e.key === "Enter" && handleAdicionar()}
+   607→                />
+   608→                <Input
+   609→                  placeholder="Resposta do bot..."
+   610→                  value={novaResp}
+   611→                  onChange={(e) => setNovaResp(e.target.value)}
+   612→                  className="text-xs h-9"
+   613→                  onKeyDown={(e) => e.key === "Enter" && handleAdicionar()}
+   614→                />
+   615→                <Button
+   616→                  size="sm"
+   617→                  className="h-9 bg-blue-500 hover:bg-blue-600 text-xs"
+   618→                  onClick={handleAdicionar}
+   619→                >
+   620→                  <Plus className="h-3 w-3 mr-1" /> Adicionar
+   621→                </Button>
+   622→              </div>
+   623→            </div>
+   624→
+   625→            {/* Lista de itens */}
+   626→            <div className="space-y-1.5 max-h-64 overflow-y-auto">
+   627→              {itensMenu.length === 0 && (
+   628→                <p className="text-xs text-muted-foreground text-center py-4 italic">
+   629→                  Nenhuma opcao no menu.
+   630→                </p>
+   631→              )}
+   632→              {itensMenu.map((item) => (
+   633→                <div
+   634→                  key={item.id}
+   635→                  className={`flex items-start gap-2 p-2.5 rounded-lg border transition-colors ${
+   636→                    item.ativo
+   637→                      ? "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+   638→                      : "bg-gray-50 dark:bg-gray-900/50 border-gray-100 dark:border-gray-800 opacity-60"
+   639→                  }`}
+   640→                >
+   641→                  {editId === item.id ? (
+   642→                    <div className="flex-1 space-y-1.5">
+   643→                      <Input
+   644→                        value={editTexto}
+   645→                        onChange={(e) => setEditTexto(e.target.value)}
+   646→                        className="text-xs h-7"
+   647→                        placeholder="Texto"
+   648→                      />
+   649→                      <Input
+   650→                        value={editResp}
+   651→                        onChange={(e) => setEditResp(e.target.value)}
+   652→                        className="text-xs h-7"
+   653→                        placeholder="Resposta"
+   654→                      />
+   655→                      <div className="flex gap-1">
+   656→                        <Button variant="ghost" size="sm" className="h-6 text-[10px] text-emerald-600" onClick={() => handleEditar(item.id)}>
+   657→                          <CheckCircle2 className="h-3 w-3 mr-0.5" /> Salvar
+   658→                        </Button>
+   659→                        <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setEditId(null)}>
+   660→                          <XCircle className="h-3 w-3 mr-0.5" /> Cancelar
+   661→                        </Button>
+   662→                      </div>
+   663→                    </div>
+   664→                  ) : (
+   665→                    <>
+   666→                      <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0 mt-0.5">
+   667→                        <span className="text-[10px] font-black text-blue-600 dark:text-blue-400">{item.numero}</span>
+   668→                      </div>
+   669→                      <div className="flex-1 min-w-0">
+   670→                        <p className="text-xs font-medium truncate">{item.texto}</p>
+   671→                        <p className="text-[10px] text-muted-foreground truncate">{item.resposta}</p>
+   672→                      </div>
+   673→                      <Switch checked={item.ativo} onCheckedChange={() => toggleItemMenu(item.id)} className="mt-1 shrink-0" />
+   674→                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 shrink-0" onClick={() => { setEditId(item.id); setEditTexto(item.texto); setEditResp(item.resposta); }}>
+   675→                        <Pencil className="h-3 w-3" />
+   676→                      </Button>
+   677→                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-red-500 shrink-0" onClick={() => { removerItemMenu(item.id); toast.success("Opcao removida."); }}>
+   678→                        <Trash2 className="h-3 w-3" />
+   679→                      </Button>
+   680→                    </>
+   681→                  )}
+   682→                </div>
+   683→              ))}
+   684→            </div>
+   685→          </>
+   686→        )}
+   687→
+   688→        {!menuAtivo && (
+   689→          <div className="text-center py-6">
+   690→            <MousePointerClick className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+   691→            <p className="text-xs text-muted-foreground">Ative o menu interativo para configurar as opcoes.</p>
+   692→          </div>
+   693→        )}
+   694→      </CardContent>
+   695→    </Card>
+   696→  );
+   697→}
+   698→
+   699→function SecaoDisparo() {
+   700→  const { conectado, apiUrl, instanceName, apiKey } = useZapBotStore();
+   701→  const { clientes } = useERPStore();
+   702→  const [msgDisparo, setMsgDisparo] = useState("");
+   703→  const [enviando, setEnviando] = useState(false);
+   704→
+   705→  const handleDisparar = async () => {
+   706→    if (!msgDisparo.trim()) {
+   707→      toast.error("Escreva a mensagem para disparar.");
+   708→      return;
+   709→    }
+   710→    const clientesComTel = clientes.filter((c) => c.telefone);
+   711→    if (clientesComTel.length === 0) {
+   712→      toast.error("Nenhum cliente com telefone cadastrado.");
+   713→      return;
+   714→    }
+   715→
+   716→    setEnviando(true);
+   717→    let sucesso = 0;
+   718→    let falha = 0;
+   719→
+   720→    for (const cliente of clientesComTel) {
+   721→      try {
+   722→        const telLimpo = cliente.telefone.replace(/\D/g, "");
+   723→        const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+   724→        await fetch(
+   725→          `${apiUrl}/message/sendText/${instanceName}?apikey=${apiKey}`,
+   726→          {
+   727→            method: "POST",
+   728→            headers: { "Content-Type": "application/json" },
+   729→            body: JSON.stringify({
+   730→              number: `${numero}@s.whatsapp.net`,
+   731→              text: msgDisparo,
+   732→            }),
+   733→          }
+   734→        );
+   735→        sucesso++;
+   736→      } catch {
+   737→        falha++;
+   738→      }
+   739→    }
+   740→
+   741→    setEnviando(false);
+   742→    if (falha === 0) {
+   743→      toast.success(`${sucesso} mensagem(ns) enviada(s)!`);
+   744→    } else {
+   745→      toast.warning(`${sucesso} enviada(s), ${falha} falha(s).`);
+   746→    }
+   747→  };
+   748→
+   749→  return (
+   750→    <Card>
+   751→      <CardHeader className="pb-3">
+   752→        <CardTitle className="flex items-center gap-2 text-sm">
+   753→          <Send className="h-4 w-4 text-purple-500" />
+   754→          Disparo em Massa
+   755→          <Badge variant="secondary" className="ml-auto text-[10px]">
+   756→            {clientes.filter((c) => c.telefone).length} contato(s)
+   757→          </Badge>
+   758→        </CardTitle>
+   759→      </CardHeader>
+   760→      <CardContent className="space-y-3">
+   761→        <Textarea
+   762→          value={msgDisparo}
+   763→          onChange={(e) => setMsgDisparo(e.target.value)}
+   764→          rows={4}
+   765→          className="text-xs resize-none"
+   766→          placeholder="Digite a mensagem que sera enviada para todos os clientes com telefone cadastrado..."
+   767→        />
+   768→        <div className="flex items-center justify-between">
+   769→          <p className="text-[10px] text-muted-foreground">
+   770→            Use *texto* para negrito e _texto_ para italico no WhatsApp.
+   771→          </p>
+   772→          <Button
+   773→            size="sm"
+   774→            className="h-9 bg-purple-600 hover:bg-purple-700 text-xs"
+   775→            onClick={handleDisparar}
+   776→            disabled={enviando || !msgDisparo.trim()}
+   777→          >
+   778→            {enviando ? (
+   779→              <><RefreshCw className="h-3 w-3 mr-1 animate-spin" /> Enviando...</>
+   780→            ) : (
+   781→              <><Send className="h-3 w-3 mr-1" /> Disparar para Todos</>
+   782→            )}
+   783→          </Button>
+   784→        </div>
+   785→        {!conectado && (
+   786→          <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-2.5 flex items-start gap-2">
+   787→            <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+   788→            <p className="text-[10px] text-amber-700 dark:text-amber-400">
+   789→              WhatsApp nao conectado. Configure a Evolution API na secao de conexao para habilitar o disparo real.
+   790→            </p>
+   791→          </div>
+   792→        )}
+   793→      </CardContent>
+   794→    </Card>
+   795→  );
+   796→}
+   797→
+   798→function SecaoLog() {
+   799→  const { mensagens, limparLog } = useZapBotStore();
+   800→
+   801→  return (
+   802→    <Card>
+   803→      <CardHeader className="pb-3">
+   804→        <div className="flex items-center justify-between">
+   805→          <CardTitle className="flex items-center gap-2 text-sm">
+   806→            <MessageSquare className="h-4 w-4 text-gray-500" />
+   807→            Historico de Mensagens
+   808→            <Badge variant="secondary" className="ml-1 text-[10px]">
+   809→              {mensagens.length}
+   810→            </Badge>
+   811→          </CardTitle>
+   812→          {mensagens.length > 0 && (
+   813→            <Button
+   814→              variant="ghost"
+   815→              size="sm"
+   816→              className="h-7 text-[10px] text-red-500"
+   817→              onClick={() => { limparLog(); toast.success("Log limpo."); }}
+   818→            >
+   819→              <Trash2 className="h-3 w-3 mr-1" /> Limpar
+   820→            </Button>
+   821→          )}
+   822→        </div>
+   823→      </CardHeader>
+   824→      <CardContent>
+   825→        <div className="max-h-80 overflow-y-auto space-y-1.5">
+   826→          {mensagens.length === 0 && (
+   827→            <div className="text-center py-8">
+   828→              <MessageSquare className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-30" />
+   829→              <p className="text-xs text-muted-foreground italic">
+   830→                Nenhuma mensagem registrada ainda.
+   831→              </p>
+   832→              <p className="text-[10px] text-muted-foreground mt-1">
+   833→                As mensagens aparecerao aqui quando o bot estiver ativo.
+   834→              </p>
+   835→            </div>
+   836→          )}
+   837→          {mensagens.map((msg) => (
+   838→            <div
+   839→              key={msg.id}
+   840→              className={`flex items-start gap-2 p-2.5 rounded-lg border text-xs ${
+   841→                msg.tipo === "enviada"
+   842→                  ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900"
+   843→                  : "bg-blue-50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900"
+   844→              }`}
+   845→            >
+   846→              <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+   847→                msg.tipo === "enviada"
+   848→                  ? "bg-emerald-200 dark:bg-emerald-800"
+   849→                  : "bg-blue-200 dark:bg-blue-800"
+   850→              }`}>
+   851→                {msg.tipo === "enviada" ? (
+   852→                  <Send className="h-3 w-3 text-emerald-700 dark:text-emerald-300" />
+   853→                ) : (
+   854→                  <MessageSquare className="h-3 w-3 text-blue-700 dark:text-blue-300" />
+   855→                )}
+   856→              </div>
+   857→              <div className="flex-1 min-w-0">
+   858→                <div className="flex items-center justify-between gap-2 mb-0.5">
+   859→                  <span className="font-medium truncate">{msg.nome || msg.numero}</span>
+   860→                  <span className="text-[9px] text-muted-foreground shrink-0">{msg.data} {msg.hora}</span>
+   861→                </div>
+   862→                <p className="text-[11px] text-gray-600 dark:text-gray-400 line-clamp-2">{msg.conteudo}</p>
+   863→              </div>
+   864→            </div>
+   865→          ))}
+   866→        </div>
+   867→      </CardContent>
+   868→    </Card>
+   869→  );
+   870→}
+   871→
+   872→// =============================================
+   873→// Painel Principal
+   874→// =============================================
+   875→
+   876→export function PainelZapBot() {
+   877→  const { conectado, respostas, menuAtivo, itensMenu, ativarBoasVindas } = useZapBotStore();
+   878→
+   879→  const totalRegras = respostas.filter((r) => r.ativo).length + (menuAtivo ? itensMenu.filter((i) => i.ativo).length : 0);
+   880→  const regrasAtivas = ativarBoasVindas ? totalRegras + 1 : totalRegras;
+   881→
+   882→  return (
+   883→    <div className="space-y-4">
+   884→      {/* Header stats */}
+   885→      <div className="grid grid-cols-3 gap-2">
+   886→        <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
+   887→          <div className={`w-3 h-3 rounded-full mx-auto mb-1.5 ${conectado ? "bg-emerald-500 shadow-sm shadow-emerald-200" : "bg-gray-300"}`} />
+   888→          <p className="text-lg font-black">{conectado ? "Online" : "Offline"}</p>
+   889→          <p className="text-[9px] text-muted-foreground uppercase font-bold">Status</p>
+   890→        </div>
+   891→        <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
+   892→          <p className="text-lg font-black text-emerald-600">{regrasAtivas}</p>
+   893→          <p className="text-[9px] text-muted-foreground uppercase font-bold">Regras Ativas</p>
+   894→        </div>
+   895→        <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
+   896→          <p className="text-lg font-black text-amber-600">{respostas.length}</p>
+   897→          <p className="text-[9px] text-muted-foreground uppercase font-bold">Respostas</p>
+   898→        </div>
+   899→      </div>
+   900→
+   901→      {/* Configuracao + Boas-vindas */}
+   902→      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+   903→        <SecaoConexao />
+   904→        <SecaoBoasVindas />
+   905→      </div>
+   906→
+   907→      {/* Respostas + Menu */}
+   908→      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+   909→        <SecaoRespostas />
+   910→        <SecaoMenu />
+   911→      </div>
+   912→
+   913→      {/* Disparo em massa */}
+   914→      <SecaoDisparo />
+   915→
+   916→      {/* Log de mensagens */}
+   917→      <SecaoLog />
+   918→    </div>
+   919→  );
+   920→}

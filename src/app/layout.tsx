@@ -23,14 +23,14 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "ZapFácil Pro - ERP Mobile",
-  description: "Sistema ERP mobile profissional para gestão de serviços, clientes e faturamento.",
-  keywords: ["ERP", "ZapFácil", "gestão", "faturamento", "comprovante"],
+  title: "ZapBot Pro - Automacao WhatsApp",
+  description: "Painel de automacao WhatsApp com Evolution API. Chatbot de menu, respostas automaticas e deploy gratuito.",
+  keywords: ["WhatsApp", "chatbot", "automacao", "Evolution API", "ZapBot"],
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "ZapFácil ERP",
+    title: "ZapBot Pro",
   },
 };
 
