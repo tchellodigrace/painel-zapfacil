@@ -1,0 +1,1071 @@
+     1→"use client";
+     2→
+     3→import { useState, useMemo, useCallback, useEffect } from "react";
+     4→import {
+     5→  useAdminStore,
+     6→  STATUS_SISTEMA,
+     7→  PLANOS,
+     8→  type SistemaCliente,
+     9→  type StatusSistema,
+    10→  type PlanoSistema,
+    11→} from "@/hooks/use-admin-store";
+    12→import { Button } from "@/components/ui/button";
+    13→import { Input } from "@/components/ui/input";
+    14→import { Label } from "@/components/ui/label";
+    15→import { Badge } from "@/components/ui/badge";
+    16→import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+    17→import {
+    18→  Dialog,
+    19→  DialogContent,
+    20→  DialogHeader,
+    21→  DialogTitle,
+    22→} from "@/components/ui/dialog";
+    23→import {
+    24→  Select,
+    25→  SelectContent,
+    26→  SelectItem,
+    27→  SelectTrigger,
+    28→  SelectValue,
+    29→} from "@/components/ui/select";
+    30→import { Textarea } from "@/components/ui/textarea";
+    31→import { Separator } from "@/components/ui/separator";
+    32→import { toast } from "sonner";
+    33→import {
+    34→  Plus,
+    35→  Search,
+    36→  Pencil,
+    37→  Trash2,
+    38→  Check,
+    39→  X,
+    40→  Eye,
+    41→  MessageCircle,
+    42→  Monitor,
+    43→  DollarSign,
+    44→  Users,
+    45→  AlertTriangle,
+    46→  TrendingUp,
+    47→  Crown,
+    48→  ShieldCheck,
+    49→  LogOut,
+    50→  ArrowRight,
+    51→  User,
+    52→  Lock,
+    53→  EyeOff,
+    54→} from "lucide-react";
+    55→import {
+    56→  Tooltip,
+    57→  TooltipContent,
+    58→  TooltipProvider,
+    59→  TooltipTrigger,
+    60→} from "@/components/ui/tooltip";
+    61→
+    62→function formatarMoeda(valor: number) {
+    63→  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    64→}
+    65→
+    66→function formatarData(data: string) {
+    67→  if (!data) return "";
+    68→  const partes = data.split("-");
+    69→  if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    70→  return data;
+    71→}
+    72→
+    73→function diasRestantes(vencimento: string): number {
+    74→  const hoje = new Date();
+    75→  hoje.setHours(0, 0, 0, 0);
+    76→  const venc = new Date(vencimento + "T00:00:00");
+    77→  const diff = venc.getTime() - hoje.getTime();
+    78→  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    79→}
+    80→
+    81→// =============================================
+    82→// TELA DE LOGIN DO ADMIN
+    83→// =============================================
+    84→function TelaLoginAdmin({
+    85→  onAutenticado,
+    86→}: {
+    87→  onAutenticado: () => void;
+    88→}) {
+    89→  const { adminCredenciais, configurarAdmin } = useAdminStore();
+    90→  const [usuario, setUsuario] = useState("");
+    91→  const [senha, setSenha] = useState("");
+    92→  const [confirmarSenha, setConfirmarSenha] = useState("");
+    93→  const [mostrarSenha, setMostrarSenha] = useState(false);
+    94→  const [carregando, setCarregando] = useState(false);
+    95→  const [ehPrimeiroAcesso, setEhPrimeiroAcesso] = useState(
+    96→    !adminCredenciais
+    97→  );
+    98→
+    99→  const handleCriar = () => {
+   100→    if (!usuario.trim() || !senha.trim()) {
+   101→      toast.error("Preencha todos os campos.");
+   102→      return;
+   103→    }
+   104→    if (senha !== confirmarSenha) {
+   105→      toast.error("As senhas nao conferem.");
+   106→      return;
+   107→    }
+   108→    configurarAdmin(usuario.trim().toLowerCase(), senha);
+   109→    sessionStorage.setItem("zapfacil_admin_session", "autenticado");
+   110→    toast.success("Admin criado com sucesso!");
+   111→    onAutenticado();
+   112→  };
+   113→
+   114→  const handleLogin = () => {
+   115→    if (!usuario.trim() || !senha.trim()) {
+   116→      toast.error("Preencha usuario e senha.");
+   117→      return;
+   118→    }
+   119→    setCarregando(true);
+   120→    setTimeout(() => {
+   121→      const cred = useAdminStore.getState().adminCredenciais;
+   122→      if (
+   123→        cred &&
+   124→        cred.usuario === usuario.trim().toLowerCase() &&
+   125→        cred.senha === senha
+   126→      ) {
+   127→        sessionStorage.setItem("zapfacil_admin_session", "autenticado");
+   128→        toast.success("Bem-vindo, Admin!");
+   129→        onAutenticado();
+   130→      } else {
+   131→        toast.error("Credenciais invalidas.");
+   132→      }
+   133→      setCarregando(false);
+   134→    }, 600);
+   135→  };
+   136→
+   137→  return (
+   138→    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
+   139→      <Card className="w-full max-w-sm border-gray-700 bg-gray-900/80 backdrop-blur">
+   140→        <CardContent className="p-8 space-y-6">
+   141→          <div className="text-center space-y-3">
+   142→            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-900/40 mb-2">
+   143→              <ShieldCheck className="w-7 h-7 text-emerald-400" />
+   144→            </div>
+   145→            <h1 className="text-xl font-bold text-white">
+   146→              {ehPrimeiroAcesso ? "Configurar Admin" : "Painel Administrativo"}
+   147→            </h1>
+   148→            <p className="text-xs text-gray-400 leading-relaxed">
+   149→              {ehPrimeiroAcesso
+   150→                ? "Crie as credenciais do administrador master."
+   151→                : "Acesso restrito ao gestor dos sistemas."}
+   152→            </p>
+   153→          </div>
+   154→
+   155→          <div className="space-y-4">
+   156→            <div className="space-y-1.5">
+   157→              <Label className="text-xs text-gray-400">Usuario</Label>
+   158→              <div className="relative">
+   159→                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+   160→                <Input
+   161→                  placeholder="admin"
+   162→                  value={usuario}
+   163→                  onChange={(e) => setUsuario(e.target.value)}
+   164→                  className="pl-10 h-10 text-sm bg-gray-800 border-gray-700 text-white"
+   165→                  onKeyDown={(e) =>
+   166→                    e.key === "Enter" &&
+   167→                    (ehPrimeiroAcesso ? handleCriar() : handleLogin())
+   168→                  }
+   169→                  autoFocus
+   170→                />
+   171→              </div>
+   172→            </div>
+   173→
+   174→            <div className="space-y-1.5">
+   175→              <Label className="text-xs text-gray-400">Senha</Label>
+   176→              <div className="relative">
+   177→                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+   178→                <Input
+   179→                  type={mostrarSenha ? "text" : "password"}
+   180→                  placeholder="Sua senha"
+   181→                  value={senha}
+   182→                  onChange={(e) => setSenha(e.target.value)}
+   183→                  className="pl-10 pr-10 h-10 text-sm bg-gray-800 border-gray-700 text-white"
+   184→                  onKeyDown={(e) =>
+   185→                    e.key === "Enter" &&
+   186→                    (ehPrimeiroAcesso ? handleCriar() : handleLogin())
+   187→                  }
+   188→                />
+   189→                <button
+   190→                  type="button"
+   191→                  onClick={() => setMostrarSenha(!mostrarSenha)}
+   192→                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+   193→                >
+   194→                  {mostrarSenha ? (
+   195→                    <EyeOff className="h-4 w-4" />
+   196→                  ) : (
+   197→                    <Eye className="h-4 w-4" />
+   198→                  )}
+   199→                </button>
+   200→              </div>
+   201→            </div>
+   202→
+   203→            {ehPrimeiroAcesso && (
+   204→              <div className="space-y-1.5">
+   205→                <Label className="text-xs text-gray-400">
+   206→                  Confirmar Senha
+   207→                </Label>
+   208→                <div className="relative">
+   209→                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+   210→                  <Input
+   211→                    type="password"
+   212→                    placeholder="Repita a senha"
+   213→                    value={confirmarSenha}
+   214→                    onChange={(e) => setConfirmarSenha(e.target.value)}
+   215→                    className="pl-10 h-10 text-sm bg-gray-800 border-gray-700 text-white"
+   216→                    onKeyDown={(e) => e.key === "Enter" && handleCriar()}
+   217→                  />
+   218→                </div>
+   219→              </div>
+   220→            )}
+   221→
+   222→            <Button
+   223→              className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold"
+   224→              onClick={ehPrimeiroAcesso ? handleCriar : handleLogin}
+   225→              disabled={carregando}
+   226→            >
+   227→              {carregando ? (
+   228→                <span className="flex items-center gap-2">
+   229→                  <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+   230→                  Verificando...
+   231→                </span>
+   232→              ) : (
+   233→                <>
+   234→                  {ehPrimeiroAcesso ? "Criar Admin" : "Entrar"}
+   235→                  <ArrowRight className="h-4 w-4 ml-2" />
+   236→                </>
+   237→              )}
+   238→            </Button>
+   239→
+   240→            {!ehPrimeiroAcesso && (
+   241→              <p className="text-center">
+   242→                <button
+   243→                  className="text-[10px] text-gray-500 hover:text-gray-300"
+   244→                  onClick={() => setEhPrimeiroAcesso(true)}
+   245→                >
+   246→                  Primeiro acesso? Clique aqui
+   247→                </button>
+   248→              </p>
+   249→            )}
+   250→          </div>
+   251→        </CardContent>
+   252→      </Card>
+   253→    </div>
+   254→  );
+   255→}
+   256→
+   257→// =============================================
+   258→// FORMULÁRIO DE SISTEMA
+   259→// =============================================
+   260→function FormularioSistema({
+   261→  sistema,
+   262→  onSalvar,
+   263→  onCancelar,
+   264→}: {
+   265→  sistema?: SistemaCliente;
+   266→  onSalvar: (dados: Omit<SistemaCliente, "id" | "criadoEm">) => void;
+   267→  onCancelar: () => void;
+   268→}) {
+   269→  const hoje = new Date().toISOString().split("T")[0];
+   270→  const [empresa, setEmpresa] = useState(sistema?.empresa || "");
+   271→  const [responsavel, setResponsavel] = useState(sistema?.responsavel || "");
+   272→  const [telefone, setTelefone] = useState(sistema?.telefone || "");
+   273→  const [email, setEmail] = useState(sistema?.email || "");
+   274→  const [cidade, setCidade] = useState(sistema?.cidade || "");
+   275→  const [dataInstalacao, setDataInstalacao] = useState(
+   276→    sistema?.dataInstalacao || hoje
+   277→  );
+   278→  const [dataVencimento, setDataVencimento] = useState(
+   279→    sistema?.dataVencimento || ""
+   280→  );
+   281→  const [plano, setPlano] = useState<PlanoSistema>(sistema?.plano || "PRO");
+   282→  const [status, setStatus] = useState<StatusSistema>(
+   283→    sistema?.status || "TRIAL"
+   284→  );
+   285→  const [valorMensal, setValorMensal] = useState(
+   286→    sistema?.valorMensal?.toString() || ""
+   287→  );
+   288→  const [observacoes, setObservacoes] = useState(
+   289→    sistema?.observacoes || ""
+   290→  );
+   291→
+   292→  const handleSubmit = (e: React.FormEvent) => {
+   293→    e.preventDefault();
+   294→    if (!empresa.trim()) {
+   295→      toast.error("Nome da empresa e obrigatorio.");
+   296→      return;
+   297→    }
+   298→    if (!responsavel.trim()) {
+   299→      toast.error("Nome do responsavel e obrigatorio.");
+   300→      return;
+   301→    }
+   302→    if (!dataVencimento) {
+   303→      toast.error("Data de vencimento e obrigatoria.");
+   304→      return;
+   305→    }
+   306→    onSalvar({
+   307→      empresa: empresa.trim(),
+   308→      responsavel: responsavel.trim(),
+   309→      telefone: telefone.trim(),
+   310→      email: email.trim(),
+   311→      cidade: cidade.trim(),
+   312→      dataInstalacao,
+   313→      dataVencimento,
+   314→      plano,
+   315→      status,
+   316→      valorMensal: parseFloat(valorMensal) || 0,
+   317→      observacoes: observacoes.trim(),
+   318→    });
+   319→  };
+   320→
+   321→  return (
+   322→    <form onSubmit={handleSubmit} className="space-y-4">
+   323→      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+   324→        <div className="sm:col-span-2 space-y-1.5">
+   325→          <Label className="text-xs">Empresa *</Label>
+   326→          <Input
+   327→            value={empresa}
+   328→            onChange={(e) => setEmpresa(e.target.value)}
+   329→            placeholder="Nome da empresa"
+   330→            className="text-sm h-9"
+   331→          />
+   332→        </div>
+   333→        <div className="space-y-1.5">
+   334→          <Label className="text-xs">Responsavel *</Label>
+   335→          <Input
+   336→            value={responsavel}
+   337→            onChange={(e) => setResponsavel(e.target.value)}
+   338→            placeholder="Nome do contato"
+   339→            className="text-sm h-9"
+   340→          />
+   341→        </div>
+   342→        <div className="space-y-1.5">
+   343→          <Label className="text-xs">Telefone</Label>
+   344→          <Input
+   345→            value={telefone}
+   346→            onChange={(e) => setTelefone(e.target.value)}
+   347→            placeholder="(00) 00000-0000"
+   348→            className="text-sm h-9"
+   349→          />
+   350→        </div>
+   351→        <div className="space-y-1.5">
+   352→          <Label className="text-xs">E-mail</Label>
+   353→          <Input
+   354→            type="email"
+   355→            value={email}
+   356→            onChange={(e) => setEmail(e.target.value)}
+   357→            placeholder="email@empresa.com"
+   358→            className="text-sm h-9"
+   359→          />
+   360→        </div>
+   361→        <div className="space-y-1.5">
+   362→          <Label className="text-xs">Cidade</Label>
+   363→          <Input
+   364→            value={cidade}
+   365→            onChange={(e) => setCidade(e.target.value)}
+   366→            placeholder="Cidade - UF"
+   367→            className="text-sm h-9"
+   368→          />
+   369→        </div>
+   370→        <div className="space-y-1.5">
+   371→          <Label className="text-xs">Data Instalacao</Label>
+   372→          <Input
+   373→            type="date"
+   374→            value={dataInstalacao}
+   375→            onChange={(e) => setDataInstalacao(e.target.value)}
+   376→            className="text-sm h-9"
+   377→          />
+   378→        </div>
+   379→        <div className="space-y-1.5">
+   380→          <Label className="text-xs">Vencimento *</Label>
+   381→          <Input
+   382→            type="date"
+   383→            value={dataVencimento}
+   384→            onChange={(e) => setDataVencimento(e.target.value)}
+   385→            className="text-sm h-9"
+   386→          />
+   387→        </div>
+   388→        <div className="space-y-1.5">
+   389→          <Label className="text-xs">Plano</Label>
+   390→          <Select value={plano} onValueChange={(v) => setPlano(v as PlanoSistema)}>
+   391→            <SelectTrigger className="text-sm h-9">
+   392→              <SelectValue />
+   393→            </SelectTrigger>
+   394→            <SelectContent>
+   395→              {PLANOS.map((p) => (
+   396→                <SelectItem key={p.valor} value={p.valor}>
+   397→                  {p.label}
+   398→                </SelectItem>
+   399→              ))}
+   400→            </SelectContent>
+   401→          </Select>
+   402→        </div>
+   403→        <div className="space-y-1.5">
+   404→          <Label className="text-xs">Status</Label>
+   405→          <Select value={status} onValueChange={(v) => setStatus(v as StatusSistema)}>
+   406→            <SelectTrigger className="text-sm h-9">
+   407→              <SelectValue />
+   408→            </SelectTrigger>
+   409→            <SelectContent>
+   410→              {STATUS_SISTEMA.map((s) => (
+   411→                <SelectItem key={s.valor} value={s.valor}>
+   412→                  {s.label}
+   413→                </SelectItem>
+   414→              ))}
+   415→            </SelectContent>
+   416→          </Select>
+   417→        </div>
+   418→        <div className="space-y-1.5">
+   419→          <Label className="text-xs">Valor Mensal (R$)</Label>
+   420→          <Input
+   421→            type="number"
+   422→            step="0.01"
+   423→            value={valorMensal}
+   424→            onChange={(e) => setValorMensal(e.target.value)}
+   425→            placeholder="0,00"
+   426→            className="text-sm h-9"
+   427→          />
+   428→        </div>
+   429→        <div className="sm:col-span-2 space-y-1.5">
+   430→          <Label className="text-xs">Observacoes</Label>
+   431→          <Textarea
+   432→            value={observacoes}
+   433→            onChange={(e) => setObservacoes(e.target.value)}
+   434→            placeholder="Notas sobre o cliente..."
+   435→            className="text-sm min-h-[60px]"
+   436→          />
+   437→        </div>
+   438→      </div>
+   439→      <div className="flex gap-2 justify-end pt-2">
+   440→        <Button
+   441→          type="button"
+   442→          variant="ghost"
+   443→          size="sm"
+   444→          className="text-xs"
+   445→          onClick={onCancelar}
+   446→        >
+   447→          Cancelar
+   448→        </Button>
+   449→        <Button
+   450→          type="submit"
+   451→          size="sm"
+   452→          className="text-xs bg-emerald-600 hover:bg-emerald-700"
+   453→        >
+   454→          {sistema ? "Salvar Alteracoes" : "Cadastrar Sistema"}
+   455→        </Button>
+   456→      </div>
+   457→    </form>
+   458→  );
+   459→}
+   460→
+   461→// =============================================
+   462→// PAINEL ADMIN PRINCIPAL
+   463→// =============================================
+   464→function PainelAdminConteudo() {
+   465→  const { sistemas, adicionarSistema, editarSistema, removerSistema, alterarStatus } =
+   466→    useAdminStore();
+   467→  const [busca, setBusca] = useState("");
+   468→  const [filtroStatus, setFiltroStatus] = useState<string>("TODOS");
+   469→  const [filtroPlano, setFiltroPlano] = useState<string>("TODOS");
+   470→  const [dialogForm, setDialogForm] = useState<SistemaCliente | null>(null);
+   471→  const [dialogNovo, setDialogNovo] = useState(false);
+   472→  const [dialogDetalhe, setDialogDetalhe] = useState<SistemaCliente | null>(null);
+   473→  const [confirmaRemover, setConfirmaRemover] = useState<string | null>(null);
+   474→
+   475→  // Estatísticas
+   476→  const stats = useMemo(() => {
+   477→    const ativos = sistemas.filter((s) => s.status === "ATIVO").length;
+   478→    const trials = sistemas.filter((s) => s.status === "TRIAL").length;
+   479→    const expirados = sistemas.filter((s) => s.status === "EXPIRADO").length;
+   480→    const cancelados = sistemas.filter((s) => s.status === "CANCELADO").length;
+   481→    const receitaMensal = sistemas
+   482→      .filter((s) => s.status === "ATIVO" || s.status === "TRIAL")
+   483→      .reduce((s, v) => s + v.valorMensal, 0);
+   484→    const vencendo = sistemas.filter(
+   485→      (s) => s.status === "ATIVO" && diasRestantes(s.dataVencimento) <= 7 && diasRestantes(s.dataVencimento) > 0
+   486→    ).length;
+   487→    return { ativos, trials, expirados, cancelados, receitaMensal, vencendo, total: sistemas.length };
+   488→  }, [sistemas]);
+   489→
+   490→  // Filtragem
+   491→  const sistemasFiltrados = useMemo(() => {
+   492→    let lista = sistemas;
+   493→    if (filtroStatus !== "TODOS") {
+   494→      lista = lista.filter((s) => s.status === filtroStatus);
+   495→    }
+   496→    if (filtroPlano !== "TODOS") {
+   497→      lista = lista.filter((s) => s.plano === filtroPlano);
+   498→    }
+   499→    if (busca.trim()) {
+   500→      const termo = busca.toLowerCase();
+   501→      lista = lista.filter(
+   502→        (s) =>
+   503→          s.empresa.toLowerCase().includes(termo) ||
+   504→          s.responsavel.toLowerCase().includes(termo) ||
+   505→          s.cidade.toLowerCase().includes(termo) ||
+   506→          s.telefone.includes(termo) ||
+   507→          s.email.toLowerCase().includes(termo)
+   508→      );
+   509→    }
+   510→    return lista;
+   511→  }, [sistemas, filtroStatus, filtroPlano, busca]);
+   512→
+   513→  const handleSalvarNovo = useCallback(
+   514→    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
+   515→      adicionarSistema(dados);
+   516→      setDialogNovo(false);
+   517→      toast.success("Sistema cadastrado!");
+   518→    },
+   519→    [adicionarSistema]
+   520→  );
+   521→
+   522→  const handleSalvarEdicao = useCallback(
+   523→    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
+   524→      if (!dialogForm) return;
+   525→      editarSistema(dialogForm.id, dados);
+   526→      setDialogForm(null);
+   527→      toast.success("Sistema atualizado!");
+   528→    },
+   529→    [dialogForm, editarSistema]
+   530→  );
+   531→
+   532→  const handleRemover = useCallback(
+   533→    (id: string) => {
+   534→      removerSistema(id);
+   535→      setConfirmaRemover(null);
+   536→      toast.success("Sistema removido.");
+   537→    },
+   538→    [removerSistema]
+   539→  );
+   540→
+   541→  const handleWhatsApp = (telefone: string) => {
+   542→    const telLimpo = telefone.replace(/\D/g, "");
+   543→    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+   544→    window.open(`https://wa.me/${numero}`, "_blank");
+   545→  };
+   546→
+   547→  const handleLogout = () => {
+   548→    sessionStorage.removeItem("zapfacil_admin_session");
+   549→    window.location.reload();
+   550→  };
+   551→
+   552→  const getStatusInfo = (status: StatusSistema) =>
+   553→    STATUS_SISTEMA.find((s) => s.valor === status) || STATUS_SISTEMA[3];
+   554→  const getPlanoInfo = (plano: PlanoSistema) =>
+   555→    PLANOS.find((p) => p.valor === plano) || PLANOS[0];
+   556→
+   557→  return (
+   558→    <div className="min-h-screen flex flex-col bg-gray-950 text-white">
+   559→      {/* Header Admin */}
+   560→      <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
+   561→        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-3">
+   562→          <div className="flex items-center gap-3">
+   563→            <div className="w-9 h-9 rounded-xl bg-emerald-900/40 flex items-center justify-center">
+   564→              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+   565→            </div>
+   566→            <div>
+   567→              <h1 className="text-sm font-bold">Painel Admin</h1>
+   568→              <p className="text-[10px] text-gray-500">
+   569→                Controle de Sistemas
+   570→              </p>
+   571→            </div>
+   572→          </div>
+   573→          <div className="flex items-center gap-1">
+   574→            <TooltipProvider>
+   575→              <Tooltip>
+   576→                <TooltipTrigger asChild>
+   577→                  <Button
+   578→                    variant="ghost"
+   579→                    size="icon"
+   580→                    className="h-8 w-8 text-red-400 hover:bg-red-950/30"
+   581→                    onClick={handleLogout}
+   582→                  >
+   583→                    <LogOut className="h-4 w-4" />
+   584→                  </Button>
+   585→                </TooltipTrigger>
+   586→                <TooltipContent>Sair</TooltipContent>
+   587→              </Tooltip>
+   588→            </TooltipProvider>
+   589→          </div>
+   590→        </div>
+   591→      </header>
+   592→
+   593→      <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
+   594→        {/* Cards de estatísticas */}
+   595→        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+   596→          <Card className="bg-gray-900 border-gray-800">
+   597→            <CardContent className="p-3.5">
+   598→              <div className="flex items-center gap-1.5 mb-1">
+   599→                <Monitor className="w-3.5 h-3.5 text-gray-500" />
+   600→                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Total</span>
+   601→              </div>
+   602→              <p className="text-2xl font-black">{stats.total}</p>
+   603→            </CardContent>
+   604→          </Card>
+   605→          <Card className="bg-gray-900 border-emerald-900/50">
+   606→            <CardContent className="p-3.5">
+   607→              <div className="flex items-center gap-1.5 mb-1">
+   608→                <Check className="w-3.5 h-3.5 text-emerald-500" />
+   609→                <span className="text-[10px] text-emerald-500 font-medium uppercase tracking-wider">Ativos</span>
+   610→              </div>
+   611→              <p className="text-2xl font-black text-emerald-400">{stats.ativos}</p>
+   612→            </CardContent>
+   613→          </Card>
+   614→          <Card className="bg-gray-900 border-blue-900/50">
+   615→            <CardContent className="p-3.5">
+   616→              <div className="flex items-center gap-1.5 mb-1">
+   617→                <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
+   618→                <span className="text-[10px] text-blue-500 font-medium uppercase tracking-wider">Trial</span>
+   619→              </div>
+   620→              <p className="text-2xl font-black text-blue-400">{stats.trials}</p>
+   621→            </CardContent>
+   622→          </Card>
+   623→          <Card className="bg-gray-900 border-red-900/50">
+   624→            <CardContent className="p-3.5">
+   625→              <div className="flex items-center gap-1.5 mb-1">
+   626→                <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
+   627→                <span className="text-[10px] text-red-500 font-medium uppercase tracking-wider">Expirados</span>
+   628→              </div>
+   629→              <p className="text-2xl font-black text-red-400">{stats.expirados}</p>
+   630→            </CardContent>
+   631→          </Card>
+   632→          <Card className="bg-gray-900 border-amber-900/50">
+   633→            <CardContent className="p-3.5">
+   634→              <div className="flex items-center gap-1.5 mb-1">
+   635→                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+   636→                <span className="text-[10px] text-amber-500 font-medium uppercase tracking-wider">Vencendo</span>
+   637→              </div>
+   638→              <p className="text-2xl font-black text-amber-400">{stats.vencendo}</p>
+   639→            </CardContent>
+   640→          </Card>
+   641→          <Card className="bg-gray-900 border-emerald-900/50">
+   642→            <CardContent className="p-3.5">
+   643→              <div className="flex items-center gap-1.5 mb-1">
+   644→                <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
+   645→                <span className="text-[10px] text-emerald-500 font-medium uppercase tracking-wider">Receita/mes</span>
+   646→              </div>
+   647→              <p className="text-lg font-black text-emerald-400">{formatarMoeda(stats.receitaMensal)}</p>
+   648→            </CardContent>
+   649→          </Card>
+   650→        </div>
+   651→
+   652→        {/* Barra de ações */}
+   653→        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+   654→          <div className="relative flex-1">
+   655→            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+   656→            <Input
+   657→              placeholder="Buscar por empresa, responsavel, cidade, telefone..."
+   658→              value={busca}
+   659→              onChange={(e) => setBusca(e.target.value)}
+   660→              className="pl-10 h-9 text-sm bg-gray-900 border-gray-800 text-white"
+   661→            />
+   662→          </div>
+   663→          <Select value={filtroStatus} onValueChange={setFiltroStatus}>
+   664→            <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-gray-900 border-gray-800 text-white">
+   665→              <SelectValue />
+   666→            </SelectTrigger>
+   667→            <SelectContent>
+   668→              <SelectItem value="TODOS">Todos Status</SelectItem>
+   669→              {STATUS_SISTEMA.map((s) => (
+   670→                <SelectItem key={s.valor} value={s.valor}>
+   671→                  {s.label}
+   672→                </SelectItem>
+   673→              ))}
+   674→            </SelectContent>
+   675→          </Select>
+   676→          <Select value={filtroPlano} onValueChange={setFiltroPlano}>
+   677→            <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-gray-900 border-gray-800 text-white">
+   678→              <SelectValue />
+   679→            </SelectTrigger>
+   680→            <SelectContent>
+   681→              <SelectItem value="TODOS">Todos Planos</SelectItem>
+   682→              {PLANOS.map((p) => (
+   683→                <SelectItem key={p.valor} value={p.valor}>
+   684→                  {p.label}
+   685→                </SelectItem>
+   686→              ))}
+   687→            </SelectContent>
+   688→          </Select>
+   689→          <Button
+   690→            className="h-9 bg-emerald-600 hover:bg-emerald-700 text-sm shrink-0"
+   691→            onClick={() => setDialogNovo(true)}
+   692→          >
+   693→            <Plus className="h-4 w-4 mr-1.5" />
+   694→            Novo Sistema
+   695→          </Button>
+   696→        </div>
+   697→
+   698→        {/* Tabela de sistemas */}
+   699→        <Card className="bg-gray-900 border-gray-800">
+   700→          <CardContent className="p-0">
+   701→            {/* Mobile cards */}
+   702→            <div className="sm:hidden divide-y divide-gray-800">
+   703→              {sistemasFiltrados.length === 0 && (
+   704→                <div className="p-8 text-center">
+   705→                  <Monitor className="w-10 h-10 text-gray-700 mx-auto mb-2" />
+   706→                  <p className="text-sm text-gray-500">
+   707→                    {busca || filtroStatus !== "TODOS" || filtroPlano !== "TODOS"
+   708→                      ? "Nenhum sistema encontrado."
+   709→                      : "Nenhum sistema cadastrado ainda."}
+   710→                  </p>
+   711→                </div>
+   712→              )}
+   713→              {sistemasFiltrados.map((s) => {
+   714→                const dias = diasRestantes(s.dataVencimento);
+   715→                const st = getStatusInfo(s.status);
+   716→                const pl = getPlanoInfo(s.plano);
+   717→                return (
+   718→                  <div key={s.id} className="p-3 space-y-2">
+   719→                    <div className="flex items-start justify-between gap-2">
+   720→                      <div className="min-w-0">
+   721→                        <p className="font-semibold text-sm truncate">{s.empresa}</p>
+   722→                        <p className="text-xs text-gray-500">{s.responsavel}</p>
+   723→                      </div>
+   724→                      <div className="flex items-center gap-1.5 shrink-0">
+   725→                        <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
+   726→                        <Badge className={`text-[10px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
+   727→                      </div>
+   728→                    </div>
+   729→                    <div className="flex items-center gap-3 text-[11px] text-gray-400">
+   730→                      {s.cidade && <span>{s.cidade}</span>}
+   731→                      <span>Vence: {formatarData(s.dataVencimento)}</span>
+   732→                      {s.status === "ATIVO" && (
+   733→                        <span className={dias <= 7 ? "text-amber-400 font-semibold" : "text-emerald-400"}>
+   734→                          {dias}d restantes
+   735→                        </span>
+   736→                      )}
+   737→                    </div>
+   738→                    <div className="flex gap-1.5 pt-1">
+   739→                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-400" onClick={() => setDialogDetalhe(s)}>
+   740→                        <Eye className="h-3 w-3 mr-1" /> Ver
+   741→                      </Button>
+   742→                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-blue-400" onClick={() => setDialogForm(s)}>
+   743→                        <Pencil className="h-3 w-3 mr-1" /> Editar
+   744→                      </Button>
+   745→                      {s.telefone && (
+   746→                        <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-400" onClick={() => handleWhatsApp(s.telefone)}>
+   747→                          <MessageCircle className="h-3 w-3" />
+   748→                        </Button>
+   749→                      )}
+   750→                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-red-400 ml-auto" onClick={() => setConfirmaRemover(s.id)}>
+   751→                        <Trash2 className="h-3 w-3" />
+   752→                      </Button>
+   753→                    </div>
+   754→                  </div>
+   755→                );
+   756→              })}
+   757→            </div>
+   758→
+   759→            {/* Desktop table */}
+   760→            <div className="hidden sm:block overflow-x-auto">
+   761→              <table className="w-full text-sm">
+   762→                <thead>
+   763→                  <tr className="border-b border-gray-800 text-[10px] text-gray-500 uppercase tracking-wider">
+   764→                    <th className="text-left py-3 px-4 font-semibold">Empresa</th>
+   765→                    <th className="text-left py-3 px-4 font-semibold">Responsavel</th>
+   766→                    <th className="text-left py-3 px-4 font-semibold">Contato</th>
+   767→                    <th className="text-left py-3 px-4 font-semibold">Plano</th>
+   768→                    <th className="text-center py-3 px-4 font-semibold">Status</th>
+   769→                    <th className="text-left py-3 px-4 font-semibold">Vencimento</th>
+   770→                    <th className="text-right py-3 px-4 font-semibold">Valor/mes</th>
+   771→                    <th className="text-center py-3 px-4 font-semibold">Acoes</th>
+   772→                  </tr>
+   773→                </thead>
+   774→                <tbody className="divide-y divide-gray-800/50">
+   775→                  {sistemasFiltrados.length === 0 && (
+   776→                    <tr>
+   777→                      <td colSpan={8} className="text-center py-12 text-gray-500 text-sm">
+   778→                        {busca || filtroStatus !== "TODOS" || filtroPlano !== "TODOS"
+   779→                          ? "Nenhum sistema encontrado."
+   780→                          : "Nenhum sistema cadastrado. Clique em 'Novo Sistema' para comecar."}
+   781→                      </td>
+   782→                    </tr>
+   783→                  )}
+   784→                  {sistemasFiltrados.map((s) => {
+   785→                    const dias = diasRestantes(s.dataVencimento);
+   786→                    const st = getStatusInfo(s.status);
+   787→                    const pl = getPlanoInfo(s.plano);
+   788→                    return (
+   789→                      <tr key={s.id} className="hover:bg-gray-800/30 transition-colors">
+   790→                        <td className="py-3 px-4">
+   791→                          <p className="font-semibold text-white">{s.empresa}</p>
+   792→                          {s.cidade && <p className="text-[11px] text-gray-500">{s.cidade}</p>}
+   793→                        </td>
+   794→                        <td className="py-3 px-4 text-gray-300">{s.responsavel}</td>
+   795→                        <td className="py-3 px-4">
+   796→                          {s.telefone && <p className="text-gray-300 text-xs">{s.telefone}</p>}
+   797→                          {s.email && <p className="text-[11px] text-gray-500">{s.email}</p>}
+   798→                        </td>
+   799→                        <td className="py-3 px-4">
+   800→                          <Badge className={`text-[10px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
+   801→                        </td>
+   802→                        <td className="py-3 px-4 text-center">
+   803→                          <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
+   804→                          {s.status === "ATIVO" && (
+   805→                            <p className={`text-[10px] mt-0.5 ${dias <= 7 ? "text-amber-400 font-semibold" : "text-gray-500"}`}>
+   806→                              {dias > 0 ? `${dias}d` : "Vencido"}
+   807→                            </p>
+   808→                          )}
+   809→                        </td>
+   810→                        <td className="py-3 px-4 text-gray-300 text-xs whitespace-nowrap">
+   811→                          {formatarData(s.dataVencimento)}
+   812→                        </td>
+   813→                        <td className="py-3 px-4 text-right font-semibold text-emerald-400 whitespace-nowrap">
+   814→                          {formatarMoeda(s.valorMensal)}
+   815→                        </td>
+   816→                        <td className="py-3 px-4">
+   817→                          <div className="flex items-center justify-center gap-1">
+   818→                            <TooltipProvider>
+   819→                              <Tooltip>
+   820→                                <TooltipTrigger asChild>
+   821→                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-white" onClick={() => setDialogDetalhe(s)}>
+   822→                                    <Eye className="h-3.5 w-3.5" />
+   823→                                  </Button>
+   824→                                </TooltipTrigger>
+   825→                                <TooltipContent>Detalhes</TooltipContent>
+   826→                              </Tooltip>
+   827→                            </TooltipProvider>
+   828→                            <TooltipProvider>
+   829→                              <Tooltip>
+   830→                                <TooltipTrigger asChild>
+   831→                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-400 hover:text-blue-300" onClick={() => setDialogForm(s)}>
+   832→                                    <Pencil className="h-3.5 w-3.5" />
+   833→                                  </Button>
+   834→                                </TooltipTrigger>
+   835→                                <TooltipContent>Editar</TooltipContent>
+   836→                              </Tooltip>
+   837→                            </TooltipProvider>
+   838→                            {s.telefone && (
+   839→                              <TooltipProvider>
+   840→                                <Tooltip>
+   841→                                  <TooltipTrigger asChild>
+   842→                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-400 hover:text-emerald-300" onClick={() => handleWhatsApp(s.telefone)}>
+   843→                                      <MessageCircle className="h-3.5 w-3.5" />
+   844→                                    </Button>
+   845→                                  </TooltipTrigger>
+   846→                                  <TooltipContent>WhatsApp</TooltipContent>
+   847→                                </Tooltip>
+   848→                              </TooltipProvider>
+   849→                            )}
+   850→                            <TooltipProvider>
+   851→                              <Tooltip>
+   852→                                <TooltipTrigger asChild>
+   853→                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-300" onClick={() => setConfirmaRemover(s.id)}>
+   854→                                    <Trash2 className="h-3.5 w-3.5" />
+   855→                                  </Button>
+   856→                                </TooltipTrigger>
+   857→                                <TooltipContent>Remover</TooltipContent>
+   858→                              </Tooltip>
+   859→                            </TooltipProvider>
+   860→                          </div>
+   861→                        </td>
+   862→                      </tr>
+   863→                    );
+   864→                  })}
+   865→                </tbody>
+   866→              </table>
+   867→            </div>
+   868→          </CardContent>
+   869→        </Card>
+   870→
+   871→        <div className="text-center text-[10px] text-gray-600 pb-4">
+   872→          {sistemasFiltrados.length} de {sistemas.length} sistema{sistemas.length !== 1 ? "s" : ""}
+   873→        </div>
+   874→      </main>
+   875→
+   876→      {/* Dialog Novo Sistema */}
+   877→      <Dialog open={dialogNovo} onOpenChange={() => setDialogNovo(false)}>
+   878→        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
+   879→          <DialogHeader>
+   880→            <DialogTitle className="flex items-center gap-2 text-base text-white">
+   881→              <Plus className="h-5 w-5 text-emerald-400" />
+   882→              Cadastrar Novo Sistema
+   883→            </DialogTitle>
+   884→          </DialogHeader>
+   885→          <FormularioSistema
+   886→            onSalvar={handleSalvarNovo}
+   887→            onCancelar={() => setDialogNovo(false)}
+   888→          />
+   889→        </DialogContent>
+   890→      </Dialog>
+   891→
+   892→      {/* Dialog Editar Sistema */}
+   893→      <Dialog open={!!dialogForm} onOpenChange={() => setDialogForm(null)}>
+   894→        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
+   895→          <DialogHeader>
+   896→            <DialogTitle className="flex items-center gap-2 text-base text-white">
+   897→              <Pencil className="h-5 w-5 text-blue-400" />
+   898→              Editar Sistema
+   899→            </DialogTitle>
+   900→          </DialogHeader>
+   901→          {dialogForm && (
+   902→            <FormularioSistema
+   903→              sistema={dialogForm}
+   904→              onSalvar={handleSalvarEdicao}
+   905→              onCancelar={() => setDialogForm(null)}
+   906→            />
+   907→          )}
+   908→        </DialogContent>
+   909→      </Dialog>
+   910→
+   911→      {/* Dialog Detalhes */}
+   912→      <Dialog open={!!dialogDetalhe} onOpenChange={() => setDialogDetalhe(null)}>
+   913→        <DialogContent className="max-w-md bg-gray-900 border-gray-800">
+   914→          <DialogHeader>
+   915→            <DialogTitle className="flex items-center gap-2 text-base text-white">
+   916→              <Eye className="h-5 w-5 text-emerald-400" />
+   917→              Detalhes do Sistema
+   918→            </DialogTitle>
+   919→          </DialogHeader>
+   920→          {dialogDetalhe && (
+   921→            <div className="space-y-4">
+   922→              <div className="bg-gray-800/50 rounded-xl p-4 space-y-3">
+   923→                <div className="flex items-start justify-between">
+   924→                  <div>
+   925→                    <p className="font-bold text-white">{dialogDetalhe.empresa}</p>
+   926→                    <p className="text-sm text-gray-400">{dialogDetalhe.responsavel}</p>
+   927→                  </div>
+   928→                  <div className="flex gap-1.5">
+   929→                    <Badge className={`text-[10px] font-semibold ${getStatusInfo(dialogDetalhe.status).cor}`}>
+   930→                      {getStatusInfo(dialogDetalhe.status).label}
+   931→                    </Badge>
+   932→                    <Badge className={`text-[10px] font-semibold ${getPlanoInfo(dialogDetalhe.plano).cor}`}>
+   933→                      {getPlanoInfo(dialogDetalhe.plano).label}
+   934→                    </Badge>
+   935→                  </div>
+   936→                </div>
+   937→                <Separator className="bg-gray-700" />
+   938→                <div className="grid grid-cols-2 gap-3 text-sm">
+   939→                  <div>
+   940→                    <p className="text-[10px] text-gray-500 uppercase">Telefone</p>
+   941→                    <p className="text-gray-300">{dialogDetalhe.telefone || "-"}</p>
+   942→                  </div>
+   943→                  <div>
+   944→                    <p className="text-[10px] text-gray-500 uppercase">E-mail</p>
+   945→                    <p className="text-gray-300">{dialogDetalhe.email || "-"}</p>
+   946→                  </div>
+   947→                  <div>
+   948→                    <p className="text-[10px] text-gray-500 uppercase">Cidade</p>
+   949→                    <p className="text-gray-300">{dialogDetalhe.cidade || "-"}</p>
+   950→                  </div>
+   951→                  <div>
+   952→                    <p className="text-[10px] text-gray-500 uppercase">Valor Mensal</p>
+   953→                    <p className="text-emerald-400 font-bold">{formatarMoeda(dialogDetalhe.valorMensal)}</p>
+   954→                  </div>
+   955→                  <div>
+   956→                    <p className="text-[10px] text-gray-500 uppercase">Instalacao</p>
+   957→                    <p className="text-gray-300">{formatarData(dialogDetalhe.dataInstalacao)}</p>
+   958→                  </div>
+   959→                  <div>
+   960→                    <p className="text-[10px] text-gray-500 uppercase">Vencimento</p>
+   961→                    <p className={dialogDetalhe.status === "ATIVO" && diasRestantes(dialogDetalhe.dataVencimento) <= 7 ? "text-amber-400 font-bold" : "text-gray-300"}>
+   962→                      {formatarData(dialogDetalhe.dataVencimento)}
+   963→                      {dialogDetalhe.status === "ATIVO" && (
+   964→                        <span className="block text-[11px]">
+   965→                          {diasRestantes(dialogDetalhe.dataVencimento) > 0
+   966→                            ? `${diasRestantes(dialogDetalhe.dataVencimento)} dias restantes`
+   967→                            : "Vencido!"}
+   968→                        </span>
+   969→                      )}
+   970→                    </p>
+   971→                  </div>
+   972→                </div>
+   973→                {dialogDetalhe.observacoes && (
+   974→                  <>
+   975→                    <Separator className="bg-gray-700" />
+   976→                    <div>
+   977→                      <p className="text-[10px] text-gray-500 uppercase mb-1">Observacoes</p>
+   978→                      <p className="text-sm text-gray-400">{dialogDetalhe.observacoes}</p>
+   979→                    </div>
+   980→                  </>
+   981→                )}
+   982→              </div>
+   983→              <div className="flex gap-2">
+   984→                {dialogDetalhe.telefone && (
+   985→                  <Button
+   986→                    variant="outline"
+   987→                    className="flex-1 bg-emerald-950/30 border-emerald-800 text-emerald-400 hover:bg-emerald-950/50 text-xs"
+   988→                    onClick={() => handleWhatsApp(dialogDetalhe.telefone)}
+   989→                  >
+   990→                    <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+   991→                    WhatsApp
+   992→                  </Button>
+   993→                )}
+   994→                <Button
+   995→                  variant="outline"
+   996→                  className="flex-1 border-gray-700 text-gray-300 hover:bg-gray-800 text-xs"
+   997→                  onClick={() => {
+   998→                    setDialogDetalhe(null);
+   999→                    setDialogForm(dialogDetalhe);
+  1000→                  }}
+  1001→                >
+  1002→                  <Pencil className="h-3.5 w-3.5 mr-1.5" />
+  1003→                  Editar
+  1004→                </Button>
+  1005→              </div>
+  1006→            </div>
+  1007→          )}
+  1008→        </DialogContent>
+  1009→      </Dialog>
+  1010→
+  1011→      {/* Dialog Confirmação de Remoção */}
+  1012→      <Dialog open={!!confirmaRemover} onOpenChange={() => setConfirmaRemover(null)}>
+  1013→        <DialogContent className="max-w-sm bg-gray-900 border-gray-800">
+  1014→          <DialogHeader>
+  1015→            <DialogTitle className="text-base text-white">Confirmar Remocao</DialogTitle>
+  1016→          </DialogHeader>
+  1017→          <p className="text-sm text-gray-400">
+  1018→            Tem certeza que deseja remover este sistema? Esta acao nao pode ser desfeita.
+  1019→          </p>
+  1020→          <div className="flex gap-2 justify-end pt-2">
+  1021→            <Button
+  1022→              variant="ghost"
+  1023→              size="sm"
+  1024→              className="text-xs text-gray-400"
+  1025→              onClick={() => setConfirmaRemover(null)}
+  1026→            >
+  1027→              Cancelar
+  1028→            </Button>
+  1029→            <Button
+  1030→              size="sm"
+  1031→              className="text-xs bg-red-600 hover:bg-red-700"
+  1032→              onClick={() => confirmaRemover && handleRemover(confirmaRemover)}
+  1033→            >
+  1034→              <Trash2 className="h-3 w-3 mr-1" />
+  1035→              Remover
+  1036→            </Button>
+  1037→          </div>
+  1038→        </DialogContent>
+  1039→      </Dialog>
+  1040→    </div>
+  1041→  );
+  1042→}
+  1043→
+  1044→// =============================================
+  1045→// EXPORT PRINCIPAL
+  1046→// =============================================
+  1047→export function PainelAdmin() {
+  1048→  const [autenticado, setAutenticado] = useState<boolean | null>(null);
+  1049→
+  1050→  useEffect(() => {
+  1051→    const session = sessionStorage.getItem("zapfacil_admin_session");
+  1052→    setAutenticado(session === "autenticado");
+  1053→  }, []);
+  1054→
+  1055→  if (autenticado === null) {
+  1056→    return (
+  1057→      <div className="min-h-screen flex items-center justify-center bg-gray-950">
+  1058→        <div className="animate-pulse flex flex-col items-center gap-3">
+  1059→          <div className="w-14 h-14 rounded-2xl bg-emerald-900/40" />
+  1060→          <div className="h-4 w-28 bg-gray-800 rounded" />
+  1061→        </div>
+  1062→      </div>
+  1063→    );
+  1064→  }
+  1065→
+  1066→  if (!autenticado) {
+  1067→    return <TelaLoginAdmin onAutenticado={() => setAutenticado(true)} />;
+  1068→  }
+  1069→
+  1070→  return <PainelAdminConteudo />;
+  1071→}

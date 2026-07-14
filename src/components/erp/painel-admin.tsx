@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -35,16 +35,12 @@ import {
   Search,
   Pencil,
   Trash2,
-  Check,
-  X,
   Eye,
   MessageCircle,
   Monitor,
   DollarSign,
-  Users,
   AlertTriangle,
   TrendingUp,
-  Crown,
   ShieldCheck,
   LogOut,
   ArrowRight,
@@ -79,7 +75,7 @@ function diasRestantes(vencimento: string): number {
 }
 
 // =============================================
-// TELA DE LOGIN DO ADMIN
+// TELA DE LOGIN DO ADMIN (CLARO)
 // =============================================
 function TelaLoginAdmin({
   onAutenticado,
@@ -135,17 +131,17 @@ function TelaLoginAdmin({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
-      <Card className="w-full max-w-sm border-gray-700 bg-gray-900/80 backdrop-blur">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 px-4">
+      <Card className="w-full max-w-sm border-0 shadow-xl">
         <CardContent className="p-8 space-y-6">
           <div className="text-center space-y-3">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-900/40 mb-2">
-              <ShieldCheck className="w-7 h-7 text-emerald-400" />
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-100 mb-2">
+              <ShieldCheck className="w-7 h-7 text-emerald-600" />
             </div>
-            <h1 className="text-xl font-bold text-white">
+            <h1 className="text-xl font-bold text-gray-900">
               {ehPrimeiroAcesso ? "Configurar Admin" : "Painel Administrativo"}
             </h1>
-            <p className="text-xs text-gray-400 leading-relaxed">
+            <p className="text-xs text-gray-500 leading-relaxed">
               {ehPrimeiroAcesso
                 ? "Crie as credenciais do administrador master."
                 : "Acesso restrito ao gestor dos sistemas."}
@@ -154,14 +150,14 @@ function TelaLoginAdmin({
 
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label className="text-xs text-gray-400">Usuario</Label>
+              <Label className="text-xs font-medium text-gray-700">Usuario</Label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="admin"
                   value={usuario}
                   onChange={(e) => setUsuario(e.target.value)}
-                  className="pl-10 h-10 text-sm bg-gray-800 border-gray-700 text-white"
+                  className="pl-10 h-10 text-sm"
                   onKeyDown={(e) =>
                     e.key === "Enter" &&
                     (ehPrimeiroAcesso ? handleCriar() : handleLogin())
@@ -172,15 +168,15 @@ function TelaLoginAdmin({
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs text-gray-400">Senha</Label>
+              <Label className="text-xs font-medium text-gray-700">Senha</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   type={mostrarSenha ? "text" : "password"}
                   placeholder="Sua senha"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
-                  className="pl-10 pr-10 h-10 text-sm bg-gray-800 border-gray-700 text-white"
+                  className="pl-10 pr-10 h-10 text-sm"
                   onKeyDown={(e) =>
                     e.key === "Enter" &&
                     (ehPrimeiroAcesso ? handleCriar() : handleLogin())
@@ -189,7 +185,7 @@ function TelaLoginAdmin({
                 <button
                   type="button"
                   onClick={() => setMostrarSenha(!mostrarSenha)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {mostrarSenha ? (
                     <EyeOff className="h-4 w-4" />
@@ -202,17 +198,17 @@ function TelaLoginAdmin({
 
             {ehPrimeiroAcesso && (
               <div className="space-y-1.5">
-                <Label className="text-xs text-gray-400">
+                <Label className="text-xs font-medium text-gray-700">
                   Confirmar Senha
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     type="password"
                     placeholder="Repita a senha"
                     value={confirmarSenha}
                     onChange={(e) => setConfirmarSenha(e.target.value)}
-                    className="pl-10 h-10 text-sm bg-gray-800 border-gray-700 text-white"
+                    className="pl-10 h-10 text-sm"
                     onKeyDown={(e) => e.key === "Enter" && handleCriar()}
                   />
                 </div>
@@ -240,7 +236,7 @@ function TelaLoginAdmin({
             {!ehPrimeiroAcesso && (
               <p className="text-center">
                 <button
-                  className="text-[10px] text-gray-500 hover:text-gray-300"
+                  className="text-[10px] text-gray-400 hover:text-gray-600"
                   onClick={() => setEhPrimeiroAcesso(true)}
                 >
                   Primeiro acesso? Clique aqui
@@ -459,10 +455,10 @@ function FormularioSistema({
 }
 
 // =============================================
-// PAINEL ADMIN PRINCIPAL
+// PAINEL ADMIN PRINCIPAL (CLARO)
 // =============================================
 function PainelAdminConteudo() {
-  const { sistemas, adicionarSistema, editarSistema, removerSistema, alterarStatus } =
+  const { sistemas, adicionarSistema, editarSistema, removerSistema } =
     useAdminStore();
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState<string>("TODOS");
@@ -477,25 +473,20 @@ function PainelAdminConteudo() {
     const ativos = sistemas.filter((s) => s.status === "ATIVO").length;
     const trials = sistemas.filter((s) => s.status === "TRIAL").length;
     const expirados = sistemas.filter((s) => s.status === "EXPIRADO").length;
-    const cancelados = sistemas.filter((s) => s.status === "CANCELADO").length;
     const receitaMensal = sistemas
       .filter((s) => s.status === "ATIVO" || s.status === "TRIAL")
       .reduce((s, v) => s + v.valorMensal, 0);
     const vencendo = sistemas.filter(
       (s) => s.status === "ATIVO" && diasRestantes(s.dataVencimento) <= 7 && diasRestantes(s.dataVencimento) > 0
     ).length;
-    return { ativos, trials, expirados, cancelados, receitaMensal, vencendo, total: sistemas.length };
+    return { ativos, trials, expirados, receitaMensal, vencendo, total: sistemas.length };
   }, [sistemas]);
 
   // Filtragem
   const sistemasFiltrados = useMemo(() => {
     let lista = sistemas;
-    if (filtroStatus !== "TODOS") {
-      lista = lista.filter((s) => s.status === filtroStatus);
-    }
-    if (filtroPlano !== "TODOS") {
-      lista = lista.filter((s) => s.plano === filtroPlano);
-    }
+    if (filtroStatus !== "TODOS") lista = lista.filter((s) => s.status === filtroStatus);
+    if (filtroPlano !== "TODOS") lista = lista.filter((s) => s.plano === filtroPlano);
     if (busca.trim()) {
       const termo = busca.toLowerCase();
       lista = lista.filter(
@@ -555,19 +546,17 @@ function PainelAdminConteudo() {
     PLANOS.find((p) => p.valor === plano) || PLANOS[0];
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-950 text-white">
-      {/* Header Admin */}
-      <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-900/40 flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5 text-emerald-600" />
             </div>
             <div>
-              <h1 className="text-sm font-bold">Painel Admin</h1>
-              <p className="text-[10px] text-gray-500">
-                Controle de Sistemas
-              </p>
+              <h1 className="text-sm font-bold text-gray-900">Painel Admin</h1>
+              <p className="text-[10px] text-gray-400">Controle de Sistemas</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -577,7 +566,7 @@ function PainelAdminConteudo() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-red-400 hover:bg-red-950/30"
+                    className="h-8 w-8 text-red-500 hover:bg-red-50"
                     onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4" />
@@ -593,58 +582,58 @@ function PainelAdminConteudo() {
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
         {/* Cards de estatísticas */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <Card className="bg-gray-900 border-gray-800">
+          <Card className="border-0 shadow-sm">
             <CardContent className="p-3.5">
               <div className="flex items-center gap-1.5 mb-1">
-                <Monitor className="w-3.5 h-3.5 text-gray-500" />
-                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Total</span>
+                <Monitor className="w-3.5 h-3.5 text-gray-400" />
+                <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Total</span>
               </div>
-              <p className="text-2xl font-black">{stats.total}</p>
+              <p className="text-2xl font-black text-gray-900">{stats.total}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gray-900 border-emerald-900/50">
+          <Card className="border-0 shadow-sm">
             <CardContent className="p-3.5">
               <div className="flex items-center gap-1.5 mb-1">
-                <Check className="w-3.5 h-3.5 text-emerald-500" />
-                <span className="text-[10px] text-emerald-500 font-medium uppercase tracking-wider">Ativos</span>
+                <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Ativos</span>
               </div>
-              <p className="text-2xl font-black text-emerald-400">{stats.ativos}</p>
+              <p className="text-2xl font-black text-emerald-600">{stats.ativos}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gray-900 border-blue-900/50">
+          <Card className="border-0 shadow-sm">
             <CardContent className="p-3.5">
               <div className="flex items-center gap-1.5 mb-1">
-                <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
-                <span className="text-[10px] text-blue-500 font-medium uppercase tracking-wider">Trial</span>
+                <Monitor className="w-3.5 h-3.5 text-blue-500" />
+                <span className="text-[10px] text-blue-600 font-medium uppercase tracking-wider">Trial</span>
               </div>
-              <p className="text-2xl font-black text-blue-400">{stats.trials}</p>
+              <p className="text-2xl font-black text-blue-600">{stats.trials}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gray-900 border-red-900/50">
+          <Card className="border-0 shadow-sm">
             <CardContent className="p-3.5">
               <div className="flex items-center gap-1.5 mb-1">
                 <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
-                <span className="text-[10px] text-red-500 font-medium uppercase tracking-wider">Expirados</span>
+                <span className="text-[10px] text-red-600 font-medium uppercase tracking-wider">Expirados</span>
               </div>
-              <p className="text-2xl font-black text-red-400">{stats.expirados}</p>
+              <p className="text-2xl font-black text-red-600">{stats.expirados}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gray-900 border-amber-900/50">
+          <Card className="border-0 shadow-sm">
             <CardContent className="p-3.5">
               <div className="flex items-center gap-1.5 mb-1">
                 <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                <span className="text-[10px] text-amber-500 font-medium uppercase tracking-wider">Vencendo</span>
+                <span className="text-[10px] text-amber-600 font-medium uppercase tracking-wider">Vencendo</span>
               </div>
-              <p className="text-2xl font-black text-amber-400">{stats.vencendo}</p>
+              <p className="text-2xl font-black text-amber-600">{stats.vencendo}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gray-900 border-emerald-900/50">
+          <Card className="border-0 shadow-sm">
             <CardContent className="p-3.5">
               <div className="flex items-center gap-1.5 mb-1">
                 <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
-                <span className="text-[10px] text-emerald-500 font-medium uppercase tracking-wider">Receita/mes</span>
+                <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Receita/mes</span>
               </div>
-              <p className="text-lg font-black text-emerald-400">{formatarMoeda(stats.receitaMensal)}</p>
+              <p className="text-lg font-black text-emerald-600">{formatarMoeda(stats.receitaMensal)}</p>
             </CardContent>
           </Card>
         </div>
@@ -652,16 +641,16 @@ function PainelAdminConteudo() {
         {/* Barra de ações */}
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Buscar por empresa, responsavel, cidade, telefone..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
-              className="pl-10 h-9 text-sm bg-gray-900 border-gray-800 text-white"
+              className="pl-10 h-9 text-sm bg-white border-gray-200"
             />
           </div>
           <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-            <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-gray-900 border-gray-800 text-white">
+            <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -674,7 +663,7 @@ function PainelAdminConteudo() {
             </SelectContent>
           </Select>
           <Select value={filtroPlano} onValueChange={setFiltroPlano}>
-            <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-gray-900 border-gray-800 text-white">
+            <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -696,14 +685,14 @@ function PainelAdminConteudo() {
         </div>
 
         {/* Tabela de sistemas */}
-        <Card className="bg-gray-900 border-gray-800">
+        <Card className="border-0 shadow-sm">
           <CardContent className="p-0">
             {/* Mobile cards */}
-            <div className="sm:hidden divide-y divide-gray-800">
+            <div className="sm:hidden divide-y divide-gray-100">
               {sistemasFiltrados.length === 0 && (
                 <div className="p-8 text-center">
-                  <Monitor className="w-10 h-10 text-gray-700 mx-auto mb-2" />
-                  <p className="text-sm text-gray-500">
+                  <Monitor className="w-10 h-10 text-gray-200 mx-auto mb-2" />
+                  <p className="text-sm text-gray-400">
                     {busca || filtroStatus !== "TODOS" || filtroPlano !== "TODOS"
                       ? "Nenhum sistema encontrado."
                       : "Nenhum sistema cadastrado ainda."}
@@ -718,8 +707,8 @@ function PainelAdminConteudo() {
                   <div key={s.id} className="p-3 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="font-semibold text-sm truncate">{s.empresa}</p>
-                        <p className="text-xs text-gray-500">{s.responsavel}</p>
+                        <p className="font-semibold text-sm text-gray-900 truncate">{s.empresa}</p>
+                        <p className="text-xs text-gray-400">{s.responsavel}</p>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
                         <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
@@ -730,24 +719,24 @@ function PainelAdminConteudo() {
                       {s.cidade && <span>{s.cidade}</span>}
                       <span>Vence: {formatarData(s.dataVencimento)}</span>
                       {s.status === "ATIVO" && (
-                        <span className={dias <= 7 ? "text-amber-400 font-semibold" : "text-emerald-400"}>
+                        <span className={dias <= 7 ? "text-amber-600 font-semibold" : "text-emerald-600"}>
                           {dias}d restantes
                         </span>
                       )}
                     </div>
                     <div className="flex gap-1.5 pt-1">
-                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-400" onClick={() => setDialogDetalhe(s)}>
+                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-500" onClick={() => setDialogDetalhe(s)}>
                         <Eye className="h-3 w-3 mr-1" /> Ver
                       </Button>
-                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-blue-400" onClick={() => setDialogForm(s)}>
+                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-blue-600" onClick={() => setDialogForm(s)}>
                         <Pencil className="h-3 w-3 mr-1" /> Editar
                       </Button>
                       {s.telefone && (
-                        <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-400" onClick={() => handleWhatsApp(s.telefone)}>
+                        <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-600" onClick={() => handleWhatsApp(s.telefone)}>
                           <MessageCircle className="h-3 w-3" />
                         </Button>
                       )}
-                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-red-400 ml-auto" onClick={() => setConfirmaRemover(s.id)}>
+                      <Button variant="ghost" size="sm" className="h-7 text-[10px] text-red-500 ml-auto" onClick={() => setConfirmaRemover(s.id)}>
                         <Trash2 className="h-3 w-3" />
                       </Button>
                     </div>
@@ -760,7 +749,7 @@ function PainelAdminConteudo() {
             <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-800 text-[10px] text-gray-500 uppercase tracking-wider">
+                  <tr className="border-b border-gray-100 text-[10px] text-gray-400 uppercase tracking-wider bg-gray-50/50">
                     <th className="text-left py-3 px-4 font-semibold">Empresa</th>
                     <th className="text-left py-3 px-4 font-semibold">Responsavel</th>
                     <th className="text-left py-3 px-4 font-semibold">Contato</th>
@@ -771,10 +760,10 @@ function PainelAdminConteudo() {
                     <th className="text-center py-3 px-4 font-semibold">Acoes</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-800/50">
+                <tbody className="divide-y divide-gray-50">
                   {sistemasFiltrados.length === 0 && (
                     <tr>
-                      <td colSpan={8} className="text-center py-12 text-gray-500 text-sm">
+                      <td colSpan={8} className="text-center py-12 text-gray-400 text-sm">
                         {busca || filtroStatus !== "TODOS" || filtroPlano !== "TODOS"
                           ? "Nenhum sistema encontrado."
                           : "Nenhum sistema cadastrado. Clique em 'Novo Sistema' para comecar."}
@@ -786,15 +775,15 @@ function PainelAdminConteudo() {
                     const st = getStatusInfo(s.status);
                     const pl = getPlanoInfo(s.plano);
                     return (
-                      <tr key={s.id} className="hover:bg-gray-800/30 transition-colors">
+                      <tr key={s.id} className="hover:bg-gray-50/80 transition-colors">
                         <td className="py-3 px-4">
-                          <p className="font-semibold text-white">{s.empresa}</p>
-                          {s.cidade && <p className="text-[11px] text-gray-500">{s.cidade}</p>}
+                          <p className="font-semibold text-gray-900">{s.empresa}</p>
+                          {s.cidade && <p className="text-[11px] text-gray-400">{s.cidade}</p>}
                         </td>
-                        <td className="py-3 px-4 text-gray-300">{s.responsavel}</td>
+                        <td className="py-3 px-4 text-gray-600">{s.responsavel}</td>
                         <td className="py-3 px-4">
-                          {s.telefone && <p className="text-gray-300 text-xs">{s.telefone}</p>}
-                          {s.email && <p className="text-[11px] text-gray-500">{s.email}</p>}
+                          {s.telefone && <p className="text-gray-600 text-xs">{s.telefone}</p>}
+                          {s.email && <p className="text-[11px] text-gray-400">{s.email}</p>}
                         </td>
                         <td className="py-3 px-4">
                           <Badge className={`text-[10px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
@@ -802,15 +791,15 @@ function PainelAdminConteudo() {
                         <td className="py-3 px-4 text-center">
                           <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
                           {s.status === "ATIVO" && (
-                            <p className={`text-[10px] mt-0.5 ${dias <= 7 ? "text-amber-400 font-semibold" : "text-gray-500"}`}>
+                            <p className={`text-[10px] mt-0.5 ${dias <= 7 ? "text-amber-600 font-semibold" : "text-gray-400"}`}>
                               {dias > 0 ? `${dias}d` : "Vencido"}
                             </p>
                           )}
                         </td>
-                        <td className="py-3 px-4 text-gray-300 text-xs whitespace-nowrap">
+                        <td className="py-3 px-4 text-gray-600 text-xs whitespace-nowrap">
                           {formatarData(s.dataVencimento)}
                         </td>
-                        <td className="py-3 px-4 text-right font-semibold text-emerald-400 whitespace-nowrap">
+                        <td className="py-3 px-4 text-right font-semibold text-emerald-600 whitespace-nowrap">
                           {formatarMoeda(s.valorMensal)}
                         </td>
                         <td className="py-3 px-4">
@@ -818,7 +807,7 @@ function PainelAdminConteudo() {
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-white" onClick={() => setDialogDetalhe(s)}>
+                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-gray-700" onClick={() => setDialogDetalhe(s)}>
                                     <Eye className="h-3.5 w-3.5" />
                                   </Button>
                                 </TooltipTrigger>
@@ -828,7 +817,7 @@ function PainelAdminConteudo() {
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-400 hover:text-blue-300" onClick={() => setDialogForm(s)}>
+                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:text-blue-700" onClick={() => setDialogForm(s)}>
                                     <Pencil className="h-3.5 w-3.5" />
                                   </Button>
                                 </TooltipTrigger>
@@ -839,7 +828,7 @@ function PainelAdminConteudo() {
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-400 hover:text-emerald-300" onClick={() => handleWhatsApp(s.telefone)}>
+                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-500 hover:text-emerald-700" onClick={() => handleWhatsApp(s.telefone)}>
                                       <MessageCircle className="h-3.5 w-3.5" />
                                     </Button>
                                   </TooltipTrigger>
@@ -850,7 +839,7 @@ function PainelAdminConteudo() {
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-300" onClick={() => setConfirmaRemover(s.id)}>
+                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-600" onClick={() => setConfirmaRemover(s.id)}>
                                     <Trash2 className="h-3.5 w-3.5" />
                                   </Button>
                                 </TooltipTrigger>
@@ -868,17 +857,17 @@ function PainelAdminConteudo() {
           </CardContent>
         </Card>
 
-        <div className="text-center text-[10px] text-gray-600 pb-4">
+        <div className="text-center text-[10px] text-gray-400 pb-4">
           {sistemasFiltrados.length} de {sistemas.length} sistema{sistemas.length !== 1 ? "s" : ""}
         </div>
       </main>
 
       {/* Dialog Novo Sistema */}
       <Dialog open={dialogNovo} onOpenChange={() => setDialogNovo(false)}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-base text-white">
-              <Plus className="h-5 w-5 text-emerald-400" />
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Plus className="h-5 w-5 text-emerald-600" />
               Cadastrar Novo Sistema
             </DialogTitle>
           </DialogHeader>
@@ -891,10 +880,10 @@ function PainelAdminConteudo() {
 
       {/* Dialog Editar Sistema */}
       <Dialog open={!!dialogForm} onOpenChange={() => setDialogForm(null)}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-800">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-base text-white">
-              <Pencil className="h-5 w-5 text-blue-400" />
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Pencil className="h-5 w-5 text-blue-600" />
               Editar Sistema
             </DialogTitle>
           </DialogHeader>
@@ -910,20 +899,20 @@ function PainelAdminConteudo() {
 
       {/* Dialog Detalhes */}
       <Dialog open={!!dialogDetalhe} onOpenChange={() => setDialogDetalhe(null)}>
-        <DialogContent className="max-w-md bg-gray-900 border-gray-800">
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-base text-white">
-              <Eye className="h-5 w-5 text-emerald-400" />
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Eye className="h-5 w-5 text-emerald-600" />
               Detalhes do Sistema
             </DialogTitle>
           </DialogHeader>
           {dialogDetalhe && (
             <div className="space-y-4">
-              <div className="bg-gray-800/50 rounded-xl p-4 space-y-3">
+              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-bold text-white">{dialogDetalhe.empresa}</p>
-                    <p className="text-sm text-gray-400">{dialogDetalhe.responsavel}</p>
+                    <p className="font-bold text-gray-900">{dialogDetalhe.empresa}</p>
+                    <p className="text-sm text-gray-500">{dialogDetalhe.responsavel}</p>
                   </div>
                   <div className="flex gap-1.5">
                     <Badge className={`text-[10px] font-semibold ${getStatusInfo(dialogDetalhe.status).cor}`}>
@@ -934,31 +923,31 @@ function PainelAdminConteudo() {
                     </Badge>
                   </div>
                 </div>
-                <Separator className="bg-gray-700" />
+                <Separator />
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <p className="text-[10px] text-gray-500 uppercase">Telefone</p>
-                    <p className="text-gray-300">{dialogDetalhe.telefone || "-"}</p>
+                    <p className="text-[10px] text-gray-400 uppercase font-medium">Telefone</p>
+                    <p className="text-gray-700">{dialogDetalhe.telefone || "-"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-gray-500 uppercase">E-mail</p>
-                    <p className="text-gray-300">{dialogDetalhe.email || "-"}</p>
+                    <p className="text-[10px] text-gray-400 uppercase font-medium">E-mail</p>
+                    <p className="text-gray-700">{dialogDetalhe.email || "-"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-gray-500 uppercase">Cidade</p>
-                    <p className="text-gray-300">{dialogDetalhe.cidade || "-"}</p>
+                    <p className="text-[10px] text-gray-400 uppercase font-medium">Cidade</p>
+                    <p className="text-gray-700">{dialogDetalhe.cidade || "-"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-gray-500 uppercase">Valor Mensal</p>
-                    <p className="text-emerald-400 font-bold">{formatarMoeda(dialogDetalhe.valorMensal)}</p>
+                    <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Mensal</p>
+                    <p className="text-emerald-600 font-bold">{formatarMoeda(dialogDetalhe.valorMensal)}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-gray-500 uppercase">Instalacao</p>
-                    <p className="text-gray-300">{formatarData(dialogDetalhe.dataInstalacao)}</p>
+                    <p className="text-[10px] text-gray-400 uppercase font-medium">Instalacao</p>
+                    <p className="text-gray-700">{formatarData(dialogDetalhe.dataInstalacao)}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-gray-500 uppercase">Vencimento</p>
-                    <p className={dialogDetalhe.status === "ATIVO" && diasRestantes(dialogDetalhe.dataVencimento) <= 7 ? "text-amber-400 font-bold" : "text-gray-300"}>
+                    <p className="text-[10px] text-gray-400 uppercase font-medium">Vencimento</p>
+                    <p className={dialogDetalhe.status === "ATIVO" && diasRestantes(dialogDetalhe.dataVencimento) <= 7 ? "text-amber-600 font-bold" : "text-gray-700"}>
                       {formatarData(dialogDetalhe.dataVencimento)}
                       {dialogDetalhe.status === "ATIVO" && (
                         <span className="block text-[11px]">
@@ -972,10 +961,10 @@ function PainelAdminConteudo() {
                 </div>
                 {dialogDetalhe.observacoes && (
                   <>
-                    <Separator className="bg-gray-700" />
+                    <Separator />
                     <div>
-                      <p className="text-[10px] text-gray-500 uppercase mb-1">Observacoes</p>
-                      <p className="text-sm text-gray-400">{dialogDetalhe.observacoes}</p>
+                      <p className="text-[10px] text-gray-400 uppercase font-medium mb-1">Observacoes</p>
+                      <p className="text-sm text-gray-500">{dialogDetalhe.observacoes}</p>
                     </div>
                   </>
                 )}
@@ -984,7 +973,7 @@ function PainelAdminConteudo() {
                 {dialogDetalhe.telefone && (
                   <Button
                     variant="outline"
-                    className="flex-1 bg-emerald-950/30 border-emerald-800 text-emerald-400 hover:bg-emerald-950/50 text-xs"
+                    className="flex-1 bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 text-xs"
                     onClick={() => handleWhatsApp(dialogDetalhe.telefone)}
                   >
                     <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
@@ -993,7 +982,7 @@ function PainelAdminConteudo() {
                 )}
                 <Button
                   variant="outline"
-                  className="flex-1 border-gray-700 text-gray-300 hover:bg-gray-800 text-xs"
+                  className="flex-1 border-gray-200 text-gray-600 hover:bg-gray-50 text-xs"
                   onClick={() => {
                     setDialogDetalhe(null);
                     setDialogForm(dialogDetalhe);
@@ -1010,18 +999,18 @@ function PainelAdminConteudo() {
 
       {/* Dialog Confirmação de Remoção */}
       <Dialog open={!!confirmaRemover} onOpenChange={() => setConfirmaRemover(null)}>
-        <DialogContent className="max-w-sm bg-gray-900 border-gray-800">
+        <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle className="text-base text-white">Confirmar Remocao</DialogTitle>
+            <DialogTitle className="text-base">Confirmar Remocao</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-500">
             Tem certeza que deseja remover este sistema? Esta acao nao pode ser desfeita.
           </p>
           <div className="flex gap-2 justify-end pt-2">
             <Button
               variant="ghost"
               size="sm"
-              className="text-xs text-gray-400"
+              className="text-xs"
               onClick={() => setConfirmaRemover(null)}
             >
               Cancelar
@@ -1054,10 +1043,10 @@ export function PainelAdmin() {
 
   if (autenticado === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-950">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-pulse flex flex-col items-center gap-3">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-900/40" />
-          <div className="h-4 w-28 bg-gray-800 rounded" />
+          <div className="w-14 h-14 rounded-2xl bg-emerald-100" />
+          <div className="h-4 w-28 bg-gray-200 rounded" />
         </div>
       </div>
     );
