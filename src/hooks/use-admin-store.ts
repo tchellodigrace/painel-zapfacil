@@ -130,6 +130,7 @@ interface AdminState {
   pedidosRecuperacao: PedidoRecuperacao[];
 
   alterarSenha: (senhaAtual: string, novaSenha: string) => boolean;
+  recarregarDados: () => void;
 
   // Ações - Sistemas
   configurarAdmin: (usuario: string, senha: string) => void;
@@ -436,6 +437,14 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     );
     salvar("pedidos_recuperacao", novaLista);
     set({ pedidosRecuperacao: novaLista });
+  },
+
+  recarregarDados: () => {
+    set({
+      sistemas: migrarSistemas(carregar<SistemaCliente[]>("sistemas", [])),
+      cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
+      pedidosRecuperacao: carregar<PedidoRecuperacao[]>("pedidos_recuperacao", []),
+    });
   },
 }));
 
