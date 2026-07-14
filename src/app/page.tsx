@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +26,7 @@ import {
   CalendarDays,
   Receipt,
   Users,
+  LogOut,
 } from "lucide-react";
 import { EmpresaPanel } from "@/components/erp/empresa-panel";
 import { CatalogoServicos } from "@/components/erp/catalogo-servicos";
@@ -38,13 +39,34 @@ import { PainelAgendamento } from "@/components/erp/painel-agendamento";
 import { PainelDespesas } from "@/components/erp/painel-despesas";
 import { PainelColaboradores } from "@/components/erp/painel-colaboradores";
 import { InicializadorLogo } from "@/components/erp/inicializador-logo";
+import { TelaLogin, destruirSessao } from "@/components/erp/tela-login";
 import type { Venda } from "@/types";
+
+const SESSION_KEY = "zapfacil_session";
+
+function verificarSessao(): boolean {
+  if (typeof window === "undefined") return false;
+  return sessionStorage.getItem(SESSION_KEY) === "autenticado";
+}
 
 export default function ZapFacilPage() {
   const { theme, setTheme } = useTheme();
-
+  const [autenticado, setAutenticado] = useState<boolean | null>(null);
   const [vendaAtual, setVendaAtual] = useState<Venda | null>(null);
   const [abaAtiva, setAbaAtiva] = useState("lancamento");
+
+  useEffect(() => {
+    setAutenticado(verificarSessao());
+  }, []);
+
+  const handleAutenticado = useCallback(() => {
+    setAutenticado(true);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    destruirSessao();
+    setAutenticado(false);
+  }, []);
 
   const handleVendaCriada = useCallback((venda: Venda) => {
     setVendaAtual(venda);
@@ -61,6 +83,24 @@ export default function ZapFacilPage() {
     }, 100);
   }, []);
 
+  // Aguardando verificação de sessão
+  if (autenticado === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+        <div className="animate-pulse flex flex-col items-center gap-3">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30" />
+          <div className="h-4 w-32 bg-gray-200 dark:bg-gray-800 rounded" />
+        </div>
+      </div>
+    );
+  }
+
+  // Tela de login
+  if (!autenticado) {
+    return <TelaLogin onAutenticado={handleAutenticado} />;
+  }
+
+  // === SISTEMA ERP (autenticado) ===
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
       <InicializadorLogo />
@@ -106,6 +146,23 @@ export default function ZapFacilPage() {
                       ? "Modo Claro"
                       : "Modo Escuro"}
                   </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Sair do Sistema</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
