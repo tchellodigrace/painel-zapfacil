@@ -645,8 +645,9 @@ function SecaoRecuperacoes() {
 
   // Recarrega dados do localStorage ao montar (resolve pedidos criados em outra pagina)
   useEffect(() => {
-    recarregarDados();
-  }, [recarregarDados]);
+    try { recarregarDados(); } catch (e) { console.warn("Erro ao recarregar dados:", e); }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // --- Pedidos de recuperacao ---
   const pendentes = pedidosRecuperacao.filter((p) => p.status === "PENDENTE");
@@ -657,14 +658,19 @@ function SecaoRecuperacoes() {
   const clientesFiltrados = useMemo(() => {
     if (!buscaCliente.trim()) return sistemas;
     const termo = buscaCliente.toLowerCase().trim();
-    return sistemas.filter(
-      (s) =>
-        s.empresa.toLowerCase().includes(termo) ||
-        s.responsavel.toLowerCase().includes(termo) ||
-        s.email.toLowerCase().includes(termo) ||
-        (s.telefone && s.telefone.includes(termo)) ||
-        (s.cidade && s.cidade.toLowerCase().includes(termo))
-    );
+    return sistemas.filter((s) => {
+      try {
+        return (
+          (s.empresa || "").toLowerCase().includes(termo) ||
+          (s.responsavel || "").toLowerCase().includes(termo) ||
+          (s.email || "").toLowerCase().includes(termo) ||
+          (s.telefone || "").includes(termo) ||
+          (s.cidade || "").toLowerCase().includes(termo)
+        );
+      } catch {
+        return false;
+      }
+    });
   }, [sistemas, buscaCliente]);
 
   // --- Funcoes auxiliares ---
@@ -695,7 +701,7 @@ function SecaoRecuperacoes() {
       return d.toLocaleDateString("pt-BR", {
         day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit",
       });
-    } catch { return iso; }
+    } catch (_e) { return iso; }
   }
 
   // --- Enviar dados proativamente via WhatsApp ---
