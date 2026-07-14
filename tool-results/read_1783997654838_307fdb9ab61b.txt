@@ -1,0 +1,701 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→import { useState, useMemo } from "react";
+     4→     4→import { useERPStore } from "@/hooks/use-erp-store";
+     5→     5→import { Button } from "@/components/ui/button";
+     6→     6→import { Input } from "@/components/ui/input";
+     7→     7→import { Badge } from "@/components/ui/badge";
+     8→     8→import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+     9→     9→import {
+    10→    10→  Dialog,
+    11→    11→  DialogContent,
+    12→    12→  DialogHeader,
+    13→    13→  DialogTitle,
+    14→    14→} from "@/components/ui/dialog";
+    15→    15→import { Separator } from "@/components/ui/separator";
+    16→    16→import type { Venda, Agendamento } from "@/types";
+    17→    17→import { STATUS_AGENDAMENTO } from "@/types";
+    18→    18→import {
+    19→    19→  Search,
+    20→    20→  ShoppingBag,
+    21→    21→  CalendarCheck,
+    22→    22→  Wallet,
+    23→    23→  ChevronRight,
+    24→    24→  Clock,
+    25→    25→  User,
+    26→    26→  CreditCard,
+    27→    27→  CheckCircle2,
+    28→    28→  AlertCircle,
+    29→    29→  ArrowLeft,
+    30→    30→  Receipt,
+    31→    31→} from "lucide-react";
+    32→    32→
+    33→    33→export function PortalCliente() {
+    34→    34→  const { vendas, agendamentos, empresa } = useERPStore();
+    35→    35→  const [busca, setBusca] = useState("");
+    36→    36→  const [clienteSelecionado, setClienteSelecionado] = useState<{
+    37→    37→    nome: string;
+    38→    38→    telefone: string;
+    39→    39→  } | null>(null);
+    40→    40→  const [vendaDetalhe, setVendaDetalhe] = useState<Venda | null>(null);
+    41→    41→
+    42→    42→  // Busca clientes únicos por telefone ou nome parcial
+    43→    43→  const clientesEncontrados = useMemo(() => {
+    44→    44→    if (busca.trim().length < 3) return [];
+    45→    45→    const termo = busca.trim().toLowerCase();
+    46→    46→    const mapa = new Map<
+    47→    47→      string,
+    48→    48→      { nome: string; telefone: string; doc: string }
+    49→    49→    >();
+    50→    50→
+    51→    51→    // Dos clientes cadastrados
+    52→    52→    const clientes = useERPStore.getState().clientes;
+    53→    53→    for (const c of clientes) {
+    54→    54→      const matchNome = c.nome.toLowerCase().includes(termo);
+    55→    55→      const matchTel = c.telefone.includes(termo);
+    56→    56→      const matchDoc = c.documento.includes(termo);
+    57→    57→      if (matchNome || matchTel || matchDoc) {
+    58→    58→        mapa.set(c.telefone, {
+    59→    59→          nome: c.nome,
+    60→    60→          telefone: c.telefone,
+    61→    61→          doc: c.documento,
+    62→    62→        });
+    63→    63→      }
+    64→    64→    }
+    65→    65→
+    66→    66→    // Das vendas (para pegar clientes que compraram mas podem não estar cadastrados)
+    67→    67→    for (const v of vendas) {
+    68→    68→      const matchNome = v.cliente.toLowerCase().includes(termo);
+    69→    69→      const matchDoc = v.docCliente.includes(termo);
+    70→    70→      if (matchNome || matchDoc) {
+    71→    71→        if (!mapa.has(v.docCliente)) {
+    72→    72→          mapa.set(v.docCliente, {
+    73→    73→            nome: v.cliente,
+    74→    74→            telefone: v.docCliente,
+    75→    75→            doc: v.docCliente,
+    76→    76→          });
+    77→    77→        }
+    78→    78→      }
+    79→    79→    }
+    80→    80→
+    81→    81→    // Dos agendamentos
+    82→    82→    for (const a of agendamentos) {
+    83→    83→      const matchNome = a.clienteNome.toLowerCase().includes(termo);
+    84→    84→      const matchTel = a.clienteTelefone.includes(termo);
+    85→    85→      if (matchNome || matchTel) {
+    86→    86→        if (!mapa.has(a.clienteTelefone)) {
+    87→    87→          mapa.set(a.clienteTelefone, {
+    88→    88→            nome: a.clienteNome,
+    89→    89→            telefone: a.clienteTelefone,
+    90→    90→            doc: "",
+    91→    91→          });
+    92→    92→        }
+    93→    93→      }
+    94→    94→    }
+    95→    95→
+    96→    96→    return Array.from(mapa.values());
+    97→    97→  }, [busca, vendas, agendamentos]);
+    98→    98→
+    99→    99→  // Dados do cliente selecionado
+   100→   100→  const dadosCliente = useMemo(() => {
+   101→   101→    if (!clienteSelecionado) return null;
+   102→   102→    const tel = clienteSelecionado.telefone;
+   103→   103→    const nome = clienteSelecionado.nome.toLowerCase();
+   104→   104→
+   105→   105→    const minhasVendas = vendas.filter(
+   106→   106→      (v) =>
+   107→   107→        v.docCliente === tel ||
+   108→   108→        v.cliente.toLowerCase() === nome
+   109→   109→    );
+   110→   110→    const meusAgendamentos = agendamentos.filter(
+   111→   111→      (a) =>
+   112→   112→        a.clienteTelefone === tel ||
+   113→   113→        a.clienteNome.toLowerCase() === nome
+   114→   114→    );
+   115→   115→
+   116→   116→    const totalGasto = minhasVendas
+   117→   117→      .filter((v) => v.status === "PAGO")
+   118→   118→      .reduce((s, v) => s + v.total, 0);
+   119→   119→    const totalPendente = minhasVendas
+   120→   120→      .filter((v) => v.status === "PENDENTE")
+   121→   121→      .reduce((s, v) => s + v.total, 0);
+   122→   122→    const totalVendas = minhasVendas.length;
+   123→   123→    const proxAgendamento = meusAgendamentos
+   124→   124→      .filter(
+   125→   125→        (a) =>
+   126→   126→          a.status !== "CONCLUIDO" &&
+   127→   127→          a.status !== "CANCELADO" &&
+   128→   128→          new Date(`${a.data}T${a.hora}`) >= new Date()
+   129→   129→      )
+   130→   130→      .sort(
+   131→   131→        (a, b) =>
+   132→   132→          new Date(`${a.data}T${a.hora}`).getTime() -
+   133→   133→          new Date(`${b.data}T${b.hora}`).getTime()
+   134→   134→      )[0];
+   135→   135→
+   136→   136→    return {
+   137→   137→      vendas: minhasVendas.sort(
+   138→   138→        (a, b) => b.timestamp - a.timestamp
+   139→   139→      ),
+   140→   140→      agendamentos: meusAgendamentos.sort(
+   141→   141→        (a, b) => b.timestamp - a.timestamp
+   142→   142→      ),
+   143→   143→      totalGasto,
+   144→   144→      totalPendente,
+   145→   145→      totalVendas,
+   146→   146→      proxAgendamento,
+   147→   147→    };
+   148→   148→  }, [clienteSelecionado, vendas, agendamentos]);
+   149→   149→
+   150→   150→  function formatarMoeda(valor: number) {
+   151→   151→    return valor.toLocaleString("pt-BR", {
+   152→   152→      style: "currency",
+   153→   153→      currency: "BRL",
+   154→   154→    });
+   155→   155→  }
+   156→   156→
+   157→   157→  function formatarData(data: string) {
+   158→   158→    if (!data) return "";
+   159→   159→    const partes = data.split("-");
+   160→   160→    if (partes.length === 3) {
+   161→   161→      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+   162→   162→    }
+   163→   163→    return data;
+   164→   164→  }
+   165→   165→
+   166→   166→  function getStatusInfo(status: string) {
+   167→   167→    if (status === "PAGO")
+   168→   168→      return {
+   169→   169→        label: "Pago",
+   170→   170→        cor: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
+   171→   171→        icone: CheckCircle2,
+   172→   172→      };
+   173→   173→    return {
+   174→   174→      label: "Pendente",
+   175→   175→      cor: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+   176→   176→      icone: AlertCircle,
+   177→   177→    };
+   178→   178→  }
+   179→   179→
+   180→   180→  function getAgendamentoStatus(status: string) {
+   181→   181→    return (
+   182→   182→      STATUS_AGENDAMENTO.find((s) => s.valor === status) || {
+   183→   183→        label: status,
+   184→   184→        cor: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
+   185→   185→      }
+   186→   186→    );
+   187→   187→  }
+   188→   188→
+   189→   189→  // === TELA DE BUSCA ===
+   190→   190→  if (!clienteSelecionado) {
+   191→   191→    return (
+   192→   192→      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col">
+   193→   193→        {/* Header Portal */}
+   194→   194→        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+   195→   195→          <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-3">
+   196→   196→            <div className="flex items-center gap-3">
+   197→   197→              <img
+   198→   198→                src="/logo-empresa.png"
+   199→   199→                alt="Logo"
+   200→   200→                className="h-9 w-auto object-contain"
+   201→   201→              />
+   202→   202→            </div>
+   203→   203→            <a
+   204→   204→              href="/"
+   205→   205→              className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
+   206→   206→            >
+   207→   207→              Acesso Admin
+   208→   208→            </a>
+   209→   209→          </div>
+   210→   210→        </header>
+   211→   211→
+   212→   212→        {/* Conteúdo busca */}
+   213→   213→        <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+   214→   214→          <div className="w-full max-w-md space-y-6">
+   215→   215→            {/* Hero */}
+   216→   216→            <div className="text-center space-y-2">
+   217→   217→              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 mb-3">
+   218→   218→                <Receipt className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
+   219→   219→              </div>
+   220→   220→              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+   221→   221→                Meus Pedidos
+   222→   222→              </h1>
+   223→   223→              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+   224→   224→                Consulte seu historico de compras, agendamentos e
+   225→   225→                situacao de pagamento.
+   226→   226→              </p>
+   227→   227→            </div>
+   228→   228→
+   229→   229→            {/* Campo busca */}
+   230→   230→            <div className="relative">
+   231→   231→              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   232→   232→              <Input
+   233→   233→                placeholder="Digite seu nome, telefone ou CPF..."
+   234→   234→                value={busca}
+   235→   235→                onChange={(e) => setBusca(e.target.value)}
+   236→   236→                className="pl-10 h-12 text-base rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus-visible:ring-emerald-500"
+   237→   237→              />
+   238→   238→            </div>
+   239→   239→
+   240→   240→            {/* Resultados */}
+   241→   241→            {busca.trim().length >= 3 &&
+   242→   242→              clientesEncontrados.length === 0 && (
+   243→   243→                <div className="text-center py-8">
+   244→   244→                  <User className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
+   245→   245→                  <p className="text-sm text-gray-400 dark:text-gray-500">
+   246→   246→                    Nenhum cliente encontrado com &quot;{busca}&quot;
+   247→   247→                  </p>
+   248→   248→                </div>
+   249→   249→              )}
+   250→   250→
+   251→   251→            {clientesEncontrados.length > 0 && (
+   252→   252→              <div className="space-y-2">
+   253→   253→                <p className="text-xs text-gray-400 px-1">
+   254→   254→                  {clientesEncontrados.length}{" "}
+   255→   255→                  {clientesEncontrados.length === 1
+   256→   256→                    ? "cliente encontrado"
+   257→   257→                    : "clientes encontrados"}
+   258→   258→                </p>
+   259→   259→                {clientesEncontrados.map((c, i) => (
+   260→   260→                  <button
+   261→   261→                    key={`${c.telefone}-${i}`}
+   262→   262→                    onClick={() => setClienteSelecionado(c)}
+   263→   263→                    className="w-full flex items-center gap-3 p-3.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-sm transition-all text-left group"
+   264→   264→                  >
+   265→   265→                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 shrink-0">
+   266→   266→                      <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+   267→   267→                    </div>
+   268→   268→                    <div className="flex-1 min-w-0">
+   269→   269→                      <p className="font-semibold text-sm text-gray-900 dark:text-white truncate">
+   270→   270→                        {c.nome}
+   271→   271→                      </p>
+   272→   272→                      <p className="text-xs text-gray-400 truncate">
+   273→   273→                        {c.telefone}
+   274→   274→                      </p>
+   275→   275→                    </div>
+   276→   276→                    <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-emerald-500 transition-colors shrink-0" />
+   277→   277→                  </button>
+   278→   278→                ))}
+   279→   279→              </div>
+   280→   280→            )}
+   281→   281→          </div>
+   282→   282→        </div>
+   283→   283→      </div>
+   284→   284→    );
+   285→   285→  }
+   286→   286→
+   287→   287→  // === PAINEL DO CLIENTE ===
+   288→   288→  const statusAgendProx = clienteSelecionado
+   289→   289→    ? dadosCliente?.proxAgendamento
+   290→   290→      ? getAgendamentoStatus(dadosCliente.proxAgendamento.status)
+   291→   291→      : null
+   292→   292→    : null;
+   293→   293→
+   294→   294→  return (
+   295→   295→    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col">
+   296→   296→      {/* Header */}
+   297→   297→      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+   298→   298→        <div className="max-w-2xl mx-auto flex items-center gap-3 px-4 py-3">
+   299→   299→          <Button
+   300→   300→            variant="ghost"
+   301→   301→            size="icon"
+   302→   302→            className="h-8 w-8 shrink-0"
+   303→   303→            onClick={() => {
+   304→   304→              setClienteSelecionado(null);
+   305→   305→              setBusca("");
+   306→   306→            }}
+   307→   307→          >
+   308→   308→            <ArrowLeft className="h-4 w-4" />
+   309→   309→          </Button>
+   310→   310→          <div className="flex items-center gap-3 flex-1 min-w-0">
+   311→   311→            <div className="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
+   312→   312→              <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+   313→   313→            </div>
+   314→   314→            <div className="min-w-0">
+   315→   315→              <p className="font-bold text-sm text-gray-900 dark:text-white truncate">
+   316→   316→                {clienteSelecionado.nome}
+   317→   317→              </p>
+   318→   318→              <p className="text-xs text-gray-400 truncate">
+   319→   319→                {clienteSelecionado.telefone}
+   320→   320→              </p>
+   321→   321→            </div>
+   322→   322→          </div>
+   323→   323→        </div>
+   324→   324→      </header>
+   325→   325→
+   326→   326→      {dadosCliente && (
+   327→   327→        <main className="flex-1 max-w-2xl mx-auto w-full p-4 space-y-4">
+   328→   328→          {/* Cards resumo */}
+   329→   329→          <div className="grid grid-cols-2 gap-3">
+   330→   330→            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+   331→   331→              <CardContent className="p-4">
+   332→   332→                <div className="flex items-center gap-2 mb-1">
+   333→   333→                  <Wallet className="w-4 h-4 text-emerald-500" />
+   334→   334→                  <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">
+   335→   335→                    Total Pago
+   336→   336→                  </span>
+   337→   337→                </div>
+   338→   338→                <p className="text-xl font-bold text-gray-900 dark:text-white">
+   339→   339→                  {formatarMoeda(dadosCliente.totalGasto)}
+   340→   340→                </p>
+   341→   341→              </CardContent>
+   342→   342→            </Card>
+   343→   343→
+   344→   344→            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+   345→   345→              <CardContent className="p-4">
+   346→   346→                <div className="flex items-center gap-2 mb-1">
+   347→   347→                  <ShoppingBag className="w-4 h-4 text-blue-500" />
+   348→   348→                  <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">
+   349→   349→                    Pedidos
+   350→   350→                  </span>
+   351→   351→                </div>
+   352→   352→                <p className="text-xl font-bold text-gray-900 dark:text-white">
+   353→   353→                  {dadosCliente.totalVendas}
+   354→   354→                </p>
+   355→   355→              </CardContent>
+   356→   356→            </Card>
+   357→   357→
+   358→   358→            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+   359→   359→              <CardContent className="p-4">
+   360→   360→                <div className="flex items-center gap-2 mb-1">
+   361→   361→                  <AlertCircle className="w-4 h-4 text-amber-500" />
+   362→   362→                  <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">
+   363→   363→                    Pendente
+   364→   364→                  </span>
+   365→   365→                </div>
+   366→   366→                <p className="text-xl font-bold text-gray-900 dark:text-white">
+   367→   367→                  {formatarMoeda(dadosCliente.totalPendente)}
+   368→   368→                </p>
+   369→   369→              </CardContent>
+   370→   370→            </Card>
+   371→   371→
+   372→   372→            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+   373→   373→              <CardContent className="p-4">
+   374→   374→                <div className="flex items-center gap-2 mb-1">
+   375→   375→                  <CalendarCheck className="w-4 h-4 text-purple-500" />
+   376→   376→                  <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">
+   377→   377→                    Agendamentos
+   378→   378→                  </span>
+   379→   379→                </div>
+   380→   380→                <p className="text-xl font-bold text-gray-900 dark:text-white">
+   381→   381→                  {dadosCliente.agendamentos.length}
+   382→   382→                </p>
+   383→   383→              </CardContent>
+   384→   384→            </Card>
+   385→   385→          </div>
+   386→   386→
+   387→   387→          {/* Próximo agendamento */}
+   388→   388→          {dadosCliente.proxAgendamento && (
+   389→   389→            <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20">
+   390→   390→              <CardContent className="p-4">
+   391→   391→                <div className="flex items-start gap-3">
+   392→   392→                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0 mt-0.5">
+   393→   393→                    <CalendarCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+   394→   394→                  </div>
+   395→   395→                  <div className="flex-1 min-w-0">
+   396→   396→                    <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider mb-1">
+   397→   397→                      Proximo Agendamento
+   398→   398→                    </p>
+   399→   399→                    <p className="font-bold text-gray-900 dark:text-white text-sm">
+   400→   400→                      {dadosCliente.proxAgendamento.servicoNome}
+   401→   401→                    </p>
+   402→   402→                    <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+   403→   403→                      <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+   404→   404→                        <Clock className="w-3 h-3" />
+   405→   405→                        {formatarData(dadosCliente.proxAgendamento.data)} às{" "}
+   406→   406→                        {dadosCliente.proxAgendamento.hora}
+   407→   407→                      </span>
+   408→   408→                      <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+   409→   409→                        <User className="w-3 h-3" />
+   410→   410→                        {dadosCliente.proxAgendamento.colaboradorNome}
+   411→   411→                      </span>
+   412→   412→                    </div>
+   413→   413→                    <Badge
+   414→   414→                      className={`mt-2 text-[10px] font-semibold ${getAgendamentoStatus(dadosCliente.proxAgendamento.status).cor}`}
+   415→   415→                    >
+   416→   416→                      {getAgendamentoStatus(dadosCliente.proxAgendamento.status).label}
+   417→   417→                    </Badge>
+   418→   418→                  </div>
+   419→   419→                </div>
+   420→   420→              </CardContent>
+   421→   421→            </Card>
+   422→   422→          )}
+   423→   423→
+   424→   424→          {/* Histórico de vendas */}
+   425→   425→          <div>
+   426→   426→            <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+   427→   427→              <ShoppingBag className="w-4 h-4 text-gray-400" />
+   428→   428→              Historico de Compras
+   429→   429→            </h2>
+   430→   430→
+   431→   431→            {dadosCliente.vendas.length === 0 ? (
+   432→   432→              <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+   433→   433→                <CardContent className="p-8 text-center">
+   434→   434→                  <ShoppingBag className="w-10 h-10 text-gray-200 dark:text-gray-700 mx-auto mb-2" />
+   435→   435→                  <p className="text-sm text-gray-400">
+   436→   436→                    Nenhuma compra encontrada
+   437→   437→                  </p>
+   438→   438→                </CardContent>
+   439→   439→              </Card>
+   440→   440→            ) : (
+   441→   441→              <div className="space-y-2">
+   442→   442→                {dadosCliente.vendas.map((venda) => {
+   443→   443→                  const st = getStatusInfo(venda.status);
+   444→   444→                  const StatusIcone = st.icone;
+   445→   445→                  return (
+   446→   446→                    <button
+   447→   447→                      key={venda.id}
+   448→   448→                      onClick={() => setVendaDetalhe(venda)}
+   449→   449→                      className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-sm transition-all text-left group"
+   450→   450→                    >
+   451→   451→                      <div className="flex items-start justify-between gap-3">
+   452→   452→                        <div className="flex-1 min-w-0">
+   453→   453→                          <div className="flex items-center gap-2 mb-1">
+   454→   454→                            <span className="text-xs text-gray-400">
+   455→   455→                              {formatarData(venda.data)} às {venda.hora}
+   456→   456→                            </span>
+   457→   457→                          </div>
+   458→   458→                          <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+   459→   459→                            {venda.itens
+   460→   460→                              .map((i) => i.servicoNome)
+   461→   461→                              .join(", ")}
+   462→   462→                          </p>
+   463→   463→                          <p className="text-xs text-gray-400 mt-0.5">
+   464→   464→                            {venda.itens.length}{" "}
+   465→   465→                            {venda.itens.length === 1
+   466→   466→                              ? "item"
+   467→   467→                              : "itens"}
+   468→   468→                            {venda.colaboradorNome &&
+   469→   469→                              ` \u00b7 ${venda.colaboradorNome}`}
+   470→   470→                          </p>
+   471→   471→                        </div>
+   472→   472→                        <div className="text-right shrink-0">
+   473→   473→                          <p className="text-sm font-bold text-gray-900 dark:text-white">
+   474→   474→                            {formatarMoeda(venda.total)}
+   475→   475→                          </p>
+   476→   476→                          <Badge
+   477→   477→                            className={`mt-1 text-[10px] font-semibold ${st.cor}`}
+   478→   478→                          >
+   479→   479→                            <StatusIcone className="w-3 h-3 mr-1" />
+   480→   480→                            {st.label}
+   481→   481→                          </Badge>
+   482→   482→                        </div>
+   483→   483→                      </div>
+   484→   484→                    </button>
+   485→   485→                  );
+   486→   486→                })}
+   487→   487→              </div>
+   488→   488→            )}
+   489→   489→          </div>
+   490→   490→
+   491→   491→          {/* Agendamentos */}
+   492→   492→          {dadosCliente.agendamentos.length > 0 && (
+   493→   493→            <div>
+   494→   494→              <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+   495→   495→                <CalendarCheck className="w-4 h-4 text-gray-400" />
+   496→   496→                Agendamentos
+   497→   497→              </h2>
+   498→   498→              <div className="space-y-2">
+   499→   499→                {dadosCliente.agendamentos.map((ag) => {
+   500→   500→                  const st = getAgendamentoStatus(ag.status);
+   501→   501→                  return (
+   502→   502→                    <Card
+   503→   503→                      key={ag.id}
+   504→   504→                      className="border-0 shadow-sm bg-white dark:bg-gray-900"
+   505→   505→                    >
+   506→   506→                      <CardContent className="p-4">
+   507→   507→                        <div className="flex items-start justify-between gap-3">
+   508→   508→                          <div className="flex-1 min-w-0">
+   509→   509→                            <p className="font-semibold text-sm text-gray-900 dark:text-white truncate">
+   510→   510→                              {ag.servicoNome}
+   511→   511→                            </p>
+   512→   512→                            <div className="flex items-center gap-3 mt-1 flex-wrap">
+   513→   513→                              <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+   514→   514→                                <Clock className="w-3 h-3" />
+   515→   515→                                {formatarData(ag.data)} às {ag.hora}
+   516→   516→                              </span>
+   517→   517→                              <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+   518→   518→                                <User className="w-3 h-3" />
+   519→   519→                                {ag.colaboradorNome}
+   520→   520→                              </span>
+   521→   521→                              <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+   522→   522→                                <CreditCard className="w-3 h-3" />
+   523→   523→                                {formatarMoeda(ag.valor)}
+   524→   524→                              </span>
+   525→   525→                            </div>
+   526→   526→                            {ag.observacoes && (
+   527→   527→                              <p className="text-xs text-gray-400 mt-1.5 italic">
+   528→   528→                                {ag.observacoes}
+   529→   529→                              </p>
+   530→   530→                            )}
+   531→   531→                          </div>
+   532→   532→                          <Badge
+   533→   533→                            className={`text-[10px] font-semibold shrink-0 ${st.cor}`}
+   534→   534→                          >
+   535→   535→                            {st.label}
+   536→   536→                          </Badge>
+   537→   537→                        </div>
+   538→   538→                      </CardContent>
+   539→   539→                    </Card>
+   540→   540→                  );
+   541→   541→                })}
+   542→   542→              </div>
+   543→   543→            </div>
+   544→   544→          )}
+   545→   545→
+   546→   546→          {/* Rodapé empresa */}
+   547→   547→          {empresa.nome && (
+   548→   548→            <div className="text-center py-6">
+   549→   549→              {empresa.logoBase64 && (
+   550→   550→                <img
+   551→   551→                  src={empresa.logoBase64}
+   552→   552→                  alt={empresa.nome}
+   553→   553→                  className="h-6 w-auto mx-auto mb-2 object-contain opacity-60"
+   554→   554→                />
+   555→   555→              )}
+   556→   556→              <p className="text-[11px] text-gray-400">{empresa.nome}</p>
+   557→   557→              {empresa.telefone && (
+   558→   558→                <p className="text-[11px] text-gray-400">
+   559→   559→                  {empresa.telefone}
+   560→   560→                </p>
+   561→   561→              )}
+   562→   562→            </div>
+   563→   563→          )}
+   564→   564→        </main>
+   565→   565→      )}
+   566→   566→
+   567→   567→      {/* Dialog detalhes da venda */}
+   568→   568→      <Dialog
+   569→   569→        open={!!vendaDetalhe}
+   570→   570→        onOpenChange={() => setVendaDetalhe(null)}
+   571→   571→      >
+   572→   572→        <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
+   573→   573→          {vendaDetalhe && (
+   574→   574→            <>
+   575→   575→              <DialogHeader>
+   576→   576→                <DialogTitle className="flex items-center gap-2 text-base">
+   577→   577→                  <Receipt className="w-4 h-4 text-emerald-500" />
+   578→   578→                  Detalhes do Pedido
+   579→   579→                </DialogTitle>
+   580→   580→              </DialogHeader>
+   581→   581→
+   582→   582→              <div className="space-y-4">
+   583→   583→                {/* Status e data */}
+   584→   584→                <div className="flex items-center justify-between">
+   585→   585→                  <span className="text-sm text-gray-500 dark:text-gray-400">
+   586→   586→                    {formatarData(vendaDetalhe.data)} às{" "}
+   587→   587→                    {vendaDetalhe.hora}
+   588→   588→                  </span>
+   589→   589→                  <Badge
+   590→   590→                    className={`text-xs font-semibold ${getStatusInfo(vendaDetalhe.status).cor}`}
+   591→   591→                  >
+   592→   592→                    {getStatusInfo(vendaDetalhe.status).label}
+   593→   593→                  </Badge>
+   594→   594→                </div>
+   595→   595→
+   596→   596→                <Separator />
+   597→   597→
+   598→   598→                {/* Itens */}
+   599→   599→                <div className="space-y-2">
+   600→   600→                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+   601→   601→                    Servicos
+   602→   602→                  </p>
+   603→   603→                  {vendaDetalhe.itens.map((item) => (
+   604→   604→                    <div
+   605→   605→                      key={item.id}
+   606→   606→                      className="flex items-center justify-between py-1.5"
+   607→   607→                    >
+   608→   608→                      <div>
+   609→   609→                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+   610→   610→                          {item.servicoNome}
+   611→   611→                        </p>
+   612→   612→                        <p className="text-xs text-gray-400">
+   613→   613→                          {item.quantidade}x{" "}
+   614→   614→                          {formatarMoeda(item.valorUnitario)}
+   615→   615→                        </p>
+   616→   616→                      </div>
+   617→   617→                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
+   618→   618→                        {formatarMoeda(item.valorTotal)}
+   619→   619→                      </p>
+   620→   620→                    </div>
+   621→   621→                  ))}
+   622→   622→                </div>
+   623→   623→
+   624→   624→                <Separator />
+   625→   625→
+   626→   626→                {/* Valores */}
+   627→   627→                <div className="space-y-1.5">
+   628→   628→                  <div className="flex justify-between text-sm">
+   629→   629→                    <span className="text-gray-500 dark:text-gray-400">
+   630→   630→                      Subtotal
+   631→   631→                    </span>
+   632→   632→                    <span className="text-gray-900 dark:text-white">
+   633→   633→                      {formatarMoeda(vendaDetalhe.valor)}
+   634→   634→                    </span>
+   635→   635→                  </div>
+   636→   636→                  {vendaDetalhe.desconto > 0 && (
+   637→   637→                    <div className="flex justify-between text-sm">
+   638→   638→                      <span className="text-red-500">Desconto</span>
+   639→   639→                      <span className="text-red-500">
+   640→   640→                        -{formatarMoeda(vendaDetalhe.desconto)}
+   641→   641→                      </span>
+   642→   642→                    </div>
+   643→   643→                  )}
+   644→   644→                  {vendaDetalhe.acrescimo > 0 && (
+   645→   645→                    <div className="flex justify-between text-sm">
+   646→   646→                      <span className="text-gray-500 dark:text-gray-400">
+   647→   647→                        Acrescimo
+   648→   648→                      </span>
+   649→   649→                      <span className="text-gray-900 dark:text-white">
+   650→   650→                        +{formatarMoeda(vendaDetalhe.acrescimo)}
+   651→   651→                      </span>
+   652→   652→                    </div>
+   653→   653→                  )}
+   654→   654→                  <Separator />
+   655→   655→                  <div className="flex justify-between text-base font-bold">
+   656→   656→                    <span className="text-gray-900 dark:text-white">
+   657→   657→                      Total
+   658→   658→                    </span>
+   659→   659→                    <span className="text-emerald-600 dark:text-emerald-400">
+   660→   660→                      {formatarMoeda(vendaDetalhe.total)}
+   661→   661→                    </span>
+   662→   662→                  </div>
+   663→   663→                </div>
+   664→   664→
+   665→   665→                <Separator />
+   666→   666→
+   667→   667→                {/* Info pagamento */}
+   668→   668→                <div className="space-y-2">
+   669→   669→                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+   670→   670→                    Pagamento
+   671→   671→                  </p>
+   672→   672→                  <div className="flex items-center gap-2">
+   673→   673→                    <CreditCard className="w-4 h-4 text-gray-400" />
+   674→   674→                    <span className="text-sm text-gray-900 dark:text-white">
+   675→   675→                      {vendaDetalhe.formaPagamento}
+   676→   676→                    </span>
+   677→   677→                  </div>
+   678→   678→                </div>
+   679→   679→
+   680→   680→                {/* Profissional */}
+   681→   681→                {vendaDetalhe.colaboradorNome && (
+   682→   682→                  <div className="space-y-2">
+   683→   683→                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+   684→   684→                      Profissional
+   685→   685→                    </p>
+   686→   686→                    <div className="flex items-center gap-2">
+   687→   687→                      <User className="w-4 h-4 text-gray-400" />
+   688→   688→                      <span className="text-sm text-gray-900 dark:text-white">
+   689→   689→                        {vendaDetalhe.colaboradorNome}
+   690→   690→                      </span>
+   691→   691→                    </div>
+   692→   692→                  </div>
+   693→   693→                )}
+   694→   694→              </div>
+   695→   695→            </>
+   696→   696→          )}
+   697→   697→        </DialogContent>
+   698→   698→      </Dialog>
+   699→   699→    </div>
+   700→   700→  );
+   701→   701→}

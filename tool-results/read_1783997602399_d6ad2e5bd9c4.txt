@@ -1,0 +1,1441 @@
+     1→"use client";
+     2→
+     3→import { useState, useMemo, useCallback, useEffect } from "react";
+     4→import {
+     5→  useAdminStore,
+     6→  STATUS_SISTEMA,
+     7→  PLANOS,
+     8→  TIPOS_LICENCA,
+     9→  type SistemaCliente,
+    10→  type StatusSistema,
+    11→  type PlanoSistema,
+    12→  type TipoLicenca,
+    13→} from "@/hooks/use-admin-store";
+    14→import { Button } from "@/components/ui/button";
+    15→import { Input } from "@/components/ui/input";
+    16→import { Label } from "@/components/ui/label";
+    17→import { Badge } from "@/components/ui/badge";
+    18→import { Card, CardContent } from "@/components/ui/card";
+    19→import {
+    20→  Dialog,
+    21→  DialogContent,
+    22→  DialogHeader,
+    23→  DialogTitle,
+    24→} from "@/components/ui/dialog";
+    25→import {
+    26→  Select,
+    27→  SelectContent,
+    28→  SelectItem,
+    29→  SelectTrigger,
+    30→  SelectValue,
+    31→} from "@/components/ui/select";
+    32→import { Textarea } from "@/components/ui/textarea";
+    33→import { Separator } from "@/components/ui/separator";
+    34→import { toast } from "sonner";
+    35→import {
+    36→  Plus,
+    37→  Search,
+    38→  Pencil,
+    39→  Trash2,
+    40→  Eye,
+    41→  MessageCircle,
+    42→  Monitor,
+    43→  DollarSign,
+    44→  AlertTriangle,
+    45→  TrendingUp,
+    46→  ShieldCheck,
+    47→  LogOut,
+    48→  Receipt,
+    49→  Lock,
+    50→  EyeOff,
+    51→  Check,
+    52→  KeyRound,
+    53→} from "lucide-react";
+    54→import {
+    55→  Tooltip,
+    56→  TooltipContent,
+    57→  TooltipProvider,
+    58→  TooltipTrigger,
+    59→} from "@/components/ui/tooltip";
+    60→import { PainelCobranças } from "./admin-cobrancas";
+    61→
+    62→function formatarMoeda(valor: number) {
+    63→  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    64→}
+    65→
+    66→function formatarData(data: string) {
+    67→  if (!data) return "";
+    68→  const partes = data.split("-");
+    69→  if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    70→  return data;
+    71→}
+    72→
+    73→function diasRestantes(vencimento: string): number {
+    74→  const hoje = new Date();
+    75→  hoje.setHours(0, 0, 0, 0);
+    76→  const venc = new Date(vencimento + "T00:00:00");
+    77→  const diff = venc.getTime() - hoje.getTime();
+    78→  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    79→}
+    80→
+    81→// =============================================
+    82→// DIALOG TROCAR SENHA
+    83→// =============================================
+    84→function DialogTrocarSenha({
+    85→  open,
+    86→  onOpenChange,
+    87→}: {
+    88→  open: boolean;
+    89→  onOpenChange: (v: boolean) => void;
+    90→}) {
+    91→  const { alterarSenha } = useAdminStore();
+    92→  const [senhaAtual, setSenhaAtual] = useState("");
+    93→  const [novaSenha, setNovaSenha] = useState("");
+    94→  const [confirmarNova, setConfirmarNova] = useState("");
+    95→  const [mostrarAtual, setMostrarAtual] = useState(false);
+    96→  const [mostrarNova, setMostrarNova] = useState(false);
+    97→
+    98→  const handleSalvar = () => {
+    99→    if (!senhaAtual || !novaSenha) {
+   100→      toast.error("Preencha todos os campos.");
+   101→      return;
+   102→    }
+   103→    if (novaSenha.length < 4) {
+   104→      toast.error("A nova senha deve ter pelo menos 4 caracteres.");
+   105→      return;
+   106→    }
+   107→    if (novaSenha !== confirmarNova) {
+   108→      toast.error("As senhas nao conferem.");
+   109→      return;
+   110→    }
+   111→    const ok = alterarSenha(senhaAtual, novaSenha);
+   112→    if (ok) {
+   113→      toast.success("Senha alterada com sucesso!");
+   114→      setSenhaAtual("");
+   115→      setNovaSenha("");
+   116→      setConfirmarNova("");
+   117→      onOpenChange(false);
+   118→    } else {
+   119→      toast.error("Senha atual incorreta.");
+   120→    }
+   121→  };
+   122→
+   123→  return (
+   124→    <Dialog open={open} onOpenChange={onOpenChange}>
+   125→      <DialogContent className="max-w-sm">
+   126→        <DialogHeader>
+   127→          <DialogTitle className="flex items-center gap-2 text-base">
+   128→            <KeyRound className="h-5 w-5 text-gray-600" />
+   129→            Alterar Senha
+   130→          </DialogTitle>
+   131→        </DialogHeader>
+   132→        <div className="space-y-4">
+   133→          <div className="space-y-1.5">
+   134→            <Label className="text-xs font-medium">Senha atual</Label>
+   135→            <div className="relative">
+   136→              <Input
+   137→                type={mostrarAtual ? "text" : "password"}
+   138→                value={senhaAtual}
+   139→                onChange={(e) => setSenhaAtual(e.target.value)}
+   140→                placeholder="Digite a senha atual"
+   141→                className="pr-10 h-10 text-sm"
+   142→                onKeyDown={(e) => e.key === "Enter" && handleSalvar()}
+   143→              />
+   144→              <button
+   145→                type="button"
+   146→                onClick={() => setMostrarAtual(!mostrarAtual)}
+   147→                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+   148→              >
+   149→                {mostrarAtual ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+   150→              </button>
+   151→            </div>
+   152→          </div>
+   153→          <div className="space-y-1.5">
+   154→            <Label className="text-xs font-medium">Nova senha</Label>
+   155→            <Input
+   156→              type="password"
+   157→              value={novaSenha}
+   158→              onChange={(e) => setNovaSenha(e.target.value)}
+   159→              placeholder="Minimo 4 caracteres"
+   160→              className="h-10 text-sm"
+   161→              onKeyDown={(e) => e.key === "Enter" && handleSalvar()}
+   162→            />
+   163→          </div>
+   164→          <div className="space-y-1.5">
+   165→            <Label className="text-xs font-medium">Confirmar nova senha</Label>
+   166→            <Input
+   167→              type="password"
+   168→              value={confirmarNova}
+   169→              onChange={(e) => setConfirmarNova(e.target.value)}
+   170→              placeholder="Repita a nova senha"
+   171→              className="h-10 text-sm"
+   172→              onKeyDown={(e) => e.key === "Enter" && handleSalvar()}
+   173→            />
+   174→          </div>
+   175→          <div className="flex gap-2 justify-end pt-1">
+   176→            <Button variant="ghost" size="sm" className="text-xs" onClick={() => onOpenChange(false)}>
+   177→              Cancelar
+   178→            </Button>
+   179→            <Button size="sm" className="text-xs bg-emerald-600 hover:bg-emerald-700" onClick={handleSalvar}>
+   180→              Salvar
+   181→            </Button>
+   182→          </div>
+   183→        </div>
+   184→      </DialogContent>
+   185→    </Dialog>
+   186→  );
+   187→}
+   188→
+   189→// =============================================
+   190→// TELA DE LOGIN DO ADMIN (CLARO)
+   191→// =============================================
+   192→const CREDENCIAIS_PADRAO = { usuario: "admin", senha: "zapfacil123" };
+   193→
+   194→function TelaLoginAdmin({
+   195→  onAutenticado,
+   196→}: {
+   197→  onAutenticado: () => void;
+   198→}) {
+   199→  const [usuario, setUsuario] = useState("");
+   200→  const [senha, setSenha] = useState("");
+   201→  const [mostrarSenha, setMostrarSenha] = useState(false);
+   202→  const [carregando, setCarregando] = useState(false);
+   203→
+   204→  const handleLogin = () => {
+   205→    if (!usuario.trim() || !senha.trim()) {
+   206→      toast.error("Preencha usuario e senha.");
+   207→      return;
+   208→    }
+   209→    setCarregando(true);
+   210→    setTimeout(() => {
+   211→      // Garante credenciais padrão antes de verificar
+   212→      const store = useAdminStore.getState();
+   213→      if (!store.adminCredenciais) {
+   214→        store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
+   215→      }
+   216→      const cred = useAdminStore.getState().adminCredenciais;
+   217→      if (
+   218→        cred &&
+   219→        cred.usuario === usuario.trim().toLowerCase() &&
+   220→        cred.senha === senha
+   221→      ) {
+   222→        sessionStorage.setItem("zapfacil_admin_session", "autenticado");
+   223→        toast.success("Bem-vindo, Admin!");
+   224→        onAutenticado();
+   225→      } else {
+   226→        toast.error("Usuario ou senha incorretos.");
+   227→      }
+   228→      setCarregando(false);
+   229→    }, 600);
+   230→  };
+   231→
+   232→  return (
+   233→    <div className="min-h-screen bg-white flex">
+   234→      {/* Lado esquerdo */}
+   235→      <div className="hidden lg:flex lg:w-[45%] bg-gray-900 p-12 flex-col justify-between relative overflow-hidden">
+   236→        <div className="absolute inset-0 opacity-20">
+   237→          <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-emerald-500/30 blur-3xl" />
+   238→          <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl" />
+   239→        </div>
+   240→        <div className="relative z-10">
+   241→          <img src="/logo-empresa.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
+   242→        </div>
+   243→        <div className="relative z-10 space-y-4">
+   244→          <h2 className="text-3xl font-bold text-white leading-tight">
+   245→            Painel do Gestor.
+   246→          </h2>
+   247→          <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+   248→            Gerencie todos os sistemas vendidos, acompanhe clientes, controle licencas e receita em um so lugar.
+   249→          </p>
+   250→        </div>
+   251→        <div className="relative z-10 flex items-center gap-2">
+   252→          <ShieldCheck className="w-4 h-4 text-gray-500" />
+   253→          <span className="text-gray-600 text-[11px]">Acesso restrito ao administrador</span>
+   254→        </div>
+   255→      </div>
+   256→
+   257→      {/* Lado direito */}
+   258→      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+   259→        <div className="w-full max-w-sm space-y-8">
+   260→          <div className="lg:hidden text-center space-y-4">
+   261→            <img src="/logo-empresa.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
+   262→            <h2 className="text-xl font-bold text-gray-900">Painel Admin</h2>
+   263→          </div>
+   264→
+   265→          <div className="hidden lg:block space-y-1">
+   266→            <h2 className="text-2xl font-bold text-gray-900">Entrar</h2>
+   267→            <p className="text-sm text-gray-500">Acesso exclusivo do gestor do sistema</p>
+   268→          </div>
+   269→
+   270→          <div className="space-y-4">
+   271→            <div className="space-y-2">
+   272→              <Label className="text-sm font-medium text-gray-700">Usuario</Label>
+   273→              <Input
+   274→                placeholder="admin"
+   275→                value={usuario}
+   276→                onChange={(e) => setUsuario(e.target.value)}
+   277→                className="h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
+   278→                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+   279→                autoFocus
+   280→              />
+   281→            </div>
+   282→
+   283→            <div className="space-y-2">
+   284→              <Label className="text-sm font-medium text-gray-700">Senha</Label>
+   285→              <div className="relative">
+   286→                <Input
+   287→                  type={mostrarSenha ? "text" : "password"}
+   288→                  placeholder="Sua senha"
+   289→                  value={senha}
+   290→                  onChange={(e) => setSenha(e.target.value)}
+   291→                  className="pr-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
+   292→                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+   293→                />
+   294→                <button
+   295→                  type="button"
+   296→                  onClick={() => setMostrarSenha(!mostrarSenha)}
+   297→                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+   298→                >
+   299→                  {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+   300→                </button>
+   301→              </div>
+   302→            </div>
+   303→
+   304→            <Button
+   305→              className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+   306→              onClick={handleLogin}
+   307→              disabled={carregando}
+   308→            >
+   309→              {carregando ? (
+   310→                <span className="flex items-center gap-2">
+   311→                  <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+   312→                  Verificando...
+   313→                </span>
+   314→              ) : (
+   315→                "Entrar no painel"
+   316→              )}
+   317→            </Button>
+   318→          </div>
+   319→
+   320→          <div className="bg-gray-50 rounded-xl p-3 space-y-1">
+   321→            <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider text-center">Credenciais padrao</p>
+   322→            <p className="text-center text-sm">
+   323→              <span className="font-mono font-semibold text-gray-700">admin</span>
+   324→              <span className="text-gray-300 mx-2">/</span>
+   325→              <span className="font-mono font-semibold text-gray-700">zapfacil123</span>
+   326→            </p>
+   327→            <p className="text-[10px] text-gray-400 text-center">Troque a senha apos o primeiro acesso pelo icone de chave no painel</p>
+   328→          </div>
+   329→        </div>
+   330→      </div>
+   331→    </div>
+   332→  );
+   333→}
+   334→
+   335→// =============================================
+   336→// FORMULÁRIO DE SISTEMA (com tipo de licença)
+   337→// =============================================
+   338→function FormularioSistema({
+   339→  sistema,
+   340→  onSalvar,
+   341→  onCancelar,
+   342→}: {
+   343→  sistema?: SistemaCliente;
+   344→  onSalvar: (dados: Omit<SistemaCliente, "id" | "criadoEm">) => void;
+   345→  onCancelar: () => void;
+   346→}) {
+   347→  const hoje = new Date().toISOString().split("T")[0];
+   348→  const [empresa, setEmpresa] = useState(sistema?.empresa || "");
+   349→  const [responsavel, setResponsavel] = useState(sistema?.responsavel || "");
+   350→  const [telefone, setTelefone] = useState(sistema?.telefone || "");
+   351→  const [email, setEmail] = useState(sistema?.email || "");
+   352→  const [cidade, setCidade] = useState(sistema?.cidade || "");
+   353→  const [dataInstalacao, setDataInstalacao] = useState(
+   354→    sistema?.dataInstalacao || hoje
+   355→  );
+   356→  const [dataVencimento, setDataVencimento] = useState(
+   357→    sistema?.dataVencimento || ""
+   358→  );
+   359→  const [plano, setPlano] = useState<PlanoSistema>(sistema?.plano || "PRO");
+   360→  const [status, setStatus] = useState<StatusSistema>(
+   361→    sistema?.status || "TRIAL"
+   362→  );
+   363→  const [tipoLicenca, setTipoLicenca] = useState<TipoLicenca>(
+   364→    sistema?.tipoLicenca || "ALUGUEL"
+   365→  );
+   366→  const [valorMensal, setValorMensal] = useState(
+   367→    sistema?.valorMensal?.toString() || ""
+   368→  );
+   369→  const [valorAquisicao, setValorAquisicao] = useState(
+   370→    sistema?.valorAquisicao?.toString() || ""
+   371→  );
+   372→  const [taxaInstalacao, setTaxaInstalacao] = useState(
+   373→    sistema?.taxaInstalacao?.toString() || ""
+   374→  );
+   375→  const [observacoes, setObservacoes] = useState(
+   376→    sistema?.observacoes || ""
+   377→  );
+   378→
+   379→  const LINK_SISTEMA = "https://j1ewd51wcs60-d.space-z.ai/";
+   380→
+   381→  const enviarWhatsApp = () => {
+   382→    if (!telefone.trim()) {
+   383→      toast.error("Preencha o telefone para enviar o link.");
+   384→      return;
+   385→    }
+   386→    const telLimpo = telefone.replace(/\D/g, "");
+   387→    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+   388→    const msg = encodeURIComponent(
+   389→      `Ola! Aqui e o suporte do ZapFacil Pro. Seu sistema esta pronto para uso. Acesse pelo link abaixo e faca seu cadastro:\n\n${LINK_SISTEMA}\n\nQualquer duvida, estou a disposicao!`
+   390→    );
+   391→    window.open(`https://wa.me/${numero}?text=${msg}`, "_blank");
+   392→  };
+   393→
+   394→  const handleSubmit = (e: React.FormEvent) => {
+   395→    e.preventDefault();
+   396→    if (!empresa.trim()) {
+   397→      toast.error("Nome da empresa e obrigatorio.");
+   398→      return;
+   399→    }
+   400→    if (!responsavel.trim()) {
+   401→      toast.error("Nome do responsavel e obrigatorio.");
+   402→      return;
+   403→    }
+   404→    if (tipoLicenca === "ALUGUEL" && !dataVencimento) {
+   405→      toast.error("Data de vencimento e obrigatoria para aluguel.");
+   406→      return;
+   407→    }
+   408→    onSalvar({
+   409→      empresa: empresa.trim(),
+   410→      responsavel: responsavel.trim(),
+   411→      telefone: telefone.trim(),
+   412→      email: email.trim(),
+   413→      cidade: cidade.trim(),
+   414→      dataInstalacao,
+   415→      dataVencimento,
+   416→      plano,
+   417→      status,
+   418→      tipoLicenca,
+   419→      valorMensal: parseFloat(valorMensal) || 0,
+   420→      valorAquisicao: parseFloat(valorAquisicao) || 0,
+   421→      taxaInstalacao: parseFloat(taxaInstalacao) || 0,
+   422→      observacoes: observacoes.trim(),
+   423→      dadosRegistro: sistema?.dadosRegistro || null,
+   424→    });
+   425→  };
+   426→
+   427→  return (
+   428→    <form onSubmit={handleSubmit} className="space-y-4">
+   429→      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+   430→        <div className="sm:col-span-2 space-y-1.5">
+   431→          <Label className="text-xs font-medium">Empresa *</Label>
+   432→          <Input
+   433→            value={empresa}
+   434→            onChange={(e) => setEmpresa(e.target.value)}
+   435→            placeholder="Nome da empresa"
+   436→            className="text-sm h-9"
+   437→          />
+   438→        </div>
+   439→        <div className="space-y-1.5">
+   440→          <Label className="text-xs font-medium">Responsavel *</Label>
+   441→          <Input
+   442→            value={responsavel}
+   443→            onChange={(e) => setResponsavel(e.target.value)}
+   444→            placeholder="Nome do contato"
+   445→            className="text-sm h-9"
+   446→          />
+   447→        </div>
+   448→        <div className="space-y-1.5">
+   449→          <Label className="text-xs font-medium">Telefone</Label>
+   450→          <Input
+   451→            value={telefone}
+   452→            onChange={(e) => setTelefone(e.target.value)}
+   453→            placeholder="(00) 00000-0000"
+   454→            className="text-sm h-9"
+   455→          />
+   456→        </div>
+   457→        <div className="space-y-1.5">
+   458→          <Label className="text-xs font-medium">E-mail</Label>
+   459→          <Input
+   460→            type="email"
+   461→            value={email}
+   462→            onChange={(e) => setEmail(e.target.value)}
+   463→            placeholder="email@empresa.com"
+   464→            className="text-sm h-9"
+   465→          />
+   466→        </div>
+   467→        <div className="space-y-1.5">
+   468→          <Label className="text-xs font-medium">Cidade</Label>
+   469→          <Input
+   470→            value={cidade}
+   471→            onChange={(e) => setCidade(e.target.value)}
+   472→            placeholder="Cidade - UF"
+   473→            className="text-sm h-9"
+   474→          />
+   475→        </div>
+   476→        <div className="space-y-1.5">
+   477→          <Label className="text-xs font-medium">Data Instalacao</Label>
+   478→          <Input
+   479→            type="date"
+   480→            value={dataInstalacao}
+   481→            onChange={(e) => setDataInstalacao(e.target.value)}
+   482→            className="text-sm h-9"
+   483→          />
+   484→        </div>
+   485→        {tipoLicenca === "ALUGUEL" && (
+   486→          <div className="space-y-1.5">
+   487→            <Label className="text-xs font-medium">Vencimento *</Label>
+   488→            <Input
+   489→              type="date"
+   490→              value={dataVencimento}
+   491→              onChange={(e) => setDataVencimento(e.target.value)}
+   492→              className="text-sm h-9"
+   493→            />
+   494→          </div>
+   495→        )}
+   496→        <div className="space-y-1.5">
+   497→          <Label className="text-xs font-medium">Tipo de Licenca</Label>
+   498→          <Select value={tipoLicenca} onValueChange={(v) => setTipoLicenca(v as TipoLicenca)}>
+   499→            <SelectTrigger className="text-sm h-9">
+   500→              <SelectValue />
+   501→            </SelectTrigger>
+   502→            <SelectContent>
+   503→              {TIPOS_LICENCA.map((t) => (
+   504→                <SelectItem key={t.valor} value={t.valor}>
+   505→                  <span className="flex flex-col">
+   506→                    <span>{t.label}</span>
+   507→                    <span className="text-[10px] text-gray-400">{t.descricao}</span>
+   508→                  </span>
+   509→                </SelectItem>
+   510→              ))}
+   511→            </SelectContent>
+   512→          </Select>
+   513→        </div>
+   514→        <div className="space-y-1.5">
+   515→          <Label className="text-xs font-medium">Plano</Label>
+   516→          <Select value={plano} onValueChange={(v) => setPlano(v as PlanoSistema)}>
+   517→            <SelectTrigger className="text-sm h-9">
+   518→              <SelectValue />
+   519→            </SelectTrigger>
+   520→            <SelectContent>
+   521→              {PLANOS.map((p) => (
+   522→                <SelectItem key={p.valor} value={p.valor}>
+   523→                  {p.label}
+   524→                </SelectItem>
+   525→              ))}
+   526→            </SelectContent>
+   527→          </Select>
+   528→        </div>
+   529→        <div className="space-y-1.5">
+   530→          <Label className="text-xs font-medium">Status</Label>
+   531→          <Select value={status} onValueChange={(v) => setStatus(v as StatusSistema)}>
+   532→            <SelectTrigger className="text-sm h-9">
+   533→              <SelectValue />
+   534→            </SelectTrigger>
+   535→            <SelectContent>
+   536→              {STATUS_SISTEMA.map((s) => (
+   537→                <SelectItem key={s.valor} value={s.valor}>
+   538→                  {s.label}
+   539→                </SelectItem>
+   540→              ))}
+   541→            </SelectContent>
+   542→          </Select>
+   543→        </div>
+   544→        {tipoLicenca === "ALUGUEL" && (
+   545→          <div className="space-y-1.5">
+   546→            <Label className="text-xs font-medium">Valor Mensal (R$)</Label>
+   547→            <Input
+   548→              type="number"
+   549→              step="0.01"
+   550→              value={valorMensal}
+   551→              onChange={(e) => setValorMensal(e.target.value)}
+   552→              placeholder="0,00"
+   553→              className="text-sm h-9"
+   554→            />
+   555→          </div>
+   556→        )}
+   557→        {tipoLicenca === "AQUISICAO" && (
+   558→          <div className="space-y-1.5">
+   559→            <Label className="text-xs font-medium">Valor Aquisicao (R$)</Label>
+   560→            <Input
+   561→              type="number"
+   562→              step="0.01"
+   563→              value={valorAquisicao}
+   564→              onChange={(e) => setValorAquisicao(e.target.value)}
+   565→              placeholder="0,00"
+   566→              className="text-sm h-9"
+   567→            />
+   568→          </div>
+   569→        )}
+   570→        <div className="space-y-1.5">
+   571→          <Label className="text-xs font-medium">Taxa Instalacao (R$)</Label>
+   572→          <Input
+   573→            type="number"
+   574→            step="0.01"
+   575→            value={taxaInstalacao}
+   576→            onChange={(e) => setTaxaInstalacao(e.target.value)}
+   577→            placeholder="0,00"
+   578→            className="text-sm h-9"
+   579→          />
+   580→        </div>
+   581→        <div className="sm:col-span-2 space-y-1.5">
+   582→          <Label className="text-xs font-medium">Observacoes</Label>
+   583→          <Textarea
+   584→            value={observacoes}
+   585→            onChange={(e) => setObservacoes(e.target.value)}
+   586→            placeholder="Notas sobre o cliente..."
+   587→            className="text-sm min-h-[60px]"
+   588→          />
+   589→        </div>
+   590→      </div>
+   591→      <div className="flex gap-2 justify-end pt-2">
+   592→        {!sistema && (
+   593→          <Button
+   594→            type="button"
+   595→            size="sm"
+   596→            className="text-xs bg-green-600 hover:bg-green-700"
+   597→            onClick={enviarWhatsApp}
+   598→          >
+   599→            <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+   600→            Enviar Link via WhatsApp
+   601→          </Button>
+   602→        )}
+   603→        <Button
+   604→          type="button"
+   605→          variant="ghost"
+   606→          size="sm"
+   607→          className="text-xs"
+   608→          onClick={onCancelar}
+   609→        >
+   610→          Cancelar
+   611→        </Button>
+   612→        <Button
+   613→          type="submit"
+   614→          size="sm"
+   615→          className="text-xs bg-emerald-600 hover:bg-emerald-700"
+   616→        >
+   617→          {sistema ? "Salvar Alteracoes" : "Cadastrar Sistema"}
+   618→        </Button>
+   619→      </div>
+   620→    </form>
+   621→  );
+   622→}
+   623→
+   624→// =============================================
+   625→// PAINEL ADMIN PRINCIPAL COM ABAS
+   626→// =============================================
+   627→type AbaAdmin = "sistemas" | "cobrancas";
+   628→
+   629→function PainelAdminConteudo() {
+   630→  const { sistemas, cobrancas, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema } =
+   631→    useAdminStore();
+   632→  const [abaAtiva, setAbaAtiva] = useState<AbaAdmin>("sistemas");
+   633→  const [busca, setBusca] = useState("");
+   634→  const [filtroStatus, setFiltroStatus] = useState<string>("TODOS");
+   635→  const [filtroPlano, setFiltroPlano] = useState<string>("TODOS");
+   636→  const [dialogForm, setDialogForm] = useState<SistemaCliente | null>(null);
+   637→  const [dialogNovo, setDialogNovo] = useState(false);
+   638→  const [dialogDetalhe, setDialogDetalhe] = useState<SistemaCliente | null>(null);
+   639→  const [confirmaRemover, setConfirmaRemover] = useState<string | null>(null);
+   640→  const [dialogTrocarSenha, setDialogTrocarSenha] = useState(false);
+   641→
+   642→  // Estatísticas
+   643→  const stats = useMemo(() => {
+   644→    const ativos = sistemas.filter((s) => s.status === "ATIVO").length;
+   645→    const trials = sistemas.filter((s) => s.status === "TRIAL").length;
+   646→    const expirados = sistemas.filter((s) => s.status === "EXPIRADO").length;
+   647→    const receitaMensal = sistemas
+   648→      .filter((s) => (s.status === "ATIVO" || s.status === "TRIAL") && s.tipoLicenca === "ALUGUEL")
+   649→      .reduce((s, v) => s + v.valorMensal, 0);
+   650→    const vencendo = sistemas.filter(
+   651→      (s) => s.status === "ATIVO" && diasRestantes(s.dataVencimento) <= 7 && diasRestantes(s.dataVencimento) > 0
+   652→    ).length;
+   653→    return { ativos, trials, expirados, receitaMensal, vencendo, total: sistemas.length };
+   654→  }, [sistemas]);
+   655→
+   656→  // Filtragem
+   657→  const sistemasFiltrados = useMemo(() => {
+   658→    let lista = sistemas;
+   659→    if (filtroStatus !== "TODOS") lista = lista.filter((s) => s.status === filtroStatus);
+   660→    if (filtroPlano !== "TODOS") lista = lista.filter((s) => s.plano === filtroPlano);
+   661→    if (busca.trim()) {
+   662→      const termo = busca.toLowerCase();
+   663→      lista = lista.filter(
+   664→        (s) =>
+   665→          s.empresa.toLowerCase().includes(termo) ||
+   666→          s.responsavel.toLowerCase().includes(termo) ||
+   667→          s.cidade.toLowerCase().includes(termo) ||
+   668→          s.telefone.includes(termo) ||
+   669→          s.email.toLowerCase().includes(termo)
+   670→      );
+   671→    }
+   672→    return lista;
+   673→  }, [sistemas, filtroStatus, filtroPlano, busca]);
+   674→
+   675→  const handleSalvarNovo = useCallback(
+   676→    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
+   677→      adicionarSistema(dados);
+   678→      setDialogNovo(false);
+   679→      toast.success("Sistema cadastrado!");
+   680→    },
+   681→    [adicionarSistema]
+   682→  );
+   683→
+   684→  const handleSalvarEdicao = useCallback(
+   685→    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
+   686→      if (!dialogForm) return;
+   687→      editarSistema(dialogForm.id, dados);
+   688→      setDialogForm(null);
+   689→      toast.success("Sistema atualizado!");
+   690→    },
+   691→    [dialogForm, editarSistema]
+   692→  );
+   693→
+   694→  const handleRemover = useCallback(
+   695→    (id: string) => {
+   696→      removerSistema(id);
+   697→      setConfirmaRemover(null);
+   698→      toast.success("Sistema removido.");
+   699→    },
+   700→    [removerSistema]
+   701→  );
+   702→
+   703→  const handleWhatsApp = (telefone: string) => {
+   704→    const telLimpo = telefone.replace(/\D/g, "");
+   705→    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+   706→    window.open(`https://wa.me/${numero}`, "_blank");
+   707→  };
+   708→
+   709→  const handleLogout = () => {
+   710→    sessionStorage.removeItem("zapfacil_admin_session");
+   711→    window.location.reload();
+   712→  };
+   713→
+   714→  const getStatusInfo = (status: StatusSistema) =>
+   715→    STATUS_SISTEMA.find((s) => s.valor === status) || STATUS_SISTEMA[3];
+   716→  const getPlanoInfo = (plano: PlanoSistema) =>
+   717→    PLANOS.find((p) => p.valor === plano) || PLANOS[0];
+   718→  const getTipoLicencaInfo = (tipo: TipoLicenca) =>
+   719→    TIPOS_LICENCA.find((t) => t.valor === tipo) || TIPOS_LICENCA[0];
+   720→
+   721→  // Cobranças pendentes/atrasadas para badge
+   722→  const cobrancasEmAberto = useMemo(
+   723→    () => cobrancas.filter((c) => c.status === "PENDENTE" || c.status === "ATRASADO").length,
+   724→    [cobrancas]
+   725→  );
+   726→
+   727→  return (
+   728→    <div className="min-h-screen flex flex-col bg-gray-50">
+   729→      {/* Header */}
+   730→      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+   731→        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-3">
+   732→          <div className="flex items-center gap-3">
+   733→            <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
+   734→              <ShieldCheck className="w-5 h-5 text-emerald-600" />
+   735→            </div>
+   736→            <div>
+   737→              <h1 className="text-sm font-bold text-gray-900">Painel Admin</h1>
+   738→              <p className="text-[10px] text-gray-400">Controle de Sistemas</p>
+   739→            </div>
+   740→          </div>
+   741→          <div className="flex items-center gap-1">
+   742→            <TooltipProvider>
+   743→              <Tooltip>
+   744→                <TooltipTrigger asChild>
+   745→                  <Button
+   746→                    variant="ghost"
+   747→                    size="icon"
+   748→                    className="h-8 w-8 text-gray-500 hover:bg-gray-100"
+   749→                    onClick={() => setDialogTrocarSenha(true)}
+   750→                  >
+   751→                    <KeyRound className="h-4 w-4" />
+   752→                  </Button>
+   753→                </TooltipTrigger>
+   754→                <TooltipContent>Alterar Senha</TooltipContent>
+   755→              </Tooltip>
+   756→            </TooltipProvider>
+   757→            <TooltipProvider>
+   758→              <Tooltip>
+   759→                <TooltipTrigger asChild>
+   760→                  <Button
+   761→                    variant="ghost"
+   762→                    size="icon"
+   763→                    className="h-8 w-8 text-red-500 hover:bg-red-50"
+   764→                    onClick={handleLogout}
+   765→                  >
+   766→                    <LogOut className="h-4 w-4" />
+   767→                  </Button>
+   768→                </TooltipTrigger>
+   769→                <TooltipContent>Sair</TooltipContent>
+   770→              </Tooltip>
+   771→            </TooltipProvider>
+   772→          </div>
+   773→        </div>
+   774→      </header>
+   775→
+   776→      <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
+   777→        {/* Abas de navegação */}
+   778→        <div className="flex gap-1 bg-white rounded-xl p-1 border border-gray-200 shadow-sm">
+   779→          <button
+   780→            onClick={() => setAbaAtiva("sistemas")}
+   781→            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+   782→              abaAtiva === "sistemas"
+   783→                ? "bg-emerald-600 text-white shadow-sm"
+   784→                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+   785→            }`}
+   786→          >
+   787→            <Monitor className="h-4 w-4" />
+   788→            Sistemas
+   789→            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+   790→              abaAtiva === "sistemas"
+   791→                ? "bg-white/20 text-white"
+   792→                : "bg-gray-100 text-gray-500"
+   793→            }`}>
+   794→              {sistemas.length}
+   795→            </span>
+   796→          </button>
+   797→          <button
+   798→            onClick={() => setAbaAtiva("cobrancas")}
+   799→            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+   800→              abaAtiva === "cobrancas"
+   801→                ? "bg-emerald-600 text-white shadow-sm"
+   802→                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+   803→            }`}
+   804→          >
+   805→            <Receipt className="h-4 w-4" />
+   806→            Cobrancas
+   807→            {cobrancasEmAberto > 0 && (
+   808→              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+   809→                abaAtiva === "cobrancas"
+   810→                  ? "bg-white/20 text-white"
+   811→                  : "bg-red-100 text-red-600"
+   812→              }`}>
+   813→                {cobrancasEmAberto}
+   814→              </span>
+   815→            )}
+   816→          </button>
+   817→        </div>
+   818→
+   819→        {/* Conteúdo da aba ativa */}
+   820→        {abaAtiva === "cobrancas" ? (
+   821→          <PainelCobranças />
+   822→        ) : (
+   823→          <>
+   824→            {/* Cards de estatísticas - Sistemas */}
+   825→            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+   826→              <Card className="border-0 shadow-sm">
+   827→                <CardContent className="p-3.5">
+   828→                  <div className="flex items-center gap-1.5 mb-1">
+   829→                    <Monitor className="w-3.5 h-3.5 text-gray-400" />
+   830→                    <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Total</span>
+   831→                  </div>
+   832→                  <p className="text-2xl font-black text-gray-900">{stats.total}</p>
+   833→                </CardContent>
+   834→              </Card>
+   835→              <Card className="border-0 shadow-sm">
+   836→                <CardContent className="p-3.5">
+   837→                  <div className="flex items-center gap-1.5 mb-1">
+   838→                    <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+   839→                    <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Ativos</span>
+   840→                  </div>
+   841→                  <p className="text-2xl font-black text-emerald-600">{stats.ativos}</p>
+   842→                </CardContent>
+   843→              </Card>
+   844→              <Card className="border-0 shadow-sm">
+   845→                <CardContent className="p-3.5">
+   846→                  <div className="flex items-center gap-1.5 mb-1">
+   847→                    <Monitor className="w-3.5 h-3.5 text-blue-500" />
+   848→                    <span className="text-[10px] text-blue-600 font-medium uppercase tracking-wider">Trial</span>
+   849→                  </div>
+   850→                  <p className="text-2xl font-black text-blue-600">{stats.trials}</p>
+   851→                </CardContent>
+   852→              </Card>
+   853→              <Card className="border-0 shadow-sm">
+   854→                <CardContent className="p-3.5">
+   855→                  <div className="flex items-center gap-1.5 mb-1">
+   856→                    <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
+   857→                    <span className="text-[10px] text-red-600 font-medium uppercase tracking-wider">Expirados</span>
+   858→                  </div>
+   859→                  <p className="text-2xl font-black text-red-600">{stats.expirados}</p>
+   860→                </CardContent>
+   861→              </Card>
+   862→              <Card className="border-0 shadow-sm">
+   863→                <CardContent className="p-3.5">
+   864→                  <div className="flex items-center gap-1.5 mb-1">
+   865→                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+   866→                    <span className="text-[10px] text-amber-600 font-medium uppercase tracking-wider">Vencendo</span>
+   867→                  </div>
+   868→                  <p className="text-2xl font-black text-amber-600">{stats.vencendo}</p>
+   869→                </CardContent>
+   870→              </Card>
+   871→              <Card className="border-0 shadow-sm">
+   872→                <CardContent className="p-3.5">
+   873→                  <div className="flex items-center gap-1.5 mb-1">
+   874→                    <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
+   875→                    <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Receita/mes</span>
+   876→                  </div>
+   877→                  <p className="text-lg font-black text-emerald-600">{formatarMoeda(stats.receitaMensal)}</p>
+   878→                </CardContent>
+   879→              </Card>
+   880→            </div>
+   881→
+   882→            {/* Barra de ações */}
+   883→            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+   884→              <div className="relative flex-1">
+   885→                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   886→                <Input
+   887→                  placeholder="Buscar por empresa, responsavel, cidade, telefone..."
+   888→                  value={busca}
+   889→                  onChange={(e) => setBusca(e.target.value)}
+   890→                  className="pl-10 h-9 text-sm bg-white border-gray-200"
+   891→                />
+   892→              </div>
+   893→              <Select value={filtroStatus} onValueChange={setFiltroStatus}>
+   894→                <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
+   895→                  <SelectValue />
+   896→                </SelectTrigger>
+   897→                <SelectContent>
+   898→                  <SelectItem value="TODOS">Todos Status</SelectItem>
+   899→                  {STATUS_SISTEMA.map((s) => (
+   900→                    <SelectItem key={s.valor} value={s.valor}>
+   901→                      {s.label}
+   902→                    </SelectItem>
+   903→                  ))}
+   904→                </SelectContent>
+   905→              </Select>
+   906→              <Select value={filtroPlano} onValueChange={setFiltroPlano}>
+   907→                <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
+   908→                  <SelectValue />
+   909→                </SelectTrigger>
+   910→                <SelectContent>
+   911→                  <SelectItem value="TODOS">Todos Planos</SelectItem>
+   912→                  {PLANOS.map((p) => (
+   913→                    <SelectItem key={p.valor} value={p.valor}>
+   914→                      {p.label}
+   915→                    </SelectItem>
+   916→                  ))}
+   917→                </SelectContent>
+   918→              </Select>
+   919→              <Button
+   920→                className="h-9 bg-emerald-600 hover:bg-emerald-700 text-sm shrink-0"
+   921→                onClick={() => setDialogNovo(true)}
+   922→              >
+   923→                <Plus className="h-4 w-4 mr-1.5" />
+   924→                Novo Sistema
+   925→              </Button>
+   926→            </div>
+   927→
+   928→            {/* Tabela de sistemas */}
+   929→            <Card className="border-0 shadow-sm">
+   930→              <CardContent className="p-0">
+   931→                {/* Mobile cards */}
+   932→                <div className="sm:hidden divide-y divide-gray-100">
+   933→                  {sistemasFiltrados.length === 0 && (
+   934→                    <div className="p-8 text-center">
+   935→                      <Monitor className="w-10 h-10 text-gray-200 mx-auto mb-2" />
+   936→                      <p className="text-sm text-gray-400">
+   937→                        {busca || filtroStatus !== "TODOS" || filtroPlano !== "TODOS"
+   938→                          ? "Nenhum sistema encontrado."
+   939→                          : "Nenhum sistema cadastrado ainda."}
+   940→                      </p>
+   941→                    </div>
+   942→                  )}
+   943→                  {sistemasFiltrados.map((s) => {
+   944→                    const dias = diasRestantes(s.dataVencimento);
+   945→                    const st = getStatusInfo(s.status);
+   946→                    const pl = getPlanoInfo(s.plano);
+   947→                    const tl = getTipoLicencaInfo(s.tipoLicenca);
+   948→                    const cobrancasSistema = getCobrancasBySistema(s.id);
+   949→                    const pendentesSistema = cobrancasSistema.filter(
+   950→                      (c) => c.status === "PENDENTE" || c.status === "ATRASADO"
+   951→                    ).length;
+   952→                    return (
+   953→                      <div key={s.id} className="p-3 space-y-2">
+   954→                        <div className="flex items-start justify-between gap-2">
+   955→                          <div className="min-w-0">
+   956→                            <p className="font-semibold text-sm text-gray-900 truncate">{s.empresa}</p>
+   957→                            <p className="text-xs text-gray-400">{s.responsavel}</p>
+   958→                          </div>
+   959→                          <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+   960→                            <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
+   961→                            <Badge className={`text-[10px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
+   962→                            <Badge className={`text-[10px] font-semibold ${tl.cor}`}>{tl.label}</Badge>
+   963→                          </div>
+   964→                        </div>
+   965→                        <div className="flex items-center gap-3 text-[11px] text-gray-400 flex-wrap">
+   966→                          {s.cidade && <span>{s.cidade}</span>}
+   967→                          {s.dadosRegistro && <span className="text-emerald-600 font-semibold">Cadastrado</span>}
+   968→                          {s.tipoLicenca === "ALUGUEL" && (
+   969→                            <>
+   970→                              <span>Vence: {formatarData(s.dataVencimento)}</span>
+   971→                              {s.status === "ATIVO" && (
+   972→                                <span className={dias <= 7 ? "text-amber-600 font-semibold" : "text-emerald-600"}>
+   973→                                  {dias}d restantes
+   974→                                </span>
+   975→                              )}
+   976→                            </>
+   977→                          )}
+   978→                          {s.tipoLicenca === "AQUISICAO" && (
+   979→                            <span className="text-emerald-600 font-semibold">
+   980→                              Aquisicao: {formatarMoeda(s.valorAquisicao)}
+   981→                            </span>
+   982→                          )}
+   983→                          {pendentesSistema > 0 && (
+   984→                            <span className="text-amber-600 font-semibold">
+   985→                              {pendentesSistema} cobranca(s)
+   986→                            </span>
+   987→                          )}
+   988→                        </div>
+   989→                        <div className="flex gap-1.5 pt-1">
+   990→                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-500" onClick={() => setDialogDetalhe(s)}>
+   991→                            <Eye className="h-3 w-3 mr-1" /> Ver
+   992→                          </Button>
+   993→                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-blue-600" onClick={() => setDialogForm(s)}>
+   994→                            <Pencil className="h-3 w-3 mr-1" /> Editar
+   995→                          </Button>
+   996→                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-purple-600" onClick={() => setAbaAtiva("cobrancas")}>
+   997→                            <Receipt className="h-3 w-3 mr-1" /> Cobrancas
+   998→                          </Button>
+   999→                          {s.telefone && (
+  1000→                            <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-600" onClick={() => handleWhatsApp(s.telefone)}>
+  1001→                              <MessageCircle className="h-3 w-3" />
+  1002→                            </Button>
+  1003→                          )}
+  1004→                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-red-500 ml-auto" onClick={() => setConfirmaRemover(s.id)}>
+  1005→                            <Trash2 className="h-3 w-3" />
+  1006→                          </Button>
+  1007→                        </div>
+  1008→                      </div>
+  1009→                    );
+  1010→                  })}
+  1011→                </div>
+  1012→
+  1013→                {/* Desktop table */}
+  1014→                <div className="hidden sm:block overflow-x-auto">
+  1015→                  <table className="w-full text-sm">
+  1016→                    <thead>
+  1017→                      <tr className="border-b border-gray-100 text-[10px] text-gray-400 uppercase tracking-wider bg-gray-50/50">
+  1018→                        <th className="text-left py-3 px-4 font-semibold">Empresa</th>
+  1019→                        <th className="text-left py-3 px-4 font-semibold">Responsavel</th>
+  1020→                        <th className="text-left py-3 px-4 font-semibold">Contato</th>
+  1021→                        <th className="text-left py-3 px-4 font-semibold">Licenca</th>
+  1022→                        <th className="text-center py-3 px-4 font-semibold">Status</th>
+  1023→                        <th className="text-left py-3 px-4 font-semibold">Vencimento</th>
+  1024→                        <th className="text-right py-3 px-4 font-semibold">Valor</th>
+  1025→                        <th className="text-center py-3 px-4 font-semibold">Acoes</th>
+  1026→                      </tr>
+  1027→                    </thead>
+  1028→                    <tbody className="divide-y divide-gray-50">
+  1029→                      {sistemasFiltrados.length === 0 && (
+  1030→                        <tr>
+  1031→                          <td colSpan={8} className="text-center py-12 text-gray-400 text-sm">
+  1032→                            {busca || filtroStatus !== "TODOS" || filtroPlano !== "TODOS"
+  1033→                              ? "Nenhum sistema encontrado."
+  1034→                              : "Nenhum sistema cadastrado. Clique em 'Novo Sistema' para comecar."}
+  1035→                          </td>
+  1036→                        </tr>
+  1037→                      )}
+  1038→                      {sistemasFiltrados.map((s) => {
+  1039→                        const dias = diasRestantes(s.dataVencimento);
+  1040→                        const st = getStatusInfo(s.status);
+  1041→                        const pl = getPlanoInfo(s.plano);
+  1042→                        const tl = getTipoLicencaInfo(s.tipoLicenca);
+  1043→                        const cobrancasSistema = getCobrancasBySistema(s.id);
+  1044→                        const pendentesSistema = cobrancasSistema.filter(
+  1045→                          (c) => c.status === "PENDENTE" || c.status === "ATRASADO"
+  1046→                        ).length;
+  1047→                        return (
+  1048→                          <tr key={s.id} className="hover:bg-gray-50/80 transition-colors">
+  1049→                            <td className="py-3 px-4">
+  1050→                              <p className="font-semibold text-gray-900">{s.empresa}</p>
+  1051→                              {s.cidade && <p className="text-[11px] text-gray-400">{s.cidade}</p>}
+  1052→                              <div className="flex items-center gap-1.5 mt-0.5">
+  1053→                                <Badge className={`text-[9px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
+  1054→                                {s.dadosRegistro && (
+  1055→                                  <span className="text-[9px] text-emerald-600 font-medium flex items-center gap-0.5">
+  1056→                                    <Check className="h-2.5 w-2.5" /> Cadastrado
+  1057→                                  </span>
+  1058→                                )}
+  1059→                                {pendentesSistema > 0 && (
+  1060→                                  <span className="text-[9px] text-amber-600 font-semibold">
+  1061→                                    {pendentesSistema} pend.
+  1062→                                  </span>
+  1063→                                )}
+  1064→                              </div>
+  1065→                            </td>
+  1066→                            <td className="py-3 px-4 text-gray-600">{s.responsavel}</td>
+  1067→                            <td className="py-3 px-4">
+  1068→                              {s.telefone && <p className="text-gray-600 text-xs">{s.telefone}</p>}
+  1069→                              {s.email && <p className="text-[11px] text-gray-400">{s.email}</p>}
+  1070→                            </td>
+  1071→                            <td className="py-3 px-4">
+  1072→                              <Badge className={`text-[10px] font-semibold ${tl.cor}`}>{tl.label}</Badge>
+  1073→                            </td>
+  1074→                            <td className="py-3 px-4 text-center">
+  1075→                              <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
+  1076→                              {s.status === "ATIVO" && s.tipoLicenca === "ALUGUEL" && (
+  1077→                                <p className={`text-[10px] mt-0.5 ${dias <= 7 ? "text-amber-600 font-semibold" : "text-gray-400"}`}>
+  1078→                                  {dias > 0 ? `${dias}d` : "Vencido"}
+  1079→                                </p>
+  1080→                              )}
+  1081→                            </td>
+  1082→                            <td className="py-3 px-4 text-gray-600 text-xs whitespace-nowrap">
+  1083→                              {s.tipoLicenca === "ALUGUEL" ? formatarData(s.dataVencimento) : "N/A"}
+  1084→                            </td>
+  1085→                            <td className="py-3 px-4 text-right font-semibold text-emerald-600 whitespace-nowrap">
+  1086→                              {s.tipoLicenca === "ALUGUEL"
+  1087→                                ? formatarMoeda(s.valorMensal) + "/mes"
+  1088→                                : formatarMoeda(s.valorAquisicao)}
+  1089→                              {s.taxaInstalacao > 0 && (
+  1090→                                <p className="text-[10px] text-gray-400 font-normal">
+  1091→                                  + {formatarMoeda(s.taxaInstalacao)} inst.
+  1092→                                </p>
+  1093→                              )}
+  1094→                            </td>
+  1095→                            <td className="py-3 px-4">
+  1096→                              <div className="flex items-center justify-center gap-0.5">
+  1097→                                <TooltipProvider>
+  1098→                                  <Tooltip>
+  1099→                                    <TooltipTrigger asChild>
+  1100→                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-gray-700" onClick={() => setDialogDetalhe(s)}>
+  1101→                                        <Eye className="h-3.5 w-3.5" />
+  1102→                                      </Button>
+  1103→                                    </TooltipTrigger>
+  1104→                                    <TooltipContent>Detalhes</TooltipContent>
+  1105→                                  </Tooltip>
+  1106→                                </TooltipProvider>
+  1107→                                <TooltipProvider>
+  1108→                                  <Tooltip>
+  1109→                                    <TooltipTrigger asChild>
+  1110→                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:text-blue-700" onClick={() => setDialogForm(s)}>
+  1111→                                        <Pencil className="h-3.5 w-3.5" />
+  1112→                                      </Button>
+  1113→                                    </TooltipTrigger>
+  1114→                                    <TooltipContent>Editar</TooltipContent>
+  1115→                                  </Tooltip>
+  1116→                                </TooltipProvider>
+  1117→                                <TooltipProvider>
+  1118→                                  <Tooltip>
+  1119→                                    <TooltipTrigger asChild>
+  1120→                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-purple-500 hover:text-purple-700" onClick={() => setAbaAtiva("cobrancas")}>
+  1121→                                        <Receipt className="h-3.5 w-3.5" />
+  1122→                                      </Button>
+  1123→                                    </TooltipTrigger>
+  1124→                                    <TooltipContent>Cobrancas</TooltipContent>
+  1125→                                  </Tooltip>
+  1126→                                </TooltipProvider>
+  1127→                                {s.telefone && (
+  1128→                                  <TooltipProvider>
+  1129→                                    <Tooltip>
+  1130→                                      <TooltipTrigger asChild>
+  1131→                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-500 hover:text-emerald-700" onClick={() => handleWhatsApp(s.telefone)}>
+  1132→                                          <MessageCircle className="h-3.5 w-3.5" />
+  1133→                                        </Button>
+  1134→                                      </TooltipTrigger>
+  1135→                                      <TooltipContent>WhatsApp</TooltipContent>
+  1136→                                    </Tooltip>
+  1137→                                  </TooltipProvider>
+  1138→                                )}
+  1139→                                <TooltipProvider>
+  1140→                                  <Tooltip>
+  1141→                                    <TooltipTrigger asChild>
+  1142→                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-600" onClick={() => setConfirmaRemover(s.id)}>
+  1143→                                        <Trash2 className="h-3.5 w-3.5" />
+  1144→                                      </Button>
+  1145→                                    </TooltipTrigger>
+  1146→                                    <TooltipContent>Remover</TooltipContent>
+  1147→                                  </Tooltip>
+  1148→                                </TooltipProvider>
+  1149→                              </div>
+  1150→                            </td>
+  1151→                          </tr>
+  1152→                        );
+  1153→                      })}
+  1154→                    </tbody>
+  1155→                  </table>
+  1156→                </div>
+  1157→              </CardContent>
+  1158→            </Card>
+  1159→
+  1160→            <div className="text-center text-[10px] text-gray-400 pb-4">
+  1161→              {sistemasFiltrados.length} de {sistemas.length} sistema{sistemas.length !== 1 ? "s" : ""}
+  1162→            </div>
+  1163→          </>
+  1164→        )}
+  1165→      </main>
+  1166→
+  1167→      {/* Dialog Novo Sistema */}
+  1168→      <Dialog open={dialogNovo} onOpenChange={() => setDialogNovo(false)}>
+  1169→        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+  1170→          <DialogHeader>
+  1171→            <DialogTitle className="flex items-center gap-2 text-base">
+  1172→              <Plus className="h-5 w-5 text-emerald-600" />
+  1173→              Cadastrar Novo Sistema
+  1174→            </DialogTitle>
+  1175→          </DialogHeader>
+  1176→          <FormularioSistema
+  1177→            onSalvar={handleSalvarNovo}
+  1178→            onCancelar={() => setDialogNovo(false)}
+  1179→          />
+  1180→        </DialogContent>
+  1181→      </Dialog>
+  1182→
+  1183→      {/* Dialog Editar Sistema */}
+  1184→      <Dialog open={!!dialogForm} onOpenChange={() => setDialogForm(null)}>
+  1185→        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+  1186→          <DialogHeader>
+  1187→            <DialogTitle className="flex items-center gap-2 text-base">
+  1188→              <Pencil className="h-5 w-5 text-blue-600" />
+  1189→              Editar Sistema
+  1190→            </DialogTitle>
+  1191→          </DialogHeader>
+  1192→          {dialogForm && (
+  1193→            <FormularioSistema
+  1194→              sistema={dialogForm}
+  1195→              onSalvar={handleSalvarEdicao}
+  1196→              onCancelar={() => setDialogForm(null)}
+  1197→            />
+  1198→          )}
+  1199→        </DialogContent>
+  1200→      </Dialog>
+  1201→
+  1202→      {/* Dialog Detalhes */}
+  1203→      <Dialog open={!!dialogDetalhe} onOpenChange={() => setDialogDetalhe(null)}>
+  1204→        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+  1205→          <DialogHeader>
+  1206→            <DialogTitle className="flex items-center gap-2 text-base">
+  1207→              <Eye className="h-5 w-5 text-emerald-600" />
+  1208→              Detalhes do Sistema
+  1209→            </DialogTitle>
+  1210→          </DialogHeader>
+  1211→          {dialogDetalhe && (
+  1212→            <div className="space-y-4">
+  1213→              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+  1214→                <div className="flex items-start justify-between">
+  1215→                  <div>
+  1216→                    <p className="font-bold text-gray-900">{dialogDetalhe.empresa}</p>
+  1217→                    <p className="text-sm text-gray-500">{dialogDetalhe.responsavel}</p>
+  1218→                  </div>
+  1219→                  <div className="flex gap-1.5 flex-wrap justify-end">
+  1220→                    <Badge className={`text-[10px] font-semibold ${getStatusInfo(dialogDetalhe.status).cor}`}>
+  1221→                      {getStatusInfo(dialogDetalhe.status).label}
+  1222→                    </Badge>
+  1223→                    <Badge className={`text-[10px] font-semibold ${getPlanoInfo(dialogDetalhe.plano).cor}`}>
+  1224→                      {getPlanoInfo(dialogDetalhe.plano).label}
+  1225→                    </Badge>
+  1226→                    <Badge className={`text-[10px] font-semibold ${getTipoLicencaInfo(dialogDetalhe.tipoLicenca).cor}`}>
+  1227→                      {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).label}
+  1228→                    </Badge>
+  1229→                  </div>
+  1230→                </div>
+  1231→                <Separator />
+  1232→                <div className="grid grid-cols-2 gap-3 text-sm">
+  1233→                  <div>
+  1234→                    <p className="text-[10px] text-gray-400 uppercase font-medium">Telefone</p>
+  1235→                    <p className="text-gray-700">{dialogDetalhe.telefone || "-"}</p>
+  1236→                  </div>
+  1237→                  <div>
+  1238→                    <p className="text-[10px] text-gray-400 uppercase font-medium">E-mail</p>
+  1239→                    <p className="text-gray-700">{dialogDetalhe.email || "-"}</p>
+  1240→                  </div>
+  1241→                  <div>
+  1242→                    <p className="text-[10px] text-gray-400 uppercase font-medium">Cidade</p>
+  1243→                    <p className="text-gray-700">{dialogDetalhe.cidade || "-"}</p>
+  1244→                  </div>
+  1245→                  <div>
+  1246→                    <p className="text-[10px] text-gray-400 uppercase font-medium">Tipo de Licenca</p>
+  1247→                    <p className="text-gray-700">
+  1248→                      {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).label}
+  1249→                      <span className="text-[10px] text-gray-400 block">
+  1250→                        {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).descricao}
+  1251→                      </span>
+  1252→                    </p>
+  1253→                  </div>
+  1254→                  {dialogDetalhe.tipoLicenca === "ALUGUEL" ? (
+  1255→                    <>
+  1256→                      <div>
+  1257→                        <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Mensal</p>
+  1258→                        <p className="text-emerald-600 font-bold">{formatarMoeda(dialogDetalhe.valorMensal)}</p>
+  1259→                      </div>
+  1260→                      <div>
+  1261→                        <p className="text-[10px] text-gray-400 uppercase font-medium">Vencimento</p>
+  1262→                        <p className={dialogDetalhe.status === "ATIVO" && diasRestantes(dialogDetalhe.dataVencimento) <= 7 ? "text-amber-600 font-bold" : "text-gray-700"}>
+  1263→                          {formatarData(dialogDetalhe.dataVencimento)}
+  1264→                          {dialogDetalhe.status === "ATIVO" && (
+  1265→                            <span className="block text-[11px]">
+  1266→                              {diasRestantes(dialogDetalhe.dataVencimento) > 0
+  1267→                                ? `${diasRestantes(dialogDetalhe.dataVencimento)} dias restantes`
+  1268→                                : "Vencido!"}
+  1269→                            </span>
+  1270→                          )}
+  1271→                        </p>
+  1272→                      </div>
+  1273→                    </>
+  1274→                  ) : (
+  1275→                    <div className="col-span-2">
+  1276→                      <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Aquisicao</p>
+  1277→                      <p className="text-emerald-600 font-bold text-lg">{formatarMoeda(dialogDetalhe.valorAquisicao)}</p>
+  1278→                      <p className="text-[10px] text-gray-400">Pagamento unico - licenca definitiva</p>
+  1279→                    </div>
+  1280→                  )}
+  1281→                  <div>
+  1282→                    <p className="text-[10px] text-gray-400 uppercase font-medium">Instalacao</p>
+  1283→                    <p className="text-gray-700">{formatarData(dialogDetalhe.dataInstalacao)}</p>
+  1284→                  </div>
+  1285→                  {dialogDetalhe.taxaInstalacao > 0 && (
+  1286→                    <div>
+  1287→                      <p className="text-[10px] text-gray-400 uppercase font-medium">Taxa Instalacao</p>
+  1288→                      <p className="text-gray-700">{formatarMoeda(dialogDetalhe.taxaInstalacao)}</p>
+  1289→                    </div>
+  1290→                  )}
+  1291→                </div>
+  1292→                {dialogDetalhe.observacoes && (
+  1293→                  <>
+  1294→                    <Separator />
+  1295→                    <div>
+  1296→                      <p className="text-[10px] text-gray-400 uppercase font-medium mb-1">Observacoes</p>
+  1297→                      <p className="text-sm text-gray-500">{dialogDetalhe.observacoes}</p>
+  1298→                    </div>
+  1299→                  </>
+  1300→                )}
+  1301→                {dialogDetalhe.dadosRegistro && (
+  1302→                  <>
+  1303→                    <Separator />
+  1304→                    <div>
+  1305→                      <p className="text-[10px] text-emerald-600 uppercase font-semibold mb-2 flex items-center gap-1">
+  1306→                        <Check className="h-3 w-3" />
+  1307→                        Dados do Cadastro do Cliente
+  1308→                      </p>
+  1309→                      <div className="grid grid-cols-2 gap-2 text-sm bg-emerald-50/50 rounded-lg p-3 border border-emerald-100">
+  1310→                        <div>
+  1311→                          <p className="text-[10px] text-gray-400">Usuario criado</p>
+  1312→                          <p className="text-gray-700 font-medium">{dialogDetalhe.dadosRegistro.usuario}</p>
+  1313→                        </div>
+  1314→                        <div>
+  1315→                          <p className="text-[10px] text-gray-400">Empresa cadastrada</p>
+  1316→                          <p className="text-gray-700 font-medium">{dialogDetalhe.dadosRegistro.nomeEmpresa}</p>
+  1317→                        </div>
+  1318→                        {dialogDetalhe.dadosRegistro.telefone && (
+  1319→                          <div>
+  1320→                            <p className="text-[10px] text-gray-400">Telefone</p>
+  1321→                            <p className="text-gray-700">{dialogDetalhe.dadosRegistro.telefone}</p>
+  1322→                          </div>
+  1323→                        )}
+  1324→                        {dialogDetalhe.dadosRegistro.email && (
+  1325→                          <div>
+  1326→                            <p className="text-[10px] text-gray-400">E-mail</p>
+  1327→                            <p className="text-gray-700">{dialogDetalhe.dadosRegistro.email}</p>
+  1328→                          </div>
+  1329→                        )}
+  1330→                        <div className="col-span-2">
+  1331→                          <p className="text-[10px] text-gray-400">Registrado em</p>
+  1332→                          <p className="text-gray-700 text-xs">
+  1333→                            {new Date(dialogDetalhe.dadosRegistro.registradoEm).toLocaleString("pt-BR")}
+  1334→                          </p>
+  1335→                        </div>
+  1336→                      </div>
+  1337→                    </div>
+  1338→                  </>
+  1339→                )}
+  1340→              </div>
+  1341→              <div className="flex gap-2">
+  1342→                {dialogDetalhe.telefone && (
+  1343→                  <Button
+  1344→                    variant="outline"
+  1345→                    className="flex-1 bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 text-xs"
+  1346→                    onClick={() => handleWhatsApp(dialogDetalhe.telefone)}
+  1347→                  >
+  1348→                    <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+  1349→                    WhatsApp
+  1350→                  </Button>
+  1351→                )}
+  1352→                <Button
+  1353→                  variant="outline"
+  1354→                  className="flex-1 border-gray-200 text-gray-600 hover:bg-gray-50 text-xs"
+  1355→                  onClick={() => {
+  1356→                    setDialogDetalhe(null);
+  1357→                    setDialogForm(dialogDetalhe);
+  1358→                  }}
+  1359→                >
+  1360→                  <Pencil className="h-3.5 w-3.5 mr-1.5" />
+  1361→                  Editar
+  1362→                </Button>
+  1363→              </div>
+  1364→            </div>
+  1365→          )}
+  1366→        </DialogContent>
+  1367→      </Dialog>
+  1368→
+  1369→      {/* Dialog Confirmação de Remoção */}
+  1370→      <Dialog open={!!confirmaRemover} onOpenChange={() => setConfirmaRemover(null)}>
+  1371→        <DialogContent className="max-w-sm">
+  1372→          <DialogHeader>
+  1373→            <DialogTitle className="text-base">Confirmar Remocao</DialogTitle>
+  1374→          </DialogHeader>
+  1375→          <p className="text-sm text-gray-500">
+  1376→            Tem certeza que deseja remover este sistema e todas as suas cobrancas? Esta acao nao pode ser desfeita.
+  1377→          </p>
+  1378→          <div className="flex gap-2 justify-end pt-2">
+  1379→            <Button
+  1380→              variant="ghost"
+  1381→              size="sm"
+  1382→              className="text-xs"
+  1383→              onClick={() => setConfirmaRemover(null)}
+  1384→            >
+  1385→              Cancelar
+  1386→            </Button>
+  1387→            <Button
+  1388→              size="sm"
+  1389→              className="text-xs bg-red-600 hover:bg-red-700"
+  1390→              onClick={() => confirmaRemover && handleRemover(confirmaRemover)}
+  1391→            >
+  1392→              <Trash2 className="h-3 w-3 mr-1" />
+  1393→              Remover
+  1394→            </Button>
+  1395→          </div>
+  1396→        </DialogContent>
+  1397→      </Dialog>
+  1398→
+  1399→      {/* Dialog Trocar Senha */}
+  1400→      <DialogTrocarSenha
+  1401→        open={dialogTrocarSenha}
+  1402→        onOpenChange={setDialogTrocarSenha}
+  1403→      />
+  1404→    </div>
+  1405→  );
+  1406→}
+  1407→
+  1408→// =============================================
+  1409→// EXPORT PRINCIPAL
+  1410→// =============================================
+  1411→export function PainelAdmin() {
+  1412→  const [autenticado, setAutenticado] = useState<boolean | null>(null);
+  1413→
+  1414→  useEffect(() => {
+  1415→    // Garante que as credenciais padrão sempre existam
+  1416→    const store = useAdminStore.getState();
+  1417→    if (!store.adminCredenciais) {
+  1418→      store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
+  1419→    }
+  1420→
+  1421→    const session = sessionStorage.getItem("zapfacil_admin_session");
+  1422→    setAutenticado(session === "autenticado");
+  1423→  }, []);
+  1424→
+  1425→  if (autenticado === null) {
+  1426→    return (
+  1427→      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+  1428→        <div className="animate-pulse flex flex-col items-center gap-3">
+  1429→          <div className="w-14 h-14 rounded-2xl bg-emerald-100" />
+  1430→          <div className="h-4 w-28 bg-gray-200 rounded" />
+  1431→        </div>
+  1432→      </div>
+  1433→    );
+  1434→  }
+  1435→
+  1436→  if (!autenticado) {
+  1437→    return <TelaLoginAdmin onAutenticado={() => setAutenticado(true)} />;
+  1438→  }
+  1439→
+  1440→  return <PainelAdminConteudo />;
+  1441→}

@@ -218,7 +218,7 @@ export function PainelAgendamento() {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Stats rápidos do dia */}
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-2 text-center border border-blue-100 dark:border-blue-900">
               <p className="text-sm font-black text-blue-700 dark:text-blue-400">{statsHoje.pendentes}</p>
               <p className="text-[9px] text-blue-600 dark:text-blue-400 font-bold uppercase">Pendentes</p>
@@ -481,7 +481,7 @@ export function PainelAgendamento() {
 
       {/* Dialog de detalhes */}
       <Dialog open={!!detalheAberto} onOpenChange={() => setDetalheAberto(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-sm">
               <CalendarDays className="h-4 w-4 text-emerald-600" />

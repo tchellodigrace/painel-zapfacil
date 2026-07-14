@@ -368,7 +368,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
         </div>
 
         {/* Desconto / Acréscimo / Status */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div>
             <Label className="text-[10px] font-bold text-red-600 uppercase mb-0.5 block">
               Desc. (R$)

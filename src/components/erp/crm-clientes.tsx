@@ -429,49 +429,76 @@ function FichaCliente({
             Nenhuma compra registrada.
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-lg border">
-            <Table className="text-xs">
-              <TableHeader>
-                <TableRow className="text-[10px] uppercase">
-                  <TableHead className="py-1.5 px-2">Data</TableHead>
-                  <TableHead className="py-1.5 px-2">Servicos</TableHead>
-                  <TableHead className="py-1.5 px-2 text-right">
-                    Total
-                  </TableHead>
-                  <TableHead className="py-1.5 px-2 text-center">
-                    Status
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {historico.map((v) => (
-                  <TableRow key={v.id}>
-                    <TableCell className="py-1.5 px-2 font-mono text-[10px] whitespace-nowrap">
-                      {v.data}
-                    </TableCell>
-                    <TableCell className="py-1.5 px-2 max-w-[140px] truncate">
-                      {v.itens.map((i) => i.servicoNome).join(", ")}
-                    </TableCell>
-                    <TableCell className="py-1.5 px-2 text-right font-bold whitespace-nowrap">
-                      {formatarMoeda(v.total)}
-                    </TableCell>
-                    <TableCell className="py-1.5 px-2 text-center">
-                      <Badge
-                        variant="secondary"
-                        className={`text-[9px] ${
-                          v.status === "PAGO"
-                            ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
-                            : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
-                        }`}
-                      >
-                        {v.status}
-                      </Badge>
-                    </TableCell>
+          <>
+            {/* Mobile cards */}
+            <div className="sm:hidden divide-y divide-gray-100 rounded-lg border">
+              {historico.map((v) => (
+                <div key={v.id} className="p-2.5 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-[11px] text-gray-400 font-mono">{v.data}</p>
+                    <p className="text-xs text-gray-700 truncate">{v.itens.map((i) => i.servicoNome).join(", ")}</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Badge
+                      variant="secondary"
+                      className={`text-[9px] ${
+                        v.status === "PAGO"
+                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
+                          : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
+                      }`}
+                    >
+                      {v.status}
+                    </Badge>
+                    <p className="text-xs font-bold text-gray-900">{formatarMoeda(v.total)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Desktop tabela */}
+            <div className="hidden sm:block overflow-x-auto rounded-lg border">
+              <Table className="text-xs">
+                <TableHeader>
+                  <TableRow className="text-[10px] uppercase">
+                    <TableHead className="py-1.5 px-2">Data</TableHead>
+                    <TableHead className="py-1.5 px-2">Servicos</TableHead>
+                    <TableHead className="py-1.5 px-2 text-right">
+                      Total
+                    </TableHead>
+                    <TableHead className="py-1.5 px-2 text-center">
+                      Status
+                    </TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {historico.map((v) => (
+                    <TableRow key={v.id}>
+                      <TableCell className="py-1.5 px-2 font-mono text-[10px] whitespace-nowrap">
+                        {v.data}
+                      </TableCell>
+                      <TableCell className="py-1.5 px-2 max-w-[140px] truncate">
+                        {v.itens.map((i) => i.servicoNome).join(", ")}
+                      </TableCell>
+                      <TableCell className="py-1.5 px-2 text-right font-bold whitespace-nowrap">
+                        {formatarMoeda(v.total)}
+                      </TableCell>
+                      <TableCell className="py-1.5 px-2 text-center">
+                        <Badge
+                          variant="secondary"
+                          className={`text-[9px] ${
+                            v.status === "PAGO"
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
+                              : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
+                          }`}
+                        >
+                          {v.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )}
       </div>
     </div>

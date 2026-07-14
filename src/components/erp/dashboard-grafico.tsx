@@ -166,7 +166,7 @@ export function DashboardGrafico() {
               <Trophy className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             </div>
           </div>
-          <p className="text-lg font-black">{topServicos[0]?.nome || "-"}</p>
+          <p className="text-lg font-black truncate">{topServicos[0]?.nome || "-"}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Servico Top</p>
         </Card>
         <Card className="p-4">
@@ -175,7 +175,7 @@ export function DashboardGrafico() {
               <Users className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
-          <p className="text-lg font-black">{topClientes[0]?.nome || "-"}</p>
+          <p className="text-lg font-black truncate">{topClientes[0]?.nome || "-"}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Cliente Top</p>
         </Card>
         <Card className="p-4">
@@ -248,7 +248,7 @@ export function DashboardGrafico() {
           </CardHeader>
           <CardContent>
             {distribuicaoPagamento.length > 0 ? (
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-4">
                 <ChartContainer
                   config={Object.fromEntries(
                     distribuicaoPagamento.map((d, i) => [
@@ -256,7 +256,7 @@ export function DashboardGrafico() {
                       { label: d.forma, color: CORES_GRAFICO[i % CORES_GRAFICO.length] },
                     ])
                   )}
-                  className="h-[200px] w-[200px]"
+                  className="h-[180px] w-[180px] sm:h-[200px] sm:w-[200px]"
                 >
                   <PieChart>
                     <Pie

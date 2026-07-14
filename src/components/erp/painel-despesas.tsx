@@ -197,7 +197,7 @@ export function PainelDespesas() {
           <p className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
             DRE Resumo - Demonstrativo de Resultados
           </p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-[10px] text-emerald-700 dark:text-emerald-400 font-bold mb-0.5">
                 <DollarSign className="h-3 w-3" />

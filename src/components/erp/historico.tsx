@@ -289,8 +289,56 @@ export function Historico({ onReemitir }: HistoricoProps) {
           </Button>
         </div>
 
-        {/* Tabela */}
-        <div className="overflow-x-auto">
+        {/* Mobile cards */}
+        <div className="sm:hidden divide-y divide-gray-100">
+          {vendasFiltradas.length === 0 && (
+            <div className="p-6 text-center text-muted-foreground text-xs">
+              Nenhum registro encontrado.
+            </div>
+          )}
+          {vendasFiltradas.map((v) => (
+            <div key={v.id} className="p-3 space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm text-gray-900 truncate">{v.cliente}</p>
+                  <p className="text-[11px] text-gray-400 truncate">{v.itens.map((i) => i.servicoNome).join(", ")}</p>
+                </div>
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <p className="font-black text-sm text-gray-900">{formatarMoeda(v.total)}</p>
+                  <Badge
+                    variant={v.status === "PAGO" ? "default" : "secondary"}
+                    className={`text-[10px] ${
+                      v.status === "PAGO"
+                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
+                        : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
+                    }`}
+                  >
+                    {v.status}
+                  </Badge>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] text-gray-400">{v.data} {v.hora}</p>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="sm" className="h-8 text-[10px] text-emerald-600" onClick={() => onReemitir(v)}>
+                    <Eye className="h-3 w-3 mr-0.5" /> Ver
+                  </Button>
+                  {v.status === "PENDENTE" && (
+                    <Button variant="ghost" size="sm" className="h-8 text-[10px] text-amber-600" onClick={() => handleCobrarPendente(v)}>
+                      <MessageCircle className="h-3 w-3" />
+                    </Button>
+                  )}
+                  <Button variant="ghost" size="sm" className="h-8 text-[10px] text-red-500" onClick={() => { if (confirm("Excluir?")) { removerVenda(v.id); toast.success("Registro excluído."); } }}>
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop tabela */}
+        <div className="hidden sm:block overflow-x-auto">
           <Table className="min-w-[600px]">
             <TableHeader>
               <TableRow className="text-[10px] uppercase">
