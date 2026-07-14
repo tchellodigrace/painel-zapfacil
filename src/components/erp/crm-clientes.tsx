@@ -35,7 +35,7 @@ import {
   DollarSign,
   ShoppingBag,
 } from "lucide-react";
-import { formatarMoeda } from "@/lib/utils-erp";
+import { formatarMoeda, abrirWhatsApp } from "@/lib/utils-erp";
 import type { Cliente, Venda } from "@/types";
 
 export function CRMClientes() {
@@ -108,12 +108,10 @@ export function CRMClientes() {
   };
 
   const handleWhatsAppCliente = (telefone: string, nome: string) => {
-    const telLimpo = telefone.replace(/\D/g, "");
-    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
-    const msg = encodeURIComponent(
-      `Ola ${nome}! Aqui e da ${useERPStore.getState().empresa.nome || "sua empresa"}.`
-    );
-    window.open(`https://wa.me/${numero}?text=${msg}`, "_blank");
+    const msg =
+      `Ola ${nome}! Aqui e da *${useERPStore.getState().empresa.nome || "sua empresa"}*.\n\n` +
+      `Estamos entrando em contato. Estamos a disposicao!`;
+    abrirWhatsApp(telefone, msg);
   };
 
   return (

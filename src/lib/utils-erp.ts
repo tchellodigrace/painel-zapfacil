@@ -128,6 +128,34 @@ export function filtrarVendasPorPeriodo(
   }
 }
 
+// ============================================
+// WhatsApp com Logomarca
+// ============================================
+
+const LOGO_URL = "https://j1ewd51wcs60-d.space-z.ai/logo-empresa.png";
+const BASE_URL = "https://j1ewd51wcs60-d.space-z.ai";
+
+/**
+ * Adiciona a logomarca e identidade visual ao final de mensagens WhatsApp.
+ * O WhatsApp gera um preview rico (card com imagem) quando detecta uma URL de imagem no texto.
+ * A logo aparece como um card visual antes do destinatário abrir a conversa.
+ */
+export function construirMensagemWhatsApp(corpoMensagem: string): string {
+  const rodape = `\n\n${LOGO_URL}\n_Powered by ZapFácil Pro_`;
+  return corpoMensagem + rodape;
+}
+
+/**
+ * Abre o WhatsApp Web/App com a mensagem formatada (com logomarca).
+ */
+export function abrirWhatsApp(telefone: string, mensagem: string): void {
+  const telLimpo = telefone.replace(/\D/g, "");
+  const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+  const msgFinal = construirMensagemWhatsApp(mensagem);
+  const msgEncoded = encodeURIComponent(msgFinal);
+  window.open(`https://wa.me/${numero}?text=${msgEncoded}`, "_blank");
+}
+
 export function exportarParaCSV(vendas: Array<Record<string, unknown>>): void {
   if (!vendas.length) return;
   const cabecalhos = Object.keys(vendas[0]);

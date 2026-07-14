@@ -36,7 +36,7 @@ import {
   Eye,
   MessageCircle,
 } from "lucide-react";
-import { formatarMoeda, gerarId } from "@/lib/utils-erp";
+import { formatarMoeda, gerarId, abrirWhatsApp } from "@/lib/utils-erp";
 import type {
   Agendamento,
   StatusAgendamento,
@@ -190,12 +190,11 @@ export function PainelAgendamento() {
   };
 
   const handleWhatsApp = (telefone: string, nome: string) => {
-    const telLimpo = telefone.replace(/\D/g, "");
-    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
-    const msg = encodeURIComponent(
-      `Ola ${nome}! Aqui e da ${useERPStore.getState().empresa.nome || "sua empresa"}.`
-    );
-    window.open(`https://wa.me/${numero}?text=${msg}`, "_blank");
+    const msg =
+      `Ola ${nome}! Aqui e da *${useERPStore.getState().empresa.nome || "sua empresa"}*.\n\n` +
+      `Estamos entrando em contato para confirmar seu agendamento.\n` +
+      `Estamos a disposicao para qualquer duvida!`;
+    abrirWhatsApp(telefone, msg);
   };
 
   const obterStatusInfo = (status: StatusAgendamento) => {

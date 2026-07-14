@@ -37,3 +37,23 @@ Stage Summary:
 - Arquivos modificados: use-admin-store.ts, painel-admin.tsx
 - Arquivos criados: admin-cobrancas.tsx
 - Funcionalidades: gerar cobranças, registrar pagamentos, enviar lembretes WhatsApp, histórico financeiro por cliente, dashboard com receita/p endingente/atrasado
+---
+Task ID: 1
+Agent: Main Agent
+Task: Adicionar logomarca em todas as mensagens WhatsApp e corrigir qualidade da logo
+
+Work Log:
+- Converti logo-empresa.png de 8-bit colormap (P mode) para 32-bit RGBA — melhora significativa de qualidade
+- Criei helper `construirMensagemWhatsApp()` e `abrirWhatsApp()` em utils-erp.ts que adiciona a URL da logo + branding "Powered by ZapFácil Pro" ao final de toda mensagem
+- Atualizei admin-cobrancas.tsx — lembrete de cobrança do admin
+- Atualizei historico.tsx — cobrança pendente individual e resumo de pendências
+- Atualizei painel-agendamento.tsx — contato de agendamento
+- Atualizei crm-clientes.tsx — contato via CRM
+- Todas as mensagens agora usam a URL absoluta da logo no servidor para gerar rich preview no WhatsApp
+- Build passou sem erros
+
+Stage Summary:
+- Logo convertida para alta qualidade (RGBA 32-bit)
+- 5 pontos de envio WhatsApp atualizados com logomarca
+- Helper centralizado em utils-erp.ts para fácil manutenção futura
+

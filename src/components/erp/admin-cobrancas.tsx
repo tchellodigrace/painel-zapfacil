@@ -49,6 +49,7 @@ import {
   Send,
   FileText,
 } from "lucide-react";
+import { abrirWhatsApp } from "@/lib/utils-erp";
 import {
   Tooltip,
   TooltipContent,
@@ -491,12 +492,14 @@ export function PainelCobranças() {
       toast.error("Telefone nao cadastrado para este sistema.");
       return;
     }
-    const telLimpo = sistema.telefone.replace(/\D/g, "");
-    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
-    const msg = encodeURIComponent(
-      `Ola! Aqui e o suporte do ZapFacil Pro.\n\nGostariamos de lhe lembrar sobre a cobranca:\n\n*${cobranca.descricao}*\nValor: ${formatarMoeda(cobranca.valor)}\nVencimento: ${formatarData(cobranca.dataVencimento)}\n\nPor favor, entre em contato para confirmar o pagamento. Estamos a disposicao!`
-    );
-    window.open(`https://wa.me/${numero}?text=${msg}`, "_blank");
+    const msg =
+      `Ola! Aqui e o suporte do *ZapFacil Pro*.\n\n` +
+      `Gostariamos de lhe lembrar sobre a cobranca:\n\n` +
+      `*${cobranca.descricao}*\n` +
+      `Valor: ${formatarMoeda(cobranca.valor)}\n` +
+      `Vencimento: ${formatarData(cobranca.dataVencimento)}\n\n` +
+      `Por favor, entre em contato para confirmar o pagamento. Estamos a disposicao!`;
+    abrirWhatsApp(sistema.telefone, msg);
   };
 
   // Cobranças do sistema selecionado para histórico

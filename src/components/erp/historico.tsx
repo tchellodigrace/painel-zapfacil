@@ -36,7 +36,7 @@ import {
   MessageCircle,
   Send,
 } from "lucide-react";
-import { formatarMoeda, exportarParaCSV, filtrarVendasPorPeriodo } from "@/lib/utils-erp";
+import { formatarMoeda, exportarParaCSV, filtrarVendasPorPeriodo, construirMensagemWhatsApp } from "@/lib/utils-erp";
 import type { Venda } from "@/types";
 
 interface HistoricoProps {
@@ -119,19 +119,19 @@ export function Historico({ onReemitir }: HistoricoProps) {
 
   const handleCobrarPendente = (v: Venda) => {
     const empresa = useERPStore.getState().empresa;
-    const msg = encodeURIComponent(
+    const msg =
       `Ola ${v.cliente}!\n\n` +
-        `Segue sua fatura de servico:\n\n` +
-        `Empresa: ${empresa.nome || "Prestador"}\n` +
-        `Data: ${v.data} as ${v.hora}\n\n` +
-        `Servico(s):\n${v.itens.map((i) => `  - ${i.servicoNome} (${i.quantidade}x) ${formatarMoeda(i.valorTotal)}`).join("\n")}\n\n` +
-        (v.desconto > 0 ? `Desconto: -${formatarMoeda(v.desconto)}\n` : "") +
-        (v.acrescimo > 0 ? `Acrescimo: +${formatarMoeda(v.acrescimo)}\n` : "") +
-        `TOTAL: ${formatarMoeda(v.total)}\n` +
-        `Forma de Pagamento: ${v.formaPagamento}\n\n` +
-        `Por favor, regularize o pagamento. Obrigado!`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${msg}`, "_blank");
+      `Segue sua fatura de servico:\n\n` +
+      `Empresa: ${empresa.nome || "Prestador"}\n` +
+      `Data: ${v.data} as ${v.hora}\n\n` +
+      `Servico(s):\n${v.itens.map((i) => `  - ${i.servicoNome} (${i.quantidade}x) ${formatarMoeda(i.valorTotal)}`).join("\n")}\n\n` +
+      (v.desconto > 0 ? `Desconto: -${formatarMoeda(v.desconto)}\n` : "") +
+      (v.acrescimo > 0 ? `Acrescimo: +${formatarMoeda(v.acrescimo)}\n` : "") +
+      `TOTAL: ${formatarMoeda(v.total)}\n` +
+      `Forma de Pagamento: ${v.formaPagamento}\n\n` +
+      `Por favor, regularize o pagamento. Obrigado!`;
+    const msgFinal = construirMensagemWhatsApp(msg);
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msgFinal)}`, "_blank");
     toast.success("Mensagem de cobranca aberta no WhatsApp!");
   };
 
@@ -148,16 +148,17 @@ export function Historico({ onReemitir }: HistoricoProps) {
         `Total: *${formatarMoeda(v.total)}*`
     ).join("\n\n");
 
-    const resumo = encodeURIComponent(
+    const resumo =
       `*RELATORIO DE PENDENCIAS*\n` +
         `Empresa: ${empresa.nome || "Prestador"}\n` +
         `Data: ${new Date().toLocaleDateString("pt-BR")}\n\n` +
         msgs +
         `\n\nTotal Pendente: *${formatarMoeda(pendentes.reduce((s, v) => s + v.total, 0))}*\n` +
-        `Quantidade: ${pendentes.length} fatura(s)`
-    );
+        `Quantidade: ${pendentes.length} fatura(s)`;
+
+    const msgFinal = construirMensagemWhatsApp(resumo);
     window.open(
-      `https://api.whatsapp.com/send?text=${resumo}`,
+      `https://api.whatsapp.com/send?text=${encodeURIComponent(msgFinal)}`,
       "_blank"
     );
     toast.success(`Resumo de ${pendentes.length} cobranca(s) aberto!`);

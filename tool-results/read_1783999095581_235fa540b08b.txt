@@ -1,0 +1,1155 @@
+     1→"use client";
+     2→
+     3→import { useState, useMemo, useCallback } from "react";
+     4→import {
+     5→  useAdminStore,
+     6→  TIPOS_COBRANCA,
+     7→  STATUS_COBRANCA,
+     8→  FORMAS_PAGAMENTO_ADMIN,
+     9→  TIPOS_LICENCA,
+    10→  type Cobranca,
+    11→  type TipoCobranca,
+    12→  type StatusCobranca,
+    13→  type FormaPagamentoAdmin,
+    14→  type SistemaCliente,
+    15→} from "@/hooks/use-admin-store";
+    16→import { Button } from "@/components/ui/button";
+    17→import { Input } from "@/components/ui/input";
+    18→import { Label } from "@/components/ui/label";
+    19→import { Badge } from "@/components/ui/badge";
+    20→import { Card, CardContent } from "@/components/ui/card";
+    21→import {
+    22→  Dialog,
+    23→  DialogContent,
+    24→  DialogHeader,
+    25→  DialogTitle,
+    26→} from "@/components/ui/dialog";
+    27→import {
+    28→  Select,
+    29→  SelectContent,
+    30→  SelectItem,
+    31→  SelectTrigger,
+    32→  SelectValue,
+    33→} from "@/components/ui/select";
+    34→import { Textarea } from "@/components/ui/textarea";
+    35→import { Separator } from "@/components/ui/separator";
+    36→import { toast } from "sonner";
+    37→import {
+    38→  Plus,
+    39→  Search,
+    40→  Trash2,
+    41→  CheckCircle2,
+    42→  XCircle,
+    43→  Receipt,
+    44→  DollarSign,
+    45→  AlertTriangle,
+    46→  TrendingUp,
+    47→  CreditCard,
+    48→  Clock,
+    49→  Send,
+    50→  FileText,
+    51→} from "lucide-react";
+    52→import {
+    53→  Tooltip,
+    54→  TooltipContent,
+    55→  TooltipProvider,
+    56→  TooltipTrigger,
+    57→} from "@/components/ui/tooltip";
+    58→
+    59→function formatarMoeda(valor: number) {
+    60→  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    61→}
+    62→
+    63→function formatarData(data: string) {
+    64→  if (!data) return "";
+    65→  const partes = data.split("-");
+    66→  if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    67→  return data;
+    68→}
+    69→
+    70→function diasRestantes(vencimento: string): number {
+    71→  const hoje = new Date();
+    72→  hoje.setHours(0, 0, 0, 0);
+    73→  const venc = new Date(vencimento + "T00:00:00");
+    74→  const diff = venc.getTime() - hoje.getTime();
+    75→  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    76→}
+    77→
+    78→// =============================================
+    79→// FORMULÁRIO DE COBRANÇA
+    80→// =============================================
+    81→function FormularioCobranca({
+    82→  sistema,
+    83→  cobrancaEdit,
+    84→  onSalvar,
+    85→  onCancelar,
+    86→}: {
+    87→  sistema?: SistemaCliente;
+    88→  cobrancaEdit?: Cobranca;
+    89→  onSalvar: (dados: Omit<Cobranca, "id" | "criadoEm">) => void;
+    90→  onCancelar: () => void;
+    91→}) {
+    92→  const { sistemas } = useAdminStore();
+    93→  const sistemasAtivos = sistemas.filter(
+    94→    (s) => s.status === "ATIVO" || s.status === "TRIAL"
+    95→  );
+    96→
+    97→  const hoje = new Date().toISOString().split("T")[0];
+    98→
+    99→  const [sistemaId, setSistemaId] = useState(
+   100→    cobrancaEdit?.sistemaId || sistema?.id || ""
+   101→  );
+   102→  const [tipo, setTipo] = useState<TipoCobranca>(
+   103→    cobrancaEdit?.tipo || "MENSALIDADE"
+   104→  );
+   105→  const [descricao, setDescricao] = useState(
+   106→    cobrancaEdit?.descricao || ""
+   107→  );
+   108→  const [valor, setValor] = useState(
+   109→    cobrancaEdit?.valor?.toString() || ""
+   110→  );
+   111→  const [dataVencimento, setDataVencimento] = useState(
+   112→    cobrancaEdit?.dataVencimento || hoje
+   113→  );
+   114→  const [observacoes, setObservacoes] = useState(
+   115→    cobrancaEdit?.observacoes || ""
+   116→  );
+   117→
+   118→  // Auto-preenche quando seleciona sistema
+   119→  const sistemaSel = sistemasAtivos.find((s) => s.id === sistemaId);
+   120→
+   121→  const handleSelectSistema = (id: string) => {
+   122→    setSistemaId(id);
+   123→    const s = sistemasAtivos.find((x) => x.id === id);
+   124→    if (s && !cobrancaEdit) {
+   125→      if (s.tipoLicenca === "ALUGUEL") {
+   126→        setTipo("MENSALIDADE");
+   127→        setValor(s.valorMensal?.toString() || "");
+   128→      } else {
+   129→        setTipo("AQUISICAO");
+   130→        setValor(s.valorAquisicao?.toString() || "");
+   131→      }
+   132→      setDescricao("");
+   133→    }
+   134→  };
+   135→
+   136→  const handleSelectTipo = (t: string) => {
+   137→    setTipo(t as TipoCobranca);
+   138→    if (!cobrancaEdit && sistemaSel) {
+   139→      if (t === "MENSALIDADE") setValor(sistemaSel.valorMensal?.toString() || "");
+   140→      if (t === "AQUISICAO") setValor(sistemaSel.valorAquisicao?.toString() || "");
+   141→      if (t === "TAXA_INSTALACAO") setValor(sistemaSel.taxaInstalacao?.toString() || "");
+   142→    }
+   143→  };
+   144→
+   145→  const handleSubmit = (e: React.FormEvent) => {
+   146→    e.preventDefault();
+   147→    if (!sistemaId) {
+   148→      toast.error("Selecione um sistema.");
+   149→      return;
+   150→    }
+   151→    const s = sistemas.find((x) => x.id === sistemaId);
+   152→    if (!descricao.trim() && tipo === "OUTROS") {
+   153→      toast.error("Descreva esta cobranca.");
+   154→      return;
+   155→    }
+   156→    if (!dataVencimento) {
+   157→      toast.error("Data de vencimento e obrigatoria.");
+   158→      return;
+   159→    }
+   160→    const valorNum = parseFloat(valor) || 0;
+   161→    if (valorNum <= 0) {
+   162→      toast.error("Valor deve ser maior que zero.");
+   163→      return;
+   164→    }
+   165→
+   166→    let descFinal = descricao.trim();
+   167→    if (!descFinal) {
+   168→      const mesRef = new Date(dataVencimento + "T00:00:00").toLocaleString("pt-BR", {
+   169→        month: "long",
+   170→        year: "numeric",
+   171→      });
+   172→      if (tipo === "MENSALIDADE") descFinal = `Mensalidade - ${mesRef}`;
+   173→      else if (tipo === "AQUISICAO") descFinal = "Aquisicao do sistema (licenca definitiva)";
+   174→      else if (tipo === "TAXA_INSTALACAO") descFinal = "Taxa de instalacao";
+   175→      else if (tipo === "TAXA_SUPORTE") descFinal = "Taxa de suporte tecnico";
+   176→    }
+   177→
+   178→    onSalvar({
+   179→      sistemaId,
+   180→      sistemaNome: s?.empresa || "",
+   181→      tipo,
+   182→      descricao: descFinal,
+   183→      valor: valorNum,
+   184→      dataVencimento,
+   185→      dataPagamento: cobrancaEdit?.dataPagamento || null,
+   186→      status: cobrancaEdit?.status || "PENDENTE",
+   187→      formaPagamento: cobrancaEdit?.formaPagamento || null,
+   188→      observacoes: observacoes.trim(),
+   189→    });
+   190→  };
+   191→
+   192→  return (
+   193→    <form onSubmit={handleSubmit} className="space-y-4">
+   194→      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+   195→        <div className="sm:col-span-2 space-y-1.5">
+   196→          <Label className="text-xs font-medium">Sistema *</Label>
+   197→          <Select value={sistemaId} onValueChange={handleSelectSistema} disabled={!!cobrancaEdit}>
+   198→            <SelectTrigger className="text-sm h-9">
+   199→              <SelectValue placeholder="Selecione o sistema" />
+   200→            </SelectTrigger>
+   201→            <SelectContent>
+   202→              {sistemasAtivos.map((s) => (
+   203→                <SelectItem key={s.id} value={s.id}>
+   204→                  {s.empresa} — {s.responsavel}
+   205→                </SelectItem>
+   206→              ))}
+   207→            </SelectContent>
+   208→          </Select>
+   209→        </div>
+   210→
+   211→        <div className="space-y-1.5">
+   212→          <Label className="text-xs font-medium">Tipo de Cobranca *</Label>
+   213→          <Select value={tipo} onValueChange={handleSelectTipo}>
+   214→            <SelectTrigger className="text-sm h-9">
+   215→              <SelectValue />
+   216→            </SelectTrigger>
+   217→            <SelectContent>
+   218→              {TIPOS_COBRANCA.map((t) => (
+   219→                <SelectItem key={t.valor} value={t.valor}>
+   220→                  {t.label}
+   221→                </SelectItem>
+   222→              ))}
+   223→            </SelectContent>
+   224→          </Select>
+   225→        </div>
+   226→
+   227→        <div className="space-y-1.5">
+   228→          <Label className="text-xs font-medium">Valor (R$) *</Label>
+   229→          <Input
+   230→            type="number"
+   231→            step="0.01"
+   232→            value={valor}
+   233→            onChange={(e) => setValor(e.target.value)}
+   234→            placeholder="0,00"
+   235→            className="text-sm h-9"
+   236→          />
+   237→        </div>
+   238→
+   239→        <div className="space-y-1.5">
+   240→          <Label className="text-xs font-medium">Vencimento *</Label>
+   241→          <Input
+   242→            type="date"
+   243→            value={dataVencimento}
+   244→            onChange={(e) => setDataVencimento(e.target.value)}
+   245→            className="text-sm h-9"
+   246→          />
+   247→        </div>
+   248→
+   249→        <div className="space-y-1.5">
+   250→          <Label className="text-xs font-medium">Descricao</Label>
+   251→          <Input
+   252→            value={descricao}
+   253→            onChange={(e) => setDescricao(e.target.value)}
+   254→            placeholder="Auto-preenchido pelo tipo"
+   255→            className="text-sm h-9"
+   256→          />
+   257→        </div>
+   258→
+   259→        <div className="sm:col-span-2 space-y-1.5">
+   260→          <Label className="text-xs font-medium">Observacoes</Label>
+   261→          <Textarea
+   262→            value={observacoes}
+   263→            onChange={(e) => setObservacoes(e.target.value)}
+   264→            placeholder="Notas internas..."
+   265→            className="text-sm min-h-[50px]"
+   266→          />
+   267→        </div>
+   268→      </div>
+   269→      <div className="flex gap-2 justify-end pt-2">
+   270→        <Button
+   271→          type="button"
+   272→          variant="ghost"
+   273→          size="sm"
+   274→          className="text-xs"
+   275→          onClick={onCancelar}
+   276→        >
+   277→          Cancelar
+   278→        </Button>
+   279→        <Button
+   280→          type="submit"
+   281→          size="sm"
+   282→          className="text-xs bg-emerald-600 hover:bg-emerald-700"
+   283→        >
+   284→          {cobrancaEdit ? "Salvar Alteracoes" : "Gerar Cobranca"}
+   285→        </Button>
+   286→      </div>
+   287→    </form>
+   288→  );
+   289→}
+   290→
+   291→// =============================================
+   292→// FORMULÁRIO DE REGISTRO DE PAGAMENTO
+   293→// =============================================
+   294→function FormularioPagamento({
+   295→  cobranca,
+   296→  onConfirmar,
+   297→  onCancelar,
+   298→}: {
+   299→  cobranca: Cobranca;
+   300→  onConfirmar: (data: string, forma: FormaPagamentoAdmin) => void;
+   301→  onCancelar: () => void;
+   302→}) {
+   303→  const hoje = new Date().toISOString().split("T")[0];
+   304→  const [dataPag, setDataPag] = useState(hoje);
+   305→  const [forma, setForma] = useState<FormaPagamentoAdmin>("PIX");
+   306→
+   307→  return (
+   308→    <div className="space-y-4">
+   309→      <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+   310→        <p className="text-sm font-semibold text-gray-900">{cobranca.sistemaNome}</p>
+   311→        <p className="text-xs text-gray-500">{cobranca.descricao}</p>
+   312→        <div className="flex items-center justify-between pt-1">
+   313→          <span className="text-xs text-gray-400">Vencimento: {formatarData(cobranca.dataVencimento)}</span>
+   314→          <span className="text-lg font-black text-emerald-600">{formatarMoeda(cobranca.valor)}</span>
+   315→        </div>
+   316→      </div>
+   317→
+   318→      <div className="grid grid-cols-2 gap-3">
+   319→        <div className="space-y-1.5">
+   320→          <Label className="text-xs font-medium">Data do Pagamento *</Label>
+   321→          <Input
+   322→            type="date"
+   323→            value={dataPag}
+   324→            onChange={(e) => setDataPag(e.target.value)}
+   325→            className="text-sm h-9"
+   326→          />
+   327→        </div>
+   328→        <div className="space-y-1.5">
+   329→          <Label className="text-xs font-medium">Forma de Pagamento *</Label>
+   330→          <Select value={forma} onValueChange={(v) => setForma(v as FormaPagamentoAdmin)}>
+   331→            <SelectTrigger className="text-sm h-9">
+   332→              <SelectValue />
+   333→            </SelectTrigger>
+   334→            <SelectContent>
+   335→              {FORMAS_PAGAMENTO_ADMIN.map((f) => (
+   336→                <SelectItem key={f.valor} value={f.valor}>
+   337→                  {f.label}
+   338→                </SelectItem>
+   339→              ))}
+   340→            </SelectContent>
+   341→          </Select>
+   342→        </div>
+   343→      </div>
+   344→
+   345→      <div className="flex gap-2 justify-end pt-2">
+   346→        <Button variant="ghost" size="sm" className="text-xs" onClick={onCancelar}>
+   347→          Cancelar
+   348→        </Button>
+   349→        <Button
+   350→          size="sm"
+   351→          className="text-xs bg-emerald-600 hover:bg-emerald-700"
+   352→          onClick={() => onConfirmar(dataPag, forma)}
+   353→        >
+   354→          <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
+   355→          Confirmar Pagamento
+   356→        </Button>
+   357→      </div>
+   358→    </div>
+   359→  );
+   360→}
+   361→
+   362→// =============================================
+   363→// PAINEL DE COBRANÇAS
+   364→// =============================================
+   365→export function PainelCobranças() {
+   366→  const {
+   367→    cobrancas,
+   368→    sistemas,
+   369→    adicionarCobranca,
+   370→    editarCobranca,
+   371→    removerCobranca,
+   372→    registrarPagamento,
+   373→    cancelarCobranca,
+   374→    gerarCobrancaMensal,
+   375→    gerarCobrancaAquisicao,
+   376→  } = useAdminStore();
+   377→
+   378→  const [busca, setBusca] = useState("");
+   379→  const [filtroStatus, setFiltroStatus] = useState<string>("TODOS");
+   380→  const [filtroTipo, setFiltroTipo] = useState<string>("TODOS");
+   381→  const [filtroSistema, setFiltroSistema] = useState<string>("TODOS");
+   382→  const [dialogNova, setDialogNova] = useState(false);
+   383→  const [dialogPagamento, setDialogPagamento] = useState<Cobranca | null>(null);
+   384→  const [dialogEditCobranca, setDialogEditCobranca] = useState<Cobranca | null>(null);
+   385→  const [dialogHistorico, setDialogHistorico] = useState<SistemaCliente | null>(null);
+   386→  const [confirmaRemoverCob, setConfirmaRemoverCob] = useState<string | null>(null);
+   387→
+   388→  // Estatísticas
+   389→  const stats = useMemo(() => {
+   390→    const agora = new Date();
+   391→    const mesAtual = agora.getMonth();
+   392→    const anoAtual = agora.getFullYear();
+   393→
+   394→    const pagosMes = cobrancas.filter((c) => {
+   395→      if (c.status !== "PAGO" || !c.dataPagamento) return false;
+   396→      const dp = new Date(c.dataPagamento + "T00:00:00");
+   397→      return dp.getMonth() === mesAtual && dp.getFullYear() === anoAtual;
+   398→    });
+   399→
+   400→    const pendentes = cobrancas.filter((c) => c.status === "PENDENTE");
+   401→    const atrasados = cobrancas.filter((c) => c.status === "ATRASADO");
+   402→    const totalRecebidoMes = pagosMes.reduce((s, c) => s + c.valor, 0);
+   403→    const totalPendente = pendentes.reduce((s, c) => s + c.valor, 0);
+   404→    const totalAtrasado = atrasados.reduce((s, c) => s + c.valor, 0);
+   405→    const previstoMes = cobrancas
+   406→      .filter((c) => {
+   407→        if (c.status === "CANCELADO") return false;
+   408→        const venc = new Date(c.dataVencimento + "T00:00:00");
+   409→        return venc.getMonth() === mesAtual && venc.getFullYear() === anoAtual;
+   410→      })
+   411→      .reduce((s, c) => s + c.valor, 0);
+   412→
+   413→    return {
+   414→      recebidoMes: totalRecebidoMes,
+   415→      pendentes: pendentes.length,
+   416→      atrasados: atrasados.length,
+   417→      totalPendente,
+   418→      totalAtrasado,
+   419→      previstoMes,
+   420→      totalCobrancas: cobrancas.length,
+   421→    };
+   422→  }, [cobrancas]);
+   423→
+   424→  // Filtragem
+   425→  const cobrancasFiltradas = useMemo(() => {
+   426→    let lista = cobrancas;
+   427→    if (filtroStatus !== "TODOS")
+   428→      lista = lista.filter((c) => c.status === filtroStatus);
+   429→    if (filtroTipo !== "TODOS") lista = lista.filter((c) => c.tipo === filtroTipo);
+   430→    if (filtroSistema !== "TODOS")
+   431→      lista = lista.filter((c) => c.sistemaId === filtroSistema);
+   432→    if (busca.trim()) {
+   433→      const termo = busca.toLowerCase();
+   434→      lista = lista.filter(
+   435→        (c) =>
+   436→          c.sistemaNome.toLowerCase().includes(termo) ||
+   437→          c.descricao.toLowerCase().includes(termo) ||
+   438→          c.observacoes.toLowerCase().includes(termo)
+   439→      );
+   440→    }
+   441→    return lista;
+   442→  }, [cobrancas, filtroStatus, filtroTipo, filtroSistema, busca]);
+   443→
+   444→  const getStatusInfo = (status: StatusCobranca) =>
+   445→    STATUS_COBRANCA.find((s) => s.valor === status) || STATUS_COBRANCA[0];
+   446→  const getTipoInfo = (tipo: TipoCobranca) =>
+   447→    TIPOS_COBRANCA.find((t) => t.valor === tipo) || TIPOS_COBRANCA[0];
+   448→  const getFormaInfo = (forma: FormaPagamentoAdmin) =>
+   449→    FORMAS_PAGAMENTO_ADMIN.find((f) => f.valor === forma);
+   450→
+   451→  const handleSalvarNova = useCallback(
+   452→    (dados: Omit<Cobranca, "id" | "criadoEm">) => {
+   453→      adicionarCobranca(dados);
+   454→      setDialogNova(false);
+   455→      toast.success("Cobranca gerada com sucesso!");
+   456→    },
+   457→    [adicionarCobranca]
+   458→  );
+   459→
+   460→  const handleSalvarEdicao = useCallback(
+   461→    (dados: Omit<Cobranca, "id" | "criadoEm">) => {
+   462→      if (!dialogEditCobranca) return;
+   463→      editarCobranca(dialogEditCobranca.id, dados);
+   464→      setDialogEditCobranca(null);
+   465→      toast.success("Cobranca atualizada!");
+   466→    },
+   467→    [dialogEditCobranca, editarCobranca]
+   468→  );
+   469→
+   470→  const handleConfirmarPagamento = useCallback(
+   471→    (id: string, dataPag: string, forma: FormaPagamentoAdmin) => {
+   472→      registrarPagamento(id, dataPag, forma);
+   473→      setDialogPagamento(null);
+   474→      toast.success("Pagamento registrado!");
+   475→    },
+   476→    [registrarPagamento]
+   477→  );
+   478→
+   479→  const handleRemover = useCallback(
+   480→    (id: string) => {
+   481→      removerCobranca(id);
+   482→      setConfirmaRemoverCob(null);
+   483→      toast.success("Cobranca removida.");
+   484→    },
+   485→    [removerCobranca]
+   486→  );
+   487→
+   488→  const enviarLembreteWhatsApp = (cobranca: Cobranca) => {
+   489→    const sistema = sistemas.find((s) => s.id === cobranca.sistemaId);
+   490→    if (!sistema?.telefone) {
+   491→      toast.error("Telefone nao cadastrado para este sistema.");
+   492→      return;
+   493→    }
+   494→    const telLimpo = sistema.telefone.replace(/\D/g, "");
+   495→    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+   496→    const msg = encodeURIComponent(
+   497→      `Ola! Aqui e o suporte do ZapFacil Pro.\n\nGostariamos de lhe lembrar sobre a cobranca:\n\n*${cobranca.descricao}*\nValor: ${formatarMoeda(cobranca.valor)}\nVencimento: ${formatarData(cobranca.dataVencimento)}\n\nPor favor, entre em contato para confirmar o pagamento. Estamos a disposicao!`
+   498→    );
+   499→    window.open(`https://wa.me/${numero}?text=${msg}`, "_blank");
+   500→  };
+   501→
+   502→  // Cobranças do sistema selecionado para histórico
+   503→  const cobrancasHistorico = dialogHistorico
+   504→    ? cobrancas.filter((c) => c.sistemaId === dialogHistorico.id)
+   505→    : [];
+   506→
+   507→  const totalPagoHistorico = cobrancasHistorico
+   508→    .filter((c) => c.status === "PAGO")
+   509→    .reduce((s, c) => s + c.valor, 0);
+   510→  const totalPendenteHistorico = cobrancasHistorico
+   511→    .filter((c) => c.status !== "PAGO" && c.status !== "CANCELADO")
+   512→    .reduce((s, c) => s + c.valor, 0);
+   513→
+   514→  return (
+   515→    <div className="space-y-5">
+   516→      {/* Cards de estatísticas */}
+   517→      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+   518→        <Card className="border-0 shadow-sm">
+   519→          <CardContent className="p-3.5">
+   520→            <div className="flex items-center gap-1.5 mb-1">
+   521→              <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
+   522→              <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
+   523→                Recebido/mes
+   524→              </span>
+   525→            </div>
+   526→            <p className="text-lg font-black text-emerald-600">
+   527→              {formatarMoeda(stats.recebidoMes)}
+   528→            </p>
+   529→          </CardContent>
+   530→        </Card>
+   531→        <Card className="border-0 shadow-sm">
+   532→          <CardContent className="p-3.5">
+   533→            <div className="flex items-center gap-1.5 mb-1">
+   534→              <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
+   535→              <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
+   536→                Previsto/mes
+   537→              </span>
+   538→            </div>
+   539→            <p className="text-lg font-black text-blue-600">
+   540→              {formatarMoeda(stats.previstoMes)}
+   541→            </p>
+   542→          </CardContent>
+   543→        </Card>
+   544→        <Card className="border-0 shadow-sm">
+   545→          <CardContent className="p-3.5">
+   546→            <div className="flex items-center gap-1.5 mb-1">
+   547→              <Clock className="w-3.5 h-3.5 text-amber-500" />
+   548→              <span className="text-[10px] text-amber-600 font-medium uppercase tracking-wider">
+   549→                Pendentes
+   550→              </span>
+   551→            </div>
+   552→            <p className="text-2xl font-black text-amber-600">{stats.pendentes}</p>
+   553→            <p className="text-[10px] text-gray-400 mt-0.5">
+   554→              {formatarMoeda(stats.totalPendente)}
+   555→            </p>
+   556→          </CardContent>
+   557→        </Card>
+   558→        <Card className="border-0 shadow-sm">
+   559→          <CardContent className="p-3.5">
+   560→            <div className="flex items-center gap-1.5 mb-1">
+   561→              <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
+   562→              <span className="text-[10px] text-red-600 font-medium uppercase tracking-wider">
+   563→                Atrasados
+   564→              </span>
+   565→            </div>
+   566→            <p className="text-2xl font-black text-red-600">{stats.atrasados}</p>
+   567→            <p className="text-[10px] text-gray-400 mt-0.5">
+   568→              {formatarMoeda(stats.totalAtrasado)}
+   569→            </p>
+   570→          </CardContent>
+   571→        </Card>
+   572→        <Card className="border-0 shadow-sm col-span-2 lg:col-span-1">
+   573→          <CardContent className="p-3.5">
+   574→            <div className="flex items-center gap-1.5 mb-1">
+   575→              <Receipt className="w-3.5 h-3.5 text-gray-400" />
+   576→              <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
+   577→                Total
+   578→              </span>
+   579→            </div>
+   580→            <p className="text-2xl font-black text-gray-900">
+   581→              {stats.totalCobrancas}
+   582→            </p>
+   583→            <p className="text-[10px] text-gray-400 mt-0.5">cobranca(s)</p>
+   584→          </CardContent>
+   585→        </Card>
+   586→      </div>
+   587→
+   588→      {/* Barra de ações */}
+   589→      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+   590→        <div className="relative flex-1">
+   591→          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   592→          <Input
+   593→            placeholder="Buscar por sistema, descricao..."
+   594→            value={busca}
+   595→            onChange={(e) => setBusca(e.target.value)}
+   596→            className="pl-10 h-9 text-sm bg-white border-gray-200"
+   597→          />
+   598→        </div>
+   599→        <Select value={filtroStatus} onValueChange={setFiltroStatus}>
+   600→          <SelectTrigger className="w-full sm:w-32 h-9 text-sm bg-white border-gray-200">
+   601→            <SelectValue />
+   602→          </SelectTrigger>
+   603→          <SelectContent>
+   604→            <SelectItem value="TODOS">Todos Status</SelectItem>
+   605→            {STATUS_COBRANCA.map((s) => (
+   606→              <SelectItem key={s.valor} value={s.valor}>
+   607→                {s.label}
+   608→              </SelectItem>
+   609→            ))}
+   610→          </SelectContent>
+   611→        </Select>
+   612→        <Select value={filtroTipo} onValueChange={setFiltroTipo}>
+   613→          <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
+   614→            <SelectValue />
+   615→          </SelectTrigger>
+   616→          <SelectContent>
+   617→            <SelectItem value="TODOS">Todos Tipos</SelectItem>
+   618→            {TIPOS_COBRANCA.map((t) => (
+   619→              <SelectItem key={t.valor} value={t.valor}>
+   620→                {t.label}
+   621→              </SelectItem>
+   622→            ))}
+   623→          </SelectContent>
+   624→        </Select>
+   625→        <Select value={filtroSistema} onValueChange={setFiltroSistema}>
+   626→          <SelectTrigger className="w-full sm:w-40 h-9 text-sm bg-white border-gray-200">
+   627→            <SelectValue />
+   628→          </SelectTrigger>
+   629→          <SelectContent>
+   630→            <SelectItem value="TODOS">Todos Sistemas</SelectItem>
+   631→            {sistemas.map((s) => (
+   632→              <SelectItem key={s.id} value={s.id}>
+   633→                {s.empresa}
+   634→              </SelectItem>
+   635→            ))}
+   636→          </SelectContent>
+   637→        </Select>
+   638→        <Button
+   639→          className="h-9 bg-emerald-600 hover:bg-emerald-700 text-sm shrink-0"
+   640→          onClick={() => setDialogNova(true)}
+   641→        >
+   642→          <Plus className="h-4 w-4 mr-1.5" />
+   643→          Nova Cobranca
+   644→        </Button>
+   645→      </div>
+   646→
+   647→      {/* Tabela de cobranças */}
+   648→      <Card className="border-0 shadow-sm">
+   649→        <CardContent className="p-0">
+   650→          {/* Mobile */}
+   651→          <div className="sm:hidden divide-y divide-gray-100">
+   652→            {cobrancasFiltradas.length === 0 && (
+   653→              <div className="p-8 text-center">
+   654→                <Receipt className="w-10 h-10 text-gray-200 mx-auto mb-2" />
+   655→                <p className="text-sm text-gray-400">
+   656→                  {busca || filtroStatus !== "TODOS" || filtroTipo !== "TODOS"
+   657→                    ? "Nenhuma cobranca encontrada."
+   658→                    : "Nenhuma cobranca cadastrada."}
+   659→                </p>
+   660→              </div>
+   661→            )}
+   662→            {cobrancasFiltradas.map((c) => {
+   663→              const st = getStatusInfo(c.status);
+   664→              const tp = getTipoInfo(c.tipo);
+   665→              const dias = diasRestantes(c.dataVencimento);
+   666→              return (
+   667→                <div key={c.id} className="p-3 space-y-2">
+   668→                  <div className="flex items-start justify-between gap-2">
+   669→                    <div className="min-w-0">
+   670→                      <p className="font-semibold text-sm text-gray-900 truncate">
+   671→                        {c.sistemaNome}
+   672→                      </p>
+   673→                      <p className="text-xs text-gray-400">{c.descricao}</p>
+   674→                    </div>
+   675→                    <Badge className={`text-[10px] font-semibold shrink-0 ${st.cor}`}>
+   676→                      {st.label}
+   677→                    </Badge>
+   678→                  </div>
+   679→                  <div className="flex items-center gap-3 text-[11px] text-gray-400">
+   680→                    <Badge className="text-[10px] bg-gray-100 text-gray-500">
+   681→                      {tp.label}
+   682→                    </Badge>
+   683→                    <span>Vence: {formatarData(c.dataVencimento)}</span>
+   684→                    {c.status === "PENDENTE" && (
+   685→                      <span className={dias <= 3 ? "text-amber-600 font-semibold" : "text-gray-400"}>
+   686→                        {dias}d
+   687→                      </span>
+   688→                    )}
+   689→                    {c.status === "ATRASADO" && (
+   690→                      <span className="text-red-600 font-semibold">
+   691→                        {Math.abs(dias)}d atrasado
+   692→                      </span>
+   693→                    )}
+   694→                  </div>
+   695→                  <div className="flex items-center justify-between">
+   696→                    <p className="text-base font-black text-gray-900">
+   697→                      {formatarMoeda(c.valor)}
+   698→                    </p>
+   699→                    <div className="flex gap-1">
+   700→                      {c.status !== "PAGO" && c.status !== "CANCELADO" && (
+   701→                        <Button
+   702→                          variant="ghost"
+   703→                          size="sm"
+   704→                          className="h-7 text-[10px] text-emerald-600"
+   705→                          onClick={() => setDialogPagamento(c)}
+   706→                        >
+   707→                          <CheckCircle2 className="h-3 w-3 mr-0.5" /> Pagar
+   708→                        </Button>
+   709→                      )}
+   710→                      {(c.status === "PENDENTE" || c.status === "ATRASADO") && (
+   711→                        <Button
+   712→                          variant="ghost"
+   713→                          size="sm"
+   714→                          className="h-7 text-[10px] text-green-600"
+   715→                          onClick={() => enviarLembreteWhatsApp(c)}
+   716→                        >
+   717→                          <Send className="h-3 w-3" />
+   718→                        </Button>
+   719→                      )}
+   720→                      <Button
+   721→                        variant="ghost"
+   722→                        size="sm"
+   723→                        className="h-7 text-[10px] text-red-400 ml-auto"
+   724→                        onClick={() => setConfirmaRemoverCob(c.id)}
+   725→                      >
+   726→                        <Trash2 className="h-3 w-3" />
+   727→                      </Button>
+   728→                    </div>
+   729→                  </div>
+   730→                </div>
+   731→              );
+   732→            })}
+   733→          </div>
+   734→
+   735→          {/* Desktop */}
+   736→          <div className="hidden sm:block overflow-x-auto">
+   737→            <table className="w-full text-sm">
+   738→              <thead>
+   739→                <tr className="border-b border-gray-100 text-[10px] text-gray-400 uppercase tracking-wider bg-gray-50/50">
+   740→                  <th className="text-left py-3 px-4 font-semibold">Sistema</th>
+   741→                  <th className="text-left py-3 px-4 font-semibold">Descricao</th>
+   742→                  <th className="text-center py-3 px-4 font-semibold">Tipo</th>
+   743→                  <th className="text-left py-3 px-4 font-semibold">Vencimento</th>
+   744→                  <th className="text-right py-3 px-4 font-semibold">Valor</th>
+   745→                  <th className="text-center py-3 px-4 font-semibold">Status</th>
+   746→                  <th className="text-left py-3 px-4 font-semibold">Pagamento</th>
+   747→                  <th className="text-center py-3 px-4 font-semibold">Acoes</th>
+   748→                </tr>
+   749→              </thead>
+   750→              <tbody className="divide-y divide-gray-50">
+   751→                {cobrancasFiltradas.length === 0 && (
+   752→                  <tr>
+   753→                    <td colSpan={8} className="text-center py-12 text-gray-400 text-sm">
+   754→                      {busca || filtroStatus !== "TODOS" || filtroTipo !== "TODOS"
+   755→                        ? "Nenhuma cobranca encontrada."
+   756→                        : "Nenhuma cobranca cadastrada. Clique em 'Nova Cobranca' para comecar."}
+   757→                    </td>
+   758→                  </tr>
+   759→                )}
+   760→                {cobrancasFiltradas.map((c) => {
+   761→                  const st = getStatusInfo(c.status);
+   762→                  const tp = getTipoInfo(c.tipo);
+   763→                  const dias = diasRestantes(c.dataVencimento);
+   764→                  const formaInfo = c.formaPagamento
+   765→                    ? getFormaInfo(c.formaPagamento)
+   766→                    : null;
+   767→                  return (
+   768→                    <tr key={c.id} className="hover:bg-gray-50/80 transition-colors">
+   769→                      <td className="py-3 px-4">
+   770→                        <p className="font-semibold text-gray-900">{c.sistemaNome}</p>
+   771→                      </td>
+   772→                      <td className="py-3 px-4">
+   773→                        <p className="text-gray-600 text-xs max-w-[200px] truncate">
+   774→                          {c.descricao}
+   775→                        </p>
+   776→                      </td>
+   777→                      <td className="py-3 px-4 text-center">
+   778→                        <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">
+   779→                          {tp.label}
+   780→                        </span>
+   781→                      </td>
+   782→                      <td className="py-3 px-4 text-gray-600 text-xs whitespace-nowrap">
+   783→                        {formatarData(c.dataVencimento)}
+   784→                        {c.status === "PENDENTE" && (
+   785→                          <span
+   786→                            className={`block text-[10px] ${dias <= 3 ? "text-amber-600 font-semibold" : "text-gray-400"}`}
+   787→                          >
+   788→                            {dias > 0 ? `${dias}d restantes` : "Hoje!"}
+   789→                          </span>
+   790→                        )}
+   791→                        {c.status === "ATRASADO" && (
+   792→                          <span className="block text-[10px] text-red-600 font-semibold">
+   793→                            {Math.abs(dias)}d atrasado
+   794→                          </span>
+   795→                        )}
+   796→                      </td>
+   797→                      <td className="py-3 px-4 text-right font-semibold text-gray-900 whitespace-nowrap">
+   798→                        {formatarMoeda(c.valor)}
+   799→                      </td>
+   800→                      <td className="py-3 px-4 text-center">
+   801→                        <Badge className={`text-[10px] font-semibold ${st.cor}`}>
+   802→                          {st.label}
+   803→                        </Badge>
+   804→                      </td>
+   805→                      <td className="py-3 px-4 text-xs whitespace-nowrap">
+   806→                        {c.status === "PAGO" && c.dataPagamento ? (
+   807→                          <div>
+   808→                            <p className="text-gray-600">
+   809→                              {formatarData(c.dataPagamento)}
+   810→                            </p>
+   811→                            {formaInfo && (
+   812→                              <p className="text-[10px] text-gray-400">
+   813→                                {formaInfo.label}
+   814→                              </p>
+   815→                            )}
+   816→                          </div>
+   817→                        ) : (
+   818→                          <span className="text-gray-300">—</span>
+   819→                        )}
+   820→                      </td>
+   821→                      <td className="py-3 px-4">
+   822→                        <div className="flex items-center justify-center gap-0.5">
+   823→                          {c.status !== "PAGO" && c.status !== "CANCELADO" && (
+   824→                            <TooltipProvider>
+   825→                              <Tooltip>
+   826→                                <TooltipTrigger asChild>
+   827→                                  <Button
+   828→                                    variant="ghost"
+   829→                                    size="icon"
+   830→                                    className="h-7 w-7 text-emerald-500 hover:text-emerald-700"
+   831→                                    onClick={() => setDialogPagamento(c)}
+   832→                                  >
+   833→                                    <CheckCircle2 className="h-3.5 w-3.5" />
+   834→                                  </Button>
+   835→                                </TooltipTrigger>
+   836→                                <TooltipContent>Registrar Pagamento</TooltipContent>
+   837→                              </Tooltip>
+   838→                            </TooltipProvider>
+   839→                          )}
+   840→                          {c.status === "PAGO" && (
+   841→                            <TooltipProvider>
+   842→                              <Tooltip>
+   843→                                <TooltipTrigger asChild>
+   844→                                  <div className="h-7 w-7 flex items-center justify-center">
+   845→                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
+   846→                                  </div>
+   847→                                </TooltipTrigger>
+   848→                                <TooltipContent>Pago</TooltipContent>
+   849→                              </Tooltip>
+   850→                            </TooltipProvider>
+   851→                          )}
+   852→                          {(c.status === "PENDENTE" || c.status === "ATRASADO") && (
+   853→                            <TooltipProvider>
+   854→                              <Tooltip>
+   855→                                <TooltipTrigger asChild>
+   856→                                  <Button
+   857→                                    variant="ghost"
+   858→                                    size="icon"
+   859→                                    className="h-7 w-7 text-green-500 hover:text-green-700"
+   860→                                    onClick={() => enviarLembreteWhatsApp(c)}
+   861→                                  >
+   862→                                    <Send className="h-3.5 w-3.5" />
+   863→                                  </Button>
+   864→                                </TooltipTrigger>
+   865→                                <TooltipContent>Enviar Lembrete WhatsApp</TooltipContent>
+   866→                              </Tooltip>
+   867→                            </TooltipProvider>
+   868→                          )}
+   869→                          {c.status !== "PAGO" && c.status !== "CANCELADO" && (
+   870→                            <TooltipProvider>
+   871→                              <Tooltip>
+   872→                                <TooltipTrigger asChild>
+   873→                                  <Button
+   874→                                    variant="ghost"
+   875→                                    size="icon"
+   876→                                    className="h-7 w-7 text-amber-500 hover:text-amber-700"
+   877→                                    onClick={() => setDialogEditCobranca(c)}
+   878→                                  >
+   879→                                    <FileText className="h-3.5 w-3.5" />
+   880→                                  </Button>
+   881→                                </TooltipTrigger>
+   882→                                <TooltipContent>Editar</TooltipContent>
+   883→                              </Tooltip>
+   884→                            </TooltipProvider>
+   885→                          )}
+   886→                          <TooltipProvider>
+   887→                            <Tooltip>
+   888→                              <TooltipTrigger asChild>
+   889→                                <Button
+   890→                                  variant="ghost"
+   891→                                  size="icon"
+   892→                                  className="h-7 w-7 text-red-400 hover:text-red-600"
+   893→                                  onClick={() => setConfirmaRemoverCob(c.id)}
+   894→                                >
+   895→                                  <Trash2 className="h-3.5 w-3.5" />
+   896→                                </Button>
+   897→                              </TooltipTrigger>
+   898→                              <TooltipContent>Remover</TooltipContent>
+   899→                            </Tooltip>
+   900→                          </TooltipProvider>
+   901→                        </div>
+   902→                      </td>
+   903→                    </tr>
+   904→                  );
+   905→                })}
+   906→              </tbody>
+   907→            </table>
+   908→          </div>
+   909→        </CardContent>
+   910→      </Card>
+   911→
+   912→      <div className="text-center text-[10px] text-gray-400 pb-4">
+   913→        {cobrancasFiltradas.length} de {cobrancas.length} cobranca
+   914→        {cobrancas.length !== 1 ? "s" : ""}
+   915→      </div>
+   916→
+   917→      {/* Dialog Nova Cobrança */}
+   918→      <Dialog open={dialogNova} onOpenChange={() => setDialogNova(false)}>
+   919→        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+   920→          <DialogHeader>
+   921→            <DialogTitle className="flex items-center gap-2 text-base">
+   922→              <Plus className="h-5 w-5 text-emerald-600" />
+   923→              Gerar Nova Cobranca
+   924→            </DialogTitle>
+   925→          </DialogHeader>
+   926→          <FormularioCobranca
+   927→            onSalvar={handleSalvarNova}
+   928→            onCancelar={() => setDialogNova(false)}
+   929→          />
+   930→        </DialogContent>
+   931→      </Dialog>
+   932→
+   933→      {/* Dialog Registrar Pagamento */}
+   934→      <Dialog open={!!dialogPagamento} onOpenChange={() => setDialogPagamento(null)}>
+   935→        <DialogContent className="max-w-md">
+   936→          <DialogHeader>
+   937→            <DialogTitle className="flex items-center gap-2 text-base">
+   938→              <CreditCard className="h-5 w-5 text-emerald-600" />
+   939→              Registrar Pagamento
+   940→            </DialogTitle>
+   941→          </DialogHeader>
+   942→          {dialogPagamento && (
+   943→            <FormularioPagamento
+   944→              cobranca={dialogPagamento}
+   945→              onConfirmar={(data, forma) =>
+   946→                handleConfirmarPagamento(dialogPagamento.id, data, forma)
+   947→              }
+   948→              onCancelar={() => setDialogPagamento(null)}
+   949→            />
+   950→          )}
+   951→        </DialogContent>
+   952→      </Dialog>
+   953→
+   954→      {/* Dialog Editar Cobrança */}
+   955→      <Dialog
+   956→        open={!!dialogEditCobranca}
+   957→        onOpenChange={() => setDialogEditCobranca(null)}
+   958→      >
+   959→        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+   960→          <DialogHeader>
+   961→            <DialogTitle className="flex items-center gap-2 text-base">
+   962→              <FileText className="h-5 w-5 text-amber-600" />
+   963→              Editar Cobranca
+   964→            </DialogTitle>
+   965→          </DialogHeader>
+   966→          {dialogEditCobranca && (
+   967→            <FormularioCobranca
+   968→              cobrancaEdit={dialogEditCobranca}
+   969→              onSalvar={handleSalvarEdicao}
+   970→              onCancelar={() => setDialogEditCobranca(null)}
+   971→            />
+   972→          )}
+   973→        </DialogContent>
+   974→      </Dialog>
+   975→
+   976→      {/* Dialog Histórico por Sistema */}
+   977→      <Dialog
+   978→        open={!!dialogHistorico}
+   979→        onOpenChange={() => setDialogHistorico(null)}
+   980→      >
+   981→        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+   982→          <DialogHeader>
+   983→            <DialogTitle className="flex items-center gap-2 text-base">
+   984→              <Receipt className="h-5 w-5 text-emerald-600" />
+   985→              Historico de Cobrancas — {dialogHistorico?.empresa}
+   986→            </DialogTitle>
+   987→          </DialogHeader>
+   988→          {dialogHistorico && (
+   989→            <div className="space-y-4">
+   990→              <div className="grid grid-cols-2 gap-3">
+   991→                <div className="bg-emerald-50 rounded-xl p-3 text-center">
+   992→                  <p className="text-[10px] text-emerald-600 uppercase font-medium">
+   993→                    Total Pago
+   994→                  </p>
+   995→                  <p className="text-lg font-black text-emerald-700">
+   996→                    {formatarMoeda(totalPagoHistorico)}
+   997→                  </p>
+   998→                </div>
+   999→                <div className="bg-amber-50 rounded-xl p-3 text-center">
+  1000→                  <p className="text-[10px] text-amber-600 uppercase font-medium">
+  1001→                    Pendente
+  1002→                  </p>
+  1003→                  <p className="text-lg font-black text-amber-700">
+  1004→                    {formatarMoeda(totalPendenteHistorico)}
+  1005→                  </p>
+  1006→                </div>
+  1007→              </div>
+  1008→
+  1009→              <Separator />
+  1010→
+  1011→              {/* Ações rápidas */}
+  1012→              <div className="flex gap-2">
+  1013→                {dialogHistorico.tipoLicenca === "ALUGUEL" && (
+  1014→                  <Button
+  1015→                    size="sm"
+  1016→                    className="text-xs bg-blue-600 hover:bg-blue-700 flex-1"
+  1017→                    onClick={() => {
+  1018→                      gerarCobrancaMensal(dialogHistorico.id);
+  1019→                      toast.success("Cobranca de mensalidade gerada!");
+  1020→                    }}
+  1021→                  >
+  1022→                    <Receipt className="h-3.5 w-3.5 mr-1" />
+  1023→                    Gerar Mensalidade
+  1024→                  </Button>
+  1025→                )}
+  1026→                {dialogHistorico.tipoLicenca === "AQUISICAO" && (
+  1027→                  <Button
+  1028→                    size="sm"
+  1029→                    className="text-xs bg-emerald-600 hover:bg-emerald-700 flex-1"
+  1030→                    onClick={() => {
+  1031→                      gerarCobrancaAquisicao(dialogHistorico.id);
+  1032→                      toast.success("Cobranca de aquisicao gerada!");
+  1033→                    }}
+  1034→                  >
+  1035→                    <DollarSign className="h-3.5 w-3.5 mr-1" />
+  1036→                    Gerar Cobranca Aquisicao
+  1037→                  </Button>
+  1038→                )}
+  1039→                {dialogHistorico.taxaInstalacao > 0 && (
+  1040→                  <Button
+  1041→                    size="sm"
+  1042→                    variant="outline"
+  1043→                    className="text-xs border-gray-200 flex-1"
+  1044→                    onClick={() => {
+  1045→                      const s = dialogHistorico;
+  1046→                      adicionarCobranca({
+  1047→                        sistemaId: s.id,
+  1048→                        sistemaNome: s.empresa,
+  1049→                        tipo: "TAXA_INSTALACAO",
+  1050→                        descricao: "Taxa de instalacao",
+  1051→                        valor: s.taxaInstalacao,
+  1052→                        dataVencimento: new Date().toISOString().split("T")[0],
+  1053→                        dataPagamento: null,
+  1054→                        status: "PENDENTE",
+  1055→                        formaPagamento: null,
+  1056→                        observacoes: "",
+  1057→                      });
+  1058→                      toast.success("Taxa de instalacao cobrada!");
+  1059→                    }}
+  1060→                  >
+  1061→                    <CreditCard className="h-3.5 w-3.5 mr-1" />
+  1062→                    Taxa Instalacao
+  1063→                  </Button>
+  1064→                )}
+  1065→              </div>
+  1066→
+  1067→              <Separator />
+  1068→
+  1069→              {/* Lista de cobranças */}
+  1070→              <div className="space-y-2 max-h-60 overflow-y-auto">
+  1071→                {cobrancasHistorico.length === 0 && (
+  1072→                  <p className="text-center text-sm text-gray-400 py-6">
+  1073→                    Nenhuma cobranca registrada para este sistema.
+  1074→                  </p>
+  1075→                )}
+  1076→                {cobrancasHistorico.map((c) => {
+  1077→                  const st = getStatusInfo(c.status);
+  1078→                  return (
+  1079→                    <div
+  1080→                      key={c.id}
+  1081→                      className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2"
+  1082→                    >
+  1083→                      <div className="min-w-0 flex-1">
+  1084→                        <p className="text-xs font-medium text-gray-700 truncate">
+  1085→                          {c.descricao}
+  1086→                        </p>
+  1087→                        <p className="text-[10px] text-gray-400">
+  1088→                          Vence: {formatarData(c.dataVencimento)}
+  1089→                          {c.dataPagamento && (
+  1090→                            <span className="text-emerald-600 ml-2">
+  1091→                              Pago: {formatarData(c.dataPagamento)}
+  1092→                            </span>
+  1093→                          )}
+  1094→                          {c.formaPagamento && (
+  1095→                            <span className="text-gray-500 ml-1">
+  1096→                              ({getFormaInfo(c.formaPagamento)?.label})
+  1097→                            </span>
+  1098→                          )}
+  1099→                        </p>
+  1100→                      </div>
+  1101→                      <div className="flex items-center gap-2 ml-2 shrink-0">
+  1102→                        <span className="text-xs font-bold text-gray-900">
+  1103→                          {formatarMoeda(c.valor)}
+  1104→                        </span>
+  1105→                        <Badge className={`text-[9px] font-semibold ${st.cor}`}>
+  1106→                          {st.label}
+  1107→                        </Badge>
+  1108→                      </div>
+  1109→                    </div>
+  1110→                  );
+  1111→                })}
+  1112→              </div>
+  1113→            </div>
+  1114→          )}
+  1115→        </DialogContent>
+  1116→      </Dialog>
+  1117→
+  1118→      {/* Dialog Confirmação de Remoção */}
+  1119→      <Dialog
+  1120→        open={!!confirmaRemoverCob}
+  1121→        onOpenChange={() => setConfirmaRemoverCob(null)}
+  1122→      >
+  1123→        <DialogContent className="max-w-sm">
+  1124→          <DialogHeader>
+  1125→            <DialogTitle className="text-base">Confirmar Remocao</DialogTitle>
+  1126→          </DialogHeader>
+  1127→          <p className="text-sm text-gray-500">
+  1128→            Tem certeza que deseja remover esta cobranca? Esta acao nao pode ser
+  1129→            desfeita.
+  1130→          </p>
+  1131→          <div className="flex gap-2 justify-end pt-2">
+  1132→            <Button
+  1133→              variant="ghost"
+  1134→              size="sm"
+  1135→              className="text-xs"
+  1136→              onClick={() => setConfirmaRemoverCob(null)}
+  1137→            >
+  1138→              Cancelar
+  1139→            </Button>
+  1140→            <Button
+  1141→              size="sm"
+  1142→              className="text-xs bg-red-600 hover:bg-red-700"
+  1143→              onClick={() =>
+  1144→                confirmaRemoverCob && handleRemover(confirmaRemoverCob)
+  1145→              }
+  1146→            >
+  1147→              <Trash2 className="h-3 w-3 mr-1" />
+  1148→              Remover
+  1149→            </Button>
+  1150→          </div>
+  1151→        </DialogContent>
+  1152→      </Dialog>
+  1153→    </div>
+  1154→  );
+  1155→}
