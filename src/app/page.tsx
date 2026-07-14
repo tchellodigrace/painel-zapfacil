@@ -27,7 +27,6 @@ import {
   Receipt,
   Users,
   LogOut,
-  Bot,
 } from "lucide-react";
 import { EmpresaPanel } from "@/components/erp/empresa-panel";
 import { CatalogoServicos } from "@/components/erp/catalogo-servicos";
@@ -39,7 +38,6 @@ import { DashboardGrafico } from "@/components/erp/dashboard-grafico";
 import { PainelAgendamento } from "@/components/erp/painel-agendamento";
 import { PainelDespesas } from "@/components/erp/painel-despesas";
 import { PainelColaboradores } from "@/components/erp/painel-colaboradores";
-import { PainelZapBot } from "@/components/erp/painel-zapbot";
 import { InicializadorLogo } from "@/components/erp/inicializador-logo";
 import { TelaLogin, destruirSessao } from "@/components/erp/tela-login";
 import type { Venda } from "@/types";
@@ -179,7 +177,7 @@ export default function ZapFacilPage() {
           onValueChange={setAbaAtiva}
           className="space-y-4"
         >
-          <TabsList className="grid w-full grid-cols-5 sm:grid-cols-8 h-auto p-1 bg-white dark:bg-gray-900 border shadow-sm">
+          <TabsList className="grid w-full grid-cols-5 sm:grid-cols-7 h-auto p-1 bg-white dark:bg-gray-900 border shadow-sm">
             <TabsTrigger
               value="lancamento"
               className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
@@ -233,14 +231,6 @@ export default function ZapFacilPage() {
               <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
               Relatorios
             </TabsTrigger>
-            <TabsTrigger
-              value="zapbot"
-              className="text-xs py-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
-            >
-              <Bot className="h-3.5 w-3.5 mr-1.5" />
-              <span className="hidden sm:inline">ZapBot</span>
-              <span className="sm:hidden">Bot</span>
-            </TabsTrigger>
           </TabsList>
 
           {/* Tab Lancamento */}
@@ -291,10 +281,7 @@ export default function ZapFacilPage() {
             <Historico onReemitir={handleReemitir} />
           </TabsContent>
 
-          {/* Tab ZapBot */}
-          <TabsContent value="zapbot">
-            <PainelZapBot />
-          </TabsContent>
+
         </Tabs>
       </main>
 

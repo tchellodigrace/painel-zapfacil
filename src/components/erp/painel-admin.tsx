@@ -53,6 +53,7 @@ import {
   Clock,
   Phone,
   Users,
+  Bot,
 } from "lucide-react";
 import {
   Tooltip,
@@ -61,6 +62,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PainelCobranças } from "./admin-cobrancas";
+import { PainelZapBot } from "./painel-zapbot";
 
 function formatarMoeda(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -1107,7 +1109,7 @@ Qualquer duvida, estou a disposicao!
 // =============================================
 // PAINEL ADMIN PRINCIPAL COM ABAS
 // =============================================
-type AbaAdmin = "sistemas" | "cobrancas" | "recuperacoes";
+type AbaAdmin = "sistemas" | "cobrancas" | "recuperacoes" | "zapbot";
 
 function PainelAdminConteudo() {
   const { sistemas, cobrancas, pedidosRecuperacao, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos } =
@@ -1323,13 +1325,26 @@ function PainelAdminConteudo() {
               </span>
             )}
           </button>
-        </div>
+
+          <button
+            onClick={() => setAbaAtiva("zapbot")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "zapbot"
+                ? "bg-purple-600 text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Bot className="h-4 w-4" />
+            ZapBot
+          </button>        </div>
 
         {/* Conteúdo da aba ativa */}
         {abaAtiva === "cobrancas" ? (
           <PainelCobranças />
         ) : abaAtiva === "recuperacoes" ? (
           <SecaoRecuperacoes />
+        ) : abaAtiva === "zapbot" ? (
+          <PainelZapBot />
         ) : (
           <>
             {/* Cards de estatísticas - Sistemas */}
@@ -1923,9 +1938,11 @@ export function PainelAdmin() {
   const [autenticado, setAutenticado] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Reseta credenciais para o padrao (remove versao anterior)
+    // Garante que as credenciais padrão sempre existam
     const store = useAdminStore.getState();
-    store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
+    if (!store.adminCredenciais) {
+      store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
+    }
 
     const session = sessionStorage.getItem("zapfacil_admin_session");
     setAutenticado(session === "autenticado");
