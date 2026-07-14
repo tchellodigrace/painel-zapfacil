@@ -189,6 +189,8 @@ function DialogTrocarSenha({
 // =============================================
 // TELA DE LOGIN DO ADMIN (CLARO)
 // =============================================
+const CREDENCIAIS_PADRAO = { usuario: "admin", senha: "zapfacil123" };
+
 function TelaLoginAdmin({
   onAutenticado,
 }: {
@@ -206,6 +208,11 @@ function TelaLoginAdmin({
     }
     setCarregando(true);
     setTimeout(() => {
+      // Garante credenciais padrão antes de verificar
+      const store = useAdminStore.getState();
+      if (!store.adminCredenciais) {
+        store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
+      }
       const cred = useAdminStore.getState().adminCredenciais;
       if (
         cred &&
@@ -1405,6 +1412,12 @@ export function PainelAdmin() {
   const [autenticado, setAutenticado] = useState<boolean | null>(null);
 
   useEffect(() => {
+    // Garante que as credenciais padrão sempre existam
+    const store = useAdminStore.getState();
+    if (!store.adminCredenciais) {
+      store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
+    }
+
     const session = sessionStorage.getItem("zapfacil_admin_session");
     setAutenticado(session === "autenticado");
   }, []);
