@@ -26,11 +26,23 @@ async function obterLogoDefault(): Promise<string> {
   try {
     const res = await fetch(DEFAULT_LOGO_URL);
     const blob = await res.blob();
-    cachedDefaultLogo = await new Promise<string>((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.readAsDataURL(blob);
-    });
+    // Redimensiona para max 800px mantendo qualidade alta
+    const bitmap = await createImageBitmap(blob);
+    const MAX = 800;
+    let w = bitmap.width;
+    let h = bitmap.height;
+    if (w > MAX || h > MAX) {
+      if (w > h) { h = Math.round((h / w) * MAX); w = MAX; }
+      else { w = Math.round((w / h) * MAX); h = MAX; }
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d")!;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    cachedDefaultLogo = canvas.toDataURL("image/png", 1.0);
     return cachedDefaultLogo || "";
   } catch {
     return "";

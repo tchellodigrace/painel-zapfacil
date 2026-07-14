@@ -40,16 +40,32 @@ export function EmpresaPanel() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error("Imagem muito grande. Máximo 2MB.");
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Imagem muito grande. Maximo 5MB.");
         return;
       }
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        salvarLogo(ev.target?.result as string);
+      // Redimensiona para garantir qualidade minima no cupom/WhatsApp
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_SIZE = 800;
+        let w = img.width;
+        let h = img.height;
+        if (w > MAX_SIZE || h > MAX_SIZE) {
+          if (w > h) { h = Math.round((h / w) * MAX_SIZE); w = MAX_SIZE; }
+          else { w = Math.round((w / h) * MAX_SIZE); h = MAX_SIZE; }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d")!;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, 0, 0, w, h);
+        const base64 = canvas.toDataURL("image/png", 1.0);
+        salvarLogo(base64);
         toast.success("Logo salva com sucesso!");
       };
-      reader.readAsDataURL(file);
+      img.src = URL.createObjectURL(file);
     },
     [salvarLogo]
   );

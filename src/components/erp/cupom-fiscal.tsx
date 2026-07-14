@@ -91,9 +91,11 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
         const html2canvas = (await import("html2canvas")).default;
         if (!containerRef.current) throw new Error("Cupom nao encontrado");
         return html2canvas(containerRef.current, {
-          scale: 2,
+          scale: 3,
           useCORS: true,
           backgroundColor: "#ffffff",
+          imageTimeout: 0,
+          allowTaint: true,
         });
       },
       obterDados: () => vendaRef.current,
@@ -140,7 +142,7 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
               <img
                 src={venda.logoBase64}
                 alt="Logo"
-                className="max-h-14 max-w-[150px] object-contain mx-auto block mb-2"
+                className="max-h-24 max-w-[240px] object-contain mx-auto block mb-2"
               />
             )}
             <div className="font-bold text-center text-xs tracking-wide">
