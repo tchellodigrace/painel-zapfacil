@@ -1822,7 +1822,7 @@ function PainelAdminConteudo() {
                       {adminCredenciais?.usuario} / {adminCredenciais?.senha}
                     </span>
                   ) : (
-                    <><Mail className="h-2.5 w-2.5" />{adminCredenciais?.usuario}</>
+                    <><Mail className="h-2.5 w-2.5" />{dadosGestor?.email || adminCredenciais?.usuario}</>
                   )}
                 </p>
               </div>
@@ -1878,18 +1878,18 @@ function PainelAdminConteudo() {
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
         {/* Abas de navegação */}
-        <div className="flex gap-1 bg-white rounded-xl p-1 border border-gray-200 shadow-sm">
+        <div className="grid grid-cols-4 bg-white rounded-xl p-1 border border-gray-200 shadow-sm">
           <button
             onClick={() => setAbaAtiva("sistemas")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "sistemas"
                 ? "bg-emerald-600 text-white shadow-sm"
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
             }`}
           >
-            <Monitor className="h-4 w-4" />
-            Sistemas
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+            <Monitor className="h-4 w-4 shrink-0" />
+            <span className="truncate">Sistemas</span>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
               abaAtiva === "sistemas"
                 ? "bg-white/20 text-white"
                 : "bg-gray-100 text-gray-500"
@@ -1899,16 +1899,16 @@ function PainelAdminConteudo() {
           </button>
           <button
             onClick={() => setAbaAtiva("cobrancas")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "cobrancas"
                 ? "bg-emerald-600 text-white shadow-sm"
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
             }`}
           >
-            <Receipt className="h-4 w-4" />
-            Cobrancas
+            <Receipt className="h-4 w-4 shrink-0" />
+            <span className="truncate">Cobrancas</span>
             {cobrancasEmAberto > 0 && (
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
                 abaAtiva === "cobrancas"
                   ? "bg-white/20 text-white"
                   : "bg-red-100 text-red-600"
@@ -1919,16 +1919,16 @@ function PainelAdminConteudo() {
           </button>
           <button
             onClick={() => setAbaAtiva("recuperacoes")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "recuperacoes"
                 ? "bg-amber-500 text-white shadow-sm"
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
             }`}
           >
-            <KeyRound className="h-4 w-4" />
-            Recuperacoes
+            <KeyRound className="h-4 w-4 shrink-0" />
+            <span className="truncate">Recuperacoes</span>
             {pedidosPendentes > 0 && (
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
                 abaAtiva === "recuperacoes"
                   ? "bg-white/20 text-white"
                   : "bg-amber-100 text-amber-600"
@@ -1937,18 +1937,18 @@ function PainelAdminConteudo() {
               </span>
             )}
           </button>
-
           <button
             onClick={() => setAbaAtiva("zapbot")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "zapbot"
                 ? "bg-purple-600 text-white shadow-sm"
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
             }`}
           >
-            <Bot className="h-4 w-4" />
-            ZapBot
-          </button>        </div>
+            <Bot className="h-4 w-4 shrink-0" />
+            <span className="truncate">ZapBot</span>
+          </button>
+        </div>
 
         {/* Conteúdo da aba ativa */}
         {abaAtiva === "cobrancas" ? (
