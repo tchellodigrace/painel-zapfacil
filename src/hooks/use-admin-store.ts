@@ -144,11 +144,27 @@ interface AdminState {
   getCobrancasBySistema: (sistemaId: string) => Cobranca[];
 }
 
+// Credenciais padrão do gestor
+const CREDENCIAIS_PADRAO = { usuario: "admin", senha: "zapfacil123" };
+
+function carregarCredenciais(): { usuario: string; senha: string } {
+  if (typeof window === "undefined") return CREDENCIAIS_PADRAO;
+  try {
+    const item = localStorage.getItem(`${ADMIN_PREFIX}credenciais`);
+    if (item) {
+      const parsed = JSON.parse(item);
+      if (parsed && typeof parsed.usuario === "string" && typeof parsed.senha === "string") {
+        return parsed;
+      }
+    }
+  } catch { /* ignora erro */ }
+  // Se não existe ou é inválido, salva o padrão e retorna
+  salvar("credenciais", CREDENCIAIS_PADRAO);
+  return CREDENCIAIS_PADRAO;
+}
+
 export const useAdminStore = create<AdminState>((set, get) => ({
-  adminCredenciais: carregar<{ usuario: string; senha: string } | null>(
-    "credenciais",
-    { usuario: "admin", senha: "zapfacil123" }
-  ),
+  adminCredenciais: carregarCredenciais(),
   sistemas: migrarSistemas(carregar<SistemaCliente[]>("sistemas", [])),
   cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
 
