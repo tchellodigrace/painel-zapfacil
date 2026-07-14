@@ -47,8 +47,6 @@ import {
   Crown,
   ShieldCheck,
   LogOut,
-  Sun,
-  Moon,
   ArrowRight,
   User,
   Lock,
@@ -60,7 +58,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useTheme } from "next-themes";
 
 function formatarMoeda(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -465,7 +462,6 @@ function FormularioSistema({
 // PAINEL ADMIN PRINCIPAL
 // =============================================
 function PainelAdminConteudo() {
-  const { theme, setTheme } = useTheme();
   const { sistemas, adicionarSistema, editarSistema, removerSistema, alterarStatus } =
     useAdminStore();
   const [busca, setBusca] = useState("");
@@ -575,21 +571,6 @@ function PainelAdminConteudo() {
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-gray-400 hover:bg-gray-800"
-                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  >
-                    {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Tema</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
