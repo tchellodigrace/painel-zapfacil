@@ -39,7 +39,8 @@ import { PainelAgendamento } from "@/components/erp/painel-agendamento";
 import { PainelDespesas } from "@/components/erp/painel-despesas";
 import { PainelColaboradores } from "@/components/erp/painel-colaboradores";
 import { InicializadorLogo } from "@/components/erp/inicializador-logo";
-import { TelaLogin, destruirSessao } from "@/components/erp/tela-login";
+import { TelaLogin, destruirSessao, carregarCredenciais } from "@/components/erp/tela-login";
+import { Mail, User } from "lucide-react";
 import type { Venda } from "@/types";
 
 const SESSION_KEY = "zapfacil_session";
@@ -54,9 +55,14 @@ export default function ZapFacilPage() {
   const [autenticado, setAutenticado] = useState<boolean | null>(null);
   const [vendaAtual, setVendaAtual] = useState<Venda | null>(null);
   const [abaAtiva, setAbaAtiva] = useState("lancamento");
+  const [dadosCliente, setDadosCliente] = useState<{ nome: string; email: string; empresa: string } | null>(null);
 
   useEffect(() => {
     setAutenticado(verificarSessao());
+    if (verificarSessao()) {
+      const cred = carregarCredenciais();
+      if (cred) setDadosCliente({ nome: cred.nomeResponsavel, email: cred.email, empresa: cred.nomeEmpresa });
+    }
   }, []);
 
   const handleAutenticado = useCallback(() => {
@@ -116,6 +122,22 @@ export default function ZapFacilPage() {
             />
           </div>
           <div className="flex items-center gap-2">
+            {dadosCliente && (
+              <button
+                type="button"
+                className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 transition-colors"
+              >
+                <div className="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold">
+                  {dadosCliente.nome.charAt(0).toUpperCase()}
+                </div>
+                <div className="text-left hidden md:block">
+                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 leading-tight">{dadosCliente.nome}</p>
+                  <p className="text-[10px] text-gray-400 leading-tight flex items-center gap-1">
+                    <Mail className="h-2.5 w-2.5" />{dadosCliente.email}
+                  </p>
+                </div>
+              </button>
+            )}
             <Badge
               variant="outline"
               className="text-emerald-700 dark:text-emerald-400 text-[10px] border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950 font-semibold"
