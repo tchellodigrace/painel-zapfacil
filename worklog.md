@@ -57,3 +57,26 @@ Stage Summary:
 - 5 pontos de envio WhatsApp atualizados com logomarca
 - Helper centralizado em utils-erp.ts para fácil manutenção futura
 
+---
+Task ID: 2
+Agent: Main Agent
+Task: Corrigir logomarca no WhatsApp - mudar de link preview para envio de arquivo de imagem
+
+Work Log:
+- Link preview do WhatsApp (URL no texto) nao funcionou para o dominio
+- Refiz toda a abordagem: agora gera uma imagem PNG (canvas) com logo + mensagem + rodape "Powered by ZapFacil Pro"
+- No mobile: Web Share API envia a imagem como arquivo anexado + texto como legenda no WhatsApp
+- No desktop: baixa a imagem automaticamente + copia o texto + abre WhatsApp Web (usuario anexe a imagem manualmente)
+- Funcao gerarImagemMensagem() cria canvas 800px de largura com logo centralizada, linha separadora verde, texto formatado e rodape
+- Criado tipo ResultadoWhatsApp para feedback contextual via toast
+- Atualizados 5 componentes: admin-cobrancas, historico (2 funcoes), painel-agendamento, crm-clientes
+- Corrigidos imports duplicados de toast
+- Logo convertida de 8-bit para RGBA 32-bit (alta qualidade)
+- Build passou sem erros
+
+Stage Summary:
+- Abordagem 100% confiavel: imagem como arquivo (nao depende de preview)
+- Mobile: imagem chega anexada automaticamente no WhatsApp
+- Desktop: download automatico da imagem + clipboard + WhatsApp Web aberto
+- 6 pontos de envio WhatsApp cobertos
+

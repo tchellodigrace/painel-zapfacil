@@ -486,7 +486,7 @@ export function PainelCobranças() {
     [removerCobranca]
   );
 
-  const enviarLembreteWhatsApp = (cobranca: Cobranca) => {
+  const enviarLembreteWhatsApp = async (cobranca: Cobranca) => {
     const sistema = sistemas.find((s) => s.id === cobranca.sistemaId);
     if (!sistema?.telefone) {
       toast.error("Telefone nao cadastrado para este sistema.");
@@ -499,7 +499,10 @@ export function PainelCobranças() {
       `Valor: ${formatarMoeda(cobranca.valor)}\n` +
       `Vencimento: ${formatarData(cobranca.dataVencimento)}\n\n` +
       `Por favor, entre em contato para confirmar o pagamento. Estamos a disposicao!`;
-    abrirWhatsApp(sistema.telefone, msg);
+    const resultado = await abrirWhatsApp(sistema.telefone, msg);
+    if (resultado === "imagem_enviada") toast.success("Lembrete com logomarca enviado!");
+    else if (resultado === "imagem_baixada") toast.success("Imagem baixada! Anexe no WhatsApp com a mensagem copiada.");
+    else toast.success("Lembrete aberto no WhatsApp!");
   };
 
   // Cobranças do sistema selecionado para histórico

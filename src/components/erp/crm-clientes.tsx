@@ -107,11 +107,13 @@ export function CRMClientes() {
       .reduce((s, v) => s + v.total, 0);
   };
 
-  const handleWhatsAppCliente = (telefone: string, nome: string) => {
+  const handleWhatsAppCliente = async (telefone: string, nome: string) => {
     const msg =
       `Ola ${nome}! Aqui e da *${useERPStore.getState().empresa.nome || "sua empresa"}*.\n\n` +
       `Estamos entrando em contato. Estamos a disposicao!`;
-    abrirWhatsApp(telefone, msg);
+    const resultado = await abrirWhatsApp(telefone, msg);
+    if (resultado === "imagem_enviada") toast.success("Mensagem com logomarca enviada!");
+    else if (resultado === "imagem_baixada") toast.success("Imagem baixada! Anexe no WhatsApp com a mensagem copiada.");
   };
 
   return (

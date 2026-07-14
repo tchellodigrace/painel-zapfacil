@@ -189,12 +189,14 @@ export function PainelAgendamento() {
     toast.info("Agendamento cancelado.");
   };
 
-  const handleWhatsApp = (telefone: string, nome: string) => {
+  const handleWhatsApp = async (telefone: string, nome: string) => {
     const msg =
       `Ola ${nome}! Aqui e da *${useERPStore.getState().empresa.nome || "sua empresa"}*.\n\n` +
       `Estamos entrando em contato para confirmar seu agendamento.\n` +
       `Estamos a disposicao para qualquer duvida!`;
-    abrirWhatsApp(telefone, msg);
+    const resultado = await abrirWhatsApp(telefone, msg);
+    if (resultado === "imagem_enviada") toast.success("Mensagem com logomarca enviada!");
+    else if (resultado === "imagem_baixada") toast.success("Imagem baixada! Anexe no WhatsApp com a mensagem copiada.");
   };
 
   const obterStatusInfo = (status: StatusAgendamento) => {

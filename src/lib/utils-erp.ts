@@ -129,31 +129,205 @@ export function filtrarVendasPorPeriodo(
 }
 
 // ============================================
-// WhatsApp com Logomarca
+// WhatsApp com Logomarca (arquivo de imagem)
 // ============================================
 
 const LOGO_URL = "https://j1ewd51wcs60-d.space-z.ai/logo-empresa.png";
-const BASE_URL = "https://j1ewd51wcs60-d.space-z.ai";
 
 /**
- * Adiciona a logomarca e identidade visual ao final de mensagens WhatsApp.
- * O WhatsApp gera um preview rico (card com imagem) quando detecta uma URL de imagem no texto.
- * A logo aparece como um card visual antes do destinatário abrir a conversa.
+ * Gera imagem PNG branca com a logomarca no topo e mensagem de texto formatada.
+ * Retorna um Blob PNG pronto para compartilhar.
  */
-export function construirMensagemWhatsApp(corpoMensagem: string): string {
-  const rodape = `\n\n${LOGO_URL}\n_Powered by ZapFácil Pro_`;
-  return corpoMensagem + rodape;
+async function gerarImagemMensagem(textoMensagem: string): Promise<Blob | null> {
+  try {
+    // Carregar a logo
+    const logoResp = await fetch(LOGO_URL);
+    const logoBlob = await logoResp.blob();
+    const logoImg = await criarImagem(logoBlob);
+
+    // Configurar canvas
+    const LARGURA = 800;
+    const LOGO_H = 200;
+    const PADDING = 40;
+    const LINHA_H = 28;
+    const FONTE = "16px sans-serif";
+
+    // Quebrar texto em linhas
+    const linhas: string[] = [];
+    const paragrafos = textoMensagem.split("\n");
+    for (const p of paragrafos) {
+      if (p.trim() === "") {
+        linhas.push("");
+        continue;
+      }
+      // Remover formatação WhatsApp (*bold*, _italic_)
+      const limpo = p.replace(/\*/g, "").replace(/_/g, "");
+      // Wrap simples
+      const maxChars = Math.floor((LARGURA - PADDING * 2) / 8);
+      if (limpo.length <= maxChars) {
+        linhas.push(limpo);
+      } else {
+        const palavras = limpo.split(" ");
+        let linhaAtual = "";
+        for (const palavra of palavras) {
+          if ((linhaAtual + " " + palavra).trim().length > maxChars) {
+            linhas.push(linhaAtual.trim());
+            linhaAtual = palavra;
+          } else {
+            linhaAtual += " " + palavra;
+          }
+        }
+        if (linhaAtual.trim()) linhas.push(linhaAtual.trim());
+      }
+    }
+
+    const textoH = linhas.length * LINHA_H + PADDING * 2;
+    const ALTURA = LOGO_H + textoH;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = LARGURA;
+    canvas.height = ALTURA;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    // Fundo branco
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, LARGURA, ALTURA);
+
+    // Logo centralizada no topo
+    const logoW = 160;
+    const logoX = (LARGURA - logoW) / 2;
+    ctx.drawImage(logoImg, logoX, 20, logoW, logoW);
+
+    // Linha separadora
+    ctx.strokeStyle = "#10b981";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(PADDING, LOGO_H + 10);
+    ctx.lineTo(LARGURA - PADDING, LOGO_H + 10);
+    ctx.stroke();
+
+    // Texto da mensagem
+    ctx.fillStyle = "#1f2937";
+    ctx.font = FONTE;
+    let y = LOGO_H + 30;
+    for (const linha of linhas) {
+      if (linha.trim() === "") {
+        y += LINHA_H * 0.6;
+        continue;
+      }
+      ctx.fillText(linha, PADDING, y);
+      y += LINHA_H;
+    }
+
+    // Rodapé
+    ctx.fillStyle = "#9ca3af";
+    ctx.font = "italic 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Powered by ZapFacil Pro", LARGURA / 2, ALTURA - 15);
+    ctx.textAlign = "start";
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => resolve(blob), "image/png", 1.0);
+    });
+  } catch {
+    return null;
+  }
+}
+
+function criarImagem(blob: Blob): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = URL.createObjectURL(blob);
+  });
+}
+
+/** Resultado do envio WhatsApp */
+export type ResultadoWhatsApp = "imagem_enviada" | "imagem_baixada" | "texto_apenas";
+
+/**
+ * Abre o WhatsApp com a logomarca como imagem anexada + mensagem como legenda.
+ * No mobile: usa Web Share API (imagem + texto).
+ * No desktop: baixa a imagem + copia o texto + abre WhatsApp Web.
+ * Retorna o resultado para o componente mostrar toast adequado.
+ */
+export async function abrirWhatsApp(telefone: string, mensagem: string): Promise<ResultadoWhatsApp> {
+  const telLimpo = telefone.replace(/\D/g, "");
+  const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+
+  // Tentar enviar imagem via Web Share API (mobile)
+  const imagemBlob = await gerarImagemMensagem(mensagem);
+  if (imagemBlob) {
+    const file = new File([imagemBlob], "zapfacil_mensagem.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], text: mensagem });
+        return "imagem_enviada";
+      } catch {
+        // Usuário cancelou ou erro — segue para fallback
+      }
+    }
+
+    // Desktop fallback: baixar imagem + copiar texto + abrir WhatsApp
+    try {
+      const urlImagem = URL.createObjectURL(imagemBlob);
+      const a = document.createElement("a");
+      a.download = "zapfacil_mensagem.png";
+      a.href = urlImagem;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(urlImagem), 5000);
+
+      await navigator.clipboard.writeText(mensagem);
+      window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`, "_blank");
+      return "imagem_baixada";
+    } catch {
+      // Falha no clipboard/download — segue para texto puro
+    }
+  }
+
+  // Fallback final: texto puro sem imagem
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`, "_blank");
+  return "texto_apenas";
 }
 
 /**
- * Abre o WhatsApp Web/App com a mensagem formatada (com logomarca).
+ * Versão sem número de telefone — abre o seletor de contatos do WhatsApp.
  */
-export function abrirWhatsApp(telefone: string, mensagem: string): void {
-  const telLimpo = telefone.replace(/\D/g, "");
-  const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
-  const msgFinal = construirMensagemWhatsApp(mensagem);
-  const msgEncoded = encodeURIComponent(msgFinal);
-  window.open(`https://wa.me/${numero}?text=${msgEncoded}`, "_blank");
+export async function compartilharWhatsApp(mensagem: string): Promise<ResultadoWhatsApp> {
+  const imagemBlob = await gerarImagemMensagem(mensagem);
+  if (imagemBlob) {
+    const file = new File([imagemBlob], "zapfacil_mensagem.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], text: mensagem });
+        return "imagem_enviada";
+      } catch {
+        // Usuário cancelou
+      }
+    }
+
+    // Desktop fallback
+    try {
+      const urlImagem = URL.createObjectURL(imagemBlob);
+      const a = document.createElement("a");
+      a.download = "zapfacil_mensagem.png";
+      a.href = urlImagem;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(urlImagem), 5000);
+
+      await navigator.clipboard.writeText(mensagem);
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`, "_blank");
+      return "imagem_baixada";
+    } catch {
+      // segue
+    }
+  }
+
+  // Fallback: texto puro
+  window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`, "_blank");
+  return "texto_apenas";
 }
 
 export function exportarParaCSV(vendas: Array<Record<string, unknown>>): void {

@@ -36,7 +36,7 @@ import {
   MessageCircle,
   Send,
 } from "lucide-react";
-import { formatarMoeda, exportarParaCSV, filtrarVendasPorPeriodo, construirMensagemWhatsApp } from "@/lib/utils-erp";
+import { formatarMoeda, exportarParaCSV, filtrarVendasPorPeriodo, compartilharWhatsApp, type ResultadoWhatsApp } from "@/lib/utils-erp";
 import type { Venda } from "@/types";
 
 interface HistoricoProps {
@@ -117,7 +117,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
     toast.success("CSV exportado!");
   };
 
-  const handleCobrarPendente = (v: Venda) => {
+  const handleCobrarPendente = async (v: Venda) => {
     const empresa = useERPStore.getState().empresa;
     const msg =
       `Ola ${v.cliente}!\n\n` +
@@ -130,12 +130,13 @@ export function Historico({ onReemitir }: HistoricoProps) {
       `TOTAL: ${formatarMoeda(v.total)}\n` +
       `Forma de Pagamento: ${v.formaPagamento}\n\n` +
       `Por favor, regularize o pagamento. Obrigado!`;
-    const msgFinal = construirMensagemWhatsApp(msg);
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msgFinal)}`, "_blank");
-    toast.success("Mensagem de cobranca aberta no WhatsApp!");
+    const resultado = await compartilharWhatsApp(msg);
+    if (resultado === "imagem_enviada") toast.success("Mensagem com logomarca enviada via WhatsApp!");
+    else if (resultado === "imagem_baixada") toast.success("Imagem baixada e mensagem copiada! Anexe a imagem no WhatsApp.");
+    else toast.success("Mensagem de cobranca aberta no WhatsApp!");
   };
 
-  const handleCobrarTodosPendentes = () => {
+  const handleCobrarTodosPendentes = async () => {
     const pendentes = vendasFiltradas.filter((v) => v.status === "PENDENTE");
     if (pendentes.length === 0) {
       toast.info("Nenhuma fatura pendente para cobrar.");
@@ -156,12 +157,10 @@ export function Historico({ onReemitir }: HistoricoProps) {
         `\n\nTotal Pendente: *${formatarMoeda(pendentes.reduce((s, v) => s + v.total, 0))}*\n` +
         `Quantidade: ${pendentes.length} fatura(s)`;
 
-    const msgFinal = construirMensagemWhatsApp(resumo);
-    window.open(
-      `https://api.whatsapp.com/send?text=${encodeURIComponent(msgFinal)}`,
-      "_blank"
-    );
-    toast.success(`Resumo de ${pendentes.length} cobranca(s) aberto!`);
+    const resultado = await compartilharWhatsApp(resumo);
+    if (resultado === "imagem_enviada") toast.success(`Resumo com logomarca de ${pendentes.length} cobranca(s) enviado!`);
+    else if (resultado === "imagem_baixada") toast.success(`Imagem baixada! Anexe no WhatsApp com a mensagem copiada.`);
+    else toast.success(`Resumo de ${pendentes.length} cobranca(s) aberto!`);
   };
 
   return (
