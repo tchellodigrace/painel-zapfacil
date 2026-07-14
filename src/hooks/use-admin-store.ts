@@ -119,6 +119,8 @@ interface AdminState {
   sistemas: SistemaCliente[];
   cobrancas: Cobranca[];
 
+  alterarSenha: (senhaAtual: string, novaSenha: string) => boolean;
+
   // Ações - Sistemas
   configurarAdmin: (usuario: string, senha: string) => void;
   adicionarSistema: (dados: Omit<SistemaCliente, "id" | "criadoEm">) => void;
@@ -145,7 +147,7 @@ interface AdminState {
 export const useAdminStore = create<AdminState>((set, get) => ({
   adminCredenciais: carregar<{ usuario: string; senha: string } | null>(
     "credenciais",
-    null
+    { usuario: "admin", senha: "zapfacil123" }
   ),
   sistemas: migrarSistemas(carregar<SistemaCliente[]>("sistemas", [])),
   cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
@@ -155,6 +157,16 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     const cred = { usuario: usuario.trim().toLowerCase(), senha };
     salvar("credenciais", cred);
     set({ adminCredenciais: cred });
+  },
+
+  alterarSenha: (senhaAtual, novaSenha) => {
+    const cred = get().adminCredenciais;
+    if (!cred) return false;
+    if (cred.senha !== senhaAtual) return false;
+ const novaCred = { usuario: cred.usuario, senha: novaSenha };
+    salvar("credenciais", novaCred);
+    set({ adminCredenciais: novaCred });
+    return true;
   },
 
   adicionarSistema: (dados) => {

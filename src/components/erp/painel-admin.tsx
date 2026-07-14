@@ -49,6 +49,7 @@ import {
   Lock,
   EyeOff,
   Check,
+  KeyRound,
 } from "lucide-react";
 import {
   Tooltip,
@@ -78,6 +79,114 @@ function diasRestantes(vencimento: string): number {
 }
 
 // =============================================
+// DIALOG TROCAR SENHA
+// =============================================
+function DialogTrocarSenha({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}) {
+  const { alterarSenha } = useAdminStore();
+  const [senhaAtual, setSenhaAtual] = useState("");
+  const [novaSenha, setNovaSenha] = useState("");
+  const [confirmarNova, setConfirmarNova] = useState("");
+  const [mostrarAtual, setMostrarAtual] = useState(false);
+  const [mostrarNova, setMostrarNova] = useState(false);
+
+  const handleSalvar = () => {
+    if (!senhaAtual || !novaSenha) {
+      toast.error("Preencha todos os campos.");
+      return;
+    }
+    if (novaSenha.length < 4) {
+      toast.error("A nova senha deve ter pelo menos 4 caracteres.");
+      return;
+    }
+    if (novaSenha !== confirmarNova) {
+      toast.error("As senhas nao conferem.");
+      return;
+    }
+    const ok = alterarSenha(senhaAtual, novaSenha);
+    if (ok) {
+      toast.success("Senha alterada com sucesso!");
+      setSenhaAtual("");
+      setNovaSenha("");
+      setConfirmarNova("");
+      onOpenChange(false);
+    } else {
+      toast.error("Senha atual incorreta.");
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-base">
+            <KeyRound className="h-5 w-5 text-gray-600" />
+            Alterar Senha
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Senha atual</Label>
+            <div className="relative">
+              <Input
+                type={mostrarAtual ? "text" : "password"}
+                value={senhaAtual}
+                onChange={(e) => setSenhaAtual(e.target.value)}
+                placeholder="Digite a senha atual"
+                className="pr-10 h-10 text-sm"
+                onKeyDown={(e) => e.key === "Enter" && handleSalvar()}
+              />
+              <button
+                type="button"
+                onClick={() => setMostrarAtual(!mostrarAtual)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {mostrarAtual ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+              </button>
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Nova senha</Label>
+            <Input
+              type="password"
+              value={novaSenha}
+              onChange={(e) => setNovaSenha(e.target.value)}
+              placeholder="Minimo 4 caracteres"
+              className="h-10 text-sm"
+              onKeyDown={(e) => e.key === "Enter" && handleSalvar()}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Confirmar nova senha</Label>
+            <Input
+              type="password"
+              value={confirmarNova}
+              onChange={(e) => setConfirmarNova(e.target.value)}
+              placeholder="Repita a nova senha"
+              className="h-10 text-sm"
+              onKeyDown={(e) => e.key === "Enter" && handleSalvar()}
+            />
+          </div>
+          <div className="flex gap-2 justify-end pt-1">
+            <Button variant="ghost" size="sm" className="text-xs" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button size="sm" className="text-xs bg-emerald-600 hover:bg-emerald-700" onClick={handleSalvar}>
+              Salvar
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// =============================================
 // TELA DE LOGIN DO ADMIN (CLARO)
 // =============================================
 function TelaLoginAdmin({
@@ -85,30 +194,10 @@ function TelaLoginAdmin({
 }: {
   onAutenticado: () => void;
 }) {
-  const { adminCredenciais, configurarAdmin } = useAdminStore();
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
-  const [confirmarSenha, setConfirmarSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [carregando, setCarregando] = useState(false);
-  const [ehPrimeiroAcesso, setEhPrimeiroAcesso] = useState(
-    !adminCredenciais
-  );
-
-  const handleCriar = () => {
-    if (!usuario.trim() || !senha.trim()) {
-      toast.error("Preencha todos os campos.");
-      return;
-    }
-    if (senha !== confirmarSenha) {
-      toast.error("As senhas nao conferem.");
-      return;
-    }
-    configurarAdmin(usuario.trim().toLowerCase(), senha);
-    sessionStorage.setItem("zapfacil_admin_session", "autenticado");
-    toast.success("Admin criado com sucesso!");
-    onAutenticado();
-  };
 
   const handleLogin = () => {
     if (!usuario.trim() || !senha.trim()) {
@@ -127,7 +216,7 @@ function TelaLoginAdmin({
         toast.success("Bem-vindo, Admin!");
         onAutenticado();
       } else {
-        toast.error("Credenciais invalidas.");
+        toast.error("Usuario ou senha incorretos.");
       }
       setCarregando(false);
     }, 600);
@@ -142,7 +231,7 @@ function TelaLoginAdmin({
           <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl" />
         </div>
         <div className="relative z-10">
-          <img src="/logo-empresa.png" alt="Logo" className="h-10 w-auto object-contain brightness-0 invert" />
+          <img src="/logo-empresa.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
         </div>
         <div className="relative z-10 space-y-4">
           <h2 className="text-3xl font-bold text-white leading-tight">
@@ -162,21 +251,13 @@ function TelaLoginAdmin({
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-sm space-y-8">
           <div className="lg:hidden text-center space-y-4">
-            <img src="/logo-empresa.png" alt="Logo" className="h-12 w-auto mx-auto object-contain" />
-            <h2 className="text-xl font-bold text-gray-900">
-              {ehPrimeiroAcesso ? "Criar conta admin" : "Painel Admin"}
-            </h2>
+            <img src="/logo-empresa.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
+            <h2 className="text-xl font-bold text-gray-900">Painel Admin</h2>
           </div>
 
           <div className="hidden lg:block space-y-1">
-            <h2 className="text-2xl font-bold text-gray-900">
-              {ehPrimeiroAcesso ? "Criar sua conta" : "Entrar"}
-            </h2>
-            <p className="text-sm text-gray-500">
-              {ehPrimeiroAcesso
-                ? "Configure o acesso do administrador master"
-                : "Acesso exclusivo do gestor do sistema"}
-            </p>
+            <h2 className="text-2xl font-bold text-gray-900">Entrar</h2>
+            <p className="text-sm text-gray-500">Acesso exclusivo do gestor do sistema</p>
           </div>
 
           <div className="space-y-4">
@@ -187,10 +268,7 @@ function TelaLoginAdmin({
                 value={usuario}
                 onChange={(e) => setUsuario(e.target.value)}
                 className="h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
-                onKeyDown={(e) =>
-                  e.key === "Enter" &&
-                  (ehPrimeiroAcesso ? handleCriar() : handleLogin())
-                }
+                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                 autoFocus
               />
             </div>
@@ -204,10 +282,7 @@ function TelaLoginAdmin({
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
                   className="pr-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
-                  onKeyDown={(e) =>
-                    e.key === "Enter" &&
-                    (ehPrimeiroAcesso ? handleCriar() : handleLogin())
-                  }
+                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                 />
                 <button
                   type="button"
@@ -219,23 +294,9 @@ function TelaLoginAdmin({
               </div>
             </div>
 
-            {ehPrimeiroAcesso && (
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Confirmar senha</Label>
-                <Input
-                  type="password"
-                  placeholder="Repita a senha"
-                  value={confirmarSenha}
-                  onChange={(e) => setConfirmarSenha(e.target.value)}
-                  className="h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
-                  onKeyDown={(e) => e.key === "Enter" && handleCriar()}
-                />
-              </div>
-            )}
-
             <Button
               className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
-              onClick={ehPrimeiroAcesso ? handleCriar : handleLogin}
+              onClick={handleLogin}
               disabled={carregando}
             >
               {carregando ? (
@@ -243,24 +304,21 @@ function TelaLoginAdmin({
                   <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Verificando...
                 </span>
-              ) : ehPrimeiroAcesso ? (
-                "Criar conta de admin"
               ) : (
                 "Entrar no painel"
               )}
             </Button>
           </div>
 
-          {!ehPrimeiroAcesso && (
-            <p className="text-center">
-              <button
-                className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-                onClick={() => setEhPrimeiroAcesso(true)}
-              >
-                Primeiro acesso? Clique aqui
-              </button>
+          <div className="bg-gray-50 rounded-xl p-3 space-y-1">
+            <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider text-center">Credenciais padrao</p>
+            <p className="text-center text-sm">
+              <span className="font-mono font-semibold text-gray-700">admin</span>
+              <span className="text-gray-300 mx-2">/</span>
+              <span className="font-mono font-semibold text-gray-700">zapfacil123</span>
             </p>
-          )}
+            <p className="text-[10px] text-gray-400 text-center">Troque a senha apos o primeiro acesso pelo icone de chave no painel</p>
+          </div>
         </div>
       </div>
     </div>
@@ -572,6 +630,7 @@ function PainelAdminConteudo() {
   const [dialogNovo, setDialogNovo] = useState(false);
   const [dialogDetalhe, setDialogDetalhe] = useState<SistemaCliente | null>(null);
   const [confirmaRemover, setConfirmaRemover] = useState<string | null>(null);
+  const [dialogTrocarSenha, setDialogTrocarSenha] = useState(false);
 
   // Estatísticas
   const stats = useMemo(() => {
@@ -673,6 +732,21 @@ function PainelAdminConteudo() {
             </div>
           </div>
           <div className="flex items-center gap-1">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-gray-500 hover:bg-gray-100"
+                    onClick={() => setDialogTrocarSenha(true)}
+                  >
+                    <KeyRound className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Alterar Senha</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -1314,6 +1388,12 @@ function PainelAdminConteudo() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Dialog Trocar Senha */}
+      <DialogTrocarSenha
+        open={dialogTrocarSenha}
+        onOpenChange={setDialogTrocarSenha}
+      />
     </div>
   );
 }
