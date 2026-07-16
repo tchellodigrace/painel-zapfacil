@@ -749,13 +749,21 @@ function TelaLoginAdmin({
             </div>
 
             {/* Link de recuperacao */}
-            <div className="text-center">
+            <div className="text-center space-y-1">
               <button
                 type="button"
                 onClick={() => setDialogRecuperar(true)}
                 className="text-sm text-gray-500 hover:text-gray-700 underline underline-offset-4 transition-colors"
               >
                 Esqueceu a senha?
+              </button>
+              <br />
+              <button
+                type="button"
+                onClick={() => setEtapa("primeiro_acesso")}
+                className="text-sm text-emerald-600 hover:text-emerald-700 underline underline-offset-4 transition-colors"
+              >
+                Primeiro acesso? Configurar perfil
               </button>
             </div>
 
@@ -2778,12 +2786,8 @@ export function PainelAdmin() {
       return;
     }
 
-    // Verifica se e primeiro acesso
-    if (!store.primeiroAcesso) {
-      setEtapa("primeiro_acesso");
-    } else {
-      setEtapa("login");
-    }
+    // Sempre mostra login. Primeiro acesso fica acessivel via link.
+    setEtapa("login");
   }, []);
 
   if (etapa === "loading") {

@@ -67,6 +67,7 @@ function destruirSessao(): void {
 
 export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
   const [temCredenciais, setTemCredenciais] = useState<boolean | null>(null);
+  const [mostrarCadastro, setMostrarCadastro] = useState(false);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
@@ -276,7 +277,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
   }
 
   // === CADASTRO (primeiro acesso) ===
-  if (!temCredenciais) {
+  if (mostrarCadastro) {
     const podeAvancarEtapa0 = nomeEmpresa.trim() && nomeResponsavel.trim() && email.trim().includes("@");
     const podeAvancarEtapa1 = telefone.trim().length >= 10;
 
@@ -548,6 +549,17 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
                 </div>
               </div>
             )}
+            <p className="text-center text-xs text-gray-400">
+              Ja tem conta?
+              {" "}
+              <button
+                type="button"
+                onClick={() => setMostrarCadastro(false)}
+                className="text-emerald-600 hover:text-emerald-700 font-medium underline underline-offset-4"
+              >
+                Fazer login
+              </button>
+            </p>
           </div>
         </div>
       </div>
@@ -657,9 +669,18 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
             </Button>
           </div>
 
-          <p className="text-center text-xs text-gray-400">
-            Sistema protegido. Acesso privado e seguro.
-          </p>
+          <div className="space-y-3">
+            <p className="text-center text-xs text-gray-400">
+              Sistema protegido. Acesso privado e seguro.
+            </p>
+            <button
+              type="button"
+              onClick={() => setMostrarCadastro(true)}
+              className="w-full text-center text-sm text-emerald-600 hover:text-emerald-700 font-medium underline underline-offset-4 transition-colors"
+            >
+              Nao tem conta? Cadastre-se
+            </button>
+          </div>
         </div>
       </div>
 
