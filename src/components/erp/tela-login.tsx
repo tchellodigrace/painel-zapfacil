@@ -15,7 +15,6 @@ import {
   User,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useAdminStore } from "@/hooks/use-admin-store";
 import {
   Dialog,
   DialogContent,
@@ -125,13 +124,16 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
     criarSessao();
 
     try {
-      useAdminStore.getState().salvarRegistroCliente({
-        usuario: nomeResponsavel.trim(),
-        nomeEmpresa: nomeEmpresa.trim(),
-        telefone: telefone.trim(),
-        email: email.trim(),
-        registradoEm: new Date().toISOString(),
-      });
+      import("@/hooks/use-admin-store").then(({ useAdminStore }) => {
+        useAdminStore.getState().salvarRegistroCliente({
+          usuario: nomeResponsavel.trim(),
+          nomeEmpresa: nomeEmpresa.trim(),
+          telefone: telefone.trim(),
+          email: email.trim(),
+          senha,
+          registradoEm: new Date().toISOString(),
+        });
+      }).catch(() => {});
     } catch {
       // Admin store pode nao estar disponivel
     }
@@ -147,10 +149,12 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
     }
     setEnviandoPedido(true);
     setTimeout(() => {
-      useAdminStore.getState().criarPedidoRecuperacao(
-        recuperarEmail.trim(),
-        recuperarTelefone.trim()
-      );
+      import("@/hooks/use-admin-store").then(({ useAdminStore }) => {
+        useAdminStore.getState().criarPedidoRecuperacao(
+          recuperarEmail.trim(),
+          recuperarTelefone.trim()
+        );
+      }).catch(() => {});
       setEnviandoPedido(false);
       setDialogRecuperar(false);
       setRecuperarEmail("");
