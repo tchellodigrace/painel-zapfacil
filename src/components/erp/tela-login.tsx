@@ -464,6 +464,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </div>
+                <button type="button" onClick={() => setMostrarCadastro(false)} className="w-full text-center text-sm text-emerald-600 hover:text-emerald-700 font-medium underline underline-offset-4">Ja tem conta? Fazer login</button>
               </div>
             )}
           </div>
@@ -577,8 +578,8 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
 
           <p className="text-center text-xs text-gray-400">
             Sistema protegido. Acesso privado e seguro.
-          <button type="button" onClick={() => setMostrarCadastro(true)} className="w-full text-center text-sm text-emerald-600 hover:text-emerald-700 font-medium underline underline-offset-4">Nao tem conta? Cadastre-se</button>
           </p>
+          <button type="button" onClick={() => setMostrarCadastro(true)} className="w-full text-center text-sm text-emerald-600 hover:text-emerald-700 font-medium underline underline-offset-4">Nao tem conta? Cadastre-se</button>
         </div>
       </div>
 
