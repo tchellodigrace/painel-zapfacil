@@ -544,8 +544,10 @@ const CREDENCIAIS_PADRAO = { usuario: "admin", senha: "zapfacil123" };
 
 function TelaLoginAdmin({
   onAutenticado,
+  onPrimeiroAcesso,
 }: {
   onAutenticado: () => void;
+  onPrimeiroAcesso: () => void;
 }) {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
@@ -760,7 +762,7 @@ function TelaLoginAdmin({
               <br />
               <button
                 type="button"
-                onClick={() => setEtapa("primeiro_acesso")}
+                onClick={() => onPrimeiroAcesso()}
                 className="text-sm text-emerald-600 hover:text-emerald-700 underline underline-offset-4 transition-colors"
               >
                 Primeiro acesso? Configurar perfil
@@ -2806,7 +2808,7 @@ export function PainelAdmin() {
   }
 
   if (etapa === "login") {
-    return <TelaLoginAdmin onAutenticado={() => setEtapa("autenticado")} />;
+    return <TelaLoginAdmin onAutenticado={() => setEtapa("autenticado")} onPrimeiroAcesso={() => setEtapa("primeiro_acesso")} />;
   }
 
   return <PainelAdminConteudo />;
