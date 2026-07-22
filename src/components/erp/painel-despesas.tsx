@@ -29,7 +29,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { formatarMoeda, gerarId, filtrarVendasPorPeriodo } from "@/lib/utils-erp";
-import type { Despesa, CategoriaDespesa, Venda } from "@/types";
+import type { Despesa, CategoriaDespesa } from "@/types";
 import { CATEGORIAS_DESPESA } from "@/types";
 
 export function PainelDespesas() {
@@ -65,12 +65,12 @@ export function PainelDespesas() {
   }, [despesas, busca, filtroCategoria]);
 
   const vendasPeriodo = useMemo(() => {
-    return filtrarVendasPorPeriodo(vendas, periodo) as Venda[];
+    return filtrarVendasPorPeriodo(vendas, periodo);
   }, [vendas, periodo]);
 
   const despesasPeriodo = useMemo(() => {
     if (periodo === "todos") return despesas;
-    return filtrarVendasPorPeriodo(despesas, periodo) as Despesa[];
+    return filtrarVendasPorPeriodo(despesas, periodo);
   }, [despesas, periodo]);
 
   const stats = useMemo(() => {

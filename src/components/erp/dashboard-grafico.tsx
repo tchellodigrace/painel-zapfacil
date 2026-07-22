@@ -107,8 +107,8 @@ export function DashboardGrafico() {
 
   // === Novas métricas ===
   const lucroMes = useMemo(() => {
-    const vendasMes = filtrarVendasPorPeriodo(vendas, "mes") as typeof vendas;
-    const despesasMes = filtrarVendasPorPeriodo(despesas, "mes") as typeof despesas;
+    const vendasMes = filtrarVendasPorPeriodo(vendas, "mes");
+    const despesasMes = filtrarVendasPorPeriodo(despesas, "mes");
     const receita = vendasMes.filter((v) => v.status === "PAGO").reduce((s, v) => s + v.total, 0);
     const totalDespesas = despesasMes.reduce((s, d) => s + d.valor, 0);
     return { receita, despesas: totalDespesas, lucro: receita - totalDespesas };
@@ -128,7 +128,7 @@ export function DashboardGrafico() {
 
   const despesasPorCategoria = useMemo(() => {
     const mapa: Record<string, number> = {};
-    const despesasMes = filtrarVendasPorPeriodo(despesas, "mes") as typeof despesas;
+    const despesasMes = filtrarVendasPorPeriodo(despesas, "mes");
     despesasMes.forEach((d) => {
       mapa[d.categoria] = (mapa[d.categoria] || 0) + d.valor;
     });

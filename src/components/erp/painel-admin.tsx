@@ -2257,7 +2257,6 @@ const handleSalvarNovo = useCallback(
               src="/logo-admin.png"
               alt="Logo Admin"
               className="h-11 w-auto object-contain"
-              priority
             />
           </div>
           <div className="flex items-center gap-2">

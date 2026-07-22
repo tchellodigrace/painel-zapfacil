@@ -220,7 +220,7 @@ export function EmpresaPanel() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex gap-1.5">
-            <Select id="tipoChavePix" defaultValue="CPF">
+            <Select defaultValue="CPF">
               <SelectTrigger className="w-[90px] h-9 text-xs">
                 <SelectValue />
               </SelectTrigger>

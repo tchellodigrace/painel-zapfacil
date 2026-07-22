@@ -105,10 +105,10 @@ export function obterPeriodoLabel(periodo: string): string {
   }
 }
 
-export function filtrarVendasPorPeriodo(
-  vendas: { timestamp: number; total: number }[],
+export function filtrarVendasPorPeriodo<T extends { timestamp: number }>(
+  itens: T[],
   periodo: string
-): { timestamp: number; total: number }[] {
+): T[] {
   const agora = new Date();
   const inicioHoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate()).getTime();
   const inicioSemana = new Date(agora);
@@ -118,13 +118,13 @@ export function filtrarVendasPorPeriodo(
 
   switch (periodo) {
     case "hoje":
-      return vendas.filter((v) => v.timestamp >= inicioHoje);
+      return itens.filter((v) => v.timestamp >= inicioHoje);
     case "semana":
-      return vendas.filter((v) => v.timestamp >= inicioSemana.getTime());
+      return itens.filter((v) => v.timestamp >= inicioSemana.getTime());
     case "mes":
-      return vendas.filter((v) => v.timestamp >= inicioMes);
+      return itens.filter((v) => v.timestamp >= inicioMes);
     default:
-      return vendas;
+      return itens;
   }
 }
 

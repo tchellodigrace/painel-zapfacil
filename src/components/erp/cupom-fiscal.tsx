@@ -138,13 +138,6 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
         {/* Logo */}
         {venda.empresa && (
           <div className="text-center mb-2">
-            {venda.logoBase64 && (
-              <img
-                src={venda.logoBase64}
-                alt="Logo"
-                className="max-h-24 max-w-[240px] object-contain mx-auto block mb-2"
-              />
-            )}
             <div className="font-bold text-center text-xs tracking-wide">
               {venda.empresa}
             </div>

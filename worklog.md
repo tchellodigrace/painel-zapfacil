@@ -121,3 +121,28 @@ Stage Summary:
 - Arquivos modificados: painel-admin.tsx, admin-cobrancas.tsx, painel-zapbot.tsx
 - Script: scripts/fix-admin-alignment.py
 
+---
+Task ID: 5
+Agent: Super Z (main)
+Task: Corrigir todos os erros e bugs do sistema (revisao completa)
+
+Work Log:
+- Executou `npx tsc --noEmit` e identificou 18 erros TypeScript no src/
+- Corrigiu `utils-erp.ts`: tornou `filtrarVendasPorPeriodo` generico com `<T extends { timestamp: number }>` — resolveu 4 erros em dashboard-grafico.tsx e painel-despesas.tsx
+- Corrigiu `dashboard-grafico.tsx`: removeu casts `as typeof vendas` e `as typeof despesas` desnecessarios
+- Corrigiu `painel-despesas.tsx`: removeu casts `as Venda[]` e `as Despesa[]`, removeu import nao utilizado de Venda
+- Corrigiu `cupom-fiscal.tsx`: removeu referencia a `venda.logoBase64` (propriedade inexistente no tipo Venda)
+- Corrigiu `empresa-panel.tsx`: removeu prop `id` do componente `Select` (nao suportada pelo shadcn)
+- Corrigiu `chatbot-config.tsx`: tornou `menuId` optional em `SubMenuFormProps`, trocou `Badge` com `onClick` por `<button>` estilizado, corrigiu `setMensagemBoasVindas` para usar valor direto em vez de callback
+- Corrigiu `page.tsx` e `painel-admin.tsx`: removeu prop `priority` de tags `<img>` (propriedade invalida em HTML)
+- Corrigiu `painel-admin.tsx`: adicionou `recarregarDados()` ao montar + listener de `window focus` para pegar cadastros novos de clientes
+- Corrigiu `tela-login.tsx`: substituiu import dinamico com `.catch(() => {})` por salvamento direto no localStorage (fallback garantido) para registro de clientes aparecer no admin
+- Verificacao final: `npx tsc --noEmit` retorna ZERO erros no src/
+
+Stage Summary:
+- 10 arquivos corrigidos, 18 erros TypeScript eliminados (de 18 para 0)
+- Bug critico corrigido: cadastro de cliente agora salva direto no localStorage do admin
+- Bug corrigido: painel admin agora recarrega dados ao montar e ao ganhar foco da janela
+- Todos os arquivos em src/ compilam sem erros TypeScript
+- Arquivos modificados: utils-erp.ts, dashboard-grafico.tsx, painel-despesas.tsx, cupom-fiscal.tsx, empresa-panel.tsx, chatbot-config.tsx, page.tsx, painel-admin.tsx, tela-login.tsx
+

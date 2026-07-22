@@ -209,7 +209,7 @@ function MenuItemForm({ item, onSave, onCancel }: MenuItemFormProps) {
 // Sub-menu form
 // =============================================
 interface SubMenuFormProps {
-  menuId: string;
+  menuId?: string;
   subItem?: SubMenuItem;
   onSave: (data: { numero: string; titulo: string; resposta: string; ativo: boolean }) => void;
   onCancel: () => void;
@@ -363,18 +363,16 @@ export function ZapBotChatbot() {
                 placeholder="Ola! Bem-vindo(a)..."
               />
               <div className="flex flex-wrap gap-1.5">
-                <Badge variant="outline" className="text-[10px] cursor-pointer" onClick={() => setMensagemBoasVindas((p) => p + "{menu}")}>
-                  {"{menu}"}
-                </Badge>
-                <Badge variant="outline" className="text-[10px] cursor-pointer" onClick={() => setMensagemBoasVindas((p) => p + "{empresa}")}>
-                  {"{empresa}"}
-                </Badge>
-                <Badge variant="outline" className="text-[10px] cursor-pointer" onClick={() => setMensagemBoasVindas((p) => p + "{nome}")}>
-                  {"{nome}"}
-                </Badge>
-                <Badge variant="outline" className="text-[10px] cursor-pointer" onClick={() => setMensagemBoasVindas((p) => p + "{telefone}")}>
-                  {"{telefone}"}
-                </Badge>
+                {["{menu}", "{empresa}", "{nome}", "{telefone}"].map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold transition-colors hover:bg-accent hover:text-accent-foreground"
+                    onClick={() => setMensagemBoasVindas(mensagemBoasVindas + tag)}
+                  >
+                    {tag}
+                  </button>
+                ))}
               </div>
               <p className="text-[11px] text-gray-400">
                 Use *texto* para negrito e _texto_ para italico no WhatsApp

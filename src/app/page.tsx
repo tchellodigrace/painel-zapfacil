@@ -112,7 +112,6 @@ export default function ZapFacilPage() {
               src="/logo-empresa.png"
               alt="Logo"
               className="h-11 w-auto object-contain"
-              priority
             />
           </div>
           <div className="flex items-center gap-2">
