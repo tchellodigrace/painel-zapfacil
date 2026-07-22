@@ -2166,7 +2166,7 @@ function SecaoSistemas({
 type AbaAdmin = "sistemas" | "cobrancas" | "recuperacoes" | "zapbot";
 
 function PainelAdminConteudo() {
-  const { sistemas, cobrancas, pedidosRecuperacao, adminCredenciais, dadosGestor, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos } =
+  const { sistemas, cobrancas, pedidosRecuperacao, adminCredenciais, dadosGestor, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos, recarregarDados } =
     useAdminStore();
   const [abaAtiva, setAbaAtiva] = useState<AbaAdmin>("sistemas");
   const [dialogForm, setDialogForm] = useState<SistemaCliente | null>(null);
@@ -2176,6 +2176,18 @@ function PainelAdminConteudo() {
   const [dialogTrocarSenha, setDialogTrocarSenha] = useState(false);
   const [dialogEmailRecuperacao, setDialogEmailRecuperacao] = useState(false);
   const [mostrarCredenciaisAdmin, setMostrarCredenciaisAdmin] = useState(false);
+
+  // Recarregar dados do localStorage ao montar (para pegar cadastros de clientes)
+  useEffect(() => {
+    recarregarDados();
+  }, [recarregarDados]);
+
+  // Tambem recarregar quando a janela ganha foco (usuario voltou do painel cliente)
+  useEffect(() => {
+    const handleFocus = () => recarregarDados();
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [recarregarDados]);
 
 const handleSalvarNovo = useCallback(
     (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {

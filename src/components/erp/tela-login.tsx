@@ -123,16 +123,50 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
     salvarCredenciais(cred);
     criarSessao();
 
+    // Salvar registro do cliente no localStorage (visivel pelo admin)
+    const registroCliente = {
+      usuario: nomeResponsavel.trim(),
+      nomeEmpresa: nomeEmpresa.trim(),
+      telefone: telefone.trim(),
+      email: email.trim().toLowerCase(),
+      senha,
+      registradoEm: new Date().toISOString(),
+    };
+
+    // Metodo 1: salvar direto no localStorage como sistema novo (fallback garantido)
+    const ADMIN_PREFIX = "zapfacil_admin_";
+    try {
+      const sistemasRaw = localStorage.getItem(`${ADMIN_PREFIX}sistemas`);
+      const sistemas = sistemasRaw ? JSON.parse(sistemasRaw) : [];
+      const novoSistema = {
+        id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        empresa: registroCliente.nomeEmpresa,
+        responsavel: registroCliente.usuario,
+        telefone: registroCliente.telefone,
+        email: registroCliente.email,
+        cidade: "",
+        dataInstalacao: new Date().toISOString().split("T")[0],
+        dataVencimento: "",
+        status: "TRIAL",
+        plano: "PRO",
+        tipoLicenca: "ALUGUEL",
+        valorMensal: 0,
+        valorAquisicao: 0,
+        taxaInstalacao: 0,
+        observacoes: "Registro automatico via link",
+        criadoEm: registroCliente.registradoEm,
+        dadosRegistro: registroCliente,
+      };
+      sistemas.unshift(novoSistema);
+      localStorage.setItem(`${ADMIN_PREFIX}sistemas`, JSON.stringify(sistemas));
+    } catch (e) {
+      console.error("Erro ao salvar registro no admin store:", e);
+    }
+
+    // Metodo 2: tentar via Zustand store (se disponivel)
     try {
       import("@/hooks/use-admin-store").then(({ useAdminStore }) => {
-        useAdminStore.getState().salvarRegistroCliente({
-          usuario: nomeResponsavel.trim(),
-          nomeEmpresa: nomeEmpresa.trim(),
-          telefone: telefone.trim(),
-          email: email.trim(),
-          senha,
-          registradoEm: new Date().toISOString(),
-        });
+        useAdminStore.getState().recarregarDados();
       }).catch(() => {});
     } catch {
       // Admin store pode nao estar disponivel
