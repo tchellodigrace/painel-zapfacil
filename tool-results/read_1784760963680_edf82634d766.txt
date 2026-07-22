@@ -1,3 +1,128 @@
+     1→"use client";
+     2→
+     3→import { useState, useEffect, useCallback } from "react";
+     4→import { Button } from "@/components/ui/button";
+     5→import { Input } from "@/components/ui/input";
+     6→import { Label } from "@/components/ui/label";
+     7→import {
+     8→  Eye,
+     9→  EyeOff,
+    10→  Lock,
+    11→  ArrowRight,
+    12→  ShieldCheck,
+    13→  Mail,
+    14→  Building2,
+    15→  User,
+    16→} from "lucide-react";
+    17→import { toast } from "sonner";
+    18→import {
+    19→  Dialog,
+    20→  DialogContent,
+    21→  DialogHeader,
+    22→  DialogTitle,
+    23→} from "@/components/ui/dialog";
+    24→import { Phone } from "lucide-react";
+    25→
+    26→const AUTH_KEY = "zapfacil_auth";
+    27→const SESSION_KEY = "zapfacil_session";
+    28→
+    29→interface Credenciais {
+    30→  email: string;
+    31→  senha: string;
+    32→  nomeEmpresa: string;
+    33→  nomeResponsavel: string;
+    34→  telefone: string;
+    35→}
+    36→
+    37→function carregarCredenciais(): Credenciais | null {
+    38→  if (typeof window === "undefined") return null;
+    39→  try {
+    40→    const item = localStorage.getItem(AUTH_KEY);
+    41→    return item ? (JSON.parse(item) as Credenciais) : null;
+    42→  } catch {
+    43→    return null;
+    44→  }
+    45→}
+    46→
+    47→function salvarCredenciais(cred: Credenciais): void {
+    48→  if (typeof window === "undefined") return;
+    49→  localStorage.setItem(AUTH_KEY, JSON.stringify(cred));
+    50→}
+    51→
+    52→function criarSessao(): void {
+    53→  if (typeof window === "undefined") return;
+    54→  sessionStorage.setItem(SESSION_KEY, "autenticado");
+    55→}
+    56→
+    57→function verificarSessao(): boolean {
+    58→  if (typeof window === "undefined") return false;
+    59→  return sessionStorage.getItem(SESSION_KEY) === "autenticado";
+    60→}
+    61→
+    62→function destruirSessao(): void {
+    63→  if (typeof window === "undefined") return;
+    64→  sessionStorage.removeItem(SESSION_KEY);
+    65→}
+    66→
+    67→export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
+    68→  const [temCredenciais, setTemCredenciais] = useState<boolean | null>(null);
+    69→  const [mostrarCadastro, setMostrarCadastro] = useState(false);
+    70→  const [email, setEmail] = useState("");
+    71→  const [senha, setSenha] = useState("");
+    72→  const [confirmarSenha, setConfirmarSenha] = useState("");
+    73→  const [nomeEmpresa, setNomeEmpresa] = useState("");
+    74→  const [nomeResponsavel, setNomeResponsavel] = useState("");
+    75→  const [telefone, setTelefone] = useState("");
+    76→  const [mostrarSenha, setMostrarSenha] = useState(false);
+    77→  const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
+    78→  const [carregando, setCarregando] = useState(false);
+    79→  const [etapaCadastro, setEtapaCadastro] = useState(0);
+    80→  const [dialogRecuperar, setDialogRecuperar] = useState(false);
+    81→  const [recuperarEmail, setRecuperarEmail] = useState("");
+    82→  const [recuperarTelefone, setRecuperarTelefone] = useState("");
+    83→  const [enviandoPedido, setEnviandoPedido] = useState(false);
+    84→
+    85→  useEffect(() => {
+    86→    if (verificarSessao()) {
+    87→      onAutenticado();
+    88→      return;
+    89→    }
+    90→    const cred = carregarCredenciais();
+    91→    setTemCredenciais(!!cred);
+    92→  }, [onAutenticado]);
+    93→
+    94→  const handleCriarConta = useCallback(() => {
+    95→    if (!nomeEmpresa.trim()) {
+    96→      toast.error("Informe o nome da empresa.");
+    97→      return;
+    98→    }
+    99→    if (!nomeResponsavel.trim()) {
+   100→      toast.error("Informe seu nome.");
+   101→      return;
+   102→    }
+   103→    if (!email.trim() || !email.includes("@")) {
+   104→      toast.error("Informe um e-mail valido.");
+   105→      return;
+   106→    }
+   107→    if (!senha.trim() || senha.length < 6) {
+   108→      toast.error("A senha deve ter pelo menos 6 caracteres.");
+   109→      return;
+   110→    }
+   111→    if (senha !== confirmarSenha) {
+   112→      toast.error("As senhas nao conferem.");
+   113→      return;
+   114→    }
+   115→
+   116→    const cred: Credenciais = {
+   117→      email: email.trim().toLowerCase(),
+   118→      senha,
+   119→      nomeEmpresa: nomeEmpresa.trim(),
+   120→      nomeResponsavel: nomeResponsavel.trim(),
+   121→      telefone: telefone.trim(),
+   122→    };
+   123→    salvarCredenciais(cred);
+   124→    criarSessao();
+   125→
    126→    // Salvar registro do cliente no localStorage (visivel pelo admin)
    127→    const registroCliente = {
    128→      usuario: nomeResponsavel.trim(),

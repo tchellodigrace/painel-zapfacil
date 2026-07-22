@@ -49,18 +49,37 @@ function verificarSessao(): boolean {
   return sessionStorage.getItem(SESSION_KEY) === "autenticado";
 }
 
+const AUTH_KEY = "zapfacil_auth";
+
+function carregarNomeLogin(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const item = localStorage.getItem(AUTH_KEY);
+    if (!item) return "";
+    const cred = JSON.parse(item);
+    return cred?.nomeResponsavel || "";
+  } catch {
+    return "";
+  }
+}
+
 export default function ZapFacilPage() {
   const { theme, setTheme } = useTheme();
   const [autenticado, setAutenticado] = useState<boolean | null>(null);
   const [vendaAtual, setVendaAtual] = useState<Venda | null>(null);
   const [abaAtiva, setAbaAtiva] = useState("lancamento");
+  const [nomeLogin, setNomeLogin] = useState("");
 
   useEffect(() => {
     setAutenticado(verificarSessao());
+    if (verificarSessao()) {
+      setNomeLogin(carregarNomeLogin());
+    }
   }, []);
 
   const handleAutenticado = useCallback(() => {
     setAutenticado(true);
+    setNomeLogin(carregarNomeLogin());
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -107,12 +126,18 @@ export default function ZapFacilPage() {
       {/* Header */}
       <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             <img
               src="/logo-empresa.png"
               alt="Logo"
               className="h-11 w-auto object-contain"
             />
+            {nomeLogin && (
+              <div className="hidden sm:flex flex-col">
+                <span className="text-xs text-gray-400 dark:text-gray-500 leading-tight">Ola,</span>
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200 leading-tight">{nomeLogin}</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Badge
