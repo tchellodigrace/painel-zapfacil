@@ -1,0 +1,707 @@
+  2120→                                    <TooltipContent>Cobrancas</TooltipContent>
+  2121→                                  </Tooltip>
+  2122→                                </TooltipProvider>
+  2123→                                {s.telefone && (
+  2124→                                  <TooltipProvider>
+  2125→                                    <Tooltip>
+  2126→                                      <TooltipTrigger asChild>
+  2127→                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-500 hover:text-emerald-700" onClick={() => onWhatsApp(s.telefone)}>
+  2128→                                          <MessageCircle className="h-3.5 w-3.5" />
+  2129→                                        </Button>
+  2130→                                      </TooltipTrigger>
+  2131→                                      <TooltipContent>WhatsApp</TooltipContent>
+  2132→                                    </Tooltip>
+  2133→                                  </TooltipProvider>
+  2134→                                )}
+  2135→                                <TooltipProvider>
+  2136→                                  <Tooltip>
+  2137→                                    <TooltipTrigger asChild>
+  2138→                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-600" onClick={() => onRemover(s.id)}>
+  2139→                                        <Trash2 className="h-3.5 w-3.5" />
+  2140→                                      </Button>
+  2141→                                    </TooltipTrigger>
+  2142→                                    <TooltipContent>Remover</TooltipContent>
+  2143→                                  </Tooltip>
+  2144→                                </TooltipProvider>
+  2145→                              </div>
+  2146→                            </td>
+  2147→                          </tr>
+  2148→                        );
+  2149→                      })}
+  2150→                    </tbody>
+  2151→                  </table>
+  2152→                </div>
+  2153→              </CardContent>
+  2154→            </Card>
+  2155→
+  2156→            <div className="text-center text-[10px] text-gray-400 pb-4">
+  2157→              {sistemasFiltrados.length} de {sistemas.length} sistema{sistemas.length !== 1 ? "s" : ""}
+  2158→            </div>
+  2159→    </div>
+  2160→  );
+  2161→}
+  2162→
+  2163→// =============================================
+  2164→// PAINEL ADMIN PRINCIPAL COM ABAS
+  2165→// =============================================
+  2166→type AbaAdmin = "sistemas" | "cobrancas" | "recuperacoes" | "zapbot";
+  2167→
+  2168→function PainelAdminConteudo() {
+  2169→  const { sistemas, cobrancas, pedidosRecuperacao, adminCredenciais, dadosGestor, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos, recarregarDados } =
+  2170→    useAdminStore();
+  2171→  const [abaAtiva, setAbaAtiva] = useState<AbaAdmin>("sistemas");
+  2172→  const [dialogForm, setDialogForm] = useState<SistemaCliente | null>(null);
+  2173→  const [dialogNovo, setDialogNovo] = useState(false);
+  2174→  const [dialogDetalhe, setDialogDetalhe] = useState<SistemaCliente | null>(null);
+  2175→  const [confirmaRemover, setConfirmaRemover] = useState<string | null>(null);
+  2176→  const [dialogTrocarSenha, setDialogTrocarSenha] = useState(false);
+  2177→  const [dialogEmailRecuperacao, setDialogEmailRecuperacao] = useState(false);
+  2178→  const [mostrarCredenciaisAdmin, setMostrarCredenciaisAdmin] = useState(false);
+  2179→
+  2180→  // Recarregar dados do localStorage ao montar (para pegar cadastros de clientes)
+  2181→  useEffect(() => {
+  2182→    recarregarDados();
+  2183→  }, [recarregarDados]);
+  2184→
+  2185→  // Tambem recarregar quando a janela ganha foco (usuario voltou do painel cliente)
+  2186→  useEffect(() => {
+  2187→    const handleFocus = () => recarregarDados();
+  2188→    window.addEventListener("focus", handleFocus);
+  2189→    return () => window.removeEventListener("focus", handleFocus);
+  2190→  }, [recarregarDados]);
+  2191→
+  2192→const handleSalvarNovo = useCallback(
+  2193→    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
+  2194→      adicionarSistema(dados);
+  2195→      setDialogNovo(false);
+  2196→      toast.success("Sistema cadastrado!");
+  2197→    },
+  2198→    [adicionarSistema]
+  2199→  );
+  2200→
+  2201→  const handleSalvarEdicao = useCallback(
+  2202→    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
+  2203→      if (!dialogForm) return;
+  2204→      editarSistema(dialogForm.id, dados);
+  2205→      setDialogForm(null);
+  2206→      toast.success("Sistema atualizado!");
+  2207→    },
+  2208→    [dialogForm, editarSistema]
+  2209→  );
+  2210→
+  2211→  const handleRemover = useCallback(
+  2212→    (id: string) => {
+  2213→      removerSistema(id);
+  2214→      setConfirmaRemover(null);
+  2215→      toast.success("Sistema removido.");
+  2216→    },
+  2217→    [removerSistema]
+  2218→  );
+  2219→
+  2220→  const handleWhatsApp = (telefone: string) => {
+  2221→    const telLimpo = telefone.replace(/\D/g, "");
+  2222→    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+  2223→    window.open(`https://wa.me/${numero}`, "_blank");
+  2224→  };
+  2225→
+  2226→  const handleLogout = () => {
+  2227→    sessionStorage.removeItem("zapfacil_admin_session");
+  2228→    window.location.reload();
+  2229→  };
+  2230→
+  2231→  const getStatusInfo = (status: StatusSistema) =>
+  2232→    STATUS_SISTEMA.find((s) => s.valor === status) || STATUS_SISTEMA[3];
+  2233→  const getPlanoInfo = (plano: PlanoSistema) =>
+  2234→    PLANOS.find((p) => p.valor === plano) || PLANOS[0];
+  2235→  const getTipoLicencaInfo = (tipo: TipoLicenca) =>
+  2236→    TIPOS_LICENCA.find((t) => t.valor === tipo) || TIPOS_LICENCA[0];
+  2237→
+  2238→  // Cobranças pendentes/atrasadas para badge
+  2239→  const cobrancasEmAberto = useMemo(
+  2240→    () => cobrancas.filter((c) => c.status === "PENDENTE" || c.status === "ATRASADO").length,
+  2241→    [cobrancas]
+  2242→  );
+  2243→
+  2244→  // Pedidos de recuperacao pendentes
+  2245→  const pedidosPendentes = useMemo(
+  2246→    () => pedidosRecuperacao.filter((p) => p.status === "PENDENTE").length,
+  2247→    [pedidosRecuperacao]
+  2248→  );
+  2249→
+  2250→  return (
+  2251→    <div className="min-h-screen flex flex-col bg-gray-50">
+  2252→      {/* Header */}
+  2253→      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+  2254→        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
+  2255→          <div className="flex items-center">
+  2256→            <img
+  2257→              src="/logo-admin.png"
+  2258→              alt="Logo Admin"
+  2259→              className="h-11 w-auto object-contain"
+  2260→            />
+  2261→          </div>
+  2262→          <div className="flex items-center gap-2">
+  2263→            {/* Dados do admin logado - estilo cliente */}
+  2264→            <button
+  2265→              type="button"
+  2266→              onClick={() => setMostrarCredenciaisAdmin(!mostrarCredenciaisAdmin)}
+  2267→              className="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
+  2268→            >
+  2269→              <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold">
+  2270→                {(dadosGestor?.nome || adminCredenciais?.usuario || "A").charAt(0).toUpperCase()}
+  2271→              </div>
+  2272→              <div className="text-left hidden md:block">
+  2273→                <p className="text-xs font-semibold text-gray-800 leading-tight">
+  2274→                  {dadosGestor?.nome || adminCredenciais?.usuario || "Admin"}
+  2275→                </p>
+  2276→                <p className="text-[10px] text-gray-400 leading-tight flex items-center gap-1">
+  2277→                  {mostrarCredenciaisAdmin ? (
+  2278→                    <span className="font-mono text-gray-500">
+  2279→                      {adminCredenciais?.usuario} / {adminCredenciais?.senha}
+  2280→                    </span>
+  2281→                  ) : (
+  2282→                    <><Mail className="h-2.5 w-2.5 shrink-0" />{dadosGestor?.email || adminCredenciais?.usuario}</>
+  2283→                  )}
+  2284→                </p>
+  2285→              </div>
+  2286→            </button>
+  2287→            <TooltipProvider>
+  2288→              <Tooltip>
+  2289→                <TooltipTrigger asChild>
+  2290→                  <Button
+  2291→                    variant="ghost"
+  2292→                    size="icon"
+  2293→                    className="h-8 w-8 text-gray-600 hover:bg-gray-100"
+  2294→                    onClick={() => setDialogTrocarSenha(true)}
+  2295→                  >
+  2296→                    <KeyRound className="h-4 w-4" />
+  2297→                  </Button>
+  2298→                </TooltipTrigger>
+  2299→                <TooltipContent>Alterar Senha</TooltipContent>
+  2300→              </Tooltip>
+  2301→            </TooltipProvider>
+  2302→            <TooltipProvider>
+  2303→              <Tooltip>
+  2304→                <TooltipTrigger asChild>
+  2305→                  <Button
+  2306→                    variant="ghost"
+  2307→                    size="icon"
+  2308→                    className="h-8 w-8 text-blue-500 hover:bg-blue-50"
+  2309→                    onClick={() => setDialogEmailRecuperacao(true)}
+  2310→                  >
+  2311→                    <Mail className="h-4 w-4" />
+  2312→                  </Button>
+  2313→                </TooltipTrigger>
+  2314→                <TooltipContent>E-mail de Recuperacao</TooltipContent>
+  2315→              </Tooltip>
+  2316→            </TooltipProvider>
+  2317→            <TooltipProvider>
+  2318→              <Tooltip>
+  2319→                <TooltipTrigger asChild>
+  2320→                  <Button
+  2321→                    variant="ghost"
+  2322→                    size="icon"
+  2323→                    className="h-8 w-8 text-red-500 hover:bg-red-50"
+  2324→                    onClick={handleLogout}
+  2325→                  >
+  2326→                    <LogOut className="h-4 w-4" />
+  2327→                  </Button>
+  2328→                </TooltipTrigger>
+  2329→                <TooltipContent>Sair</TooltipContent>
+  2330→              </Tooltip>
+  2331→            </TooltipProvider>
+  2332→          </div>
+  2333→        </div>
+  2334→      </header>
+  2335→
+  2336→      <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
+  2337→        {/* Abas de navegação */}
+  2338→        <div className="grid grid-cols-2 sm:grid-cols-4 bg-white rounded-xl p-1 border border-gray-200 shadow-sm">
+  2339→          <button
+  2340→            onClick={() => setAbaAtiva("sistemas")}
+  2341→            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+  2342→              abaAtiva === "sistemas"
+  2343→                ? "bg-emerald-600 text-white shadow-sm"
+  2344→                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+  2345→            }`}
+  2346→          >
+  2347→            <Monitor className="h-4 w-4 shrink-0" />
+  2348→            <span className="truncate text-xs sm:text-sm">Sistemas</span>
+  2349→            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
+  2350→              abaAtiva === "sistemas"
+  2351→                ? "bg-white/20 text-white"
+  2352→                : "bg-gray-100 text-gray-500"
+  2353→            }`}>
+  2354→              {sistemas.length}
+  2355→            </span>
+  2356→          </button>
+  2357→          <button
+  2358→            onClick={() => setAbaAtiva("cobrancas")}
+  2359→            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+  2360→              abaAtiva === "cobrancas"
+  2361→                ? "bg-emerald-600 text-white shadow-sm"
+  2362→                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+  2363→            }`}
+  2364→          >
+  2365→            <Receipt className="h-4 w-4 shrink-0" />
+  2366→            <span className="truncate text-xs sm:text-sm">Cobrancas</span>
+  2367→            {cobrancasEmAberto > 0 && (
+  2368→              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
+  2369→                abaAtiva === "cobrancas"
+  2370→                  ? "bg-white/20 text-white"
+  2371→                  : "bg-red-100 text-red-600"
+  2372→              }`}>
+  2373→                {cobrancasEmAberto}
+  2374→              </span>
+  2375→            )}
+  2376→          </button>
+  2377→          <button
+  2378→            onClick={() => setAbaAtiva("recuperacoes")}
+  2379→            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+  2380→              abaAtiva === "recuperacoes"
+  2381→                ? "bg-amber-500 text-white shadow-sm"
+  2382→                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+  2383→            }`}
+  2384→          >
+  2385→            <KeyRound className="h-4 w-4 shrink-0" />
+  2386→            <span className="truncate text-xs sm:text-sm">Recuperacoes</span>
+  2387→            {pedidosPendentes > 0 && (
+  2388→              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
+  2389→                abaAtiva === "recuperacoes"
+  2390→                  ? "bg-white/20 text-white"
+  2391→                  : "bg-amber-100 text-amber-600"
+  2392→              }`}>
+  2393→                {pedidosPendentes}
+  2394→              </span>
+  2395→            )}
+  2396→          </button>
+  2397→          <button
+  2398→            onClick={() => setAbaAtiva("zapbot")}
+  2399→            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+  2400→              abaAtiva === "zapbot"
+  2401→                ? "bg-purple-600 text-white shadow-sm"
+  2402→                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+  2403→            }`}
+  2404→          >
+  2405→            <Bot className="h-4 w-4 shrink-0" />
+  2406→            <span className="truncate text-xs sm:text-sm">ZapBot</span>
+  2407→          </button>
+  2408→        </div>
+  2409→
+  2410→        {/* Conteúdo da aba ativa */}
+  2411→        {abaAtiva === "cobrancas" ? (
+  2412→          <PainelCobranças />
+  2413→        ) : abaAtiva === "recuperacoes" ? (
+  2414→          <SecaoRecuperacoes />
+  2415→        ) : abaAtiva === "zapbot" ? (
+  2416→          <PainelZapBot />
+  2417→        ) : (
+  2418→          <SecaoSistemas
+  2419→            onNovo={() => setDialogNovo(true)}
+  2420→            onVerDetalhe={setDialogDetalhe}
+  2421→            onEditar={setDialogForm}
+  2422→            onRemover={setConfirmaRemover}
+  2423→            onMudarAba={setAbaAtiva}
+  2424→            onWhatsApp={handleWhatsApp}
+  2425→          />
+  2426→        )}
+  2427→      </main>
+  2428→
+  2429→      {/* Dialog Novo Sistema */}
+  2430→      <Dialog open={dialogNovo} onOpenChange={() => setDialogNovo(false)}>
+  2431→        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+  2432→          <DialogHeader>
+  2433→            <DialogTitle className="flex items-center gap-2 text-base">
+  2434→              <Plus className="h-5 w-5 text-emerald-600" />
+  2435→              Cadastrar Novo Sistema
+  2436→            </DialogTitle>
+  2437→          </DialogHeader>
+  2438→          <FormularioSistema
+  2439→            onSalvar={handleSalvarNovo}
+  2440→            onCancelar={() => setDialogNovo(false)}
+  2441→          />
+  2442→        </DialogContent>
+  2443→      </Dialog>
+  2444→
+  2445→      {/* Dialog Editar Sistema */}
+  2446→      <Dialog open={!!dialogForm} onOpenChange={() => setDialogForm(null)}>
+  2447→        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+  2448→          <DialogHeader>
+  2449→            <DialogTitle className="flex items-center gap-2 text-base">
+  2450→              <Pencil className="h-5 w-5 text-blue-600" />
+  2451→              Editar Sistema
+  2452→            </DialogTitle>
+  2453→          </DialogHeader>
+  2454→          {dialogForm && (
+  2455→            <FormularioSistema
+  2456→              sistema={dialogForm}
+  2457→              onSalvar={handleSalvarEdicao}
+  2458→              onCancelar={() => setDialogForm(null)}
+  2459→            />
+  2460→          )}
+  2461→        </DialogContent>
+  2462→      </Dialog>
+  2463→
+  2464→      {/* Dialog Detalhes */}
+  2465→      <Dialog open={!!dialogDetalhe} onOpenChange={() => setDialogDetalhe(null)}>
+  2466→        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+  2467→          <DialogHeader>
+  2468→            <DialogTitle className="flex items-center gap-2 text-base">
+  2469→              <Eye className="h-5 w-5 text-emerald-600" />
+  2470→              Detalhes do Sistema
+  2471→            </DialogTitle>
+  2472→          </DialogHeader>
+  2473→          {dialogDetalhe && (
+  2474→            <div className="space-y-4">
+  2475→              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+  2476→                <div className="flex items-start justify-between">
+  2477→                  <div>
+  2478→                    <p className="font-bold text-gray-900">{dialogDetalhe.empresa}</p>
+  2479→                    <p className="text-sm text-gray-500">{dialogDetalhe.responsavel}</p>
+  2480→                  </div>
+  2481→                  <div className="flex gap-1.5 flex-wrap justify-end">
+  2482→                    <Badge className={`text-[10px] font-semibold ${getStatusInfo(dialogDetalhe.status).cor}`}>
+  2483→                      {getStatusInfo(dialogDetalhe.status).label}
+  2484→                    </Badge>
+  2485→                    <Badge className={`text-[10px] font-semibold ${getPlanoInfo(dialogDetalhe.plano).cor}`}>
+  2486→                      {getPlanoInfo(dialogDetalhe.plano).label}
+  2487→                    </Badge>
+  2488→                    <Badge className={`text-[10px] font-semibold ${getTipoLicencaInfo(dialogDetalhe.tipoLicenca).cor}`}>
+  2489→                      {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).label}
+  2490→                    </Badge>
+  2491→                  </div>
+  2492→                </div>
+  2493→                <Separator />
+  2494→                <div className="grid grid-cols-2 gap-3 text-sm">
+  2495→                  <div>
+  2496→                    <p className="text-[10px] text-gray-400 uppercase font-medium">Telefone</p>
+  2497→                    <p className="text-gray-700">{dialogDetalhe.telefone || "-"}</p>
+  2498→                  </div>
+  2499→                  <div>
+  2500→                    <p className="text-[10px] text-gray-400 uppercase font-medium">E-mail</p>
+  2501→                    <p className="text-gray-700">{dialogDetalhe.email || "-"}</p>
+  2502→                  </div>
+  2503→                  <div>
+  2504→                    <p className="text-[10px] text-gray-400 uppercase font-medium">Cidade</p>
+  2505→                    <p className="text-gray-700">{dialogDetalhe.cidade || "-"}</p>
+  2506→                  </div>
+  2507→                  <div>
+  2508→                    <p className="text-[10px] text-gray-400 uppercase font-medium">Tipo de Licenca</p>
+  2509→                    <p className="text-gray-700">
+  2510→                      {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).label}
+  2511→                      <span className="text-[10px] text-gray-400 block">
+  2512→                        {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).descricao}
+  2513→                      </span>
+  2514→                    </p>
+  2515→                  </div>
+  2516→                  {dialogDetalhe.tipoLicenca === "ALUGUEL" ? (
+  2517→                    <>
+  2518→                      <div>
+  2519→                        <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Mensal</p>
+  2520→                        <p className="text-emerald-600 font-bold">{formatarMoeda(dialogDetalhe.valorMensal)}</p>
+  2521→                      </div>
+  2522→                      <div>
+  2523→                        <p className="text-[10px] text-gray-400 uppercase font-medium">Vencimento</p>
+  2524→                        <p className={dialogDetalhe.status === "ATIVO" && diasRestantes(dialogDetalhe.dataVencimento) <= 7 ? "text-amber-600 font-bold" : "text-gray-700"}>
+  2525→                          {formatarData(dialogDetalhe.dataVencimento)}
+  2526→                          {dialogDetalhe.status === "ATIVO" && (
+  2527→                            <span className="block text-[11px]">
+  2528→                              {diasRestantes(dialogDetalhe.dataVencimento) > 0
+  2529→                                ? `${diasRestantes(dialogDetalhe.dataVencimento)} dias restantes`
+  2530→                                : "Vencido!"}
+  2531→                            </span>
+  2532→                          )}
+  2533→                        </p>
+  2534→                      </div>
+  2535→                    </>
+  2536→                  ) : (
+  2537→                    <div className="col-span-2">
+  2538→                      <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Aquisicao</p>
+  2539→                      <p className="text-emerald-600 font-bold text-lg">{formatarMoeda(dialogDetalhe.valorAquisicao)}</p>
+  2540→                      <p className="text-[10px] text-gray-400">Pagamento unico - licenca definitiva</p>
+  2541→                    </div>
+  2542→                  )}
+  2543→                  <div>
+  2544→                    <p className="text-[10px] text-gray-400 uppercase font-medium">Instalacao</p>
+  2545→                    <p className="text-gray-700">{formatarData(dialogDetalhe.dataInstalacao)}</p>
+  2546→                  </div>
+  2547→                  {dialogDetalhe.taxaInstalacao > 0 && (
+  2548→                    <div>
+  2549→                      <p className="text-[10px] text-gray-400 uppercase font-medium">Taxa Instalacao</p>
+  2550→                      <p className="text-gray-700">{formatarMoeda(dialogDetalhe.taxaInstalacao)}</p>
+  2551→                    </div>
+  2552→                  )}
+  2553→                </div>
+  2554→                {dialogDetalhe.observacoes && (
+  2555→                  <>
+  2556→                    <Separator />
+  2557→                    <div>
+  2558→                      <p className="text-[10px] text-gray-400 uppercase font-medium mb-1">Observacoes</p>
+  2559→                      <p className="text-sm text-gray-500">{dialogDetalhe.observacoes}</p>
+  2560→                    </div>
+  2561→                  </>
+  2562→                )}
+  2563→                {dialogDetalhe.dadosRegistro && (
+  2564→                  <>
+  2565→                    <Separator />
+  2566→                    <div>
+  2567→                      <p className="text-[10px] text-emerald-600 uppercase font-semibold mb-2 flex items-center gap-1">
+  2568→                        <Check className="h-3 w-3" />
+  2569→                        Dados do Cadastro do Cliente
+  2570→                      </p>
+  2571→                      <div className="grid grid-cols-2 gap-2 text-sm bg-emerald-50/50 rounded-lg p-3 border border-emerald-100">
+  2572→                        <div>
+  2573→                          <p className="text-[10px] text-gray-400">Usuario criado</p>
+  2574→                          <p className="text-gray-700 font-medium">{dialogDetalhe.dadosRegistro.usuario}</p>
+  2575→                        </div>
+  2576→                        <div>
+  2577→                          <p className="text-[10px] text-gray-400">Empresa cadastrada</p>
+  2578→                          <p className="text-gray-700 font-medium">{dialogDetalhe.dadosRegistro.nomeEmpresa}</p>
+  2579→                        </div>
+  2580→                        {dialogDetalhe.dadosRegistro.telefone && (
+  2581→                          <div>
+  2582→                            <p className="text-[10px] text-gray-400">Telefone</p>
+  2583→                            <p className="text-gray-700">{dialogDetalhe.dadosRegistro.telefone}</p>
+  2584→                          </div>
+  2585→                        )}
+  2586→                        {dialogDetalhe.dadosRegistro.email && (
+  2587→                          <div>
+  2588→                            <p className="text-[10px] text-gray-400">E-mail</p>
+  2589→                            <p className="text-gray-700">{dialogDetalhe.dadosRegistro.email}</p>
+  2590→                          </div>
+  2591→                        )}
+  2592→                        <div className="col-span-2">
+  2593→                          <p className="text-[10px] text-gray-400">Registrado em</p>
+  2594→                          <p className="text-gray-700 text-xs">
+  2595→                            {new Date(dialogDetalhe.dadosRegistro.registradoEm).toLocaleString("pt-BR")}
+  2596→                          </p>
+  2597→                        </div>
+  2598→                      </div>
+  2599→                    </div>
+  2600→                  </>
+  2601→                )}
+  2602→
+  2603→                {/* Credenciais de Acesso do Cliente */}
+  2604→                <div className="bg-gray-900 rounded-xl p-4 text-white">
+  2605→                  <p className="text-[10px] text-gray-400 uppercase font-semibold mb-3 flex items-center gap-1.5">
+  2606→                    <KeyRound className="h-3.5 w-3.5" />
+  2607→                    Credenciais de Acesso do Cliente
+  2608→                  </p>
+  2609→                  <div className="space-y-3">
+  2610→                    <div>
+  2611→                      <p className="text-[10px] text-gray-500 mb-1">E-mail de login (usuario)</p>
+  2612→                      <div className="bg-white/10 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+  2613→                        <p className="text-sm font-mono font-semibold text-white truncate">
+  2614→                          {dialogDetalhe.dadosRegistro?.email || dialogDetalhe.email || "-"}
+  2615→                        </p>
+  2616→                        <button
+  2617→                          type="button"
+  2618→                          onClick={() => {
+  2619→                            const emailCopiar = dialogDetalhe.dadosRegistro?.email || dialogDetalhe.email || "";
+  2620→                            navigator.clipboard.writeText(emailCopiar);
+  2621→                            toast.success("E-mail copiado!");
+  2622→                          }}
+  2623→                          className="shrink-0 text-gray-400 hover:text-white transition-colors"
+  2624→                        >
+  2625→                          <Copy className="h-4 w-4" />
+  2626→                        </button>
+  2627→                      </div>
+  2628→                    </div>
+  2629→                    <div>
+  2630→                      <p className="text-[10px] text-gray-500 mb-1">Senha</p>
+  2631→                      <div className="bg-white/10 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+  2632→                        <p className="text-sm font-mono font-semibold text-white">
+  2633→                          {dialogDetalhe.dadosRegistro?.senha || "Nao registrada (cadastro antigo)"}
+  2634→                        </p>
+  2635→                        {dialogDetalhe.dadosRegistro?.senha && (
+  2636→                          <button
+  2637→                            type="button"
+  2638→                            onClick={() => {
+  2639→                              navigator.clipboard.writeText(dialogDetalhe.dadosRegistro!.senha);
+  2640→                              toast.success("Senha copiada!");
+  2641→                            }}
+  2642→                            className="shrink-0 text-gray-400 hover:text-white transition-colors"
+  2643→                          >
+  2644→                            <Copy className="h-4 w-4" />
+  2645→                          </button>
+  2646→                        )}
+  2647→                      </div>
+  2648→                    </div>
+  2649→                    <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2">
+  2650→                      <span className="text-[10px] text-gray-500">Link de acesso:</span>
+  2651→                      <span className="text-[11px] text-gray-300 font-mono truncate flex-1">https://j1ewd51wcs60-d.space-z.ai/</span>
+  2652→                    </div>
+  2653→                    {dialogDetalhe.dadosRegistro?.senha && (
+  2654→                      <Button
+  2655→                        className="w-full h-9 bg-emerald-600 hover:bg-emerald-700 text-xs font-medium rounded-lg"
+  2656→                        onClick={() => {
+  2657→                          const emailLogin = dialogDetalhe.dadosRegistro?.email || dialogDetalhe.email || "";
+  2658→                          const senhaCliente = dialogDetalhe.dadosRegistro?.senha || "";
+  2659→                          const tel = dialogDetalhe.dadosRegistro?.telefone || dialogDetalhe.telefone || "";
+  2660→                          if (!tel) { toast.error("Sem telefone cadastrado."); return; }
+  2661→                          const telLimpo = tel.replace(/\D/g, "");
+  2662→                          const numero = telLimpo.startsWith("55") ? telLimpo : "55" + telLimpo;
+  2663→                          const nomeCliente = dialogDetalhe.dadosRegistro?.usuario || dialogDetalhe.responsavel;
+  2664→                          const msg = encodeURIComponent(
+  2665→                            "Ola " + nomeCliente + "! Aqui e o suporte do ZapFacil Pro.\n\n" +
+  2666→                            "Segue seus dados de acesso ao sistema:\n\n" +
+  2667→                            "Link: https://j1ewd51wcs60-d.space-z.ai/\n" +
+  2668→                            "Login (e-mail): " + emailLogin + "\n" +
+  2669→                            "Senha: " + senhaCliente + "\n\n" +
+  2670→                            "Salve esses dados! Qualquer duvida, estou a disposicao."
+  2671→                          );
+  2672→                          window.open("https://wa.me/" + numero + "?text=" + msg, "_blank");
+  2673→                        }}
+  2674→                      >
+  2675→                        <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+  2676→                        Enviar credenciais por WhatsApp
+  2677→                      </Button>
+  2678→                    )}
+  2679→                    {!dialogDetalhe.dadosRegistro?.senha && (
+  2680→                      <p className="text-[10px] text-amber-400 text-center">
+  2681→                        A senha nao foi salva no cadastro. Clientes cadastrados antes da atualizacao nao tem a senha registrada.
+  2682→                      </p>
+  2683→                    )}
+  2684→                  </div>
+  2685→                </div>
+  2686→              </div>
+  2687→              <div className="flex gap-2">
+  2688→                {dialogDetalhe.telefone && (
+  2689→                  <Button
+  2690→                    variant="outline"
+  2691→                    className="flex-1 bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 text-xs"
+  2692→                    onClick={() => handleWhatsApp(dialogDetalhe.telefone)}
+  2693→                  >
+  2694→                    <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+  2695→                    WhatsApp
+  2696→                  </Button>
+  2697→                )}
+  2698→                <Button
+  2699→                  variant="outline"
+  2700→                  className="flex-1 border-gray-200 text-gray-600 hover:bg-gray-50 text-xs"
+  2701→                  onClick={() => {
+  2702→                    setDialogDetalhe(null);
+  2703→                    setDialogForm(dialogDetalhe);
+  2704→                  }}
+  2705→                >
+  2706→                  <Pencil className="h-3.5 w-3.5 mr-1.5" />
+  2707→                  Editar
+  2708→                </Button>
+  2709→              </div>
+  2710→            </div>
+  2711→          )}
+  2712→        </DialogContent>
+  2713→      </Dialog>
+  2714→
+  2715→      {/* Dialog Confirmação de Remoção */}
+  2716→      <Dialog open={!!confirmaRemover} onOpenChange={() => setConfirmaRemover(null)}>
+  2717→        <DialogContent className="max-w-sm">
+  2718→          <DialogHeader>
+  2719→            <DialogTitle className="text-base">Confirmar Remocao</DialogTitle>
+  2720→          </DialogHeader>
+  2721→          <p className="text-sm text-gray-500">
+  2722→            Tem certeza que deseja remover este sistema e todas as suas cobrancas? Esta acao nao pode ser desfeita.
+  2723→          </p>
+  2724→          <div className="flex gap-2 justify-end pt-2">
+  2725→            <Button
+  2726→              variant="ghost"
+  2727→              size="sm"
+  2728→              className="text-xs"
+  2729→              onClick={() => setConfirmaRemover(null)}
+  2730→            >
+  2731→              Cancelar
+  2732→            </Button>
+  2733→            <Button
+  2734→              size="sm"
+  2735→              className="text-xs bg-red-600 hover:bg-red-700"
+  2736→              onClick={() => confirmaRemover && handleRemover(confirmaRemover)}
+  2737→            >
+  2738→              <Trash2 className="h-3 w-3 mr-1" />
+  2739→              Remover
+  2740→            </Button>
+  2741→          </div>
+  2742→        </DialogContent>
+  2743→      </Dialog>
+  2744→
+  2745→      {/* Dialog E-mail de Recuperacao */}
+  2746→      <Dialog open={dialogEmailRecuperacao} onOpenChange={setDialogEmailRecuperacao}>
+  2747→        <DialogContent className="max-w-sm">
+  2748→          <DialogHeader>
+  2749→            <DialogTitle className="flex items-center gap-2 text-base">
+  2750→              <Mail className="h-5 w-5 text-blue-500" />
+  2751→              E-mail de Recuperacao
+  2752→            </DialogTitle>
+  2753→          </DialogHeader>
+  2754→          <div className="space-y-4">
+  2755→            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
+  2756→              <div className="flex items-start gap-2">
+  2757→                <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+  2758→                <div>
+  2759→                  <p className="text-sm font-medium text-blue-800">E-mail de recuperacao de senha</p>
+  2760→                  <p className="text-xs text-blue-600 mt-0.5">
+  2761→                    Este e-mail sera usado para verificar a identidade do administrador caso ele precise redefinir a senha na tela de login.
+  2762→                  </p>
+  2763→                </div>
+  2764→              </div>
+  2765→            </div>
+  2766→            <DialogEmailRecuperacaoForm />
+  2767→          </div>
+  2768→        </DialogContent>
+  2769→      </Dialog>
+  2770→
+  2771→      {/* Dialog Trocar Senha */}
+  2772→      <DialogTrocarSenha
+  2773→        open={dialogTrocarSenha}
+  2774→        onOpenChange={setDialogTrocarSenha}
+  2775→      />
+  2776→    </div>
+  2777→  );
+  2778→}
+  2779→
+  2780→// =============================================
+  2781→// EXPORT PRINCIPAL
+  2782→// =============================================
+  2783→type EtapaAdmin = "loading" | "primeiro_acesso" | "login" | "autenticado";
+  2784→
+  2785→export function PainelAdmin() {
+  2786→  const [etapa, setEtapa] = useState<EtapaAdmin>("loading");
+  2787→
+  2788→  useEffect(() => {
+  2789→    const store = useAdminStore.getState();
+  2790→    // Garante credenciais padrao se nao existir nada
+  2791→    if (!store.adminCredenciais) {
+  2792→      store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
+  2793→    }
+  2794→
+  2795→    // Verifica se ja esta autenticado nesta sessao
+  2796→    const session = sessionStorage.getItem("zapfacil_admin_session");
+  2797→    if (session === "autenticado") {
+  2798→      setEtapa("autenticado");
+  2799→      return;
+  2800→    }
+  2801→
+  2802→    // Sempre mostra login. Primeiro acesso fica acessivel via link.
+  2803→    setEtapa("login");
+  2804→  }, []);
+  2805→
+  2806→  if (etapa === "loading") {
+  2807→    return (
+  2808→      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+  2809→        <div className="animate-pulse flex flex-col items-center gap-3">
+  2810→          <div className="w-14 h-14 rounded-2xl bg-emerald-100" />
+  2811→          <div className="h-4 w-28 bg-gray-200 rounded" />
+  2812→        </div>
+  2813→      </div>
+  2814→    );
+  2815→  }
+  2816→
+  2817→  if (etapa === "primeiro_acesso") {
+  2818→    return <TelaPrimeiroAcesso onConcluido={() => setEtapa("autenticado")} />;
+  2819→  }
+  2820→
+  2821→  if (etapa === "login") {
+  2822→    return <TelaLoginAdmin onAutenticado={() => setEtapa("autenticado")} onPrimeiroAcesso={() => setEtapa("primeiro_acesso")} />;
+  2823→  }
+  2824→
+  2825→  return <PainelAdminConteudo />;
+  2826→}

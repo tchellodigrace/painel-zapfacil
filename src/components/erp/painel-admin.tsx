@@ -1769,7 +1769,7 @@ function SecaoSistemas({
   onEditar: (s: SistemaCliente) => void;
   onRemover: (id: string) => void;
   onMudarAba: (aba: AbaAdmin) => void;
-  onWhatsApp: (tel: string) => void;
+  onWhatsApp: (tel: string, sistema?: SistemaCliente) => void;
 }) {
   const { sistemas, getCobrancasBySistema } = useAdminStore();
   const [busca, setBusca] = useState("");
@@ -1992,8 +1992,8 @@ function SecaoSistemas({
                           <Button variant="ghost" size="sm" className="h-7 text-[10px] text-purple-600" onClick={() => onMudarAba("cobrancas")}>
                             <Receipt className="h-3 w-3 mr-1" /> Cobrancas
                           </Button>
-                          {s.telefone && (
-                            <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-600" onClick={() => onWhatsApp(s.telefone)}>
+                          {(s.telefone || s.dadosRegistro?.telefone) && (
+                            <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-600" onClick={() => onWhatsApp(s.telefone || s.dadosRegistro?.telefone || "", s)}>
                               <MessageCircle className="h-3 w-3" />
                             </Button>
                           )}
@@ -2120,11 +2120,11 @@ function SecaoSistemas({
                                     <TooltipContent>Cobrancas</TooltipContent>
                                   </Tooltip>
                                 </TooltipProvider>
-                                {s.telefone && (
+                                {(s.telefone || s.dadosRegistro?.telefone) && (
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-500 hover:text-emerald-700" onClick={() => onWhatsApp(s.telefone)}>
+                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-500 hover:text-emerald-700" onClick={() => onWhatsApp(s.telefone || s.dadosRegistro?.telefone || "", s)}>
                                           <MessageCircle className="h-3.5 w-3.5" />
                                         </Button>
                                       </TooltipTrigger>
@@ -2217,10 +2217,29 @@ const handleSalvarNovo = useCallback(
     [removerSistema]
   );
 
-  const handleWhatsApp = (telefone: string) => {
+  const handleWhatsApp = (telefone: string, sistema?: SistemaCliente) => {
     const telLimpo = telefone.replace(/\D/g, "");
+    if (telLimpo.length < 10) {
+      toast.error("Numero de telefone invalido.");
+      return;
+    }
     const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
-    window.open(`https://wa.me/${numero}`, "_blank");
+
+    let msg = "Ola! Aqui e o suporte do ZapFacil Pro.";
+    if (sistema) {
+      const nomeCliente = sistema.dadosRegistro?.usuario || sistema.responsavel || "Cliente";
+      const nomeEmpresa = sistema.dadosRegistro?.nomeEmpresa || sistema.empresa || "sua empresa";
+      const emailLogin = sistema.dadosRegistro?.email || sistema.email || "";
+      msg = `Ola ${nomeCliente}! Aqui e o suporte do ZapFacil Pro.\n\nEstamos entrando em contato sobre o sistema da *${nomeEmpresa}*.`;
+      if (emailLogin) {
+        msg += `\n\n*Link de acesso:*\nhttps://j1ewd51wcs60-d.space-z.ai/\n\nSeu e-mail de login: *${emailLogin}*`;
+      }
+      msg += `\n\nQualquer duvida, estou a disposicao!`;
+    }
+
+    const msgEncoded = encodeURIComponent(msg);
+    window.open(`https://wa.me/${numero}?text=${msgEncoded}`, "_blank");
+    toast.success("WhatsApp aberto!");
   };
 
   const handleLogout = () => {
@@ -2685,11 +2704,11 @@ const handleSalvarNovo = useCallback(
                 </div>
               </div>
               <div className="flex gap-2">
-                {dialogDetalhe.telefone && (
+                {(dialogDetalhe.telefone || dialogDetalhe.dadosRegistro?.telefone) && (
                   <Button
                     variant="outline"
                     className="flex-1 bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 text-xs"
-                    onClick={() => handleWhatsApp(dialogDetalhe.telefone)}
+                    onClick={() => handleWhatsApp(dialogDetalhe.telefone || dialogDetalhe.dadosRegistro?.telefone || "", dialogDetalhe)}
                   >
                     <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
                     WhatsApp
