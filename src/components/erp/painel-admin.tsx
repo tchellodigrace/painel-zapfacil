@@ -957,6 +957,13 @@ function FormularioSistema({
     sistema?.observacoes || ""
   );
 
+  // Senha de acesso do cliente (somente para novo cadastro)
+  const ehNovoCadastro = !sistema;
+  const [senhaAcesso, setSenhaAcesso] = useState("");
+  const [confirmarSenhaAcesso, setConfirmarSenhaAcesso] = useState("");
+  const [mostrarSenhaForm, setMostrarSenhaForm] = useState(false);
+  const [mostrarSenhaVisivel, setMostrarSenhaVisivel] = useState(false);
+
   const LINK_SISTEMA = "https://j1ewd51wcs60-d.space-z.ai/";
 
   const enviarWhatsApp = () => {
@@ -986,6 +993,32 @@ function FormularioSistema({
       toast.error("Data de vencimento e obrigatoria para aluguel.");
       return;
     }
+    if (ehNovoCadastro && senhaAcesso && senhaAcesso.length < 6) {
+      toast.error("A senha do cliente deve ter pelo menos 6 caracteres.");
+      return;
+    }
+    if (ehNovoCadastro && senhaAcesso && senhaAcesso !== confirmarSenhaAcesso) {
+      toast.error("As senhas nao conferem.");
+      return;
+    }
+    if (ehNovoCadastro && !email.trim()) {
+      toast.error("E-mail e obrigatorio para definir senha de acesso do cliente.");
+      return;
+    }
+
+    // Montar dadosRegistro com senha se definida pelo admin
+    let dadosRegistroFinal = sistema?.dadosRegistro || null;
+    if (ehNovoCadastro && senhaAcesso) {
+      dadosRegistroFinal = {
+        usuario: responsavel.trim(),
+        nomeEmpresa: empresa.trim(),
+        telefone: telefone.trim(),
+        email: email.trim().toLowerCase(),
+        senha: senhaAcesso,
+        registradoEm: new Date().toISOString(),
+      };
+    }
+
     onSalvar({
       empresa: empresa.trim(),
       responsavel: responsavel.trim(),
@@ -1001,7 +1034,7 @@ function FormularioSistema({
       valorAquisicao: parseFloat(valorAquisicao) || 0,
       taxaInstalacao: parseFloat(taxaInstalacao) || 0,
       observacoes: observacoes.trim(),
-      dadosRegistro: sistema?.dadosRegistro || null,
+      dadosRegistro: dadosRegistroFinal,
     });
   };
 
@@ -1159,6 +1192,63 @@ function FormularioSistema({
             className="text-sm h-9"
           />
         </div>
+        {/* Senha de acesso (somente novo cadastro) */}
+        {ehNovoCadastro && (
+          <div className="sm:col-span-2 border border-dashed border-emerald-300 dark:border-emerald-700 rounded-lg p-3 bg-emerald-50/50 dark:bg-emerald-950/20 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <KeyRound className="h-4 w-4 text-emerald-600" />
+                <Label className="text-xs font-medium text-emerald-800 dark:text-emerald-300">Senha de Acesso do Cliente</Label>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMostrarSenhaForm(!mostrarSenhaForm)}
+                className="text-[10px] text-emerald-600 hover:text-emerald-800 underline"
+              >
+                {mostrarSenhaForm ? "Ocultar" : "Definir senha"}
+              </button>
+            </div>
+            {mostrarSenhaForm && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] font-medium text-gray-600">Senha *</Label>
+                  <div className="relative">
+                    <Input
+                      type={mostrarSenhaVisivel ? "text" : "password"}
+                      value={senhaAcesso}
+                      onChange={(e) => setSenhaAcesso(e.target.value)}
+                      placeholder="Min. 6 caracteres"
+                      className="text-sm h-9 pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setMostrarSenhaVisivel(!mostrarSenhaVisivel)}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {mostrarSenhaVisivel ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] font-medium text-gray-600">Confirmar Senha *</Label>
+                  <Input
+                    type="password"
+                    value={confirmarSenhaAcesso}
+                    onChange={(e) => setConfirmarSenhaAcesso(e.target.value)}
+                    placeholder="Repita a senha"
+                    className="text-sm h-9"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <p className="text-[10px] text-gray-500 leading-relaxed">
+                    Defina uma senha generica para o cliente. Ele podera altera-la apos o primeiro acesso.
+                    Sem senha, o cliente precisara se cadastrar pelo link.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <div className="sm:col-span-2 space-y-1.5">
           <Label className="text-xs font-medium">Observacoes</Label>
           <Textarea
@@ -2649,7 +2739,7 @@ const handleSalvarNovo = useCallback(
                       <p className="text-[10px] text-gray-500 mb-1">Senha</p>
                       <div className="bg-white/10 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
                         <p className="text-sm font-mono font-semibold text-white">
-                          {dialogDetalhe.dadosRegistro?.senha || "Nao registrada (cadastro antigo)"}
+                          {dialogDetalhe.dadosRegistro?.senha || "Senha nao definida"}
                         </p>
                         {dialogDetalhe.dadosRegistro?.senha && (
                           <button
@@ -2696,10 +2786,14 @@ const handleSalvarNovo = useCallback(
                       </Button>
                     ) : dialogDetalhe.dadosRegistro ? (
                       <p className="text-[10px] text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-2.5 text-center leading-relaxed">
-                        A senha deste cliente nao esta registrada no sistema.
-                        Use o botao WhatsApp abaixo para enviar o link de acesso, ou oriente o cliente a usar a opcao "Esqueceu a senha?" na tela de login.
+                        A senha deste cliente nao foi definida no cadastro.
+                        Envie o link de acesso via WhatsApp ou oriente o cliente a usar "Esqueceu a senha?" na tela de login.
                       </p>
-                    ) : null}
+                    ) : (
+                      <p className="text-[10px] text-gray-400 bg-white/5 rounded-lg p-2.5 text-center leading-relaxed">
+                        Cliente cadastrado sem credenciais de acesso. Ele devera se registrar pelo link.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

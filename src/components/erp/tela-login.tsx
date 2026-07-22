@@ -206,18 +206,58 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
     }
     setCarregando(true);
     setTimeout(() => {
+      const emailNorm = email.trim().toLowerCase();
+
+      // 1. Verificar credenciais ja salvas no zapfacil_auth
       const cred = carregarCredenciais();
       if (
         cred &&
-        cred.email === email.trim().toLowerCase() &&
+        cred.email === emailNorm &&
         cred.senha === senha
       ) {
         criarSessao();
         toast.success(`Bem-vindo, ${cred.nomeResponsavel}!`);
         onAutenticado();
-      } else {
-        toast.error("E-mail ou senha incorretos.");
+        setCarregando(false);
+        return;
       }
+
+      // 2. Verificar credenciais definidas pelo admin em zapfacil_admin_sistemas
+      try {
+        const ADMIN_PREFIX = "zapfacil_admin_";
+        const sistemasRaw = localStorage.getItem(`${ADMIN_PREFIX}sistemas`);
+        if (sistemasRaw) {
+          const sistemas = JSON.parse(sistemasRaw);
+          const sistemaAdmin = sistemas.find(
+            (s: any) =>
+              s.dadosRegistro &&
+              s.dadosRegistro.email &&
+              s.dadosRegistro.email.toLowerCase() === emailNorm &&
+              s.dadosRegistro.senha === senha
+          );
+          if (sistemaAdmin && sistemaAdmin.dadosRegistro) {
+            // Encontrou! Salvar no zapfacil_auth para proximos logins
+            const novasCred: Credenciais = {
+              email: sistemaAdmin.dadosRegistro.email,
+              senha: sistemaAdmin.dadosRegistro.senha,
+              nomeEmpresa: sistemaAdmin.dadosRegistro.nomeEmpresa || sistemaAdmin.empresa,
+              nomeResponsavel: sistemaAdmin.dadosRegistro.usuario || sistemaAdmin.responsavel,
+              telefone: sistemaAdmin.dadosRegistro.telefone || sistemaAdmin.telefone || "",
+            };
+            salvarCredenciais(novasCred);
+            criarSessao();
+            toast.success(`Bem-vindo, ${novasCred.nomeResponsavel}!`);
+            onAutenticado();
+            setCarregando(false);
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("Erro ao verificar credenciais admin:", e);
+      }
+
+      // 3. Nenhuma credencial encontrada
+      toast.error("E-mail ou senha incorretos.");
       setCarregando(false);
     }, 800);
   }, [email, senha, onAutenticado]);
