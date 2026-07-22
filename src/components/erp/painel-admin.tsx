@@ -2669,7 +2669,7 @@ const handleSalvarNovo = useCallback(
                       <span className="text-[10px] text-gray-500">Link de acesso:</span>
                       <span className="text-[11px] text-gray-300 font-mono truncate flex-1">https://j1ewd51wcs60-d.space-z.ai/</span>
                     </div>
-                    {dialogDetalhe.dadosRegistro?.senha && (
+                    {dialogDetalhe.dadosRegistro?.senha ? (
                       <Button
                         className="w-full h-9 bg-emerald-600 hover:bg-emerald-700 text-xs font-medium rounded-lg"
                         onClick={() => {
@@ -2694,12 +2694,12 @@ const handleSalvarNovo = useCallback(
                         <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
                         Enviar credenciais por WhatsApp
                       </Button>
-                    )}
-                    {!dialogDetalhe.dadosRegistro?.senha && (
-                      <p className="text-[10px] text-amber-400 text-center">
-                        A senha nao foi salva no cadastro. Clientes cadastrados antes da atualizacao nao tem a senha registrada.
+                    ) : dialogDetalhe.dadosRegistro ? (
+                      <p className="text-[10px] text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-2.5 text-center leading-relaxed">
+                        A senha deste cliente nao esta registrada no sistema.
+                        Use o botao WhatsApp abaixo para enviar o link de acesso, ou oriente o cliente a usar a opcao "Esqueceu a senha?" na tela de login.
                       </p>
-                    )}
+                    ) : null}
                   </div>
                 </div>
               </div>
