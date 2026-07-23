@@ -15,15 +15,15 @@ export async function POST(req: NextRequest) {
 
     if (!GEMINI_API_KEY) {
       return NextResponse.json(
-        { erro: "Chave da API Gemini nao configurada." },
+        { erro: "Chave da API Gemini nao configurada. Adicione GEMINI_API_KEY no arquivo .env" },
         { status: 500 }
       );
     }
 
-    // Montar prompt para geracao de imagem
-    const formato = plataforma === "facebook" ? "1080x1920" : "1080x1920";
+    const nomePlataforma = plataforma === "facebook" ? "Facebook" : "Instagram";
+
     const promptImagem =
-      `Crie um design profissional de story para ${plataforma === "facebook" ? "Facebook" : "Instagram"} no formato 9:16 (1080x1920 pixels). ` +
+      `Crie um design profissional de story para ${nomePlataforma} no formato 9:16 (1080x1920 pixels). ` +
       `Tipo de negocio: ${tipoNegocio}. ` +
       `Promocao: ${promocao}. ` +
       `Estilo visual: ${tomEstilo || "moderno e atrativo"}. ` +
@@ -32,9 +32,9 @@ export async function POST(req: NextRequest) {
       `Nao inclua texto excessivo, apenas o essencial para a promocao. ` +
       `O resultado deve ser uma imagem pronta para publicar.`;
 
-    // Chamar Gemini API (modelo de geracao de imagem)
+    // Chamar Gemini 2.5 Flash com geracao de imagem nativa
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,12 +62,16 @@ export async function POST(req: NextRequest) {
 
     // Extrair imagem da resposta
     let imagemBase64 = "";
+    let mimeType = "image/png";
     let textoResposta = "";
     const parts = data?.candidates?.[0]?.content?.parts || [];
 
     for (const part of parts) {
       if (part.inlineData) {
         imagemBase64 = part.inlineData.data;
+        if (part.inlineData.mimeType) {
+          mimeType = part.inlineData.mimeType;
+        }
       } else if (part.text) {
         textoResposta += part.text;
       }
@@ -82,7 +86,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       imagem: imagemBase64,
-      mimeType: "image/png",
+      mimeType,
       texto: textoResposta,
     });
   } catch (error) {
