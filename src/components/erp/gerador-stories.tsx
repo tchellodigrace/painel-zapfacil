@@ -149,8 +149,18 @@ export function GeradorStories() {
         return;
       }
 
+      if (data.erro === "quota_api_esgotada") {
+        toast.error(data.mensagem, { duration: 8000 });
+        return;
+      }
+
+      if (data.erro === "chave_invalida") {
+        toast.error(data.mensagem, { duration: 8000 });
+        return;
+      }
+
       if (!res.ok) {
-        toast.error(data.erro || "Erro ao gerar o story.");
+        toast.error(data.mensagem || data.erro || "Erro ao gerar o story.", { duration: 6000 });
         return;
       }
 
