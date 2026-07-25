@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
+import { useTheme } from "next-themes";
 import {
   useAdminStore,
   STATUS_SISTEMA,
@@ -60,6 +61,8 @@ import {
   Send,
   Zap,
   GitBranch,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -2335,6 +2338,7 @@ function SecaoSistemas({
 type AbaAdmin = "sistemas" | "cobrancas" | "recuperacoes" | "zapbot";
 
 function PainelAdminConteudo() {
+  const { theme, setTheme } = useTheme();
   const { sistemas, cobrancas, pedidosRecuperacao, adminCredenciais, dadosGestor, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos, recarregarDados } =
     useAdminStore();
   const [abaAtiva, setAbaAtiva] = useState<AbaAdmin>("sistemas");
@@ -2450,9 +2454,9 @@ const handleSalvarNovo = useCallback(
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
           <div className="flex items-center">
             <img
@@ -2466,18 +2470,18 @@ const handleSalvarNovo = useCallback(
             <button
               type="button"
               onClick={() => setMostrarCredenciaisAdmin(!mostrarCredenciaisAdmin)}
-              className="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
+              className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 transition-colors"
             >
-              <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-7 h-7 rounded-full bg-gray-900 dark:bg-gray-100 flex items-center justify-center text-white dark:text-gray-900 text-xs font-bold">
                 {(dadosGestor?.nome || adminCredenciais?.usuario || "A").charAt(0).toUpperCase()}
               </div>
               <div className="text-left hidden md:block">
-                <p className="text-xs font-semibold text-gray-800 leading-tight">
+                <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 leading-tight">
                   {dadosGestor?.nome || adminCredenciais?.usuario || "Admin"}
                 </p>
-                <p className="text-[10px] text-gray-400 leading-tight flex items-center gap-1">
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight flex items-center gap-1">
                   {mostrarCredenciaisAdmin ? (
-                    <span className="font-mono text-gray-500">
+                    <span className="font-mono text-gray-500 dark:text-gray-400">
                       {adminCredenciais?.usuario} / {adminCredenciais?.senha}
                     </span>
                   ) : (
@@ -2492,7 +2496,28 @@ const handleSalvarNovo = useCallback(
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-gray-600 hover:bg-gray-100"
+                    className="h-8 w-8 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  >
+                    {theme === "dark" ? (
+                      <Sun className="h-4 w-4" />
+                    ) : (
+                      <Moon className="h-4 w-4" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {theme === "dark" ? "Modo Claro" : "Modo Escuro"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                     onClick={() => setDialogTrocarSenha(true)}
                   >
                     <KeyRound className="h-4 w-4" />
@@ -2507,7 +2532,7 @@ const handleSalvarNovo = useCallback(
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-blue-500 hover:bg-blue-50"
+                    className="h-8 w-8 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30"
                     onClick={() => setDialogEmailRecuperacao(true)}
                   >
                     <Mail className="h-4 w-4" />
@@ -2522,7 +2547,7 @@ const handleSalvarNovo = useCallback(
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-red-500 hover:bg-red-50"
+                    className="h-8 w-8 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
                     onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4" />
@@ -2537,13 +2562,13 @@ const handleSalvarNovo = useCallback(
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
         {/* Abas de navegação */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 bg-white rounded-xl p-1 border border-gray-200 shadow-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-4 bg-white dark:bg-gray-900 rounded-xl p-1 border border-gray-200 dark:border-gray-800 shadow-sm">
           <button
             onClick={() => setAbaAtiva("sistemas")}
             className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "sistemas"
                 ? "bg-emerald-600 text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
           >
             <Monitor className="h-4 w-4 shrink-0" />
@@ -2561,7 +2586,7 @@ const handleSalvarNovo = useCallback(
             className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "cobrancas"
                 ? "bg-emerald-600 text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
           >
             <Receipt className="h-4 w-4 shrink-0" />
@@ -2581,7 +2606,7 @@ const handleSalvarNovo = useCallback(
             className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "recuperacoes"
                 ? "bg-amber-500 text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
           >
             <KeyRound className="h-4 w-4 shrink-0" />
@@ -2601,7 +2626,7 @@ const handleSalvarNovo = useCallback(
             className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "zapbot"
                 ? "bg-purple-600 text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
           >
             <Bot className="h-4 w-4 shrink-0" />
