@@ -74,6 +74,11 @@ export interface SistemaCliente {
   observacoes: string;
   criadoEm: string;
   dadosRegistro: DadosRegistroCliente | null;
+  // Feature flags Premium
+  zapbotAtivo?: boolean;
+  disparoAtivo?: boolean;
+  funilAtivo?: boolean;
+  fluxosAtivo?: boolean;
 }
 
 export interface PedidoRecuperacao {

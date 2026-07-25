@@ -57,7 +57,11 @@ import {
   Mail,
   ArrowRight,
   Copy,
+  Send,
+  Zap,
+  GitBranch,
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
   TooltipContent,
@@ -957,6 +961,12 @@ function FormularioSistema({
     sistema?.observacoes || ""
   );
 
+  // Feature flags Premium
+  const [zapbotAtivo, setZapbotAtivo] = useState(sistema?.zapbotAtivo ?? (sistema?.plano === "PREMIUM" || sistema?.plano === "PRO"));
+  const [disparoAtivo, setDisparoAtivo] = useState(sistema?.disparoAtivo ?? (sistema?.plano === "PREMIUM"));
+  const [funilAtivo, setFunilAtivo] = useState(sistema?.funilAtivo ?? (sistema?.plano === "PREMIUM"));
+  const [fluxosAtivo, setFluxosAtivo] = useState(sistema?.fluxosAtivo ?? (sistema?.plano === "PREMIUM"));
+
   // Senha de acesso do cliente (somente para novo cadastro)
   const ehNovoCadastro = !sistema;
   const [senhaAcesso, setSenhaAcesso] = useState("");
@@ -1035,6 +1045,10 @@ function FormularioSistema({
       taxaInstalacao: parseFloat(taxaInstalacao) || 0,
       observacoes: observacoes.trim(),
       dadosRegistro: dadosRegistroFinal,
+      zapbotAtivo,
+      disparoAtivo,
+      funilAtivo,
+      fluxosAtivo,
     });
   };
 
@@ -1257,6 +1271,63 @@ function FormularioSistema({
             placeholder="Notas sobre o cliente..."
             className="text-sm min-h-[60px]"
           />
+        </div>
+        {/* Recursos Premium */}
+        <div className="sm:col-span-2 border border-purple-200 dark:border-purple-800 rounded-xl p-4 bg-purple-50/50 dark:bg-purple-950/20 space-y-4">
+          <div className="flex items-center gap-2">
+            <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            <Label className="text-xs font-semibold text-purple-800 dark:text-purple-300 uppercase tracking-wider">Recursos Premium</Label>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
+                  <Bot className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">ZapBot</p>
+                  <p className="text-[10px] text-gray-400">Chatbot automatico</p>
+                </div>
+              </div>
+              <Switch checked={zapbotAtivo} onCheckedChange={setZapbotAtivo} />
+            </div>
+            <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+                  <Send className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Disparo em Massa</p>
+                  <p className="text-[10px] text-gray-400">Envio em lote</p>
+                </div>
+              </div>
+              <Switch checked={disparoAtivo} onCheckedChange={setDisparoAtivo} />
+            </div>
+            <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
+                  <TrendingUp className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Funil de Leads</p>
+                  <p className="text-[10px] text-gray-400">Pipeline CRM</p>
+                </div>
+              </div>
+              <Switch checked={funilAtivo} onCheckedChange={setFunilAtivo} />
+            </div>
+            <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center">
+                  <GitBranch className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Fluxos de Automacao</p>
+                  <p className="text-[10px] text-gray-400">Regras SE/ENTAO</p>
+                </div>
+              </div>
+              <Switch checked={fluxosAtivo} onCheckedChange={setFluxosAtivo} />
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex gap-2 justify-end pt-2">
@@ -2046,6 +2117,10 @@ function SecaoSistemas({
                             <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
                             <Badge className={`text-[10px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
                             <Badge className={`text-[10px] font-semibold ${tl.cor}`}>{tl.label}</Badge>
+                            {s.zapbotAtivo && <Badge className="text-[9px] bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">Bot</Badge>}
+                            {s.disparoAtivo && <Badge className="text-[9px] bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">Disparo</Badge>}
+                            {s.funilAtivo && <Badge className="text-[9px] bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">Funil</Badge>}
+                            {s.fluxosAtivo && <Badge className="text-[9px] bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400">Fluxos</Badge>}
                           </div>
                         </div>
                         <div className="flex items-center gap-3 text-[11px] text-gray-400 flex-wrap">
@@ -2135,8 +2210,12 @@ function SecaoSistemas({
                             <td className="py-3 px-4">
                               <p className="font-semibold text-gray-900">{s.empresa}</p>
                               {s.cidade && <p className="text-[11px] text-gray-400">{s.cidade}</p>}
-                              <div className="flex items-center gap-1.5 mt-0.5">
+                              <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                                 <Badge className={`text-[9px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
+                                {s.zapbotAtivo && <Badge className="text-[8px] bg-emerald-100 text-emerald-700">Bot</Badge>}
+                                {s.disparoAtivo && <Badge className="text-[8px] bg-blue-100 text-blue-700">Disparo</Badge>}
+                                {s.funilAtivo && <Badge className="text-[8px] bg-amber-100 text-amber-700">Funil</Badge>}
+                                {s.fluxosAtivo && <Badge className="text-[8px] bg-violet-100 text-violet-700">Fluxos</Badge>}
                                 {s.dadosRegistro && (
                                   <span className="text-[9px] text-emerald-600 font-medium flex items-center gap-0.5">
                                     <Check className="h-2.5 w-2.5" /> Cadastrado
@@ -2282,6 +2361,13 @@ function PainelAdminConteudo() {
 const handleSalvarNovo = useCallback(
     (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
       adicionarSistema(dados);
+      // Salvar feature flags no localStorage para o painel cliente ler
+      if (typeof window !== "undefined") {
+        localStorage.setItem("zapfacil_zapbot_habilitado", String(!!dados.zapbotAtivo));
+        localStorage.setItem("zapfacil_disparo_habilitado", String(!!dados.disparoAtivo));
+        localStorage.setItem("zapfacil_funil_habilitado", String(!!dados.funilAtivo));
+        localStorage.setItem("zapfacil_fluxos_habilitado", String(!!dados.fluxosAtivo));
+      }
       setDialogNovo(false);
       toast.success("Sistema cadastrado!");
     },
@@ -2292,6 +2378,13 @@ const handleSalvarNovo = useCallback(
     (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
       if (!dialogForm) return;
       editarSistema(dialogForm.id, dados);
+      // Salvar feature flags no localStorage para o painel cliente ler
+      if (typeof window !== "undefined") {
+        localStorage.setItem("zapfacil_zapbot_habilitado", String(!!dados.zapbotAtivo));
+        localStorage.setItem("zapfacil_disparo_habilitado", String(!!dados.disparoAtivo));
+        localStorage.setItem("zapfacil_funil_habilitado", String(!!dados.funilAtivo));
+        localStorage.setItem("zapfacil_fluxos_habilitado", String(!!dados.fluxosAtivo));
+      }
       setDialogForm(null);
       toast.success("Sistema atualizado!");
     },
@@ -2659,6 +2752,19 @@ const handleSalvarNovo = useCallback(
                       <p className="text-gray-700">{formatarMoeda(dialogDetalhe.taxaInstalacao)}</p>
                     </div>
                   )}
+                </div>
+                <Separator />
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase font-medium mb-2">Recursos Premium Ativos</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {dialogDetalhe.zapbotAtivo && <Badge className="text-[10px] bg-emerald-100 text-emerald-700"><Bot className="h-3 w-3 mr-1" />ZapBot</Badge>}
+                    {dialogDetalhe.disparoAtivo && <Badge className="text-[10px] bg-blue-100 text-blue-700"><Send className="h-3 w-3 mr-1" />Disparo em Massa</Badge>}
+                    {dialogDetalhe.funilAtivo && <Badge className="text-[10px] bg-amber-100 text-amber-700"><TrendingUp className="h-3 w-3 mr-1" />Funil de Leads</Badge>}
+                    {dialogDetalhe.fluxosAtivo && <Badge className="text-[10px] bg-violet-100 text-violet-700"><GitBranch className="h-3 w-3 mr-1" />Fluxos</Badge>}
+                    {!dialogDetalhe.zapbotAtivo && !dialogDetalhe.disparoAtivo && !dialogDetalhe.funilAtivo && !dialogDetalhe.fluxosAtivo && (
+                      <p className="text-xs text-gray-400">Nenhum recurso Premium ativo</p>
+                    )}
+                  </div>
                 </div>
                 {dialogDetalhe.observacoes && (
                   <>
