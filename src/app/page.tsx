@@ -185,10 +185,10 @@ export default function ZapFacilPage() {
 
   // === SISTEMA ERP (autenticado) ===
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen flex flex-col bg-background">
       <InicializadorLogo />
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+      {/* Header com glass effect */}
+      <header className="glass border-b border-border sticky top-0 z-50 shadow-sticky">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-3 sm:px-4 py-2">
           <div className="flex items-center gap-3">
             <img
@@ -198,15 +198,15 @@ export default function ZapFacilPage() {
             />
             {nomeLogin && (
               <div className="hidden sm:flex flex-col">
-                <span className="text-xs text-gray-400 dark:text-gray-500 leading-tight">Ola,</span>
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200 leading-tight">{nomeLogin}</span>
+                <span className="text-xs text-muted-foreground leading-tight">Ola,</span>
+                <span className="text-sm font-semibold text-foreground leading-tight">{nomeLogin}</span>
               </div>
             )}
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Badge
               variant="outline"
-              className="text-emerald-700 dark:text-emerald-400 text-[10px] border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950 font-semibold"
+              className="text-success dark:text-success border-success/30 bg-success/10 font-semibold"
             >
               PRO
             </Badge>
@@ -216,7 +216,7 @@ export default function ZapFacilPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                     onClick={() =>
                       setTheme(theme === "dark" ? "light" : "dark")
                     }

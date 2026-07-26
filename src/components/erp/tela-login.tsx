@@ -245,7 +245,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
   // Loading
   if (temCredenciais === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <img src="/logo-empresa.png" alt="" className="h-24 w-auto object-contain animate-pulse opacity-40" />
       </div>
     );
@@ -257,9 +257,9 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
     const podeAvancarEtapa1 = telefone.trim().length >= 10;
 
     return (
-      <div className="min-h-screen bg-white flex">
+      <div className="min-h-screen bg-background flex">
         {/* Lado esquerdo - branding */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-600 to-emerald-800 p-12 flex-col justify-between relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-primary/70 p-12 flex-col justify-between relative overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-white/20 blur-3xl" />
             <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
@@ -533,9 +533,9 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
 
   // === LOGIN ===
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="min-h-screen bg-background flex">
       {/* Lado esquerdo - branding */}
-      <div className="hidden lg:flex lg:w-[45%] bg-gradient-to-br from-emerald-600 to-emerald-800 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-[45%] bg-gradient-to-br from-primary to-primary/70 p-12 flex-col justify-between relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-white/20 blur-3xl" />
           <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-white/10 blur-3xl" />

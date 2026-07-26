@@ -251,9 +251,9 @@ function TelaPrimeiroAcesso({
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="min-h-screen bg-background flex">
       {/* Lado esquerdo - branding */}
-      <div className="hidden lg:flex lg:w-[45%] bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-[45%] bg-gradient-to-br from-sidebar via-sidebar to-primary/30 p-12 flex-col justify-between relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-emerald-500/30 blur-3xl" />
           <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-blue-500/20 blur-3xl" />
@@ -670,12 +670,12 @@ function TelaLoginAdmin({
 
   return (
     <>
-      <div className="min-h-screen bg-white flex">
+      <div className="min-h-screen bg-background flex">
         {/* Lado esquerdo */}
-        <div className="hidden lg:flex lg:w-[45%] bg-gray-900 p-12 flex-col justify-between relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-[45%] bg-sidebar p-12 flex-col justify-between relative overflow-hidden border-r border-border">
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-emerald-500/30 blur-3xl" />
-            <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl" />
+            <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-primary/30 blur-3xl" />
+            <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-primary/20 blur-3xl" />
           </div>
           <div className="relative z-10">
             <img src="/logo-admin.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
@@ -2515,9 +2515,9 @@ const handleSalvarNovo = useCallback(
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 shadow-sm">
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* Header com glass effect e sombra sticky */}
+      <header className="glass border-b border-border sticky top-0 z-50 shadow-sticky">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
           <div className="flex items-center">
             <img
@@ -2531,18 +2531,18 @@ const handleSalvarNovo = useCallback(
             <button
               type="button"
               onClick={() => setMostrarCredenciaisAdmin(!mostrarCredenciaisAdmin)}
-              className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 transition-colors"
+              className="flex items-center gap-2 bg-secondary hover:bg-secondary/80 border border-border rounded-lg px-3 py-1.5 transition-colors"
             >
-              <div className="w-7 h-7 rounded-full bg-gray-900 dark:bg-gray-100 flex items-center justify-center text-white dark:text-gray-900 text-xs font-bold">
+              <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
                 {(dadosGestor?.nome || adminCredenciais?.usuario || "A").charAt(0).toUpperCase()}
               </div>
               <div className="text-left hidden md:block">
-                <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 leading-tight">
+                <p className="text-xs font-semibold text-foreground leading-tight">
                   {dadosGestor?.nome || adminCredenciais?.usuario || "Admin"}
                 </p>
-                <p className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight flex items-center gap-1">
+                <p className="text-[10px] text-muted-foreground leading-tight flex items-center gap-1">
                   {mostrarCredenciaisAdmin ? (
-                    <span className="font-mono text-gray-500 dark:text-gray-400">
+                    <span className="font-mono text-muted-foreground">
                       {adminCredenciais?.usuario} / {adminCredenciais?.senha}
                     </span>
                   ) : (
@@ -2557,7 +2557,7 @@ const handleSalvarNovo = useCallback(
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                     onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                   >
                     {theme === "dark" ? (
@@ -3110,10 +3110,10 @@ export function PainelAdmin() {
 
   if (etapa === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse flex flex-col items-center gap-3">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-100" />
-          <div className="h-4 w-28 bg-gray-200 rounded" />
+          <div className="w-14 h-14 rounded-2xl bg-primary/20" />
+          <div className="h-4 w-28 bg-muted rounded skeleton" />
         </div>
       </div>
     );
