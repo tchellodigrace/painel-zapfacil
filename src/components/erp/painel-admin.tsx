@@ -992,7 +992,36 @@ function FormularioSistema({
   const [mostrarSenhaForm, setMostrarSenhaForm] = useState(false);
   const [mostrarSenhaVisivel, setMostrarSenhaVisivel] = useState(false);
 
-  const LINK_SISTEMA = "https://j1ewd51wcs60-d.space-z.ai/";
+  // Hash da senha existente (apenas para edicao - buscado do Supabase via API)
+  const [senhaHashExistente, setSenhaHashExistente] = useState<string | null>(null);
+  const [carregandoSenhaHash, setCarregandoSenhaHash] = useState(false);
+
+  // Em modo edicao: buscar o hash da senha do cliente (busca pelo email)
+  useEffect(() => {
+    if (ehNovoCadastro || !email) return;
+    let cancelado = false;
+    setCarregandoSenhaHash(true);
+    setSenhaHashExistente(null);
+    (async () => {
+      try {
+        const res = await fetch(`/api/cliente/senha-hash?email=${encodeURIComponent(email.trim().toLowerCase())}`);
+        if (cancelado) return;
+        if (res.ok) {
+          const json = await res.json();
+          if (json?.ok && json.senhaHash) {
+            setSenhaHashExistente(json.senhaHash);
+          }
+        }
+      } catch (e) {
+        console.warn("[FormularioSistema] erro ao buscar hash:", e);
+      } finally {
+        if (!cancelado) setCarregandoSenhaHash(false);
+      }
+    })();
+    return () => { cancelado = true; };
+  }, [ehNovoCadastro, email]);
+
+  const LINK_SISTEMA = "https://my-project-rho-sooty.vercel.app/";
 
   const enviarWhatsApp = () => {
     if (!telefone.trim()) {
@@ -1214,24 +1243,42 @@ function FormularioSistema({
           </div>
         )}
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium">Taxa Instalacao (R$)</Label>
+          <div className="flex items-center justify-between">
+            <Label className="text-xs font-medium">Taxa Instalacao (R$)</Label>
+            {taxaInstalacao && (
+              <button
+                type="button"
+                onClick={() => setTaxaInstalacao("")}
+                className="text-[10px] text-red-500 hover:text-red-700 underline"
+              >
+                Limpar
+              </button>
+            )}
+          </div>
           <Input
             type="number"
             step="0.01"
             value={taxaInstalacao}
             onChange={(e) => setTaxaInstalacao(e.target.value)}
-            placeholder="0,00"
+            placeholder="0,00 (vazio = sem taxa)"
             className="text-sm h-9"
           />
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            Deixe vazio ou "0" para remover a taxa de instalacao deste cliente.
+          </p>
         </div>
-        {/* Senha de acesso (somente novo cadastro) */}
-        {ehNovoCadastro && (
-          <div className="sm:col-span-2 border border-dashed border-primary/30 dark:border-primary/40 rounded-lg p-3 bg-primary/5 dark:bg-primary/15 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <KeyRound className="h-4 w-4 text-primary shrink-0" />
-                <Label className="text-xs font-medium text-primary dark:text-foreground/80">Senha de Acesso do Cliente</Label>
-              </div>
+        {/* Senha de acesso - em modo edicao mostra o hash, em novo cadastro permite definir */}
+        <div className="sm:col-span-2 border border-dashed border-primary/30 dark:border-primary/40 rounded-lg p-3 bg-primary/5 dark:bg-primary/15 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <KeyRound className="h-4 w-4 text-primary shrink-0" />
+              <Label className="text-xs font-medium text-primary dark:text-foreground/80">
+                {ehNovoCadastro
+                  ? "Senha de Acesso do Cliente"
+                  : "Senha Cadastrada do Cliente"}
+              </Label>
+            </div>
+            {ehNovoCadastro && (
               <button
                 type="button"
                 onClick={() => setMostrarSenhaForm(!mostrarSenhaForm)}
@@ -1239,48 +1286,83 @@ function FormularioSistema({
               >
                 {mostrarSenhaForm ? "Ocultar" : "Definir senha"}
               </button>
-            </div>
-            {mostrarSenhaForm && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-[10px] font-medium text-muted-foreground">Senha *</Label>
-                  <div className="relative">
-                    <Input
-                      type={mostrarSenhaVisivel ? "text" : "password"}
-                      value={senhaAcesso}
-                      onChange={(e) => setSenhaAcesso(e.target.value)}
-                      placeholder="Min. 6 caracteres"
-                      className="text-sm h-9 pr-10"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setMostrarSenhaVisivel(!mostrarSenhaVisivel)}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {mostrarSenhaVisivel ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                    </button>
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-[10px] font-medium text-muted-foreground">Confirmar Senha *</Label>
-                  <Input
-                    type="password"
-                    value={confirmarSenhaAcesso}
-                    onChange={(e) => setConfirmarSenhaAcesso(e.target.value)}
-                    placeholder="Repita a senha"
-                    className="text-sm h-9"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">
-                    Defina uma senha generica para o cliente. Ele podera altera-la apos o primeiro acesso.
-                    Sem senha, o cliente precisara se cadastrar pelo link.
-                  </p>
-                </div>
-              </div>
             )}
           </div>
-        )}
+
+          {/* MODO EDICAO: mostra o hash bcrypt da senha existente */}
+          {!ehNovoCadastro && (
+            <div className="space-y-2">
+              {carregandoSenhaHash ? (
+                <div className="text-[11px] text-muted-foreground italic">
+                  Carregando senha...
+                </div>
+              ) : senhaHashExistente ? (
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] font-medium text-muted-foreground">
+                    Hash bcrypt (senha criptografada - nao e possivel decifrar)
+                  </Label>
+                  <div className="bg-background dark:bg-black/30 border border-border rounded p-2">
+                    <code className="text-[10px] text-foreground/80 break-all font-mono leading-relaxed">
+                      {senhaHashExistente}
+                    </code>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">
+                    A senha do cliente e armazenada com hash bcrypt (one-way).
+                    Por seguranca, nao e possivel recuperar a senha original.
+                    Para dar uma nova senha ao cliente, use o botao "Redefinir
+                    senha" no painel ou solicite que o cliente use "Esqueci minha senha".
+                  </p>
+                </div>
+              ) : (
+                <div className="text-[11px] text-muted-foreground italic">
+                  Este cliente nao possui senha cadastrada (pode ter sido criado
+                  direto pelo painel admin sem criar login de cliente).
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* MODO NOVO CADASTRO: formulario para definir senha */}
+          {ehNovoCadastro && mostrarSenhaForm && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-medium text-muted-foreground">Senha *</Label>
+                <div className="relative">
+                  <Input
+                    type={mostrarSenhaVisivel ? "text" : "password"}
+                    value={senhaAcesso}
+                    onChange={(e) => setSenhaAcesso(e.target.value)}
+                    placeholder="Min. 6 caracteres"
+                    className="text-sm h-9 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarSenhaVisivel(!mostrarSenhaVisivel)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {mostrarSenhaVisivel ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-medium text-muted-foreground">Confirmar Senha *</Label>
+                <Input
+                  type="password"
+                  value={confirmarSenhaAcesso}
+                  onChange={(e) => setConfirmarSenhaAcesso(e.target.value)}
+                  placeholder="Repita a senha"
+                  className="text-sm h-9"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                  Defina uma senha generica para o cliente. Ele podera altera-la apos o primeiro acesso.
+                  Sem senha, o cliente precisara se cadastrar pelo link.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
         <div className="sm:col-span-2 space-y-1.5">
           <Label className="text-xs font-medium">Observacoes</Label>
           <Textarea
@@ -1479,7 +1561,7 @@ function SecaoRecuperacoes() {
     const emailLogin = clienteSelecionado.dadosRegistro?.email || clienteSelecionado.email;
 
     const msg = encodeURIComponent(
-      `Ola ${nomeCliente}! Aqui e o suporte do ZapFacil Pro.\n\nEstamos enviando seus dados de acesso ao sistema da ${nomeEmpresa}.\n\n*Link de acesso:*\nhttps://j1ewd51wcs60-d.space-z.ai/\n\nSeu e-mail de login: *${emailLogin}*\n\nCaso nao lembre a senha, podemos redefinir juntos. Basta responder esta mensagem.\n\nQualquer duvida, estou a disposicao!`
+      `Ola ${nomeCliente}! Aqui e o suporte do ZapFacil Pro.\n\nEstamos enviando seus dados de acesso ao sistema da ${nomeEmpresa}.\n\n*Link de acesso:*\nhttps://my-project-rho-sooty.vercel.app/\n\nSeu e-mail de login: *${emailLogin}*\n\nCaso nao lembre a senha, podemos redefinir juntos. Basta responder esta mensagem.\n\nQualquer duvida, estou a disposicao!`
     );
     window.open(`https://wa.me/${numero}?text=${msg}`, "_blank");
     setDialogConfirmarEnvio(false);
@@ -1499,7 +1581,7 @@ function SecaoRecuperacoes() {
     const nomeCliente = cliente?.nome || "Cliente";
     const nomeEmpresa = cliente?.empresa || "sua empresa";
     const msg = encodeURIComponent(
-      `Ola ${nomeCliente}! Aqui e o suporte do ZapFacil Pro.\n\nVoce solicitou a recuperacao dos seus dados de acesso ao sistema da ${nomeEmpresa}.\n\n*Link de acesso:*\nhttps://j1ewd51wcs60-d.space-z.ai/\n\nSeu e-mail de login: *${pedido.email}*\n\nCaso nao lembre a senha, podemos redefinir juntos. Responda esta mensagem.\n\nQualquer duvida, estou a disposicao!`
+      `Ola ${nomeCliente}! Aqui e o suporte do ZapFacil Pro.\n\nVoce solicitou a recuperacao dos seus dados de acesso ao sistema da ${nomeEmpresa}.\n\n*Link de acesso:*\nhttps://my-project-rho-sooty.vercel.app/\n\nSeu e-mail de login: *${pedido.email}*\n\nCaso nao lembre a senha, podemos redefinir juntos. Responda esta mensagem.\n\nQualquer duvida, estou a disposicao!`
     );
     window.open(`https://wa.me/${numero}?text=${msg}`, "_blank");
     resolverPedidoRecuperacao(pedido.id, "ENVIADO");
@@ -1717,7 +1799,7 @@ function SecaoRecuperacoes() {
 Estamos enviando seus dados de acesso ao sistema da {clienteSelecionado.dadosRegistro?.nomeEmpresa || clienteSelecionado.empresa}.
 
 Link de acesso:
-https://j1ewd51wcs60-d.space-z.ai/
+https://my-project-rho-sooty.vercel.app/
 
 Seu e-mail de login: {clienteSelecionado.dadosRegistro?.email || clienteSelecionado.email}
 
@@ -2382,6 +2464,21 @@ function PainelAdminConteudo() {
     return () => window.removeEventListener("focus", handleFocus);
   }, [recarregarDados, sincronizarDoSupabase]);
 
+  // POLLING AUTOMATICO: busca novos clientes no Supabase a cada 15 segundos
+  // Nao recarrega do localStorage (nao precisa - dados sao do servidor).
+  // Isso garante que admin veja novos cadastros sem precisar dar F5.
+  useEffect(() => {
+    const POLL_INTERVAL_MS = 15000; // 15 segundos
+    const intervalId = setInterval(() => {
+      try {
+        sincronizarDoSupabase();
+      } catch (e) {
+        console.warn("[polling] erro ao sincronizar:", e);
+      }
+    }, POLL_INTERVAL_MS);
+    return () => clearInterval(intervalId);
+  }, [sincronizarDoSupabase]);
+
 const handleSalvarNovo = useCallback(
     async (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
       adicionarSistema(dados);
@@ -2495,7 +2592,7 @@ const handleSalvarNovo = useCallback(
       const emailLogin = sistema.dadosRegistro?.email || sistema.email || "";
       msg = `Ola ${nomeCliente}! Aqui e o suporte do ZapFacil Pro.\n\nEstamos entrando em contato sobre o sistema da *${nomeEmpresa}*.`;
       if (emailLogin) {
-        msg += `\n\n*Link de acesso:*\nhttps://j1ewd51wcs60-d.space-z.ai/\n\nSeu e-mail de login: *${emailLogin}*`;
+        msg += `\n\n*Link de acesso:*\nhttps://my-project-rho-sooty.vercel.app/\n\nSeu e-mail de login: *${emailLogin}*`;
       }
       msg += `\n\nQualquer duvida, estou a disposicao!`;
     }
@@ -2966,7 +3063,7 @@ const handleSalvarNovo = useCallback(
                     </div>
                     <div className="flex items-center gap-2 bg-secondary border border-border rounded-lg px-3 py-2">
                       <span className="text-[10px] text-muted-foreground">Link de acesso:</span>
-                      <span className="text-[11px] text-muted-foreground font-mono truncate flex-1">https://j1ewd51wcs60-d.space-z.ai/</span>
+                      <span className="text-[11px] text-muted-foreground font-mono truncate flex-1">https://my-project-rho-sooty.vercel.app/</span>
                     </div>
                     {dialogDetalhe.dadosRegistro?.senha ? (
                       <Button
@@ -2982,7 +3079,7 @@ const handleSalvarNovo = useCallback(
                           const msg = encodeURIComponent(
                             "Ola " + nomeCliente + "! Aqui e o suporte do ZapFacil Pro.\n\n" +
                             "Segue seus dados de acesso ao sistema:\n\n" +
-                            "Link: https://j1ewd51wcs60-d.space-z.ai/\n" +
+                            "Link: https://my-project-rho-sooty.vercel.app/\n" +
                             "Login (e-mail): " + emailLogin + "\n" +
                             "Senha: " + senhaCliente + "\n\n" +
                             "Salve esses dados! Qualquer duvida, estou a disposicao."
