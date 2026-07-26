@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
+import { useTheme } from "next-themes";
 import {
   useAdminStore,
   STATUS_SISTEMA,
@@ -72,7 +73,6 @@ import {
 } from "@/components/ui/tooltip";
 import { PainelCobranças } from "./admin-cobrancas";
 import { PainelZapBot } from "./painel-zapbot";
-import { HeaderPadrao } from "./header-padrao";
 
 function formatarMoeda(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -2353,6 +2353,7 @@ function SecaoSistemas({
 type AbaAdmin = "sistemas" | "cobrancas" | "recuperacoes" | "zapbot";
 
 function PainelAdminConteudo() {
+  const { theme, setTheme } = useTheme();
   const { sistemas, cobrancas, pedidosRecuperacao, adminCredenciais, dadosGestor, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos, recarregarDados, sincronizarDoSupabase } =
     useAdminStore();
   const [abaAtiva, setAbaAtiva] = useState<AbaAdmin>("sistemas");
@@ -2362,6 +2363,7 @@ function PainelAdminConteudo() {
   const [confirmaRemover, setConfirmaRemover] = useState<string | null>(null);
   const [dialogTrocarSenha, setDialogTrocarSenha] = useState(false);
   const [dialogEmailRecuperacao, setDialogEmailRecuperacao] = useState(false);
+  const [mostrarCredenciaisAdmin, setMostrarCredenciaisAdmin] = useState(false);
 
   // Recarregar dados do localStorage ao montar (para pegar cadastros de clientes)
   useEffect(() => {
@@ -2529,17 +2531,112 @@ const handleSalvarNovo = useCallback(
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Header padrao unificado (mesmo componente do painel cliente) */}
-      <HeaderPadrao
-        logoSrc="/logo-admin.png"
-        logoAlt="Logo Admin"
-        nomeUsuario={dadosGestor?.nome || adminCredenciais?.usuario || "Admin"}
-        emailUsuario={dadosGestor?.email || adminCredenciais?.usuario || ""}
-        credenciais={`${adminCredenciais?.usuario || ""} / ${adminCredenciais?.senha || ""}`}
-        onLogout={handleLogout}
-        onAlterarSenha={() => setDialogTrocarSenha(true)}
-        onEmailRecuperacao={() => setDialogEmailRecuperacao(true)}
-      />
+      {/* Header com glass effect e sombra sticky */}
+      <header className="glass border-b border-border sticky top-0 z-50 shadow-sticky">
+        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
+          <div className="flex items-center">
+            <img
+              src="/logo-admin.png"
+              alt="Logo Admin"
+              width={400}
+              height={100}
+              className="h-[50px] w-[200px] sm:h-[60px] sm:w-[240px] md:h-[70px] md:w-[280px] lg:h-[80px] lg:w-[320px] xl:h-[100px] xl:w-[400px] object-contain"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Dados do admin logado - estilo cliente */}
+            <button
+              type="button"
+              onClick={() => setMostrarCredenciaisAdmin(!mostrarCredenciaisAdmin)}
+              className="flex items-center gap-2 bg-secondary hover:bg-secondary/80 border border-border rounded-lg px-3 py-1.5 transition-colors"
+            >
+              <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+                {(dadosGestor?.nome || adminCredenciais?.usuario || "A").charAt(0).toUpperCase()}
+              </div>
+              <div className="text-left hidden md:block">
+                <p className="text-xs font-semibold text-foreground leading-tight">
+                  {dadosGestor?.nome || adminCredenciais?.usuario || "Admin"}
+                </p>
+                <p className="text-[10px] text-muted-foreground leading-tight flex items-center gap-1">
+                  {mostrarCredenciaisAdmin ? (
+                    <span className="font-mono text-muted-foreground">
+                      {adminCredenciais?.usuario} / {adminCredenciais?.senha}
+                    </span>
+                  ) : (
+                    <><Mail className="h-2.5 w-2.5 shrink-0" />{dadosGestor?.email || adminCredenciais?.usuario}</>
+                  )}
+                </p>
+              </div>
+            </button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground shrink-0"
+                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  >
+                    {theme === "dark" ? (
+                      <Sun className="h-4 w-4 shrink-0" />
+                    ) : (
+                      <Moon className="h-4 w-4 shrink-0" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {theme === "dark" ? "Modo Claro" : "Modo Escuro"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:bg-gray-100 dark:hover:bg-gray-800 shrink-0"
+                    onClick={() => setDialogTrocarSenha(true)}
+                  >
+                    <KeyRound className="h-4 w-4 shrink-0" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Alterar Senha</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-info hover:bg-info/10 dark:hover:bg-info/20 shrink-0"
+                    onClick={() => setDialogEmailRecuperacao(true)}
+                  >
+                    <Mail className="h-4 w-4 shrink-0" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>E-mail de Recuperacao</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 shrink-0"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-4 w-4 shrink-0" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Sair</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
+      </header>
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
         {/* Abas de navegação */}
