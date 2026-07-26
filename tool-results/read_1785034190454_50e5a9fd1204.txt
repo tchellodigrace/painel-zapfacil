@@ -1,0 +1,1002 @@
+     1→"use client";
+     2→
+     3→import { useState, useMemo, useCallback, useEffect } from "react";
+     4→import { useTheme } from "next-themes";
+     5→import {
+     6→  useAdminStore,
+     7→  STATUS_SISTEMA,
+     8→  PLANOS,
+     9→  TIPOS_LICENCA,
+    10→  type SistemaCliente,
+    11→  type StatusSistema,
+    12→  type PlanoSistema,
+    13→  type TipoLicenca,
+    14→} from "@/hooks/use-admin-store";
+    15→import { Button } from "@/components/ui/button";
+    16→import { Input } from "@/components/ui/input";
+    17→import { Label } from "@/components/ui/label";
+    18→import { Badge } from "@/components/ui/badge";
+    19→import { Card, CardContent } from "@/components/ui/card";
+    20→import {
+    21→  Dialog,
+    22→  DialogContent,
+    23→  DialogHeader,
+    24→  DialogTitle,
+    25→} from "@/components/ui/dialog";
+    26→import {
+    27→  Select,
+    28→  SelectContent,
+    29→  SelectItem,
+    30→  SelectTrigger,
+    31→  SelectValue,
+    32→} from "@/components/ui/select";
+    33→import { Textarea } from "@/components/ui/textarea";
+    34→import { Separator } from "@/components/ui/separator";
+    35→import { toast } from "sonner";
+    36→import {
+    37→  Plus,
+    38→  Search,
+    39→  Pencil,
+    40→  Trash2,
+    41→  Eye,
+    42→  MessageCircle,
+    43→  Monitor,
+    44→  DollarSign,
+    45→  AlertTriangle,
+    46→  TrendingUp,
+    47→  ShieldCheck,
+    48→  LogOut,
+    49→  Receipt,
+    50→  Lock,
+    51→  EyeOff,
+    52→  Check,
+    53→  KeyRound,
+    54→  Clock,
+    55→  Phone,
+    56→  Users,
+    57→  Bot,
+    58→  Mail,
+    59→  ArrowRight,
+    60→  Copy,
+    61→  Send,
+    62→  Zap,
+    63→  GitBranch,
+    64→  Sun,
+    65→  Moon,
+    66→} from "lucide-react";
+    67→import { Switch } from "@/components/ui/switch";
+    68→import {
+    69→  Tooltip,
+    70→  TooltipContent,
+    71→  TooltipProvider,
+    72→  TooltipTrigger,
+    73→} from "@/components/ui/tooltip";
+    74→import { PainelCobranças } from "./admin-cobrancas";
+    75→import { PainelZapBot } from "./painel-zapbot";
+    76→
+    77→function formatarMoeda(valor: number) {
+    78→  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    79→}
+    80→
+    81→function formatarData(data: string) {
+    82→  if (!data) return "";
+    83→  const partes = data.split("-");
+    84→  if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    85→  return data;
+    86→}
+    87→
+    88→function diasRestantes(vencimento: string): number {
+    89→  const hoje = new Date();
+    90→  hoje.setHours(0, 0, 0, 0);
+    91→  const venc = new Date(vencimento + "T00:00:00");
+    92→  const diff = venc.getTime() - hoje.getTime();
+    93→  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    94→}
+    95→
+    96→// =============================================
+    97→// DIALOG TROCAR SENHA
+    98→// =============================================
+    99→function DialogTrocarSenha({
+   100→  open,
+   101→  onOpenChange,
+   102→}: {
+   103→  open: boolean;
+   104→  onOpenChange: (v: boolean) => void;
+   105→}) {
+   106→  const { alterarSenha } = useAdminStore();
+   107→  const [senhaAtual, setSenhaAtual] = useState("");
+   108→  const [novaSenha, setNovaSenha] = useState("");
+   109→  const [confirmarNova, setConfirmarNova] = useState("");
+   110→  const [mostrarAtual, setMostrarAtual] = useState(false);
+   111→  const [mostrarNova, setMostrarNova] = useState(false);
+   112→
+   113→  const handleSalvar = () => {
+   114→    if (!senhaAtual || !novaSenha) {
+   115→      toast.error("Preencha todos os campos.");
+   116→      return;
+   117→    }
+   118→    if (novaSenha.length < 4) {
+   119→      toast.error("A nova senha deve ter pelo menos 4 caracteres.");
+   120→      return;
+   121→    }
+   122→    if (novaSenha !== confirmarNova) {
+   123→      toast.error("As senhas nao conferem.");
+   124→      return;
+   125→    }
+   126→    const ok = alterarSenha(senhaAtual, novaSenha);
+   127→    if (ok) {
+   128→      toast.success("Senha alterada com sucesso!");
+   129→      setSenhaAtual("");
+   130→      setNovaSenha("");
+   131→      setConfirmarNova("");
+   132→      onOpenChange(false);
+   133→    } else {
+   134→      toast.error("Senha atual incorreta.");
+   135→    }
+   136→  };
+   137→
+   138→  return (
+   139→    <Dialog open={open} onOpenChange={onOpenChange}>
+   140→      <DialogContent className="max-w-sm">
+   141→        <DialogHeader>
+   142→          <DialogTitle className="flex items-center gap-2 text-base">
+   143→            <KeyRound className="h-5 w-5 text-gray-600" />
+   144→            Alterar Senha
+   145→          </DialogTitle>
+   146→        </DialogHeader>
+   147→        <div className="space-y-4">
+   148→          <div className="space-y-1.5">
+   149→            <Label className="text-xs font-medium">Senha atual</Label>
+   150→            <div className="relative">
+   151→              <Input
+   152→                type={mostrarAtual ? "text" : "password"}
+   153→                value={senhaAtual}
+   154→                onChange={(e) => setSenhaAtual(e.target.value)}
+   155→                placeholder="Digite a senha atual"
+   156→                className="pr-10 h-10 text-sm"
+   157→                onKeyDown={(e) => e.key === "Enter" && handleSalvar()}
+   158→              />
+   159→              <button
+   160→                type="button"
+   161→                onClick={() => setMostrarAtual(!mostrarAtual)}
+   162→                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+   163→              >
+   164→                {mostrarAtual ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+   165→              </button>
+   166→            </div>
+   167→          </div>
+   168→          <div className="space-y-1.5">
+   169→            <Label className="text-xs font-medium">Nova senha</Label>
+   170→            <Input
+   171→              type="password"
+   172→              value={novaSenha}
+   173→              onChange={(e) => setNovaSenha(e.target.value)}
+   174→              placeholder="Minimo 4 caracteres"
+   175→              className="h-10 text-sm"
+   176→              onKeyDown={(e) => e.key === "Enter" && handleSalvar()}
+   177→            />
+   178→          </div>
+   179→          <div className="space-y-1.5">
+   180→            <Label className="text-xs font-medium">Confirmar nova senha</Label>
+   181→            <Input
+   182→              type="password"
+   183→              value={confirmarNova}
+   184→              onChange={(e) => setConfirmarNova(e.target.value)}
+   185→              placeholder="Repita a nova senha"
+   186→              className="h-10 text-sm"
+   187→              onKeyDown={(e) => e.key === "Enter" && handleSalvar()}
+   188→            />
+   189→          </div>
+   190→          <div className="flex gap-2 justify-end pt-1">
+   191→            <Button variant="ghost" size="sm" className="text-xs" onClick={() => onOpenChange(false)}>
+   192→              Cancelar
+   193→            </Button>
+   194→            <Button size="sm" className="text-xs bg-emerald-600 hover:bg-emerald-700" onClick={handleSalvar}>
+   195→              Salvar
+   196→            </Button>
+   197→          </div>
+   198→        </div>
+   199→      </DialogContent>
+   200→    </Dialog>
+   201→  );
+   202→}
+   203→
+   204→// =============================================
+   205→// TELA PRIMEIRO ACESSO ADMIN
+   206→// =============================================
+   207→function TelaPrimeiroAcesso({
+   208→  onConcluido,
+   209→}: {
+   210→  onConcluido: () => void;
+   211→}) {
+   212→  const { configurarPrimeiroAcesso } = useAdminStore();
+   213→  const [etapa, setEtapa] = useState(0);
+   214→  const [carregando, setCarregando] = useState(false);
+   215→
+   216→  // Etapa 0: Dados pessoais
+   217→  const [nome, setNome] = useState("");
+   218→  const [email, setEmail] = useState("");
+   219→  const [telefone, setTelefone] = useState("");
+   220→
+   221→  // Etapa 1: Credenciais de acesso
+   222→  const [usuario, setUsuario] = useState("");
+   223→  const [senha, setSenha] = useState("");
+   224→  const [confirmarSenha, setConfirmarSenha] = useState("");
+   225→  const [mostrarSenha, setMostrarSenha] = useState(false);
+   226→
+   227→  // Etapa 2: E-mail de recuperacao
+   228→  const [emailRecuperacao, setEmailRecuperacao] = useState("");
+   229→
+   230→  const podeAvancarEtapa0 = nome.trim().length >= 2 && email.trim().includes("@") && telefone.trim().length >= 10;
+   231→  const podeAvancarEtapa1 = usuario.trim().length >= 3 && senha.length >= 6 && senha === confirmarSenha;
+   232→  const podeConcluir = emailRecuperacao.trim().includes("@");
+   233→
+   234→  const handleConcluir = () => {
+   235→    if (!podeConcluir) return;
+   236→    setCarregando(true);
+   237→    setTimeout(() => {
+   238→      configurarPrimeiroAcesso({
+   239→        usuario: usuario.trim(),
+   240→        senha,
+   241→        nome: nome.trim(),
+   242→        email: email.trim(),
+   243→        telefone: telefone.trim(),
+   244→        emailRecuperacao: emailRecuperacao.trim(),
+   245→      });
+   246→      sessionStorage.setItem("zapfacil_admin_session", "autenticado");
+   247→      setCarregando(false);
+   248→      toast.success("Configuracao concluida! Bem-vindo ao painel admin.");
+   249→      onConcluido();
+   250→    }, 800);
+   251→  };
+   252→
+   253→  return (
+   254→    <div className="min-h-screen bg-white flex">
+   255→      {/* Lado esquerdo - branding */}
+   256→      <div className="hidden lg:flex lg:w-[45%] bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 p-12 flex-col justify-between relative overflow-hidden">
+   257→        <div className="absolute inset-0 opacity-20">
+   258→          <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-emerald-500/30 blur-3xl" />
+   259→          <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-blue-500/20 blur-3xl" />
+   260→        </div>
+   261→        <div className="relative z-10">
+   262→          <img src="/logo-admin.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
+   263→        </div>
+   264→        <div className="relative z-10 space-y-6">
+   265→          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5">
+   266→            <span className="text-[10px] font-semibold text-emerald-300 uppercase tracking-wider">Primeiro Acesso</span>
+   267→          </div>
+   268→          <h2 className="text-3xl font-bold text-white leading-tight">
+   269→            Configure seu painel<br />de gestao.
+   270→          </h2>
+   271→          <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+   272→            Preencha seus dados para personalizar o acesso ao painel administrativo. Essa configuracao sera necessaria apenas na primeira vez ou apos atualizacoes do sistema.
+   273→          </p>
+   274→        </div>
+   275→        <div className="relative z-10">
+   276→          {/* Steps indicator */}
+   277→          <div className="flex items-center gap-3">
+   278→            {[0, 1, 2].map((i) => (
+   279→              <div key={i} className="flex items-center gap-2">
+   280→                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+   281→                  etapa > i
+   282→                    ? "bg-emerald-500 text-white"
+   283→                    : etapa === i
+   284→                      ? "bg-white text-gray-900 ring-2 ring-emerald-400"
+   285→                      : "bg-white/10 text-gray-500"
+   286→                }`}>
+   287→                  {etapa > i ? <Check className="h-4 w-4" /> : i + 1}
+   288→                </div>
+   289→                {i < 2 && (
+   290→                  <div className={`w-8 h-0.5 rounded ${etapa > i ? "bg-emerald-500" : "bg-white/10"}`} />
+   291→                )}
+   292→              </div>
+   293→            ))}
+   294→            <div className="ml-3 text-[11px] text-gray-400">
+   295→              {etapa === 0 && "Dados pessoais"}
+   296→              {etapa === 1 && "Credenciais"}
+   297→              {etapa === 2 && "Seguranca"}
+   298→            </div>
+   299→          </div>
+   300→        </div>
+   301→      </div>
+   302→
+   303→      {/* Lado direito - formulario */}
+   304→      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+   305→        <div className="w-full max-w-md space-y-8">
+   306→          {/* Header mobile */}
+   307→          <div className="lg:hidden text-center space-y-4">
+   308→            <img src="/logo-admin.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
+   309→            <div>
+   310→              <div className="inline-flex items-center gap-2 bg-emerald-50 rounded-full px-3 py-1 mb-2">
+   311→                <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">Primeiro Acesso</span>
+   312→              </div>
+   313→              <h2 className="text-xl font-bold text-gray-900">Configure seu painel</h2>
+   314→              <p className="text-sm text-gray-500 mt-1">Etapa {etapa + 1} de 3</p>
+   315→            </div>
+   316→            {/* Mobile steps */}
+   317→            <div className="flex items-center justify-center gap-2">
+   318→              {[0, 1, 2].map((i) => (
+   319→                <div key={i} className="flex items-center gap-2">
+   320→                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+   321→                    etapa > i
+   322→                      ? "bg-emerald-500 text-white"
+   323→                      : etapa === i
+   324→                        ? "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500"
+   325→                        : "bg-gray-100 text-gray-400"
+   326→                  }`}>
+   327→                    {etapa > i ? <Check className="h-3.5 w-3.5" /> : i + 1}
+   328→                  </div>
+   329→                  {i < 2 && <div className={`w-6 h-0.5 rounded ${etapa > i ? "bg-emerald-500" : "bg-gray-200"}`} />}
+   330→                </div>
+   331→              ))}
+   332→            </div>
+   333→          </div>
+   334→
+   335→          {/* Etapa 0: Dados pessoais */}
+   336→          {etapa === 0 && (
+   337→            <div className="space-y-5">
+   338→              <div className="hidden lg:block space-y-1">
+   339→                <h2 className="text-2xl font-bold text-gray-900">Seus dados</h2>
+   340→                <p className="text-sm text-gray-500">Informe seus dados de gestor</p>
+   341→              </div>
+   342→              <div className="space-y-2">
+   343→                <Label className="text-sm font-medium text-gray-700">Nome completo</Label>
+   344→                <div className="relative">
+   345→                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   346→                  <Input
+   347→                    placeholder="Seu nome"
+   348→                    value={nome}
+   349→                    onChange={(e) => setNome(e.target.value)}
+   350→                    className="pl-10 h-12 text-sm rounded-xl border-gray-200"
+   351→                    autoFocus
+   352→                  />
+   353→                </div>
+   354→              </div>
+   355→              <div className="space-y-2">
+   356→                <Label className="text-sm font-medium text-gray-700">E-mail</Label>
+   357→                <div className="relative">
+   358→                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   359→                  <Input
+   360→                    type="email"
+   361→                    placeholder="gestor@empresa.com"
+   362→                    value={email}
+   363→                    onChange={(e) => setEmail(e.target.value)}
+   364→                    className="pl-10 h-12 text-sm rounded-xl border-gray-200"
+   365→                  />
+   366→                </div>
+   367→              </div>
+   368→              <div className="space-y-2">
+   369→                <Label className="text-sm font-medium text-gray-700">WhatsApp</Label>
+   370→                <div className="relative">
+   371→                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   372→                  <Input
+   373→                    placeholder="11999999999"
+   374→                    value={telefone}
+   375→                    onChange={(e) => setTelefone(e.target.value.replace(/\D/g, ""))}
+   376→                    className="pl-10 h-12 text-sm rounded-xl border-gray-200"
+   377→                  />
+   378→                </div>
+   379→                <p className="text-[11px] text-gray-400">Apenas numeros, com DDD</p>
+   380→              </div>
+   381→              <Button
+   382→                className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+   383→                onClick={() => setEtapa(1)}
+   384→                disabled={!podeAvancarEtapa0}
+   385→              >
+   386→                Prosseguir
+   387→                <ArrowRight className="h-4 w-4 ml-2" />
+   388→              </Button>
+   389→            </div>
+   390→          )}
+   391→
+   392→          {/* Etapa 1: Credenciais */}
+   393→          {etapa === 1 && (
+   394→            <div className="space-y-5">
+   395→              <div className="hidden lg:block space-y-1">
+   396→                <h2 className="text-2xl font-bold text-gray-900">Credenciais de acesso</h2>
+   397→                <p className="text-sm text-gray-500">Defina usuario e senha para o painel</p>
+   398→              </div>
+   399→              <div className="space-y-2">
+   400→                <Label className="text-sm font-medium text-gray-700">Usuario de acesso</Label>
+   401→                <div className="relative">
+   402→                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   403→                  <Input
+   404→                    placeholder="admin"
+   405→                    value={usuario}
+   406→                    onChange={(e) => setUsuario(e.target.value.trim().toLowerCase())}
+   407→                    className="pl-10 h-12 text-sm rounded-xl border-gray-200"
+   408→                    autoFocus
+   409→                  />
+   410→                </div>
+   411→                <p className="text-[11px] text-gray-400">Minimo 3 caracteres. Sera usado para login.</p>
+   412→              </div>
+   413→              <div className="space-y-2">
+   414→                <Label className="text-sm font-medium text-gray-700">Senha</Label>
+   415→                <div className="relative">
+   416→                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   417→                  <Input
+   418→                    type={mostrarSenha ? "text" : "password"}
+   419→                    placeholder="Minimo 6 caracteres"
+   420→                    value={senha}
+   421→                    onChange={(e) => setSenha(e.target.value)}
+   422→                    className="pl-10 pr-10 h-12 text-sm rounded-xl border-gray-200"
+   423→                  />
+   424→                  <button
+   425→                    type="button"
+   426→                    onClick={() => setMostrarSenha(!mostrarSenha)}
+   427→                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+   428→                  >
+   429→                    {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+   430→                  </button>
+   431→                </div>
+   432→              </div>
+   433→              <div className="space-y-2">
+   434→                <Label className="text-sm font-medium text-gray-700">Confirmar senha</Label>
+   435→                <div className="relative">
+   436→                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   437→                  <Input
+   438→                    type="password"
+   439→                    placeholder="Repita a senha"
+   440→                    value={confirmarSenha}
+   441→                    onChange={(e) => setConfirmarSenha(e.target.value)}
+   442→                    className={`pl-10 h-12 text-sm rounded-xl border-gray-200 ${
+   443→                      confirmarSenha && senha !== confirmarSenha ? "border-red-300 focus-visible:ring-red-400" : ""
+   444→                    }`}
+   445→                  />
+   446→                </div>
+   447→                {confirmarSenha && senha !== confirmarSenha && (
+   448→                  <p className="text-[11px] text-red-500 flex items-center gap-1">
+   449→                    <AlertTriangle className="h-3 w-3" /> As senhas nao conferem
+   450→                  </p>
+   451→                )}
+   452→              </div>
+   453→              <div className="flex gap-3">
+   454→                <Button variant="outline" className="flex-1 h-12 text-sm rounded-xl" onClick={() => setEtapa(0)}>
+   455→                  Voltar
+   456→                </Button>
+   457→                <Button
+   458→                  className="flex-1 h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+   459→                  onClick={() => setEtapa(2)}
+   460→                  disabled={!podeAvancarEtapa1}
+   461→                >
+   462→                  Prosseguir
+   463→                  <ArrowRight className="h-4 w-4 ml-2" />
+   464→                </Button>
+   465→              </div>
+   466→            </div>
+   467→          )}
+   468→
+   469→          {/* Etapa 2: Email de recuperacao */}
+   470→          {etapa === 2 && (
+   471→            <div className="space-y-5">
+   472→              <div className="hidden lg:block space-y-1">
+   473→                <h2 className="text-2xl font-bold text-gray-900">Seguranca</h2>
+   474→                <p className="text-sm text-gray-500">Configure a recuperacao de senha</p>
+   475→              </div>
+   476→              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
+   477→                <div className="flex items-start gap-2">
+   478→                  <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+   479→                  <div>
+   480→                    <p className="text-sm font-medium text-blue-800">E-mail de recuperacao</p>
+   481→                    <p className="text-xs text-blue-600 mt-0.5">
+   482→                      Caso esqueca sua senha, voce podera redefini-la informando este e-mail na tela de login. Recomendamos usar um e-mail diferente do pessoal para maior seguranca.
+   483→                    </p>
+   484→                  </div>
+   485→                </div>
+   486→              </div>
+   487→              <div className="space-y-2">
+   488→                <Label className="text-sm font-medium text-gray-700">E-mail de recuperacao</Label>
+   489→                <div className="relative">
+   490→                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   491→                  <Input
+   492→                    type="email"
+   493→                    placeholder="recuperacao@seuemail.com"
+   494→                    value={emailRecuperacao}
+   495→                    onChange={(e) => setEmailRecuperacao(e.target.value)}
+   496→                    className="pl-10 h-12 text-sm rounded-xl border-gray-200"
+   497→                    autoFocus
+   498→                  />
+   499→                </div>
+   500→                <button
+   501→                  type="button"
+   502→                  onClick={() => setEmailRecuperacao(email)}
+   503→                  className="text-[11px] text-emerald-600 hover:text-emerald-700 font-medium"
+   504→                >
+   505→                  Usar o mesmo e-mail ({email})
+   506→                </button>
+   507→              </div>
+   508→              <div className="flex gap-3">
+   509→                <Button variant="outline" className="flex-1 h-12 text-sm rounded-xl" onClick={() => setEtapa(1)}>
+   510→                  Voltar
+   511→                </Button>
+   512→                <Button
+   513→                  className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+   514→                  onClick={handleConcluir}
+   515→                  disabled={carregando || !podeConcluir}
+   516→                >
+   517→                  {carregando ? (
+   518→                    <span className="flex items-center gap-2">
+   519→                      <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+   520→                      Configurando...
+   521→                    </span>
+   522→                  ) : (
+   523→                    <>
+   524→                      <Check className="h-4 w-4 mr-2" />
+   525→                      Concluir configuracao
+   526→                    </>
+   527→                  )}
+   528→                </Button>
+   529→              </div>
+   530→            </div>
+   531→          )}
+   532→
+   533→          {/* Info footer */}
+   534→          <div className="text-center">
+   535→            <p className="text-[11px] text-gray-400">
+   536→              Essa configuracao sera necessaria apenas na primeira vez.
+   537→              <br />Apos atualizacoes do sistema, basta refazer este passo rapidamente.
+   538→            </p>
+   539→          </div>
+   540→        </div>
+   541→      </div>
+   542→    </div>
+   543→  );
+   544→}
+   545→
+   546→
+   547→// =============================================
+   548→// TELA DE LOGIN DO ADMIN (CLARO)
+   549→// =============================================
+   550→const CREDENCIAIS_PADRAO = { usuario: "admin", senha: "zapfacil123" };
+   551→
+   552→function TelaLoginAdmin({
+   553→  onAutenticado,
+   554→  onPrimeiroAcesso,
+   555→}: {
+   556→  onAutenticado: () => void;
+   557→  onPrimeiroAcesso: () => void;
+   558→}) {
+   559→  const [usuario, setUsuario] = useState("");
+   560→  const [senha, setSenha] = useState("");
+   561→  const [mostrarSenha, setMostrarSenha] = useState(false);
+   562→  const [carregando, setCarregando] = useState(false);
+   563→
+   564→  // Estado de recuperacao
+   565→  const [dialogRecuperar, setDialogRecuperar] = useState(false);
+   566→  const [recuperarEmail, setRecuperarEmail] = useState("");
+   567→  const [etapaRecuperacao, setEtapaRecuperacao] = useState<"email" | "redefinir">("email");
+   568→  const [novaSenhaRecuperacao, setNovaSenhaRecuperacao] = useState("");
+   569→  const [confirmarSenhaRecuperacao, setConfirmarSenhaRecuperacao] = useState("");
+   570→  const [carregandoRecuperacao, setCarregandoRecuperacao] = useState(false);
+   571→
+   572→  const handleLogin = () => {
+   573→    if (!usuario.trim() || !senha.trim()) {
+   574→      toast.error("Preencha usuario e senha.");
+   575→      return;
+   576→    }
+   577→    setCarregando(true);
+   578→    setTimeout(() => {
+   579→      const store = useAdminStore.getState();
+   580→      if (!store.adminCredenciais) {
+   581→        store.configurarAdmin(CREDENCIAIS_PADRAO.usuario, CREDENCIAIS_PADRAO.senha);
+   582→      }
+   583→      const cred = useAdminStore.getState().adminCredenciais;
+   584→      if (
+   585→        cred &&
+   586→        cred.usuario === usuario.trim().toLowerCase() &&
+   587→        cred.senha === senha
+   588→      ) {
+   589→        sessionStorage.setItem("zapfacil_admin_session", "autenticado");
+   590→        toast.success("Bem-vindo, Admin!");
+   591→        onAutenticado();
+   592→      } else {
+   593→        toast.error("Usuario ou senha incorretos.");
+   594→      }
+   595→      setCarregando(false);
+   596→    }, 600);
+   597→  };
+   598→
+   599→  const handleVerificarEmail = () => {
+   600→    if (!recuperarEmail.trim() || !recuperarEmail.includes("@")) {
+   601→      toast.error("Informe um e-mail valido.");
+   602→      return;
+   603→    }
+   604→    setCarregandoRecuperacao(true);
+   605→    setTimeout(() => {
+   606→      const store = useAdminStore.getState();
+   607→      const emailCadastrado = store.emailRecuperacao || "";
+   608→      if (emailCadastrado && emailCadastrado === recuperarEmail.trim().toLowerCase()) {
+   609→        setEtapaRecuperacao("redefinir");
+   610→        toast.success("E-mail verificado! Defina sua nova senha.");
+   611→      } else if (!emailCadastrado) {
+   612→        toast.error("Nenhum e-mail de recuperacao configurado. Contate o suporte.");
+   613→      } else {
+   614→        toast.error("E-mail nao corresponde ao cadastrado para recuperacao.");
+   615→      }
+   616→      setCarregandoRecuperacao(false);
+   617→    }, 800);
+   618→  };
+   619→
+   620→  const handleRedefinirSenha = () => {
+   621→    if (!novaSenhaRecuperacao.trim() || novaSenhaRecuperacao.length < 6) {
+   622→      toast.error("A nova senha deve ter pelo menos 6 caracteres.");
+   623→      return;
+   624→    }
+   625→    if (novaSenhaRecuperacao !== confirmarSenhaRecuperacao) {
+   626→      toast.error("As senhas nao conferem.");
+   627→      return;
+   628→    }
+   629→    setCarregandoRecuperacao(true);
+   630→    setTimeout(() => {
+   631→      useAdminStore.getState().resetarSenhaAdmin(novaSenhaRecuperacao);
+   632→      setCarregandoRecuperacao(false);
+   633→      setDialogRecuperar(false);
+   634→      setEtapaRecuperacao("email");
+   635→      setRecuperarEmail("");
+   636→      setNovaSenhaRecuperacao("");
+   637→      setConfirmarSenhaRecuperacao("");
+   638→      toast.success("Senha redefinida com sucesso! Faca login com a nova senha.");
+   639→    }, 800);
+   640→  };
+   641→
+   642→  const handleEnviarEmailRecuperacao = () => {
+   643→    const store = useAdminStore.getState();
+   644→    const emailCadastrado = store.emailRecuperacao;
+   645→    if (!emailCadastrado) {
+   646→      toast.error("Nenhum e-mail de recuperacao configurado.");
+   647→      return;
+   648→    }
+   649→    const assunto = encodeURIComponent("Recuperacao de Senha - Painel Admin ZapFacil Pro");
+   650→    const corpo = encodeURIComponent(
+   651→      "Voce solicitou a recuperacao de senha do Painel Admin ZapFacil Pro.\n\n" +
+   652→      "Para redefinir sua senha:\n" +
+   653→      "1. Acesse o painel admin\n" +
+   654→      "2. Clique em \"Esqueceu a senha?\"\n" +
+   655→      "3. Informe este e-mail: " + emailCadastrado + "\n" +
+   656→      "4. Defina sua nova senha\n\n" +
+   657→      "Se nao foi voce, ignore este e-mail.\n\n" +
+   658→      "Equipe ZapFacil Pro"
+   659→    );
+   660→    window.open("mailto:" + emailCadastrado + "?subject=" + assunto + "&body=" + corpo, "_self");
+   661→  };
+   662→
+   663→  const fecharDialogRecuperar = () => {
+   664→    setDialogRecuperar(false);
+   665→    setEtapaRecuperacao("email");
+   666→    setRecuperarEmail("");
+   667→    setNovaSenhaRecuperacao("");
+   668→    setConfirmarSenhaRecuperacao("");
+   669→  };
+   670→
+   671→  return (
+   672→    <>
+   673→      <div className="min-h-screen bg-white flex">
+   674→        {/* Lado esquerdo */}
+   675→        <div className="hidden lg:flex lg:w-[45%] bg-gray-900 p-12 flex-col justify-between relative overflow-hidden">
+   676→          <div className="absolute inset-0 opacity-20">
+   677→            <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-emerald-500/30 blur-3xl" />
+   678→            <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl" />
+   679→          </div>
+   680→          <div className="relative z-10">
+   681→            <img src="/logo-admin.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
+   682→          </div>
+   683→          <div className="relative z-10 space-y-4">
+   684→            <h2 className="text-3xl font-bold text-white leading-tight">
+   685→              Painel do Gestor.
+   686→            </h2>
+   687→            <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+   688→              Gerencie todos os sistemas vendidos, acompanhe clientes, controle licencas e receita em um so lugar.
+   689→            </p>
+   690→          </div>
+   691→          <div className="relative z-10 flex items-center gap-2">
+   692→            <ShieldCheck className="w-4 h-4 text-gray-500" />
+   693→            <span className="text-gray-600 text-[11px]">Acesso restrito ao administrador</span>
+   694→          </div>
+   695→        </div>
+   696→
+   697→        {/* Lado direito */}
+   698→        <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+   699→          <div className="w-full max-w-sm space-y-8">
+   700→            <div className="lg:hidden text-center space-y-4">
+   701→              <img src="/logo-admin.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
+   702→              <h2 className="text-xl font-bold text-gray-900">Painel Admin</h2>
+   703→            </div>
+   704→
+   705→            <div className="hidden lg:block space-y-1">
+   706→              <h2 className="text-2xl font-bold text-gray-900">Entrar</h2>
+   707→              <p className="text-sm text-gray-500">Acesso exclusivo do gestor do sistema</p>
+   708→            </div>
+   709→
+   710→            <div className="space-y-4">
+   711→              <div className="space-y-2">
+   712→                <Label className="text-sm font-medium text-gray-700">Usuario</Label>
+   713→                <Input
+   714→                  placeholder="admin"
+   715→                  value={usuario}
+   716→                  onChange={(e) => setUsuario(e.target.value)}
+   717→                  className="h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
+   718→                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+   719→                  autoFocus
+   720→                />
+   721→              </div>
+   722→
+   723→              <div className="space-y-2">
+   724→                <Label className="text-sm font-medium text-gray-700">Senha</Label>
+   725→                <div className="relative">
+   726→                  <Input
+   727→                    type={mostrarSenha ? "text" : "password"}
+   728→                    placeholder="Sua senha"
+   729→                    value={senha}
+   730→                    onChange={(e) => setSenha(e.target.value)}
+   731→                    className="pr-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
+   732→                    onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+   733→                  />
+   734→                  <button
+   735→                    type="button"
+   736→                    onClick={() => setMostrarSenha(!mostrarSenha)}
+   737→                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+   738→                  >
+   739→                    {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+   740→                  </button>
+   741→                </div>
+   742→              </div>
+   743→
+   744→              <Button
+   745→                className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+   746→                onClick={handleLogin}
+   747→                disabled={carregando}
+   748→              >
+   749→                {carregando ? (
+   750→                  <span className="flex items-center gap-2">
+   751→                    <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+   752→                    Verificando...
+   753→                  </span>
+   754→                ) : (
+   755→                  "Entrar no painel"
+   756→                )}
+   757→              </Button>
+   758→            </div>
+   759→
+   760→            {/* Link de recuperacao */}
+   761→            <div className="text-center space-y-1">
+   762→              <button
+   763→                type="button"
+   764→                onClick={() => setDialogRecuperar(true)}
+   765→                className="text-sm text-gray-500 hover:text-gray-700 underline underline-offset-4 transition-colors"
+   766→              >
+   767→                Esqueceu a senha?
+   768→              </button>
+   769→              <br />
+   770→              <button
+   771→                type="button"
+   772→                onClick={() => onPrimeiroAcesso()}
+   773→                className="text-sm text-emerald-600 hover:text-emerald-700 underline underline-offset-4 transition-colors"
+   774→              >
+   775→                Primeiro acesso? Configurar perfil
+   776→              </button>
+   777→            </div>
+   778→
+   779→            <div className="bg-gray-50 rounded-xl p-3 space-y-1">
+   780→              <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider text-center">Credenciais padrao</p>
+   781→              <p className="text-center text-sm">
+   782→                <span className="font-mono font-semibold text-gray-700">admin</span>
+   783→                <span className="text-gray-300 mx-2">/</span>
+   784→                <span className="font-mono font-semibold text-gray-700">zapfacil123</span>
+   785→              </p>
+   786→              <p className="text-[10px] text-gray-400 text-center">Troque a senha apos o primeiro acesso pelo icone de chave no painel</p>
+   787→            </div>
+   788→          </div>
+   789→        </div>
+   790→      </div>
+   791→
+   792→      {/* Dialog de recuperacao de senha */}
+   793→      <Dialog open={dialogRecuperar} onOpenChange={(v) => { if (!v) fecharDialogRecuperar(); else setDialogRecuperar(true); }}>
+   794→        <DialogContent className="sm:max-w-md">
+   795→          <DialogHeader>
+   796→            <DialogTitle className="flex items-center gap-2">
+   797→              <KeyRound className="h-5 w-5 text-amber-500" />
+   798→              {etapaRecuperacao === "email" ? "Recuperar Senha" : "Redefinir Senha"}
+   799→            </DialogTitle>
+   800→          </DialogHeader>
+   801→
+   802→          {etapaRecuperacao === "email" ? (
+   803→            <div className="space-y-4">
+   804→              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+   805→                <p className="text-xs text-amber-700 leading-relaxed">
+   806→                  Informe o e-mail de recuperacao cadastrado nas configuracoes do painel admin. Se o e-mail corresponder, voce podera definir uma nova senha.
+   807→                </p>
+   808→              </div>
+   809→
+   810→              <div className="space-y-2">
+   811→                <Label className="text-sm font-medium">E-mail de recuperacao</Label>
+   812→                <Input
+   813→                  type="email"
+   814→                  placeholder="seu@email.com"
+   815→                  value={recuperarEmail}
+   816→                  onChange={(e) => setRecuperarEmail(e.target.value)}
+   817→                  className="h-11 text-sm rounded-xl"
+   818→                  onKeyDown={(e) => e.key === "Enter" && handleVerificarEmail()}
+   819→                />
+   820→              </div>
+   821→
+   822→              <Button
+   823→                className="w-full h-11 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+   824→                onClick={handleVerificarEmail}
+   825→                disabled={carregandoRecuperacao}
+   826→              >
+   827→                {carregandoRecuperacao ? (
+   828→                  <span className="flex items-center gap-2">
+   829→                    <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+   830→                    Verificando...
+   831→                  </span>
+   832→                ) : (
+   833→                  "Verificar E-mail"
+   834→                )}
+   835→              </Button>
+   836→
+   837→              <div className="flex items-center gap-2 pt-1">
+   838→                <Separator className="flex-1" />
+   839→                <span className="text-[10px] text-gray-400 uppercase tracking-wider">ou</span>
+   840→                <Separator className="flex-1" />
+   841→              </div>
+   842→
+   843→              <Button
+   844→                variant="outline"
+   845→                className="w-full h-10 text-sm rounded-xl"
+   846→                onClick={handleEnviarEmailRecuperacao}
+   847→              >
+   848→                <Mail className="h-4 w-4 mr-2" />
+   849→                Receber instrucoes por e-mail
+   850→              </Button>
+   851→              <p className="text-[11px] text-gray-400 text-center">
+   852→                Abre seu cliente de e-mail com as instrucoes de recuperacao.
+   853→              </p>
+   854→            </div>
+   855→          ) : (
+   856→            <div className="space-y-4">
+   857→              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex items-start gap-2">
+   858→                <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+   859→                <p className="text-xs text-emerald-700">
+   860→                  E-mail verificado com sucesso! Defina sua nova senha abaixo.
+   861→                </p>
+   862→              </div>
+   863→
+   864→              <div className="space-y-2">
+   865→                <Label className="text-sm font-medium">Nova senha</Label>
+   866→                <div className="relative">
+   867→                  <Input
+   868→                    type={mostrarSenha ? "text" : "password"}
+   869→                    placeholder="Minimo 6 caracteres"
+   870→                    value={novaSenhaRecuperacao}
+   871→                    onChange={(e) => setNovaSenhaRecuperacao(e.target.value)}
+   872→                    className="h-11 text-sm rounded-xl pr-10"
+   873→                  />
+   874→                  <button
+   875→                    type="button"
+   876→                    onClick={() => setMostrarSenha(!mostrarSenha)}
+   877→                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+   878→                  >
+   879→                    {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+   880→                  </button>
+   881→                </div>
+   882→              </div>
+   883→
+   884→              <div className="space-y-2">
+   885→                <Label className="text-sm font-medium">Confirmar nova senha</Label>
+   886→                <Input
+   887→                  type="password"
+   888→                  placeholder="Repita a nova senha"
+   889→                  value={confirmarSenhaRecuperacao}
+   890→                  onChange={(e) => setConfirmarSenhaRecuperacao(e.target.value)}
+   891→                  className="h-11 text-sm rounded-xl"
+   892→                  onKeyDown={(e) => e.key === "Enter" && handleRedefinirSenha()}
+   893→                />
+   894→              </div>
+   895→
+   896→              <div className="flex gap-3 pt-2">
+   897→                <Button variant="outline" className="flex-1 h-11 text-sm rounded-xl" onClick={fecharDialogRecuperar}>
+   898→                  Cancelar
+   899→                </Button>
+   900→                <Button
+   901→                  className="flex-1 h-11 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+   902→                  onClick={handleRedefinirSenha}
+   903→                  disabled={carregandoRecuperacao}
+   904→                >
+   905→                  {carregandoRecuperacao ? (
+   906→                    <span className="flex items-center gap-2">
+   907→                      <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+   908→                      Redefinindo...
+   909→                    </span>
+   910→                  ) : (
+   911→                    "Redefinir Senha"
+   912→                  )}
+   913→                </Button>
+   914→              </div>
+   915→            </div>
+   916→          )}
+   917→        </DialogContent>
+   918→      </Dialog>
+   919→    </>
+   920→  );
+   921→}
+   922→
+   923→// =============================================
+   924→// FORMULÁRIO DE SISTEMA (com tipo de licença)
+   925→// =============================================
+   926→function FormularioSistema({
+   927→  sistema,
+   928→  onSalvar,
+   929→  onCancelar,
+   930→}: {
+   931→  sistema?: SistemaCliente;
+   932→  onSalvar: (dados: Omit<SistemaCliente, "id" | "criadoEm">) => void;
+   933→  onCancelar: () => void;
+   934→}) {
+   935→  const hoje = new Date().toISOString().split("T")[0];
+   936→  const [empresa, setEmpresa] = useState(sistema?.empresa || "");
+   937→  const [responsavel, setResponsavel] = useState(sistema?.responsavel || "");
+   938→  const [telefone, setTelefone] = useState(sistema?.telefone || "");
+   939→  const [email, setEmail] = useState(sistema?.email || "");
+   940→  const [cidade, setCidade] = useState(sistema?.cidade || "");
+   941→  const [dataInstalacao, setDataInstalacao] = useState(
+   942→    sistema?.dataInstalacao || hoje
+   943→  );
+   944→  const [dataVencimento, setDataVencimento] = useState(
+   945→    sistema?.dataVencimento || ""
+   946→  );
+   947→  const [plano, setPlano] = useState<PlanoSistema>(sistema?.plano || "PRO");
+   948→  const [status, setStatus] = useState<StatusSistema>(
+   949→    sistema?.status || "TRIAL"
+   950→  );
+   951→  const [tipoLicenca, setTipoLicenca] = useState<TipoLicenca>(
+   952→    sistema?.tipoLicenca || "ALUGUEL"
+   953→  );
+   954→  const [valorMensal, setValorMensal] = useState(
+   955→    sistema?.valorMensal?.toString() || ""
+   956→  );
+   957→  const [valorAquisicao, setValorAquisicao] = useState(
+   958→    sistema?.valorAquisicao?.toString() || ""
+   959→  );
+   960→  const [taxaInstalacao, setTaxaInstalacao] = useState(
+   961→    sistema?.taxaInstalacao?.toString() || ""
+   962→  );
+   963→  const [observacoes, setObservacoes] = useState(
+   964→    sistema?.observacoes || ""
+   965→  );
+   966→
+   967→  // Feature flags Premium
+   968→  const [zapbotAtivo, setZapbotAtivo] = useState(sistema?.zapbotAtivo ?? (sistema?.plano === "PREMIUM" || sistema?.plano === "PRO"));
+   969→  const [disparoAtivo, setDisparoAtivo] = useState(sistema?.disparoAtivo ?? (sistema?.plano === "PREMIUM"));
+   970→  const [funilAtivo, setFunilAtivo] = useState(sistema?.funilAtivo ?? (sistema?.plano === "PREMIUM"));
+   971→  const [fluxosAtivo, setFluxosAtivo] = useState(sistema?.fluxosAtivo ?? (sistema?.plano === "PREMIUM"));
+   972→
+   973→  // Senha de acesso do cliente (somente para novo cadastro)
+   974→  const ehNovoCadastro = !sistema;
+   975→  const [senhaAcesso, setSenhaAcesso] = useState("");
+   976→  const [confirmarSenhaAcesso, setConfirmarSenhaAcesso] = useState("");
+   977→  const [mostrarSenhaForm, setMostrarSenhaForm] = useState(false);
+   978→  const [mostrarSenhaVisivel, setMostrarSenhaVisivel] = useState(false);
+   979→
+   980→  const LINK_SISTEMA = "https://j1ewd51wcs60-d.space-z.ai/";
+   981→
+   982→  const enviarWhatsApp = () => {
+   983→    if (!telefone.trim()) {
+   984→      toast.error("Preencha o telefone para enviar o link.");
+   985→      return;
+   986→    }
+   987→    const telLimpo = telefone.replace(/\D/g, "");
+   988→    const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+   989→    const msg = encodeURIComponent(
+   990→      `Ola! Aqui e o suporte do ZapFacil Pro. Seu sistema esta pronto para uso. Acesse pelo link abaixo e faca seu cadastro:\n\n${LINK_SISTEMA}\n\nQualquer duvida, estou a disposicao!`
+   991→    );
+   992→    window.open(`https://wa.me/${numero}?text=${msg}`, "_blank");
+   993→  };
+   994→
+   995→  const handleSubmit = (e: React.FormEvent) => {
+   996→    e.preventDefault();
+   997→    if (!empresa.trim()) {
+   998→      toast.error("Nome da empresa e obrigatorio.");
+   999→      return;
+  1000→    }
+
+[showing lines 1-1000 of 3131; use offset=1001 with limit to continue reading]
