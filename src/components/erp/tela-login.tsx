@@ -223,7 +223,53 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
       criarSessao();
 
       toast.success("Conta criada com sucesso!");
-      onAutenticado();
+
+      // Abrir WhatsApp automaticamente com as credenciais para o cliente guardar
+      if (cred.telefone) {
+        const telLimpo = cred.telefone.replace(/\D/g, "");
+        const numero = telLimpo.startsWith("55") ? telLimpo : `55${telLimpo}`;
+        const linkAcesso = "https://my-project-rho-sooty.vercel.app/";
+        const mensagem = encodeURIComponent(
+          `Ola ${cred.nomeResponsavel}!\n\n` +
+          `Cadastro concluido com sucesso no ZapFacil Pro. ` +
+          `Guarde seus dados de acesso:\n\n` +
+          `*Link de acesso:*\n${linkAcesso}\n\n` +
+          `*E-mail de login:*\n${cred.email}\n\n` +
+          `*Senha:*\n${cred.senha}\n\n` +
+          `Recomendamos trocar a senha apos o primeiro acesso pelo menu do painel.\n\n` +
+          `Qualquer duvida, estamos a disposicao!`
+        );
+        // Tenta abrir em nova aba. Se bloqueado por popup blocker, mostra toast com botao.
+        const waUrl = `https://wa.me/${numero}?text=${mensagem}`;
+        const newWindow = window.open(waUrl, "_blank");
+        if (!newWindow) {
+          // Popup bloqueado - mostra toast com link clicavel
+          toast(
+            `WhatsApp: abrimos uma notificacao para voce salvar suas credenciais. ` +
+            `Se nao abriu, clique aqui para abrir manualmente.`,
+            {
+              duration: 8000,
+              action: {
+                label: "Abrir WhatsApp",
+                onClick: () => window.open(waUrl, "_blank"),
+              },
+            }
+          );
+        } else {
+          toast.info("Abrimos o WhatsApp com suas credenciais. Salve a mensagem!");
+        }
+      } else {
+        // Sem telefone - mostra toast com as credenciais para o cliente copiar
+        toast(
+          `Guarde seus dados de acesso! E-mail: ${cred.email} - Senha: ${cred.senha}`,
+          { duration: 10000 }
+        );
+      }
+
+      // Pequeno delay para o usuario ver o toast antes de redirecionar
+      setTimeout(() => {
+        onAutenticado();
+      }, 1500);
     } catch (e) {
       console.error("[handleCriarConta] erro:", e);
       toast.error("Erro de conexao. Tente novamente.");
