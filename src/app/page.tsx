@@ -11,12 +11,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import {
   Sun,
   Moon,
   FileText,
@@ -31,6 +25,7 @@ import {
   Send,
   TrendingUp,
   GitBranch,
+  Mail,
 } from "lucide-react";
 import { EmpresaPanel } from "@/components/erp/empresa-panel";
 import { CatalogoServicos } from "@/components/erp/catalogo-servicos";
@@ -89,6 +84,8 @@ export default function ZapFacilPage() {
   const [vendaAtual, setVendaAtual] = useState<Venda | null>(null);
   const [abaAtiva, setAbaAtiva] = useState("lancamento");
   const [nomeLogin, setNomeLogin] = useState("");
+  const [emailLogin, setEmailLogin] = useState("");
+  const [mostrarCredenciais, setMostrarCredenciais] = useState(false);
 
   // Feature flags Premium (buscadas do Supabase)
   const [zapbotAtivo, setZapbotAtivo] = useState(false);
@@ -101,6 +98,7 @@ export default function ZapFacilPage() {
     setAutenticado(verificarSessao());
     if (verificarSessao()) {
       setNomeLogin(carregarNomeLogin());
+      setEmailLogin(carregarEmailLogin());
     }
     mountedRef.current = true;
   }, []);
@@ -140,6 +138,7 @@ export default function ZapFacilPage() {
   const handleAutenticado = useCallback(() => {
     setAutenticado(true);
     setNomeLogin(carregarNomeLogin());
+    setEmailLogin(carregarEmailLogin());
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -187,27 +186,45 @@ export default function ZapFacilPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <InicializadorLogo />
-      {/* Header com glass effect */}
+      {/* Header com glass effect e sombra sticky (identico ao painel admin) */}
       <header className="glass border-b border-border sticky top-0 z-50 shadow-sticky">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             <img
               src="/logo-cliente.png"
               alt="Logo"
               width={400} height={200}
               className="h-[50px] w-[100px] sm:h-[60px] sm:w-[120px] md:h-[70px] md:w-[140px] lg:h-[80px] lg:w-[160px] xl:h-[100px] xl:w-[200px] object-contain shrink-0"
             />
-            {nomeLogin && (
-              <div className="hidden sm:flex flex-col">
-                <span className="text-xs text-muted-foreground leading-tight">Ola,</span>
-                <span className="text-sm font-semibold text-foreground leading-tight">{nomeLogin}</span>
-              </div>
-            )}
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-2">
+            {/* Dados do cliente logado - estilo admin (card clicavel) */}
+            <button
+              type="button"
+              onClick={() => setMostrarCredenciais(!mostrarCredenciais)}
+              className="flex items-center gap-2 bg-secondary hover:bg-secondary/80 border border-border rounded-lg px-3 py-1.5 transition-colors"
+            >
+              <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+                {(nomeLogin || "C").charAt(0).toUpperCase()}
+              </div>
+              <div className="text-left hidden md:block">
+                <p className="text-xs font-semibold text-foreground leading-tight">
+                  {nomeLogin || "Cliente"}
+                </p>
+                <p className="text-[10px] text-muted-foreground leading-tight flex items-center gap-1">
+                  {mostrarCredenciais ? (
+                    <span className="font-mono text-muted-foreground">
+                      {emailLogin || "—"}
+                    </span>
+                  ) : (
+                    <><Mail className="h-2.5 w-2.5 shrink-0" />{emailLogin || "—"}</>
+                  )}
+                </p>
+              </div>
+            </button>
             <Badge
               variant="outline"
-              className="text-success dark:text-success border-success/30 bg-success/10 font-semibold"
+              className="text-success dark:text-success border-success/30 bg-success/10 font-semibold shrink-0"
             >
               PRO
             </Badge>
@@ -217,24 +234,20 @@ export default function ZapFacilPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground shrink-0"
                     onClick={() =>
                       setTheme(theme === "dark" ? "light" : "dark")
                     }
                   >
                     {theme === "dark" ? (
-                      <Sun className="h-4 w-4" />
+                      <Sun className="h-4 w-4 shrink-0" />
                     ) : (
-                      <Moon className="h-4 w-4" />
+                      <Moon className="h-4 w-4 shrink-0" />
                     )}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>
-                    {theme === "dark"
-                      ? "Modo Claro"
-                      : "Modo Escuro"}
-                  </p>
+                  {theme === "dark" ? "Modo Claro" : "Modo Escuro"}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -244,15 +257,13 @@ export default function ZapFacilPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+                    className="h-8 w-8 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 shrink-0"
                     onClick={handleLogout}
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className="h-4 w-4 shrink-0" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
-                  <p>Sair do Sistema</p>
-                </TooltipContent>
+                <TooltipContent>Sair do Sistema</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
@@ -260,125 +271,156 @@ export default function ZapFacilPage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto w-full p-3 sm:p-4 md:p-6">
-        <Tabs
-          value={abaAtiva}
-          onValueChange={setAbaAtiva}
-          className="space-y-4"
-        >
-          <TabsList className={`grid w-full ${gridColsClass} h-auto p-1 bg-card border shadow-sm`}>
-            {/* Tabs fixos do ERP */}
-            <TabsTrigger
-              value="lancamento"
-              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              <FileText className="h-3.5 w-3.5 mr-1" />
-              <span className="hidden sm:inline">Lancar</span>
-              <span className="sm:hidden">Lanc.</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="cadastros"
-              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              <Building2 className="h-3.5 w-3.5 mr-1" />
-              <span className="hidden sm:inline">Cadastros</span>
-              <span className="sm:hidden">Cad.</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="agenda"
-              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              <CalendarDays className="h-3.5 w-3.5 mr-1" />
-              <span className="hidden sm:inline">Agenda</span>
-              <span className="sm:hidden">Ag.</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="financeiro"
-              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              <Receipt className="h-3.5 w-3.5 mr-1" />
-              <span className="hidden sm:inline">Financeiro</span>
-              <span className="sm:hidden">Fin.</span>
-            </TabsTrigger>
+      <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
+        {/* Abas de navegacao - pill bar (identica ao painel admin) */}
+        <div className={`grid ${gridColsClass} bg-card rounded-xl p-1 border border-border shadow-card`}>
+          <button
+            onClick={() => setAbaAtiva("lancamento")}
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "lancamento"
+                ? "bg-primary text-white shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <FileText className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">Lancar</span>
+          </button>
+          <button
+            onClick={() => setAbaAtiva("cadastros")}
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "cadastros"
+                ? "bg-primary text-white shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <Building2 className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">Cadastros</span>
+          </button>
+          <button
+            onClick={() => setAbaAtiva("agenda")}
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "agenda"
+                ? "bg-primary text-white shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <CalendarDays className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">Agenda</span>
+          </button>
+          <button
+            onClick={() => setAbaAtiva("financeiro")}
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "financeiro"
+                ? "bg-primary text-white shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <Receipt className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">Financeiro</span>
+          </button>
 
-            {/* Tabs Premium condicionais */}
-            {zapbotAtivo && (
-              <TabsTrigger
-                value="zapbot"
-                className="text-xs py-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
-              >
-                <Bot className="h-3.5 w-3.5 mr-1" />
-                <span className="hidden sm:inline">ZapBot</span>
-                <span className="sm:hidden">Bot</span>
-              </TabsTrigger>
-            )}
-            {disparoAtivo && (
-              <TabsTrigger
-                value="disparo"
-                className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white"
-              >
-                <Send className="h-3.5 w-3.5 mr-1" />
-                <span className="hidden sm:inline">Disparo</span>
-                <span className="sm:hidden">Disp.</span>
-              </TabsTrigger>
-            )}
-            {funilAtivo && (
-              <TabsTrigger
-                value="funil"
-                className="text-xs py-2 data-[state=active]:bg-amber-600 data-[state=active]:text-white"
-              >
-                <TrendingUp className="h-3.5 w-3.5 mr-1" />
-                <span className="hidden sm:inline">Funil</span>
-                <span className="sm:hidden">Fun.</span>
-              </TabsTrigger>
-            )}
-            {fluxosAtivo && (
-              <TabsTrigger
-                value="fluxos"
-                className="text-xs py-2 data-[state=active]:bg-violet-600 data-[state=active]:text-white"
-              >
-                <GitBranch className="h-3.5 w-3.5 mr-1" />
-                <span className="hidden sm:inline">Fluxos</span>
-                <span className="sm:hidden">Flx.</span>
-              </TabsTrigger>
-            )}
+          {/* Tabs Premium condicionais */}
+          {zapbotAtivo && (
+            <button
+              onClick={() => setAbaAtiva("zapbot")}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                abaAtiva === "zapbot"
+                  ? "bg-purple-600 text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <Bot className="h-4 w-4 shrink-0" />
+              <span className="truncate text-xs sm:text-sm">ZapBot</span>
+            </button>
+          )}
+          {disparoAtivo && (
+            <button
+              onClick={() => setAbaAtiva("disparo")}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                abaAtiva === "disparo"
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <Send className="h-4 w-4 shrink-0" />
+              <span className="truncate text-xs sm:text-sm">Disparo</span>
+            </button>
+          )}
+          {funilAtivo && (
+            <button
+              onClick={() => setAbaAtiva("funil")}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                abaAtiva === "funil"
+                  ? "bg-amber-600 text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <TrendingUp className="h-4 w-4 shrink-0" />
+              <span className="truncate text-xs sm:text-sm">Funil</span>
+            </button>
+          )}
+          {fluxosAtivo && (
+            <button
+              onClick={() => setAbaAtiva("fluxos")}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                abaAtiva === "fluxos"
+                  ? "bg-violet-600 text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <GitBranch className="h-4 w-4 shrink-0" />
+              <span className="truncate text-xs sm:text-sm">Fluxos</span>
+            </button>
+          )}
 
-            {/* Tabs fixas secundárias (hidden no mobile para caber) */}
-            <TabsTrigger
-              value="equipe"
-              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white hidden lg:inline-flex"
-            >
-              <Users className="h-3.5 w-3.5 mr-1" />
-              Equipe
-            </TabsTrigger>
-            <TabsTrigger
-              value="dashboard"
-              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white hidden lg:inline-flex"
-            >
-              <LayoutDashboard className="h-3.5 w-3.5 mr-1" />
-              Dashboard
-            </TabsTrigger>
-            <TabsTrigger
-              value="historico"
-              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white hidden lg:inline-flex"
-            >
-              <BarChart3 className="h-3.5 w-3.5 mr-1" />
-              Relatorios
-            </TabsTrigger>
-          </TabsList>
+          {/* Tabs fixas secundarias (hidden no mobile para caber) */}
+          <button
+            onClick={() => setAbaAtiva("equipe")}
+            className={`hidden lg:flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "equipe"
+                ? "bg-primary text-white shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <Users className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">Equipe</span>
+          </button>
+          <button
+            onClick={() => setAbaAtiva("dashboard")}
+            className={`hidden lg:flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "dashboard"
+                ? "bg-primary text-white shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <LayoutDashboard className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">Dashboard</span>
+          </button>
+          <button
+            onClick={() => setAbaAtiva("historico")}
+            className={`hidden lg:flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              abaAtiva === "historico"
+                ? "bg-primary text-white shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <BarChart3 className="h-4 w-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">Relatorios</span>
+          </button>
+        </div>
 
-          {/* Tab Lancamento */}
-          <TabsContent value="lancamento" className="space-y-4">
+        {/* Conteudo da aba ativa */}
+        <div className="space-y-4">
+          {abaAtiva === "lancamento" && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <LancamentoForm onVendaCriada={handleVendaCriada} />
               <div id="cupom-section">
                 <AcoesCupom vendaAtual={vendaAtual} />
               </div>
             </div>
-          </TabsContent>
+          )}
 
-          {/* Tab Cadastros */}
-          <TabsContent value="cadastros" className="space-y-4">
+          {abaAtiva === "cadastros" && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="lg:col-span-1">
                 <EmpresaPanel />
@@ -386,83 +428,51 @@ export default function ZapFacilPage() {
               <CatalogoServicos />
               <CRMClientes />
             </div>
-          </TabsContent>
+          )}
 
-          {/* Tab Agenda */}
-          <TabsContent value="agenda">
-            <PainelAgendamento />
-          </TabsContent>
+          {abaAtiva === "agenda" && <PainelAgendamento />}
 
-          {/* Tab Financeiro (Despesas) */}
-          <TabsContent value="financeiro">
-            <PainelDespesas />
-          </TabsContent>
+          {abaAtiva === "financeiro" && <PainelDespesas />}
 
-          {/* Tab ZapBot Premium */}
-          {zapbotAtivo && (
-            <TabsContent value="zapbot">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                    <Bot className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-foreground">ZapBot</h2>
-                    <p className="text-xs text-muted-foreground">Chatbot automatico para WhatsApp</p>
-                  </div>
+          {abaAtiva === "zapbot" && zapbotAtivo && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                  <Bot className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                 </div>
-                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-                  <p className="text-sm text-amber-800 dark:text-amber-300">
-                    Configure seu ZapBot na aba &quot;ZapBot&quot; do painel admin ou contate o suporte.
-                  </p>
+                <div>
+                  <h2 className="text-lg font-bold text-foreground">ZapBot</h2>
+                  <p className="text-xs text-muted-foreground">Chatbot automatico para WhatsApp</p>
                 </div>
               </div>
-            </TabsContent>
+              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+                <p className="text-sm text-amber-800 dark:text-amber-300">
+                  Configure seu ZapBot na aba &quot;ZapBot&quot; do painel admin ou contate o suporte.
+                </p>
+              </div>
+            </div>
           )}
 
-          {/* Tab Disparo em Massa Premium */}
-          {disparoAtivo && (
-            <TabsContent value="disparo">
-              <ZapBotDisparo />
-            </TabsContent>
-          )}
+          {abaAtiva === "disparo" && disparoAtivo && <ZapBotDisparo />}
 
-          {/* Tab Funil de Leads Premium */}
-          {funilAtivo && (
-            <TabsContent value="funil">
-              <FunilLeads />
-            </TabsContent>
-          )}
+          {abaAtiva === "funil" && funilAtivo && <FunilLeads />}
 
-          {/* Tab Fluxos de Automacao Premium */}
-          {fluxosAtivo && (
-            <TabsContent value="fluxos">
-              <ZapBotFluxos />
-            </TabsContent>
-          )}
+          {abaAtiva === "fluxos" && fluxosAtivo && <ZapBotFluxos />}
 
-          {/* Tab Equipe */}
-          <TabsContent value="equipe">
+          {abaAtiva === "equipe" && (
             <div className="max-w-2xl mx-auto">
               <PainelColaboradores />
             </div>
-          </TabsContent>
+          )}
 
-          {/* Tab Dashboard */}
-          <TabsContent value="dashboard">
-            <DashboardGrafico />
-          </TabsContent>
+          {abaAtiva === "dashboard" && <DashboardGrafico />}
 
-          {/* Tab Relatorios */}
-          <TabsContent value="historico">
-            <Historico onReemitir={handleReemitir} />
-          </TabsContent>
-
-        </Tabs>
+          {abaAtiva === "historico" && <Historico onReemitir={handleReemitir} />}
+        </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-gray-800 dark:bg-gray-900 text-center py-3 text-[10px] text-gray-400 px-4 border-t border-gray-700 mt-auto">
+      {/* Footer - tokens semanticos */}
+      <footer className="bg-card border-t border-border text-center py-3 text-[10px] text-muted-foreground px-4 mt-auto">
         <p>&copy; 2026 ZapFacil Mobile Ecosystem. Todos os direitos reservados.</p>
       </footer>
     </div>
