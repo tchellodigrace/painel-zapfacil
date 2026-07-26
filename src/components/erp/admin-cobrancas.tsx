@@ -529,7 +529,7 @@ export function PainelCobranças() {
                 Recebido/mes
               </span>
             </div>
-            <p className="text-lg font-black text-primary font-display">
+            <p className="text-base sm:text-lg font-black text-primary font-display">
               {formatarMoeda(stats.recebidoMes)}
             </p>
           </CardContent>
@@ -542,7 +542,7 @@ export function PainelCobranças() {
                 Previsto/mes
               </span>
             </div>
-            <p className="text-lg font-black text-blue-600 font-display">
+            <p className="text-base sm:text-lg font-black text-blue-600 font-display">
               {formatarMoeda(stats.previstoMes)}
             </p>
           </CardContent>
@@ -555,7 +555,7 @@ export function PainelCobranças() {
                 Pendentes
               </span>
             </div>
-            <p className="text-2xl font-black text-amber-600 font-display">{stats.pendentes}</p>
+            <p className="text-xl sm:text-2xl font-black text-amber-600 font-display">{stats.pendentes}</p>
             <p className="text-[10px] text-gray-400 mt-0.5">
               {formatarMoeda(stats.totalPendente)}
             </p>
@@ -569,7 +569,7 @@ export function PainelCobranças() {
                 Atrasados
               </span>
             </div>
-            <p className="text-2xl font-black text-red-600 font-display">{stats.atrasados}</p>
+            <p className="text-xl sm:text-2xl font-black text-red-600 font-display">{stats.atrasados}</p>
             <p className="text-[10px] text-gray-400 mt-0.5">
               {formatarMoeda(stats.totalAtrasado)}
             </p>
@@ -583,7 +583,7 @@ export function PainelCobranças() {
                 Total
               </span>
             </div>
-            <p className="text-2xl font-black text-gray-900 font-display">
+            <p className="text-xl sm:text-2xl font-black text-gray-900 font-display">
               {stats.totalCobrancas}
             </p>
             <p className="text-[10px] text-gray-400 mt-0.5">cobranca(s)</p>
@@ -998,7 +998,7 @@ export function PainelCobranças() {
                   <p className="text-[10px] text-primary uppercase font-medium">
                     Total Pago
                   </p>
-                  <p className="text-lg font-black text-primary font-display">
+                  <p className="text-base sm:text-lg font-black text-primary font-display">
                     {formatarMoeda(totalPagoHistorico)}
                   </p>
                 </div>
@@ -1006,7 +1006,7 @@ export function PainelCobranças() {
                   <p className="text-[10px] text-amber-600 uppercase font-medium">
                     Pendente
                   </p>
-                  <p className="text-lg font-black text-amber-700 font-display">
+                  <p className="text-base sm:text-lg font-black text-amber-700 font-display">
                     {formatarMoeda(totalPendenteHistorico)}
                   </p>
                 </div>

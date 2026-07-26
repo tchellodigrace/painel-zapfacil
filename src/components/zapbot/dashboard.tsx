@@ -80,7 +80,7 @@ export function ZapBotDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Enviadas</p>
-                <p className="text-2xl font-bold text-gray-900 font-display">{totalEnviadas}</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{totalEnviadas}</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
                 <Send className="h-5 w-5 text-primary" />
@@ -94,7 +94,7 @@ export function ZapBotDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Recebidas</p>
-                <p className="text-2xl font-bold text-gray-900 font-display">{totalRecebidas}</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{totalRecebidas}</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center">
                 <MessageSquare className="h-5 w-5 text-blue-600" />
@@ -108,7 +108,7 @@ export function ZapBotDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Automaticas</p>
-                <p className="text-2xl font-bold text-gray-900 font-display">{totalAutomaticas}</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{totalAutomaticas}</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center">
                 <Bot className="h-5 w-5 text-amber-600" />
@@ -122,7 +122,7 @@ export function ZapBotDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Taxa Resposta</p>
-                <p className="text-2xl font-bold text-gray-900 font-display">{taxaResposta}%</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{taxaResposta}%</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-purple-100 flex items-center justify-center">
                 <TrendingUp className="h-5 w-5 text-purple-600" />

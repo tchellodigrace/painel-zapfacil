@@ -885,15 +885,15 @@ export function PainelZapBot() {
       <div className="grid grid-cols-3 gap-2">
         <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
           <div className={`w-3 h-3 rounded-full mx-auto mb-1.5 ${conectado ? "bg-primary/50 shadow-sm shadow-primary" : "bg-gray-300"}`} />
-          <p className="text-lg font-black font-display">{conectado ? "Online" : "Offline"}</p>
+          <p className="text-base sm:text-lg font-black font-display">{conectado ? "Online" : "Offline"}</p>
           <p className="text-[9px] text-muted-foreground uppercase font-bold">Status</p>
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
-          <p className="text-lg font-black text-primary font-display">{regrasAtivas}</p>
+          <p className="text-base sm:text-lg font-black text-primary font-display">{regrasAtivas}</p>
           <p className="text-[9px] text-muted-foreground uppercase font-bold">Regras Ativas</p>
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
-          <p className="text-lg font-black text-amber-600 font-display">{respostas.length}</p>
+          <p className="text-base sm:text-lg font-black text-amber-600 font-display">{respostas.length}</p>
           <p className="text-[9px] text-muted-foreground uppercase font-bold">Respostas</p>
         </div>
       </div>

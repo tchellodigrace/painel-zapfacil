@@ -367,7 +367,7 @@ export default function LandingPage() {
                       <p className="text-xs text-muted-foreground">
                         {stat.label}
                       </p>
-                      <p className="text-2xl font-bold text-foreground mt-1 font-display">
+                      <p className="text-xl sm:text-2xl font-bold text-foreground mt-1 font-display">
                         {stat.valor}
                       </p>
                       <p className="text-xs text-success mt-1">{stat.delta}</p>

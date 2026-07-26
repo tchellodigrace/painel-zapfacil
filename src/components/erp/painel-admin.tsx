@@ -2004,7 +2004,7 @@ function SecaoSistemas({
                     <Monitor className="w-3.5 h-3.5 text-gray-400" />
                     <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Total</span>
                   </div>
-                  <p className="text-2xl font-black text-gray-900 font-display">{stats.total}</p>
+                  <p className="text-xl sm:text-2xl font-black text-gray-900 font-display">{stats.total}</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-sm">
@@ -2013,7 +2013,7 @@ function SecaoSistemas({
                     <TrendingUp className="w-3.5 h-3.5 text-primary" />
                     <span className="text-[10px] text-primary font-medium uppercase tracking-wider">Ativos</span>
                   </div>
-                  <p className="text-2xl font-black text-primary font-display">{stats.ativos}</p>
+                  <p className="text-xl sm:text-2xl font-black text-primary font-display">{stats.ativos}</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-sm">
@@ -2022,7 +2022,7 @@ function SecaoSistemas({
                     <Monitor className="w-3.5 h-3.5 text-blue-500" />
                     <span className="text-[10px] text-blue-600 font-medium uppercase tracking-wider">Trial</span>
                   </div>
-                  <p className="text-2xl font-black text-blue-600 font-display">{stats.trials}</p>
+                  <p className="text-xl sm:text-2xl font-black text-blue-600 font-display">{stats.trials}</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-sm">
@@ -2031,7 +2031,7 @@ function SecaoSistemas({
                     <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
                     <span className="text-[10px] text-red-600 font-medium uppercase tracking-wider">Expirados</span>
                   </div>
-                  <p className="text-2xl font-black text-red-600 font-display">{stats.expirados}</p>
+                  <p className="text-xl sm:text-2xl font-black text-red-600 font-display">{stats.expirados}</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-sm">
@@ -2040,7 +2040,7 @@ function SecaoSistemas({
                     <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
                     <span className="text-[10px] text-amber-600 font-medium uppercase tracking-wider">Vencendo</span>
                   </div>
-                  <p className="text-2xl font-black text-amber-600 font-display">{stats.vencendo}</p>
+                  <p className="text-xl sm:text-2xl font-black text-amber-600 font-display">{stats.vencendo}</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-sm">
@@ -2049,7 +2049,7 @@ function SecaoSistemas({
                     <DollarSign className="w-3.5 h-3.5 text-primary" />
                     <span className="text-[10px] text-primary font-medium uppercase tracking-wider">Receita/mes</span>
                   </div>
-                  <p className="text-lg font-black text-primary font-display">{formatarMoeda(stats.receitaMensal)}</p>
+                  <p className="text-base sm:text-lg font-black text-primary font-display whitespace-nowrap">{formatarMoeda(stats.receitaMensal)}</p>
                 </CardContent>
               </Card>
             </div>
@@ -2839,7 +2839,7 @@ const handleSalvarNovo = useCallback(
                   ) : (
                     <div className="col-span-2">
                       <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Aquisicao</p>
-                      <p className="text-primary font-bold text-lg font-display">{formatarMoeda(dialogDetalhe.valorAquisicao)}</p>
+                      <p className="text-primary font-bold text-base sm:text-lg font-display whitespace-nowrap">{formatarMoeda(dialogDetalhe.valorAquisicao)}</p>
                       <p className="text-[10px] text-gray-400">Pagamento unico - licenca definitiva</p>
                     </div>
                   )}

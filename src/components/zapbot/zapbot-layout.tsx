@@ -153,15 +153,15 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
         <div className="p-4 border-t border-primary/40">
           <div className="grid grid-cols-3 gap-2 text-center">
             <div>
-              <p className="text-primary/80 text-lg font-bold font-display">{totalEnviadas}</p>
+              <p className="text-primary/80 text-base sm:text-lg font-bold font-display">{totalEnviadas}</p>
               <p className="text-primary/70 text-[10px] uppercase tracking-wider">Enviadas</p>
             </div>
             <div>
-              <p className="text-primary/80 text-lg font-bold font-display">{totalRecebidas}</p>
+              <p className="text-primary/80 text-base sm:text-lg font-bold font-display">{totalRecebidas}</p>
               <p className="text-primary/70 text-[10px] uppercase tracking-wider">Recebidas</p>
             </div>
             <div>
-              <p className="text-primary/80 text-lg font-bold font-display">{conectado ? "ON" : "OFF"}</p>
+              <p className="text-primary/80 text-base sm:text-lg font-bold font-display">{conectado ? "ON" : "OFF"}</p>
               <p className="text-primary/70 text-[10px] uppercase tracking-wider">Status</p>
             </div>
           </div>

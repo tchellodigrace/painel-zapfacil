@@ -643,7 +643,7 @@ export function ZapBotFluxos() {
                 <GitBranch className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-2xl font-bold font-display">{totalFlows}</p>
+                <p className="text-xl sm:text-2xl font-bold font-display">{totalFlows}</p>
                 <p className="text-xs text-muted-foreground">Total de Fluxos</p>
               </div>
             </div>
@@ -657,7 +657,7 @@ export function ZapBotFluxos() {
                 <Play className="h-5 w-5 text-primary dark:text-primary/80" />
               </div>
               <div>
-                <p className="text-2xl font-bold font-display">{activeFlows}</p>
+                <p className="text-xl sm:text-2xl font-bold font-display">{activeFlows}</p>
                 <p className="text-xs text-muted-foreground">Ativos</p>
               </div>
             </div>
@@ -671,7 +671,7 @@ export function ZapBotFluxos() {
                 <Pause className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold font-display">{totalFlows - activeFlows}</p>
+                <p className="text-xl sm:text-2xl font-bold font-display">{totalFlows - activeFlows}</p>
                 <p className="text-xs text-muted-foreground">Inativos</p>
               </div>
             </div>
@@ -685,7 +685,7 @@ export function ZapBotFluxos() {
                 <Zap className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold font-display">
+                <p className="text-xl sm:text-2xl font-bold font-display">
                   {topTrigger ? topTrigger[1] : 0}
                 </p>
                 <p className="text-xs text-muted-foreground truncate">

@@ -231,19 +231,19 @@ export default function MigrarSupabasePage() {
                 <div className="grid grid-cols-3 gap-3 mt-3">
                   <div className="bg-white dark:bg-gray-800 rounded p-2 text-center">
                     <p className="text-xs text-gray-500 dark:text-gray-400">Sucesso</p>
-                    <p className="text-lg font-bold text-primary dark:text-primary/80 font-display">
+                    <p className="text-base sm:text-lg font-bold text-primary dark:text-primary/80 font-display">
                       {stats.success}
                     </p>
                   </div>
                   <div className="bg-white dark:bg-gray-800 rounded p-2 text-center">
                     <p className="text-xs text-gray-500 dark:text-gray-400">Pulados</p>
-                    <p className="text-lg font-bold text-amber-600 dark:text-amber-400 font-display">
+                    <p className="text-base sm:text-lg font-bold text-amber-600 dark:text-amber-400 font-display">
                       {stats.skipped}
                     </p>
                   </div>
                   <div className="bg-white dark:bg-gray-800 rounded p-2 text-center">
                     <p className="text-xs text-gray-500 dark:text-gray-400">Erros</p>
-                    <p className="text-lg font-bold text-red-600 dark:text-red-400 font-display">
+                    <p className="text-base sm:text-lg font-bold text-red-600 dark:text-red-400 font-display">
                       {stats.errors}
                     </p>
                   </div>

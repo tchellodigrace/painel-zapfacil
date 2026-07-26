@@ -175,7 +175,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
             <span className="text-[10px] font-bold text-primary dark:text-primary/80 uppercase tracking-wider block">
               Total Faturado
             </span>
-            <p className="text-lg font-black text-primary dark:text-primary/80 font-display">
+            <p className="text-base sm:text-lg font-black text-primary dark:text-primary/80 font-display">
               {formatarMoeda(stats.totalFaturado)}
             </p>
           </div>
