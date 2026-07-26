@@ -717,7 +717,7 @@ export function PainelCobranças() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-7 text-[10px] text-green-600"
+                          className="h-7 text-[10px] text-success"
                           onClick={() => enviarLembreteWhatsApp(c)}
                         >
                           <Send className="h-3 w-3 shrink-0" />
@@ -862,7 +862,7 @@ export function PainelCobranças() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-7 w-7 text-green-500 hover:text-green-700 shrink-0"
+                                    className="h-7 w-7 text-success hover:text-success/80 shrink-0"
                                     onClick={() => enviarLembreteWhatsApp(c)}
                                   >
                                     <Send className="h-3.5 w-3.5" />

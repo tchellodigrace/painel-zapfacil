@@ -401,11 +401,11 @@ export function ZapBotDisparo() {
           </CardContent>
         </Card>
         {/* Sent */}
-        <Card className="bg-green-50 dark:bg-green-950/40 min-w-0">
+        <Card className="bg-success/10 dark:bg-success/20 min-w-0">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
-              <p className="text-base sm:text-lg font-bold text-green-700 dark:text-green-400 font-display">
+              <CheckCircle className="h-4 w-4 text-success shrink-0" />
+              <p className="text-base sm:text-lg font-bold text-success dark:text-success/80 font-display">
                 {enviados}
               </p>
             </div>
@@ -829,7 +829,7 @@ export function ZapBotDisparo() {
                       <Badge
                         className={`text-[10px] ${
                           camp.status === "concluida"
-                            ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300"
+                            ? "bg-success/15 dark:bg-success/25 text-success dark:text-success/80"
                             : camp.status === "enviando"
                               ? "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300"
                               : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
@@ -862,11 +862,11 @@ export function ZapBotDisparo() {
                       </p>
                     </div>
                     <div className="text-center">
-                      <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                      <p className="text-xs text-success dark:text-success/80 flex items-center gap-1">
                         <CheckCircle className="h-3 w-3 shrink-0" />
                         Enviados
                       </p>
-                      <p className="text-sm font-bold text-green-700 dark:text-green-400">
+                      <p className="text-sm font-bold text-success dark:text-success/80">
                         {camp.enviados}
                       </p>
                     </div>
@@ -927,7 +927,7 @@ function StatusBadge({ status }: { status: Contact["status"] }) {
       );
     case "enviado":
       return (
-        <Badge className="text-[10px] bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 flex items-center gap-1">
+        <Badge className="text-[10px] bg-success/15 dark:bg-success/25 text-success dark:text-success/80 flex items-center gap-1">
           <CheckCircle className="h-3 w-3 shrink-0" />
           Enviado
         </Badge>

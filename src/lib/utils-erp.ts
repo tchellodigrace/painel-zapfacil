@@ -200,7 +200,7 @@ async function gerarImagemMensagem(textoMensagem: string): Promise<Blob | null> 
     ctx.drawImage(logoImg, logoX, 20, logoW, logoW);
 
     // Linha separadora
-    ctx.strokeStyle = "#10b981";
+    ctx.strokeStyle = "#0093ce";
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(PADDING, LOGO_H + 10);

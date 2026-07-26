@@ -87,7 +87,7 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
               className={cn(
                 "h-2.5 w-2.5 rounded-full",
                 statusConexao === "conectado"
-                  ? "bg-green-400 animate-pulse"
+                  ? "bg-success animate-pulse"
                   : statusConexao === "conectando"
                     ? "bg-yellow-400 animate-pulse"
                     : statusConexao === "erro"
@@ -189,7 +189,7 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
             <div
               className={cn(
                 "h-2 w-2 rounded-full",
-                conectado ? "bg-green-500" : "bg-gray-400"
+                conectado ? "bg-success" : "bg-gray-400"
               )}
             />
             <span className="text-xs text-gray-500">

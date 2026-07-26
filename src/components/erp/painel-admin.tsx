@@ -1353,7 +1353,7 @@ function FormularioSistema({
           <Button
             type="button"
             size="sm"
-            className="text-xs bg-green-600 hover:bg-green-700"
+            className="text-xs bg-success hover:bg-success/90"
             onClick={enviarWhatsApp}
           >
             <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
@@ -1634,7 +1634,7 @@ function SecaoRecuperacoes() {
                               sistema.status === "ATIVO" ? "bg-primary/10 text-primary"
                               : sistema.status === "TRIAL" ? "bg-blue-100 text-blue-700"
                               : sistema.status === "EXPIRADO" ? "bg-red-100 text-red-700"
-                              : "bg-gray-100 text-gray-500"
+                              : "bg-secondary text-muted-foreground"
                             }`}>{sistema.status}</Badge>
                           </div>
                           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-gray-500 dark:text-gray-400">
@@ -1817,7 +1817,7 @@ Qualquer duvida, estou a disposicao!
                             <Badge className={`text-[10px] ${
                               pedido.status === "PENDENTE" ? "bg-amber-100 text-amber-700"
                               : pedido.status === "ENVIADO" ? "bg-primary/10 text-primary"
-                              : "bg-gray-100 text-gray-500"
+                              : "bg-secondary text-muted-foreground"
                             }`}>
                               {pedido.status === "PENDENTE" ? "Pendente" : pedido.status === "ENVIADO" ? "Enviado" : "Ignorado"}
                             </Badge>
@@ -2638,13 +2638,13 @@ const handleSalvarNovo = useCallback(
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">
         {/* Abas de navegação */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 bg-white dark:bg-gray-900 rounded-xl p-1 border border-gray-200 dark:border-gray-800 shadow-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-4 bg-card rounded-xl p-1 border border-border shadow-card">
           <button
             onClick={() => setAbaAtiva("sistemas")}
             className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "sistemas"
                 ? "bg-primary text-white shadow-sm"
-                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             }`}
           >
             <Monitor className="h-4 w-4 shrink-0" />
@@ -2652,7 +2652,7 @@ const handleSalvarNovo = useCallback(
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
               abaAtiva === "sistemas"
                 ? "bg-white/20 text-white"
-                : "bg-gray-100 text-gray-500"
+                : "bg-secondary text-muted-foreground"
             }`}>
               {sistemas.length}
             </span>
@@ -2662,7 +2662,7 @@ const handleSalvarNovo = useCallback(
             className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "cobrancas"
                 ? "bg-primary text-white shadow-sm"
-                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             }`}
           >
             <Receipt className="h-4 w-4 shrink-0" />
@@ -2682,7 +2682,7 @@ const handleSalvarNovo = useCallback(
             className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "recuperacoes"
                 ? "bg-amber-500 text-white shadow-sm"
-                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             }`}
           >
             <KeyRound className="h-4 w-4 shrink-0" />
@@ -2702,7 +2702,7 @@ const handleSalvarNovo = useCallback(
             className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "zapbot"
                 ? "bg-purple-600 text-white shadow-sm"
-                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             }`}
           >
             <Bot className="h-4 w-4 shrink-0" />

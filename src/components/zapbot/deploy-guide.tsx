@@ -166,7 +166,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
           <div className="bg-gray-50 rounded-xl p-4">
             <div className="flex flex-col items-center gap-3 text-center">
               <div className="flex items-center gap-2 flex-wrap justify-center">
-                <Badge className="bg-green-600 text-sm px-3 py-1">Cliente WhatsApp</Badge>
+                <Badge className="bg-success text-sm px-3 py-1">Cliente WhatsApp</Badge>
                 <span className="text-gray-400">→</span>
                 <Badge className="bg-primary text-sm px-3 py-1">Evolution API (Docker)</Badge>
                 <span className="text-gray-400">→</span>
