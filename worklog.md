@@ -25,3 +25,26 @@ Stage Summary:
 - Autenticação agora é multi-device (qualquer dispositivo acessa mesma conta)
 - Senhas hasheadas com bcrypt (10 rounds)
 - AGUARDANDO USUÁRIO: rodar schema.sql no Supabase + adicionar env vars no Vercel
+
+---
+Task ID: 9
+Agent: Super Z (main)
+Task: Substituir logo da empresa (página de login + painel do cliente) pela nova logo em https://ibb.co/J47ns36
+
+Work Log:
+- Baixou página HTML de https://ibb.co/J47ns36 e extraiu URL direta da imagem: https://i.ibb.co/J47ns36/sf.png
+- Baixou imagem PNG (180x180 RGBA, 16303 bytes)
+- Criou scripts/replace-logo-empresa.js para otimizar via sharp (PNG compressionLevel 9)
+- Substituiu /public/logo-empresa.png (antes 1536x1024, 135069 bytes -> agora 180x180, 5357 bytes)
+- Build Next.js passou com sucesso (12 paginas, 9 rotas API)
+- Commit 994b982 + push para origin/main
+
+Stage Summary:
+- /public/logo-empresa.png atualizada em todos os pontos de uso:
+  * tela-login.tsx (loading + painel branding desktop + mobile)
+  * portal-cliente.tsx (header glass do portal do cliente)
+  * app/page.tsx (header da landing admin)
+  * lib/utils-erp.ts (LOGO_URL usado em canvas/PDF)
+- /public/logo-admin.png mantida intacta (logo anterior ja atualizada em tarefa separada)
+- Logo e quadrada 180x180 - aparece centralizada em containers retangulares via object-contain
+- Deploy automatico no Vercel em andamento
