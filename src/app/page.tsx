@@ -37,6 +37,7 @@ import { PainelAgendamento } from "@/components/erp/painel-agendamento";
 import { PainelDespesas } from "@/components/erp/painel-despesas";
 import { PainelColaboradores } from "@/components/erp/painel-colaboradores";
 import { InicializadorLogo } from "@/components/erp/inicializador-logo";
+import { PainelZapBotCliente } from "@/components/erp/painel-zapbot-cliente";
 import { TelaLogin, destruirSessao } from "@/components/erp/tela-login";
 import { ZapBotDisparo } from "@/components/zapbot/disparo-massa";
 import { FunilLeads } from "@/components/crm/funil-leads";
@@ -428,24 +429,7 @@ export default function ZapFacilPage() {
 
           {abaAtiva === "financeiro" && <PainelDespesas />}
 
-          {abaAtiva === "zapbot" && zapbotAtivo && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                  <Bot className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-foreground">ZapBot</h2>
-                  <p className="text-xs text-muted-foreground">Chatbot automatico para WhatsApp</p>
-                </div>
-              </div>
-              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-                <p className="text-sm text-amber-800 dark:text-amber-300">
-                  Configure seu ZapBot na aba &quot;ZapBot&quot; do painel admin ou contate o suporte.
-                </p>
-              </div>
-            </div>
-          )}
+          {abaAtiva === "zapbot" && zapbotAtivo && <PainelZapBotCliente />}
 
           {abaAtiva === "disparo" && disparoAtivo && <ZapBotDisparo />}
 

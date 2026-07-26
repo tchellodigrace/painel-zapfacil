@@ -73,6 +73,7 @@ import {
 } from "@/components/ui/tooltip";
 import { PainelCobranças } from "./admin-cobrancas";
 import { PainelZapBot } from "./painel-zapbot";
+import { ConfigGlobalEvolutionAPI } from "./config-global-evolution-api";
 
 function formatarMoeda(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -2815,7 +2816,12 @@ const handleSalvarNovo = useCallback(
         ) : abaAtiva === "recuperacoes" ? (
           <SecaoRecuperacoes />
         ) : abaAtiva === "zapbot" ? (
-          <PainelZapBot />
+          <div className="space-y-6">
+            <ConfigGlobalEvolutionAPI />
+            <div className="border-t pt-4">
+              <PainelZapBot />
+            </div>
+          </div>
         ) : (
           <SecaoSistemas
             onNovo={() => setDialogNovo(true)}
