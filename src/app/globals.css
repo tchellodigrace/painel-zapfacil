@@ -55,7 +55,7 @@
   --shadow-sticky: 0 1px 0 rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-/* ====== TEMA CLARO (INSPIRADO NO BITRIX24 - clean, verde vibrante) ====== */
+/* ====== TEMA CLARO (INSPIRADO NO BITRIX24 - azul vibrante) ====== */
 :root {
   --radius: 0.5rem; /* 8px - padrão Bitrix24 */
 
@@ -70,8 +70,8 @@
   --popover: #ffffff;
   --popover-foreground: #2d2d2d;
 
-  /* Primary = verde Bitrix24 (#2DBC5F) */
-  --primary: #2dbc5f;
+  /* Primary = azul Bitrix24 (#0093CE) - cor principal da marca */
+  --primary: #0093ce;
   --primary-foreground: #ffffff;
 
   --secondary: #eef2f6;
@@ -80,7 +80,7 @@
   --muted: #f0f2f5;
   --muted-foreground: #80868b;
 
-  /* Accent azul Bitrix24 (para links/destaques secundários) */
+  /* Accent azul mais claro (para destaques secundários) */
   --accent: #e7f5ff;
   --accent-foreground: #0093ce;
 
@@ -95,9 +95,9 @@
   /* Bordas bem sutis */
   --border: #e4e7eb;
   --input: #e4e7eb;
-  --ring: #2dbc5f;
+  --ring: #0093ce;
 
-  --chart-1: #2dbc5f;
+  --chart-1: #0093ce;
   --chart-2: #2bb7ff;
   --chart-3: #f5a623;
   --chart-4: #ea4335;
@@ -105,19 +105,19 @@
 
   --sidebar: #ffffff;
   --sidebar-foreground: #2d2d2d;
-  --sidebar-primary: #2dbc5f;
+  --sidebar-primary: #0093ce;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #f0f2f5;
   --sidebar-accent-foreground: #2d2d2d;
   --sidebar-border: #e4e7eb;
-  --sidebar-ring: #2dbc5f;
+  --sidebar-ring: #0093ce;
 }
 
 /* ====== TEMA ESCURO (versão dark do mesmo design) ====== */
 .dark {
   --radius: 0.5rem;
 
-  /* Fundo mais escuro que o anterior (estilo Bitrix24 dark) */
+  /* Fundo mais escuro (estilo Bitrix24 dark) */
   --background: #1a1a1a;
   --foreground: #eaeaea;
 
@@ -128,9 +128,9 @@
   --popover: #252525;
   --popover-foreground: #eaeaea;
 
-  /* Verde mais vibrante no dark (maior contraste) */
-  --primary: #2dbc5f;
-  --primary-foreground: #ffffff;
+  /* Azul Bitrix24 mantido no dark */
+  --primary: #2bb7ff;
+  --primary-foreground: #1a1a1a;
 
   --secondary: #2f2f2f;
   --secondary-foreground: #eaeaea;
@@ -151,22 +151,22 @@
 
   --border: #3a3a3a;
   --input: #3a3a3a;
-  --ring: #2dbc5f;
+  --ring: #2bb7ff;
 
-  --chart-1: #2dbc5f;
-  --chart-2: #2bb7ff;
+  --chart-1: #2bb7ff;
+  --chart-2: #2dbc5f;
   --chart-3: #f5a623;
   --chart-4: #ea4335;
   --chart-5: #9c5cff;
 
   --sidebar: #1f1f1f;
   --sidebar-foreground: #eaeaea;
-  --sidebar-primary: #2dbc5f;
-  --sidebar-primary-foreground: #ffffff;
+  --sidebar-primary: #2bb7ff;
+  --sidebar-primary-foreground: #1a1a1a;
   --sidebar-accent: #2f2f2f;
   --sidebar-accent-foreground: #eaeaea;
   --sidebar-border: #3a3a3a;
-  --sidebar-ring: #2dbc5f;
+  --sidebar-ring: #2bb7ff;
 }
 
 @layer base {
