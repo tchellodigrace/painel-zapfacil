@@ -161,7 +161,14 @@ export async function PATCH(req: NextRequest) {
 
 /**
  * DELETE /api/sistemas?id=xxx
- * Remove um sistema (admin).
+ * Remove um sistema (admin) E o cliente correspondente (login).
+ *
+ * CORREÇÃO: Antes o delete só removia de `sistemas`, deixando o registro
+ * em `clientes` (email + senha_hash) órfão. Isso fazia o registro rejeitar
+ * qualquer novo cadastro com o mesmo email ("Já existe uma conta com este e-mail.").
+ *
+ * Agora: busca o sistema, captura `cliente_id` e `email`, deleta de
+ * `sistemas` e em seguida deleta de `clientes` (por id OU email).
  */
 export async function DELETE(req: NextRequest) {
   try {
@@ -177,14 +184,65 @@ export async function DELETE(req: NextRequest) {
 
     const supabase = getSupabaseServer();
 
-    const { error } = await supabase.from("sistemas").delete().eq("id", id);
+    // 1) Buscar o sistema antes de deletar para saber cliente_id e email
+    const { data: sistema, error: errBusca } = await supabase
+      .from("sistemas")
+      .select("id, cliente_id, email")
+      .eq("id", id)
+      .maybeSingle();
 
-    if (error) {
-      console.error("[sistemas DELETE] erro:", error);
+    if (errBusca) {
+      console.error("[sistemas DELETE] erro ao buscar sistema:", errBusca);
+      return NextResponse.json(
+        { ok: false, error: "Erro ao buscar sistema antes de remover." },
+        { status: 500 }
+      );
+    }
+
+    // 2) Deletar o sistema
+    const { error: errDelSistema } = await supabase
+      .from("sistemas")
+      .delete()
+      .eq("id", id);
+
+    if (errDelSistema) {
+      console.error("[sistemas DELETE] erro:", errDelSistema);
       return NextResponse.json(
         { ok: false, error: "Erro ao remover sistema." },
         { status: 500 }
       );
+    }
+
+    // 3) Deletar também o cliente correspondente (evita email "fantasma")
+    //    Usa cliente_id se houver; senão, fallback por email.
+    if (sistema) {
+      if (sistema.cliente_id) {
+        const { error: errDelCliente } = await supabase
+          .from("clientes")
+          .delete()
+          .eq("id", sistema.cliente_id);
+
+        if (errDelCliente) {
+          // Não falha a request toda — o sistema já foi removido.
+          // Mas loga para diagnóstico.
+          console.error(
+            "[sistemas DELETE] cliente_id presente mas falha ao deletar cliente:",
+            errDelCliente
+          );
+        }
+      } else if (sistema.email) {
+        const { error: errDelCliente } = await supabase
+          .from("clientes")
+          .delete()
+          .eq("email", String(sistema.email).toLowerCase());
+
+        if (errDelCliente) {
+          console.error(
+            "[sistemas DELETE] falha ao deletar cliente por email:",
+            errDelCliente
+          );
+        }
+      }
     }
 
     return NextResponse.json({ ok: true });
