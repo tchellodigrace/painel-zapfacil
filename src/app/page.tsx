@@ -27,7 +27,6 @@ import {
   Receipt,
   Users,
   LogOut,
-  Sparkles,
   Bot,
   Send,
   TrendingUp,
@@ -45,7 +44,6 @@ import { PainelDespesas } from "@/components/erp/painel-despesas";
 import { PainelColaboradores } from "@/components/erp/painel-colaboradores";
 import { InicializadorLogo } from "@/components/erp/inicializador-logo";
 import { TelaLogin, destruirSessao } from "@/components/erp/tela-login";
-import { GeradorStories } from "@/components/erp/gerador-stories";
 import { ZapBotDisparo } from "@/components/zapbot/disparo-massa";
 import { FunilLeads } from "@/components/crm/funil-leads";
 import { ZapBotFluxos } from "@/components/zapbot/fluxos-automacao";
@@ -343,14 +341,6 @@ export default function ZapFacilPage() {
               <BarChart3 className="h-3.5 w-3.5 mr-1" />
               Relatorios
             </TabsTrigger>
-            <TabsTrigger
-              value="stories"
-              className="text-xs py-2 data-[state=active]:bg-pink-600 data-[state=active]:text-white"
-            >
-              <Sparkles className="h-3.5 w-3.5 mr-1" />
-              <span className="hidden sm:inline">Stories IA</span>
-              <span className="sm:hidden">IA</span>
-            </TabsTrigger>
           </TabsList>
 
           {/* Tab Lancamento */}
@@ -442,11 +432,6 @@ export default function ZapFacilPage() {
           {/* Tab Relatorios */}
           <TabsContent value="historico">
             <Historico onReemitir={handleReemitir} />
-          </TabsContent>
-
-          {/* Tab Stories IA */}
-          <TabsContent value="stories">
-            <GeradorStories />
           </TabsContent>
 
         </Tabs>
