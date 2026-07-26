@@ -48,126 +48,125 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Sombras padrão SaaS dark mode */
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.5);
-  --shadow-pop: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-sticky: 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 16px rgba(0, 0, 0, 0.3);
+  /* Sombras padrão SaaS (estilo Bitrix24 - sutis no light) */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-sticky: 0 1px 0 rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-/* ====== TEMA CLARO (manter clean, mas com hierarquia visual forte) ====== */
+/* ====== TEMA CLARO (INSPIRADO NO BITRIX24 - clean, verde vibrante) ====== */
 :root {
-  --radius: 0.75rem; /* 12px - padrão moderno */
+  --radius: 0.5rem; /* 8px - padrão Bitrix24 */
 
-  /* Background com leve tom frio (não branco puro) */
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  /* Fundo cinza bem claro (não branco puro) - estilo Bitrix24 */
+  --background: #f5f7fa;
+  --foreground: #2d2d2d;
 
-  /* Cards mais claros que o fundo, com sombra sutil */
+  /* Cards brancos puros com sombra sutil - clean */
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #2d2d2d;
 
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover-foreground: #2d2d2d;
 
-  /* Primary = azul moderno (igual ao dark) */
-  --primary: #3b82f6;
+  /* Primary = verde Bitrix24 (#2DBC5F) */
+  --primary: #2dbc5f;
   --primary-foreground: #ffffff;
 
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
+  --secondary: #eef2f6;
+  --secondary-foreground: #2d2d2d;
 
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+  --muted: #f0f2f5;
+  --muted-foreground: #80868b;
 
-  --accent: #eff6ff;
-  --accent-foreground: #1e40af;
+  /* Accent azul Bitrix24 (para links/destaques secundários) */
+  --accent: #e7f5ff;
+  --accent-foreground: #0093ce;
 
-  --destructive: #ef4444;
-  --success: #22c55e;
+  --destructive: #ea4335;
+  --success: #2dbc5f;
   --success-foreground: #ffffff;
-  --warning: #f59e0b;
-  --warning-foreground: #1f2937;
-  --info: #3b82f6;
+  --warning: #f5a623;
+  --warning-foreground: #2d2d2d;
+  --info: #2bb7ff;
   --info-foreground: #ffffff;
 
-  /* Bordas sutis */
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #3b82f6;
+  /* Bordas bem sutis */
+  --border: #e4e7eb;
+  --input: #e4e7eb;
+  --ring: #2dbc5f;
 
-  --chart-1: #3b82f6;
-  --chart-2: #22c55e;
-  --chart-3: #f59e0b;
-  --chart-4: #ef4444;
-  --chart-5: #8b5cf6;
+  --chart-1: #2dbc5f;
+  --chart-2: #2bb7ff;
+  --chart-3: #f5a623;
+  --chart-4: #ea4335;
+  --chart-5: #9c5cff;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #3b82f6;
+  --sidebar-foreground: #2d2d2d;
+  --sidebar-primary: #2dbc5f;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f1f5f9;
-  --sidebar-accent-foreground: #0f172a;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #3b82f6;
+  --sidebar-accent: #f0f2f5;
+  --sidebar-accent-foreground: #2d2d2d;
+  --sidebar-border: #e4e7eb;
+  --sidebar-ring: #2dbc5f;
 }
 
-/* ====== TEMA ESCURO (PALETA PROFISSIONAL DO BRIEFING) ====== */
+/* ====== TEMA ESCURO (versão dark do mesmo design) ====== */
 .dark {
-  --radius: 0.75rem; /* 12px */
+  --radius: 0.5rem;
 
-  /* Fundo principal = #121212 (NUNCA preto puro) */
-  --background: #121212;
+  /* Fundo mais escuro que o anterior (estilo Bitrix24 dark) */
+  --background: #1a1a1a;
   --foreground: #eaeaea;
 
-  /* Cards/containers = #1E1E1E (mais claros que o fundo, criam profundidade) */
-  --card: #1e1e1e;
+  /* Cards um tom mais claro */
+  --card: #252525;
   --card-foreground: #eaeaea;
 
-  --popover: #1e1e1e;
+  --popover: #252525;
   --popover-foreground: #eaeaea;
 
-  /* Primary = azul moderno #3B82F6 (cor de destaque) */
-  --primary: #3b82f6;
+  /* Verde mais vibrante no dark (maior contraste) */
+  --primary: #2dbc5f;
   --primary-foreground: #ffffff;
 
-  --secondary: #2a2a2a;
+  --secondary: #2f2f2f;
   --secondary-foreground: #eaeaea;
 
-  --muted: #2a2a2a;
-  --muted-foreground: #a0a0a0;
+  --muted: #2f2f2f;
+  --muted-foreground: #9aa0a6;
 
-  --accent: #1e3a5f; /* azul escuro translúcido pro hover */
+  --accent: #1e3a5f;
   --accent-foreground: #93c5fd;
 
-  --destructive: #ef4444;
-  --success: #22c55e;
+  --destructive: #ea4335;
+  --success: #2dbc5f;
   --success-foreground: #ffffff;
-  --warning: #f59e0b;
-  --warning-foreground: #1f2937;
-  --info: #3b82f6;
-  --info-foreground: #ffffff;
+  --warning: #f5a623;
+  --warning-foreground: #1a1a1a;
+  --info: #2bb7ff;
+  --info-foreground: #1a1a1a;
 
-  /* Bordas sutis = #2A2A2A */
-  --border: #2a2a2a;
-  --input: #2a2a2a;
-  --ring: #3b82f6;
+  --border: #3a3a3a;
+  --input: #3a3a3a;
+  --ring: #2dbc5f;
 
-  --chart-1: #3b82f6;
-  --chart-2: #22c55e;
-  --chart-3: #f59e0b;
-  --chart-4: #ef4444;
-  --chart-5: #8b5cf6;
+  --chart-1: #2dbc5f;
+  --chart-2: #2bb7ff;
+  --chart-3: #f5a623;
+  --chart-4: #ea4335;
+  --chart-5: #9c5cff;
 
-  /* Sidebar um tom mais escura que o card (efeito camadas) */
-  --sidebar: #181818;
+  --sidebar: #1f1f1f;
   --sidebar-foreground: #eaeaea;
-  --sidebar-primary: #3b82f6;
+  --sidebar-primary: #2dbc5f;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2a2a2a;
+  --sidebar-accent: #2f2f2f;
   --sidebar-accent-foreground: #eaeaea;
-  --sidebar-border: #2a2a2a;
-  --sidebar-ring: #3b82f6;
+  --sidebar-border: #3a3a3a;
+  --sidebar-ring: #2dbc5f;
 }
 
 @layer base {
@@ -191,14 +190,14 @@
   select,
   textarea {
     transition-property: color, background-color, border-color, box-shadow, opacity, transform;
-    transition-duration: 200ms;
+    transition-duration: 180ms;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Hover suave em botões (microinteração) */
+  /* Hover suave em botões (microinteração sutil - Bitrix24 style) */
   button:not(:disabled):hover,
   a:hover {
-    transform: translateY(-1px);
+    transform: translateY(-0.5px);
   }
 
   button:not(:disabled):active,
@@ -209,7 +208,7 @@
   /* Headings com hierarquia clara */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.012em;
   }
 
   h1 { font-size: 1.5rem; line-height: 2rem; }
