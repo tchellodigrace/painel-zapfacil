@@ -197,9 +197,9 @@ export function PortalCliente() {
               <img
                 src="/logo-empresa.png"
                 alt="Logo"
-                width={400}
-                height={100}
-                className="h-[50px] w-[200px] sm:h-[60px] sm:w-[240px] md:h-[70px] md:w-[280px] lg:h-[80px] lg:w-[320px] xl:h-[100px] xl:w-[400px] object-contain"
+                width={180}
+                height={180}
+                className="h-[50px] w-[50px] sm:h-[60px] sm:w-[60px] md:h-[70px] md:w-[70px] lg:h-[80px] lg:w-[80px] xl:h-[100px] xl:w-[100px] object-contain shrink-0"
               />
             </div>
             <a

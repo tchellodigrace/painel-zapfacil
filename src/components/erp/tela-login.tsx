@@ -245,7 +245,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
   if (temCredenciais === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <img src="/logo-empresa.png" alt="" width={400} height={100} className="h-[80px] w-[320px] object-contain animate-pulse opacity-60" />
+        <img src="/logo-empresa.png" alt="" width={180} height={180} className="h-[80px] w-[80px] object-contain animate-pulse opacity-60" />
       </div>
     );
   }
@@ -267,9 +267,8 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
             <img
               src="/logo-empresa.png"
               alt="Logo"
-              width={400}
-              height={100}
-              className="h-[60px] w-[240px] object-contain drop-shadow-lg"
+              width={180} height={180}
+              className="h-[60px] w-[60px] object-contain drop-shadow-lg"
             />
           </div>
 
@@ -313,9 +312,8 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
               <img
                 src="/logo-empresa.png"
                 alt="Logo"
-                width={400}
-                height={100}
-                className="h-[60px] w-[240px] mx-auto object-contain mb-6"
+                width={180} height={180}
+                className="h-[60px] w-[60px] mx-auto object-contain mb-6"
               />
             </div>
 
@@ -515,9 +513,8 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
           <img
             src="/logo-empresa.png"
             alt="Logo"
-            width={400}
-            height={100}
-            className="h-[60px] w-[240px] object-contain drop-shadow-lg"
+            width={180} height={180}
+            className="h-[60px] w-[60px] object-contain drop-shadow-lg"
           />
         </div>
 
@@ -559,9 +556,8 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
             <img
               src="/logo-empresa.png"
               alt="Logo"
-              width={400}
-              height={100}
-              className="h-[60px] w-[240px] mx-auto object-contain mb-4"
+              width={180} height={180}
+              className="h-[60px] w-[60px] mx-auto object-contain mb-4"
             />
           </div>
 
