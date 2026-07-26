@@ -3,7 +3,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -223,12 +222,6 @@ export default function ZapFacilPage() {
                 </p>
               </div>
             </button>
-            <Badge
-              variant="outline"
-              className="text-success dark:text-success border-success/30 bg-success/10 font-semibold shrink-0"
-            >
-              PRO
-            </Badge>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
