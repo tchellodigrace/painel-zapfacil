@@ -203,14 +203,14 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Atalhos */}
-        <div className="grid grid-cols-2 gap-2 bg-primary/5 dark:bg-primary/15 p-3 rounded-lg border border-primary/15 dark:border-primary/40">
-          <div>
-            <Label className="text-[10px] font-bold text-primary dark:text-foreground/80 uppercase mb-1 block">
-              <User className="h-3 w-3 inline mr-1 shrink-0" />
-              Atalho CRM
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-primary/5 dark:bg-primary/15 p-3 rounded-lg border border-primary/15 dark:border-primary/40">
+          <div className="min-w-0">
+            <Label className="text-[10px] font-bold text-primary dark:text-foreground/80 uppercase mb-1 block flex items-center gap-1">
+              <User className="h-3 w-3 shrink-0" />
+              <span className="truncate">Atalho CRM</span>
             </Label>
             <Select value={clienteId} onValueChange={handleClienteSelect}>
-              <SelectTrigger className="text-xs h-8">
+              <SelectTrigger className="w-full text-xs h-8">
                 <SelectValue placeholder="Selecionar cliente..." />
               </SelectTrigger>
               <SelectContent>
@@ -222,13 +222,13 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <Label className="text-[10px] font-bold text-primary dark:text-foreground/80 uppercase mb-1 block">
-              <Wrench className="h-3 w-3 inline mr-1 shrink-0" />
-              Atalho Catálogo
+          <div className="min-w-0">
+            <Label className="text-[10px] font-bold text-primary dark:text-foreground/80 uppercase mb-1 block flex items-center gap-1">
+              <Wrench className="h-3 w-3 shrink-0" />
+              <span className="truncate">Atalho Catálogo</span>
             </Label>
             <Select value={servicoSelId} onValueChange={setServicoSelId}>
-              <SelectTrigger className="text-xs h-8">
+              <SelectTrigger className="w-full text-xs h-8">
                 <SelectValue placeholder="Selecionar serviço..." />
               </SelectTrigger>
               <SelectContent>
@@ -250,7 +250,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
             onChange={(e) => setNomeCliente(e.target.value)}
             className="text-sm h-9"
           />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Input
               placeholder="Doc. Cliente (Opcional)"
               value={docCliente}
@@ -261,7 +261,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
               value={formaPagamento}
               onValueChange={(v) => setFormaPagamento(v as FormaPagamento)}
             >
-              <SelectTrigger className="text-xs h-9">
+              <SelectTrigger className="w-full text-xs h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -302,9 +302,9 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
             <ShoppingCart className="h-3 w-3 inline mr-1 shrink-0" />
             Itens do Atendimento
           </Label>
-          <div className="flex gap-1.5">
+          <div className="flex flex-wrap gap-1.5">
             <Select value={servicoSelId} onValueChange={setServicoSelId}>
-              <SelectTrigger className="flex-1 text-xs h-9">
+              <SelectTrigger className="flex-1 w-full min-w-[140px] text-xs h-9">
                 <SelectValue placeholder="Serviço..." />
               </SelectTrigger>
               <SelectContent>
