@@ -2902,16 +2902,16 @@ const handleSalvarNovo = useCallback(
                 )}
 
                 {/* Credenciais de Acesso do Cliente */}
-                <div className="bg-gray-900 rounded-xl p-4 text-white">
-                  <p className="text-[10px] text-gray-400 uppercase font-semibold mb-3 flex items-center gap-1.5">
+                <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-semibold mb-3 flex items-center gap-1.5">
                     <KeyRound className="h-3.5 w-3.5" />
                     Credenciais de Acesso do Cliente
                   </p>
                   <div className="space-y-3">
                     <div>
-                      <p className="text-[10px] text-gray-500 mb-1">E-mail de login (usuario)</p>
-                      <div className="bg-white/10 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
-                        <p className="text-sm font-mono font-semibold text-white truncate">
+                      <p className="text-[10px] text-gray-500 dark:text-gray-500 mb-1">E-mail de login (usuario)</p>
+                      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+                        <p className="text-sm font-mono font-semibold text-gray-900 dark:text-white truncate">
                           {dialogDetalhe.dadosRegistro?.email || dialogDetalhe.email || "-"}
                         </p>
                         <button
@@ -2921,16 +2921,16 @@ const handleSalvarNovo = useCallback(
                             navigator.clipboard.writeText(emailCopiar);
                             toast.success("E-mail copiado!");
                           }}
-                          className="shrink-0 text-gray-400 hover:text-white transition-colors"
+                          className="shrink-0 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >
                           <Copy className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
                     <div>
-                      <p className="text-[10px] text-gray-500 mb-1">Senha</p>
-                      <div className="bg-white/10 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
-                        <p className="text-sm font-mono font-semibold text-white">
+                      <p className="text-[10px] text-gray-500 dark:text-gray-500 mb-1">Senha</p>
+                      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+                        <p className="text-sm font-mono font-semibold text-gray-900 dark:text-white">
                           {dialogDetalhe.dadosRegistro?.senha || "Senha nao definida"}
                         </p>
                         {dialogDetalhe.dadosRegistro?.senha && (
@@ -2940,16 +2940,16 @@ const handleSalvarNovo = useCallback(
                               navigator.clipboard.writeText(dialogDetalhe.dadosRegistro!.senha);
                               toast.success("Senha copiada!");
                             }}
-                            className="shrink-0 text-gray-400 hover:text-white transition-colors"
+                            className="shrink-0 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                           >
                             <Copy className="h-4 w-4" />
                           </button>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2">
-                      <span className="text-[10px] text-gray-500">Link de acesso:</span>
-                      <span className="text-[11px] text-gray-300 font-mono truncate flex-1">https://j1ewd51wcs60-d.space-z.ai/</span>
+                    <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2">
+                      <span className="text-[10px] text-gray-500 dark:text-gray-400">Link de acesso:</span>
+                      <span className="text-[11px] text-gray-700 dark:text-gray-300 font-mono truncate flex-1">https://j1ewd51wcs60-d.space-z.ai/</span>
                     </div>
                     {dialogDetalhe.dadosRegistro?.senha ? (
                       <Button
@@ -2977,12 +2977,12 @@ const handleSalvarNovo = useCallback(
                         Enviar credenciais por WhatsApp
                       </Button>
                     ) : dialogDetalhe.dadosRegistro ? (
-                      <p className="text-[10px] text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-2.5 text-center leading-relaxed">
+                      <p className="text-[10px] text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-2.5 text-center leading-relaxed">
                         A senha deste cliente nao foi definida no cadastro.
                         Envie o link de acesso via WhatsApp ou oriente o cliente a usar "Esqueceu a senha?" na tela de login.
                       </p>
                     ) : (
-                      <p className="text-[10px] text-gray-400 bg-white/5 rounded-lg p-2.5 text-center leading-relaxed">
+                      <p className="text-[10px] text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-2.5 text-center leading-relaxed">
                         Cliente cadastrado sem credenciais de acesso. Ele devera se registrar pelo link.
                       </p>
                     )}
