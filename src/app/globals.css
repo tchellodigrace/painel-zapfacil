@@ -117,25 +117,25 @@
 .dark {
   --radius: 0.5rem;
 
-  /* Fundo cinza-escuro (nao preto) - leitura confortavel */
-  --background: #2b2b2e;
+  /* Fundo cinza-escuro (#363636) - leitura confortavel */
+  --background: #363636;
   --foreground: #f3f4f6;
 
   /* Cards um tom mais claro que o fundo (contraste claro) */
-  --card: #353539;
+  --card: #414145;
   --card-foreground: #f3f4f6;
 
-  --popover: #353539;
+  --popover: #414145;
   --popover-foreground: #f3f4f6;
 
   /* Azul Bitrix24 mais claro para visibilidade no dark */
   --primary: #4cc4ff;
   --primary-foreground: #0d1b2a;
 
-  --secondary: #3f3f44;
+  --secondary: #4a4a4f;
   --secondary-foreground: #f3f4f6;
 
-  --muted: #3f3f44;
+  --muted: #4a4a4f;
   --muted-foreground: #c4c7cc;
 
   --accent: #1e3a5f;
@@ -149,8 +149,8 @@
   --info: #4cc4ff;
   --info-foreground: #0d1b2a;
 
-  --border: #4a4a50;
-  --input: #4a4a50;
+  --border: #55555a;
+  --input: #55555a;
   --ring: #4cc4ff;
 
   --chart-1: #4cc4ff;
@@ -159,13 +159,13 @@
   --chart-4: #f4756b;
   --chart-5: #b888ff;
 
-  --sidebar: #303034;
+  --sidebar: #313134;
   --sidebar-foreground: #f3f4f6;
   --sidebar-primary: #4cc4ff;
   --sidebar-primary-foreground: #0d1b2a;
-  --sidebar-accent: #3f3f44;
+  --sidebar-accent: #4a4a4f;
   --sidebar-accent-foreground: #f3f4f6;
-  --sidebar-border: #4a4a50;
+  --sidebar-border: #55555a;
   --sidebar-ring: #4cc4ff;
 }
 
