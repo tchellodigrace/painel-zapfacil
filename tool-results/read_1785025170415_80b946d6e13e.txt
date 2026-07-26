@@ -1,0 +1,739 @@
+     1→"use client";
+     2→
+     3→import { useState, useEffect, useCallback } from "react";
+     4→import { Button } from "@/components/ui/button";
+     5→import { Input } from "@/components/ui/input";
+     6→import { Label } from "@/components/ui/label";
+     7→import {
+     8→  Eye,
+     9→  EyeOff,
+    10→  Lock,
+    11→  ArrowRight,
+    12→  ShieldCheck,
+    13→  Mail,
+    14→  Building2,
+    15→  User,
+    16→} from "lucide-react";
+    17→import { toast } from "sonner";
+    18→import {
+    19→  Dialog,
+    20→  DialogContent,
+    21→  DialogHeader,
+    22→  DialogTitle,
+    23→} from "@/components/ui/dialog";
+    24→import { Phone } from "lucide-react";
+    25→
+    26→const AUTH_KEY = "zapfacil_auth";
+    27→const SESSION_KEY = "zapfacil_session";
+    28→
+    29→interface Credenciais {
+    30→  email: string;
+    31→  senha: string;
+    32→  nomeEmpresa: string;
+    33→  nomeResponsavel: string;
+    34→  telefone: string;
+    35→}
+    36→
+    37→function carregarCredenciais(): Credenciais | null {
+    38→  if (typeof window === "undefined") return null;
+    39→  try {
+    40→    const item = localStorage.getItem(AUTH_KEY);
+    41→    return item ? (JSON.parse(item) as Credenciais) : null;
+    42→  } catch {
+    43→    return null;
+    44→  }
+    45→}
+    46→
+    47→function salvarCredenciais(cred: Credenciais): void {
+    48→  if (typeof window === "undefined") return;
+    49→  localStorage.setItem(AUTH_KEY, JSON.stringify(cred));
+    50→}
+    51→
+    52→function criarSessao(): void {
+    53→  if (typeof window === "undefined") return;
+    54→  sessionStorage.setItem(SESSION_KEY, "autenticado");
+    55→}
+    56→
+    57→function verificarSessao(): boolean {
+    58→  if (typeof window === "undefined") return false;
+    59→  return sessionStorage.getItem(SESSION_KEY) === "autenticado";
+    60→}
+    61→
+    62→function destruirSessao(): void {
+    63→  if (typeof window === "undefined") return;
+    64→  sessionStorage.removeItem(SESSION_KEY);
+    65→}
+    66→
+    67→export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
+    68→  const [temCredenciais, setTemCredenciais] = useState<boolean | null>(null);
+    69→  const [mostrarCadastro, setMostrarCadastro] = useState(false);
+    70→  const [email, setEmail] = useState("");
+    71→  const [senha, setSenha] = useState("");
+    72→  const [confirmarSenha, setConfirmarSenha] = useState("");
+    73→  const [nomeEmpresa, setNomeEmpresa] = useState("");
+    74→  const [nomeResponsavel, setNomeResponsavel] = useState("");
+    75→  const [telefone, setTelefone] = useState("");
+    76→  const [mostrarSenha, setMostrarSenha] = useState(false);
+    77→  const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
+    78→  const [carregando, setCarregando] = useState(false);
+    79→  const [etapaCadastro, setEtapaCadastro] = useState(0);
+    80→  const [dialogRecuperar, setDialogRecuperar] = useState(false);
+    81→  const [recuperarEmail, setRecuperarEmail] = useState("");
+    82→  const [recuperarTelefone, setRecuperarTelefone] = useState("");
+    83→  const [enviandoPedido, setEnviandoPedido] = useState(false);
+    84→
+    85→  useEffect(() => {
+    86→    if (verificarSessao()) {
+    87→      onAutenticado();
+    88→      return;
+    89→    }
+    90→    const cred = carregarCredenciais();
+    91→    setTemCredenciais(!!cred);
+    92→  }, [onAutenticado]);
+    93→
+    94→  const handleCriarConta = useCallback(() => {
+    95→    if (!nomeEmpresa.trim()) {
+    96→      toast.error("Informe o nome da empresa.");
+    97→      return;
+    98→    }
+    99→    if (!nomeResponsavel.trim()) {
+   100→      toast.error("Informe seu nome.");
+   101→      return;
+   102→    }
+   103→    if (!email.trim() || !email.includes("@")) {
+   104→      toast.error("Informe um e-mail valido.");
+   105→      return;
+   106→    }
+   107→    if (!senha.trim() || senha.length < 6) {
+   108→      toast.error("A senha deve ter pelo menos 6 caracteres.");
+   109→      return;
+   110→    }
+   111→    if (senha !== confirmarSenha) {
+   112→      toast.error("As senhas nao conferem.");
+   113→      return;
+   114→    }
+   115→
+   116→    const cred: Credenciais = {
+   117→      email: email.trim().toLowerCase(),
+   118→      senha,
+   119→      nomeEmpresa: nomeEmpresa.trim(),
+   120→      nomeResponsavel: nomeResponsavel.trim(),
+   121→      telefone: telefone.trim(),
+   122→    };
+   123→    salvarCredenciais(cred);
+   124→    criarSessao();
+   125→
+   126→    // Salvar registro do cliente no localStorage (visivel pelo admin)
+   127→    const registroCliente = {
+   128→      usuario: nomeResponsavel.trim(),
+   129→      nomeEmpresa: nomeEmpresa.trim(),
+   130→      telefone: telefone.trim(),
+   131→      email: email.trim().toLowerCase(),
+   132→      senha,
+   133→      registradoEm: new Date().toISOString(),
+   134→    };
+   135→
+   136→    // Metodo 1: salvar direto no localStorage como sistema novo (fallback garantido)
+   137→    const ADMIN_PREFIX = "zapfacil_admin_";
+   138→    try {
+   139→      const sistemasRaw = localStorage.getItem(`${ADMIN_PREFIX}sistemas`);
+   140→      const sistemas = sistemasRaw ? JSON.parse(sistemasRaw) : [];
+   141→      const novoSistema = {
+   142→        id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+   143→        empresa: registroCliente.nomeEmpresa,
+   144→        responsavel: registroCliente.usuario,
+   145→        telefone: registroCliente.telefone,
+   146→        email: registroCliente.email,
+   147→        cidade: "",
+   148→        dataInstalacao: new Date().toISOString().split("T")[0],
+   149→        dataVencimento: "",
+   150→        status: "TRIAL",
+   151→        plano: "PRO",
+   152→        tipoLicenca: "ALUGUEL",
+   153→        valorMensal: 0,
+   154→        valorAquisicao: 0,
+   155→        taxaInstalacao: 0,
+   156→        observacoes: "Registro automatico via link",
+   157→        criadoEm: registroCliente.registradoEm,
+   158→        dadosRegistro: registroCliente,
+   159→      };
+   160→      sistemas.unshift(novoSistema);
+   161→      localStorage.setItem(`${ADMIN_PREFIX}sistemas`, JSON.stringify(sistemas));
+   162→    } catch (e) {
+   163→      console.error("Erro ao salvar registro no admin store:", e);
+   164→    }
+   165→
+   166→    // Metodo 2: tentar via Zustand store (se disponivel)
+   167→    try {
+   168→      import("@/hooks/use-admin-store").then(({ useAdminStore }) => {
+   169→        useAdminStore.getState().recarregarDados();
+   170→      }).catch(() => {});
+   171→    } catch {
+   172→      // Admin store pode nao estar disponivel
+   173→    }
+   174→
+   175→    toast.success("Conta criada com sucesso!");
+   176→    onAutenticado();
+   177→  }, [email, senha, confirmarSenha, nomeEmpresa, nomeResponsavel, telefone, onAutenticado]);
+   178→
+   179→  const handleRecuperarSenha = useCallback(() => {
+   180→    if (!recuperarEmail.trim() || !recuperarEmail.includes("@")) {
+   181→      toast.error("Informe um e-mail valido.");
+   182→      return;
+   183→    }
+   184→    setEnviandoPedido(true);
+   185→    setTimeout(() => {
+   186→      import("@/hooks/use-admin-store").then(({ useAdminStore }) => {
+   187→        useAdminStore.getState().criarPedidoRecuperacao(
+   188→          recuperarEmail.trim(),
+   189→          recuperarTelefone.trim()
+   190→        );
+   191→      }).catch(() => {});
+   192→      setEnviandoPedido(false);
+   193→      setDialogRecuperar(false);
+   194→      setRecuperarEmail("");
+   195→      setRecuperarTelefone("");
+   196→      toast.success(
+   197→        "Pedido enviado ao administrador! Voce recebera seus dados de acesso pelo WhatsApp."
+   198→      );
+   199→    }, 800);
+   200→  }, [recuperarEmail, recuperarTelefone]);
+   201→
+   202→  const handleLogin = useCallback(() => {
+   203→    if (!email.trim() || !senha.trim()) {
+   204→      toast.error("Preencha e-mail e senha.");
+   205→      return;
+   206→    }
+   207→    setCarregando(true);
+   208→    setTimeout(() => {
+   209→      const emailNorm = email.trim().toLowerCase();
+   210→
+   211→      // 1. Verificar credenciais ja salvas no zapfacil_auth
+   212→      const cred = carregarCredenciais();
+   213→      if (
+   214→        cred &&
+   215→        cred.email === emailNorm &&
+   216→        cred.senha === senha
+   217→      ) {
+   218→        criarSessao();
+   219→        toast.success(`Bem-vindo, ${cred.nomeResponsavel}!`);
+   220→        onAutenticado();
+   221→        setCarregando(false);
+   222→        return;
+   223→      }
+   224→
+   225→      // 2. Verificar credenciais definidas pelo admin em zapfacil_admin_sistemas
+   226→      try {
+   227→        const ADMIN_PREFIX = "zapfacil_admin_";
+   228→        const sistemasRaw = localStorage.getItem(`${ADMIN_PREFIX}sistemas`);
+   229→        if (sistemasRaw) {
+   230→          const sistemas = JSON.parse(sistemasRaw);
+   231→          const sistemaAdmin = sistemas.find(
+   232→            (s: any) =>
+   233→              s.dadosRegistro &&
+   234→              s.dadosRegistro.email &&
+   235→              s.dadosRegistro.email.toLowerCase() === emailNorm &&
+   236→              s.dadosRegistro.senha === senha
+   237→          );
+   238→          if (sistemaAdmin && sistemaAdmin.dadosRegistro) {
+   239→            // Encontrou! Salvar no zapfacil_auth para proximos logins
+   240→            const novasCred: Credenciais = {
+   241→              email: sistemaAdmin.dadosRegistro.email,
+   242→              senha: sistemaAdmin.dadosRegistro.senha,
+   243→              nomeEmpresa: sistemaAdmin.dadosRegistro.nomeEmpresa || sistemaAdmin.empresa,
+   244→              nomeResponsavel: sistemaAdmin.dadosRegistro.usuario || sistemaAdmin.responsavel,
+   245→              telefone: sistemaAdmin.dadosRegistro.telefone || sistemaAdmin.telefone || "",
+   246→            };
+   247→            salvarCredenciais(novasCred);
+   248→            criarSessao();
+   249→            toast.success(`Bem-vindo, ${novasCred.nomeResponsavel}!`);
+   250→            onAutenticado();
+   251→            setCarregando(false);
+   252→            return;
+   253→          }
+   254→        }
+   255→      } catch (e) {
+   256→        console.error("Erro ao verificar credenciais admin:", e);
+   257→      }
+   258→
+   259→      // 3. Nenhuma credencial encontrada
+   260→      toast.error("E-mail ou senha incorretos.");
+   261→      setCarregando(false);
+   262→    }, 800);
+   263→  }, [email, senha, onAutenticado]);
+   264→
+   265→  // Loading
+   266→  if (temCredenciais === null) {
+   267→    return (
+   268→      <div className="min-h-screen flex items-center justify-center bg-white">
+   269→        <img src="/logo-empresa.png" alt="" className="h-24 w-auto object-contain animate-pulse opacity-40" />
+   270→      </div>
+   271→    );
+   272→  }
+   273→
+   274→  // === CADASTRO (primeiro acesso) ===
+   275→  if (mostrarCadastro) {
+   276→    const podeAvancarEtapa0 = nomeEmpresa.trim() && nomeResponsavel.trim() && email.trim().includes("@");
+   277→    const podeAvancarEtapa1 = telefone.trim().length >= 10;
+   278→
+   279→    return (
+   280→      <div className="min-h-screen bg-white flex">
+   281→        {/* Lado esquerdo - branding */}
+   282→        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-600 to-emerald-800 p-12 flex-col justify-between relative overflow-hidden">
+   283→          <div className="absolute inset-0 opacity-10">
+   284→            <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-white/20 blur-3xl" />
+   285→            <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
+   286→          </div>
+   287→          <div className="relative z-10">
+   288→            <img src="/logo-empresa.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
+   289→          </div>
+   290→          <div className="relative z-10 space-y-6">
+   291→            <h2 className="text-3xl font-bold text-white leading-tight">
+   292→              Configure seu sistema<br />de gestao em 2 minutos.
+   293→            </h2>
+   294→            <p className="text-emerald-100 text-sm leading-relaxed max-w-md">
+   295→              Preencha seus dados para criar sua conta. Depois e so comecar a usar: lancar vendas, agendar clientes, controlar financeiro e muito mais.
+   296→            </p>
+   297→            <div className="flex items-center gap-4 pt-4">
+   298→              <div className="flex -space-x-2">
+   299→                {["bg-amber-400", "bg-blue-400", "bg-pink-400", "bg-purple-400"].map((c, i) => (
+   300→                  <div key={i} className={`w-8 h-8 rounded-full ${c} border-2 border-emerald-700 flex items-center justify-center text-[10px] font-bold text-white`}>
+   301→                    {["A", "B", "C", "D"][i]}
+   302→                  </div>
+   303→                ))}
+   304→              </div>
+   305→              <p className="text-emerald-200 text-xs">
+   306→                <span className="font-semibold">+2.000 empresas</span> ja usam o sistema
+   307→              </p>
+   308→            </div>
+   309→          </div>
+   310→          <div className="relative z-10 flex items-center gap-2 text-emerald-200 text-[11px]">
+   311→            <ShieldCheck className="w-3.5 h-3.5" />
+   312→            Seus dados ficam salvos apenas no seu dispositivo
+   313→          </div>
+   314→        </div>
+   315→
+   316→        {/* Lado direito - formulário */}
+   317→        <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+   318→          <div className="w-full max-w-md space-y-8">
+   319→            {/* Header mobile */}
+   320→            <div className="lg:hidden text-center space-y-4">
+   321→              <img src="/logo-empresa.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
+   322→              <div>
+   323→                <h2 className="text-xl font-bold text-gray-900">Criar sua conta</h2>
+   324→                <p className="text-sm text-gray-500 mt-1">Configure o sistema em poucos passos</p>
+   325→              </div>
+   326→            </div>
+   327→
+   328→            {/* Steps indicator */}
+   329→            <div className="hidden lg:flex items-center gap-2">
+   330→              {[0, 1, 2].map((i) => (
+   331→                <div key={i} className="flex items-center gap-2">
+   332→                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+   333→                    etapaCadastro > i
+   334→                      ? "bg-emerald-600 text-white"
+   335→                      : etapaCadastro === i
+   336→                        ? "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-600"
+   337→                        : "bg-gray-100 text-gray-400"
+   338→                  }`}>
+   339→                    {etapaCadastro > i ? "✓" : i + 1}
+   340→                  </div>
+   341→                  {i < 2 && (
+   342→                    <div className={`w-12 h-0.5 transition-colors ${etapaCadastro > i ? "bg-emerald-600" : "bg-gray-200"}`} />
+   343→                  )}
+   344→                </div>
+   345→              ))}
+   346→            </div>
+   347→
+   348→            {/* Etapa 0: Dados da empresa */}
+   349→            {etapaCadastro === 0 && (
+   350→              <div className="space-y-5">
+   351→                <div className="hidden lg:block">
+   352→                  <h3 className="text-lg font-semibold text-gray-900">Dados da empresa</h3>
+   353→                  <p className="text-sm text-gray-500 mt-0.5">Como podemos chamar seu negocio?</p>
+   354→                </div>
+   355→                <div className="space-y-4">
+   356→                  <div className="space-y-2">
+   357→                    <Label className="text-sm font-medium text-gray-700">Nome da empresa</Label>
+   358→                    <div className="relative">
+   359→                      <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   360→                      <Input
+   361→                        placeholder="Ex: Barbearia do Joao"
+   362→                        value={nomeEmpresa}
+   363→                        onChange={(e) => setNomeEmpresa(e.target.value)}
+   364→                        className="pl-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+   365→                        autoFocus
+   366→                      />
+   367→                    </div>
+   368→                  </div>
+   369→                  <div className="space-y-2">
+   370→                    <Label className="text-sm font-medium text-gray-700">Seu nome</Label>
+   371→                    <div className="relative">
+   372→                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   373→                      <Input
+   374→                        placeholder="Ex: Joao Silva"
+   375→                        value={nomeResponsavel}
+   376→                        onChange={(e) => setNomeResponsavel(e.target.value)}
+   377→                        className="pl-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+   378→                      />
+   379→                    </div>
+   380→                  </div>
+   381→                  <div className="space-y-2">
+   382→                    <Label className="text-sm font-medium text-gray-700">E-mail</Label>
+   383→                    <div className="relative">
+   384→                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   385→                      <Input
+   386→                        type="email"
+   387→                        placeholder="contato@empresa.com"
+   388→                        value={email}
+   389→                        onChange={(e) => setEmail(e.target.value)}
+   390→                        className="pl-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+   391→                        onKeyDown={(e) => e.key === "Enter" && podeAvancarEtapa0 && setEtapaCadastro(1)}
+   392→                      />
+   393→                    </div>
+   394→                  </div>
+   395→                </div>
+   396→                <Button
+   397→                  className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+   398→                  disabled={!podeAvancarEtapa0}
+   399→                  onClick={() => setEtapaCadastro(1)}
+   400→                >
+   401→                  Continuar
+   402→                  <ArrowRight className="h-4 w-4 ml-2" />
+   403→                </Button>
+   404→              </div>
+   405→            )}
+   406→
+   407→            {/* Etapa 1: Contato */}
+   408→            {etapaCadastro === 1 && (
+   409→              <div className="space-y-5">
+   410→                <div className="hidden lg:block">
+   411→                  <h3 className="text-lg font-semibold text-gray-900">Contato</h3>
+   412→                  <p className="text-sm text-gray-500 mt-0.5">Como podemos entrar em contato?</p>
+   413→                </div>
+   414→                <div className="space-y-4">
+   415→                  <div className="space-y-2">
+   416→                    <Label className="text-sm font-medium text-gray-700">Telefone / WhatsApp</Label>
+   417→                    <Input
+   418→                      placeholder="(00) 00000-0000"
+   419→                      value={telefone}
+   420→                      onChange={(e) => setTelefone(e.target.value)}
+   421→                      className="h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+   422→                      autoFocus
+   423→                    />
+   424→                    <p className="text-xs text-gray-400">Opcional, mas recomendado para suporte via WhatsApp</p>
+   425→                  </div>
+   426→                </div>
+   427→                <div className="flex gap-3">
+   428→                  <Button
+   429→                    variant="outline"
+   430→                    className="flex-1 h-12 rounded-xl text-sm font-medium border-gray-200"
+   431→                    onClick={() => setEtapaCadastro(0)}
+   432→                  >
+   433→                    Voltar
+   434→                  </Button>
+   435→                  <Button
+   436→                    className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+   437→                    onClick={() => setEtapaCadastro(2)}
+   438→                  >
+   439→                    Continuar
+   440→                    <ArrowRight className="h-4 w-4 ml-2" />
+   441→                  </Button>
+   442→                </div>
+   443→              </div>
+   444→            )}
+   445→
+   446→            {/* Etapa 2: Senha */}
+   447→            {etapaCadastro === 2 && (
+   448→              <div className="space-y-5">
+   449→                <div className="hidden lg:block">
+   450→                  <h3 className="text-lg font-semibold text-gray-900">Seguranca</h3>
+   451→                  <p className="text-sm text-gray-500 mt-0.5">Crie uma senha para proteger seu acesso.</p>
+   452→                </div>
+   453→                <div className="space-y-4">
+   454→                  <div className="space-y-2">
+   455→                    <Label className="text-sm font-medium text-gray-700">Senha</Label>
+   456→                    <div className="relative">
+   457→                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   458→                      <Input
+   459→                        type={mostrarSenha ? "text" : "password"}
+   460→                        placeholder="Minimo 6 caracteres"
+   461→                        value={senha}
+   462→                        onChange={(e) => setSenha(e.target.value)}
+   463→                        className="pl-11 pr-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+   464→                        onKeyDown={(e) => e.key === "Enter" && handleCriarConta()}
+   465→                        autoFocus
+   466→                      />
+   467→                      <button
+   468→                        type="button"
+   469→                        onClick={() => setMostrarSenha(!mostrarSenha)}
+   470→                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+   471→                      >
+   472→                        {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+   473→                      </button>
+   474→                    </div>
+   475→                    {/* Indicador de forca */}
+   476→                    {senha.length > 0 && (
+   477→                      <div className="space-y-1.5">
+   478→                        <div className="flex gap-1">
+   479→                          {[0, 1, 2].map((i) => (
+   480→                            <div
+   481→                              key={i}
+   482→                              className={`h-1 flex-1 rounded-full transition-colors ${
+   483→                                senha.length >= 6 && senha.length < 8
+   484→                                  ? "bg-amber-400"
+   485→                                  : senha.length >= 8
+   486→                                    ? "bg-emerald-500"
+   487→                                    : "bg-gray-200"
+   488→                              }`}
+   489→                            />
+   490→                          ))}
+   491→                        </div>
+   492→                        <p className="text-[11px] text-gray-400">
+   493→                          {senha.length < 6
+   494→                            ? "Muito curta"
+   495→                            : senha.length < 8
+   496→                              ? "Razoavel"
+   497→                              : "Forte"}
+   498→                        </p>
+   499→                      </div>
+   500→                    )}
+   501→                  </div>
+   502→                  <div className="space-y-2">
+   503→                    <Label className="text-sm font-medium text-gray-700">Confirmar senha</Label>
+   504→                    <div className="relative">
+   505→                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   506→                      <Input
+   507→                        type={mostrarConfirmar ? "text" : "password"}
+   508→                        placeholder="Repita a senha"
+   509→                        value={confirmarSenha}
+   510→                        onChange={(e) => setConfirmarSenha(e.target.value)}
+   511→                        className={`pl-11 pr-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500 ${
+   512→                          confirmarSenha && confirmarSenha !== senha ? "border-red-300 focus-visible:ring-red-500" : ""
+   513→                        }`}
+   514→                        onKeyDown={(e) => e.key === "Enter" && handleCriarConta()}
+   515→                      />
+   516→                      <button
+   517→                        type="button"
+   518→                        onClick={() => setMostrarConfirmar(!mostrarConfirmar)}
+   519→                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+   520→                      >
+   521→                        {mostrarConfirmar ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+   522→                      </button>
+   523→                    </div>
+   524→                    {confirmarSenha && confirmarSenha !== senha && (
+   525→                      <p className="text-xs text-red-500">As senhas nao conferem</p>
+   526→                    )}
+   527→                  </div>
+   528→                </div>
+   529→                <div className="flex gap-3">
+   530→                  <Button
+   531→                    variant="outline"
+   532→                    className="flex-1 h-12 rounded-xl text-sm font-medium border-gray-200"
+   533→                    onClick={() => setEtapaCadastro(1)}
+   534→                  >
+   535→                    Voltar
+   536→                  </Button>
+   537→                  <Button
+   538→                    className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+   539→                    onClick={handleCriarConta}
+   540→                  >
+   541→                    Criar conta
+   542→                    <ArrowRight className="h-4 w-4 ml-2" />
+   543→                  </Button>
+   544→                </div>
+   545→                <button type="button" onClick={() => setMostrarCadastro(false)} className="w-full text-center text-sm text-emerald-600 hover:text-emerald-700 font-medium underline underline-offset-4">Ja tem conta? Fazer login</button>
+   546→              </div>
+   547→            )}
+   548→          </div>
+   549→        </div>
+   550→      </div>
+   551→    );
+   552→  }
+   553→
+   554→  // === LOGIN ===
+   555→  return (
+   556→    <div className="min-h-screen bg-white flex">
+   557→      {/* Lado esquerdo - branding */}
+   558→      <div className="hidden lg:flex lg:w-[45%] bg-gradient-to-br from-emerald-600 to-emerald-800 p-12 flex-col justify-between relative overflow-hidden">
+   559→        <div className="absolute inset-0 opacity-10">
+   560→          <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-white/20 blur-3xl" />
+   561→          <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
+   562→        </div>
+   563→        <div className="relative z-10">
+   564→          <img src="/logo-empresa.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
+   565→        </div>
+   566→        <div className="relative z-10 space-y-4">
+   567→          <h2 className="text-3xl font-bold text-white leading-tight">
+   568→            Bem-vindo de volta.
+   569→          </h2>
+   570→          <p className="text-emerald-100 text-sm leading-relaxed max-w-sm">
+   571→            Acesse seu sistema de gestao e controle seu negocio de qualquer lugar.
+   572→          </p>
+   573→        </div>
+   574→        <div className="relative z-10 flex items-center gap-2 text-emerald-200 text-[11px]">
+   575→          <ShieldCheck className="w-3.5 h-3.5" />
+   576→          Seus dados ficam salvos apenas no seu dispositivo
+   577→        </div>
+   578→      </div>
+   579→
+   580→      {/* Lado direito - login */}
+   581→      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+   582→        <div className="w-full max-w-sm space-y-8">
+   583→          <div className="lg:hidden text-center space-y-4">
+   584→            <img src="/logo-empresa.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
+   585→            <h2 className="text-xl font-bold text-gray-900">Bem-vindo de volta</h2>
+   586→          </div>
+   587→
+   588→          <div className="hidden lg:block space-y-1">
+   589→            <h2 className="text-2xl font-bold text-gray-900">Entrar</h2>
+   590→            <p className="text-sm text-gray-500">Use seu e-mail e senha para acessar</p>
+   591→          </div>
+   592→
+   593→          <div className="space-y-4">
+   594→            <div className="space-y-2">
+   595→              <Label className="text-sm font-medium text-gray-700">E-mail</Label>
+   596→              <div className="relative">
+   597→                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   598→                <Input
+   599→                  type="email"
+   600→                  placeholder="seu@email.com"
+   601→                  value={email}
+   602→                  onChange={(e) => setEmail(e.target.value)}
+   603→                  className="pl-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+   604→                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+   605→                  autoFocus
+   606→                />
+   607→              </div>
+   608→            </div>
+   609→
+   610→            <div className="space-y-2">
+   611→              <div className="flex items-center justify-between">
+   612→                <Label className="text-sm font-medium text-gray-700">Senha</Label>
+   613→                <button
+   614→                  type="button"
+   615→                  className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+   616→                  onClick={() => setDialogRecuperar(true)}
+   617→                >
+   618→                  Esqueceu a senha?
+   619→                </button>
+   620→              </div>
+   621→              <div className="relative">
+   622→                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   623→                <Input
+   624→                  type={mostrarSenha ? "text" : "password"}
+   625→                  placeholder="Sua senha"
+   626→                  value={senha}
+   627→                  onChange={(e) => setSenha(e.target.value)}
+   628→                  className="pl-11 pr-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+   629→                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+   630→                />
+   631→                <button
+   632→                  type="button"
+   633→                  onClick={() => setMostrarSenha(!mostrarSenha)}
+   634→                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+   635→                >
+   636→                  {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+   637→                </button>
+   638→              </div>
+   639→            </div>
+   640→
+   641→            <Button
+   642→              className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+   643→              onClick={handleLogin}
+   644→              disabled={carregando}
+   645→            >
+   646→              {carregando ? (
+   647→                <span className="flex items-center gap-2">
+   648→                  <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+   649→                  Entrando...
+   650→                </span>
+   651→              ) : (
+   652→                "Entrar no sistema"
+   653→              )}
+   654→            </Button>
+   655→          </div>
+   656→
+   657→          <p className="text-center text-xs text-gray-400">
+   658→            Sistema protegido. Acesso privado e seguro.
+   659→          </p>
+   660→          <button type="button" onClick={() => setMostrarCadastro(true)} className="w-full text-center text-sm text-emerald-600 hover:text-emerald-700 font-medium underline underline-offset-4">Nao tem conta? Cadastre-se</button>
+   661→        </div>
+   662→      </div>
+   663→
+   664→      {/* Dialog Esqueceu a Senha */}
+   665→      <Dialog open={dialogRecuperar} onOpenChange={setDialogRecuperar}>
+   666→        <DialogContent className="max-w-sm">
+   667→          <DialogHeader>
+   668→            <DialogTitle className="flex items-center gap-2 text-base">
+   669→              <Lock className="h-5 w-5 text-emerald-600" />
+   670→              Recuperar acesso
+   671→            </DialogTitle>
+   672→          </DialogHeader>
+   673→          <div className="space-y-4">
+   674→            <p className="text-sm text-gray-500 leading-relaxed">
+   675→              Informe o e-mail usado no cadastro. O administrador enviara seus dados de acesso pelo WhatsApp.
+   676→            </p>
+   677→            <div className="space-y-2">
+   678→              <Label className="text-sm font-medium text-gray-700">E-mail cadastrado</Label>
+   679→              <div className="relative">
+   680→                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   681→                <Input
+   682→                  type="email"
+   683→                  placeholder="seu@email.com"
+   684→                  value={recuperarEmail}
+   685→                  onChange={(e) => setRecuperarEmail(e.target.value)}
+   686→                  className="pl-11 h-11 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+   687→                  onKeyDown={(e) => e.key === "Enter" && handleRecuperarSenha()}
+   688→                  autoFocus
+   689→                />
+   690→              </div>
+   691→            </div>
+   692→            <div className="space-y-2">
+   693→              <Label className="text-sm font-medium text-gray-700">WhatsApp (opcional)</Label>
+   694→              <div className="relative">
+   695→                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   696→                <Input
+   697→                  placeholder="(00) 00000-0000"
+   698→                  value={recuperarTelefone}
+   699→                  onChange={(e) => setRecuperarTelefone(e.target.value)}
+   700→                  className="pl-11 h-11 text-sm rounded-xl border-gray-200 focus-visible:ring-emerald-500"
+   701→                  onKeyDown={(e) => e.key === "Enter" && handleRecuperarSenha()}
+   702→                />
+   703→              </div>
+   704→              <p className="text-[11px] text-gray-400">Se informado, o admin usara este numero para contato</p>
+   705→            </div>
+   706→            <div className="flex gap-2 pt-1">
+   707→              <Button
+   708→                variant="outline"
+   709→                className="flex-1 h-11 rounded-xl text-sm"
+   710→                onClick={() => setDialogRecuperar(false)}
+   711→              >
+   712→                Cancelar
+   713→              </Button>
+   714→              <Button
+   715→                className="flex-1 h-11 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+   716→                onClick={handleRecuperarSenha}
+   717→                disabled={enviandoPedido}
+   718→              >
+   719→                {enviandoPedido ? (
+   720→                  <span className="flex items-center gap-2">
+   721→                    <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+   722→                    Enviando...
+   723→                  </span>
+   724→                ) : (
+   725→                  <>
+   726→                    <ArrowRight className="h-4 w-4 mr-1" />
+   727→                    Solicitar
+   728→                  </>
+   729→                )}
+   730→              </Button>
+   731→            </div>
+   732→          </div>
+   733→        </DialogContent>
+   734→      </Dialog>
+   735→    </div>
+   736→  );
+   737→}
+   738→
+   739→export { destruirSessao, carregarCredenciais };
