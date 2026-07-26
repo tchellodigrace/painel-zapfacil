@@ -377,7 +377,7 @@ export function ZapBotDisparo() {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
               <Users className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100 font-display">
                 {totalContatos}
               </p>
             </div>
@@ -391,7 +391,7 @@ export function ZapBotDisparo() {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
               <UserPlus className="h-4 w-4 text-primary" />
-              <p className="text-lg font-bold text-primary dark:text-primary/80">
+              <p className="text-lg font-bold text-primary dark:text-primary/80 font-display">
                 {selecionados}
               </p>
             </div>
@@ -405,7 +405,7 @@ export function ZapBotDisparo() {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
               <CheckCircle className="h-4 w-4 text-green-500" />
-              <p className="text-lg font-bold text-green-700 dark:text-green-400">
+              <p className="text-lg font-bold text-green-700 dark:text-green-400 font-display">
                 {enviados}
               </p>
             </div>
@@ -419,7 +419,7 @@ export function ZapBotDisparo() {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
               <XCircle className="h-4 w-4 text-red-500" />
-              <p className="text-lg font-bold text-red-700 dark:text-red-400">
+              <p className="text-lg font-bold text-red-700 dark:text-red-400 font-display">
                 {falharam}
               </p>
             </div>

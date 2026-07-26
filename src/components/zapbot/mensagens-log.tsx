@@ -162,25 +162,25 @@ export function ZapBotMensagens() {
       <div className="grid grid-cols-4 gap-3">
         <Card className="bg-gray-50">
           <CardContent className="p-3 text-center">
-            <p className="text-lg font-bold">{contagem.total}</p>
+            <p className="text-lg font-bold font-display">{contagem.total}</p>
             <p className="text-[10px] text-gray-500 uppercase tracking-wider">Total</p>
           </CardContent>
         </Card>
         <Card className="bg-primary/5">
           <CardContent className="p-3 text-center">
-            <p className="text-lg font-bold text-primary">{contagem.enviadas}</p>
+            <p className="text-lg font-bold text-primary font-display">{contagem.enviadas}</p>
             <p className="text-[10px] text-gray-500 uppercase tracking-wider">Enviadas</p>
           </CardContent>
         </Card>
         <Card className="bg-blue-50">
           <CardContent className="p-3 text-center">
-            <p className="text-lg font-bold text-blue-700">{contagem.recebidas}</p>
+            <p className="text-lg font-bold text-blue-700 font-display">{contagem.recebidas}</p>
             <p className="text-[10px] text-gray-500 uppercase tracking-wider">Recebidas</p>
           </CardContent>
         </Card>
         <Card className="bg-amber-50">
           <CardContent className="p-3 text-center">
-            <p className="text-lg font-bold text-amber-700">{contagem.automaticas}</p>
+            <p className="text-lg font-bold text-amber-700 font-display">{contagem.automaticas}</p>
             <p className="text-[10px] text-gray-500 uppercase tracking-wider">Automaticas</p>
           </CardContent>
         </Card>

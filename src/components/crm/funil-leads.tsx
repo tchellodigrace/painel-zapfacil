@@ -335,7 +335,7 @@ export function FunilLeads() {
             </div>
             <div>
               <p className="text-xs font-medium text-muted-foreground">Pipeline</p>
-              <p className="text-lg font-bold text-foreground">{formatCurrency(stats.pipelineValue)}</p>
+              <p className="text-lg font-bold text-foreground font-display">{formatCurrency(stats.pipelineValue)}</p>
             </div>
           </CardContent>
         </Card>
@@ -346,7 +346,7 @@ export function FunilLeads() {
             </div>
             <div>
               <p className="text-xs font-medium text-muted-foreground">Taxa de Conversão</p>
-              <p className="text-lg font-bold text-foreground">{stats.conversionRate.toFixed(1)}%</p>
+              <p className="text-lg font-bold text-foreground font-display">{stats.conversionRate.toFixed(1)}%</p>
             </div>
           </CardContent>
         </Card>
@@ -357,7 +357,7 @@ export function FunilLeads() {
             </div>
             <div>
               <p className="text-xs font-medium text-muted-foreground">Total de Leads</p>
-              <p className="text-lg font-bold text-foreground">{stats.total}</p>
+              <p className="text-lg font-bold text-foreground font-display">{stats.total}</p>
             </div>
           </CardContent>
         </Card>

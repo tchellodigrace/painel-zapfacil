@@ -367,7 +367,7 @@ export default function LandingPage() {
                       <p className="text-xs text-muted-foreground">
                         {stat.label}
                       </p>
-                      <p className="text-2xl font-bold text-foreground mt-1">
+                      <p className="text-2xl font-bold text-foreground mt-1 font-display">
                         {stat.valor}
                       </p>
                       <p className="text-xs text-success mt-1">{stat.delta}</p>
@@ -391,7 +391,7 @@ export default function LandingPage() {
               { valor: "24/7", label: "Suporte disponível" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
-                <p className="text-3xl sm:text-4xl font-bold text-primary">
+                <p className="text-3xl sm:text-4xl font-bold text-primary font-display">
                   {stat.valor}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">

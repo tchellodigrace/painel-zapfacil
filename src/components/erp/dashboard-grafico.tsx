@@ -148,7 +148,7 @@ export function DashboardGrafico() {
               <DollarSign className="h-4 w-4 text-primary dark:text-primary/80" />
             </div>
           </div>
-          <p className="text-lg font-black">{formatarMoeda(receitaPorDia.reduce((s, d) => s + d.total, 0))}</p>
+          <p className="text-lg font-black font-display">{formatarMoeda(receitaPorDia.reduce((s, d) => s + d.total, 0))}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Receita (7 dias)</p>
         </Card>
         <Card className="p-4">
@@ -157,7 +157,7 @@ export function DashboardGrafico() {
               <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
-          <p className="text-lg font-black">{formatarMoeda(ticketMedio)}</p>
+          <p className="text-lg font-black font-display">{formatarMoeda(ticketMedio)}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Ticket Medio</p>
         </Card>
         <Card className="p-4">
@@ -166,7 +166,7 @@ export function DashboardGrafico() {
               <Trophy className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             </div>
           </div>
-          <p className="text-lg font-black truncate">{topServicos[0]?.nome || "-"}</p>
+          <p className="text-lg font-black truncate font-display">{topServicos[0]?.nome || "-"}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Servico Top</p>
         </Card>
         <Card className="p-4">
@@ -175,7 +175,7 @@ export function DashboardGrafico() {
               <Users className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
-          <p className="text-lg font-black truncate">{topClientes[0]?.nome || "-"}</p>
+          <p className="text-lg font-black truncate font-display">{topClientes[0]?.nome || "-"}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Cliente Top</p>
         </Card>
         <Card className="p-4">
@@ -193,7 +193,7 @@ export function DashboardGrafico() {
               <CalendarDays className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
-          <p className="text-lg font-black">{agendamentosHoje.length}</p>
+          <p className="text-lg font-black font-display">{agendamentosHoje.length}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Agend. Hoje</p>
         </Card>
       </div>
