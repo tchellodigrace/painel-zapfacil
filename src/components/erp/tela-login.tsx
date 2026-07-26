@@ -65,6 +65,40 @@ function destruirSessao(): void {
   sessionStorage.removeItem(SESSION_KEY);
 }
 
+function limparCredenciais(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(AUTH_KEY);
+}
+
+/**
+ * Re-valida a sessao salva chamando /api/auth/login silenciosamente.
+ * Retorna:
+ *   "ok"       -> credenciais ainda validas no servidor
+ *   "invalido" -> cliente foi removido ou senha foi alterada
+ *   "offline"  -> erro de rede (nao punir o usuario)
+ */
+async function revalidarSessao(cred: Credenciais): Promise<"ok" | "invalido" | "offline"> {
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: cred.email.trim().toLowerCase(),
+        senha: cred.senha,
+      }),
+    });
+
+    if (res.status === 401) return "invalido";
+    if (!res.ok) return "offline"; // erro inesperado do servidor - nao punir
+
+    const data = await res.json();
+    if (data?.ok && data?.cliente) return "ok";
+    return "invalido";
+  } catch {
+    return "offline"; // erro de rede - nao punir o usuario
+  }
+}
+
 export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
   const [temCredenciais, setTemCredenciais] = useState<boolean | null>(null);
   const [mostrarCadastro, setMostrarCadastro] = useState(false);
@@ -84,12 +118,53 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
   const [enviandoPedido, setEnviandoPedido] = useState(false);
 
   useEffect(() => {
-    if (verificarSessao()) {
-      onAutenticado();
-      return;
+    // Flag para evitar setEstado apos desmontar
+    let cancelado = false;
+
+    async function inicializar() {
+      // 1. Sem sessao salva -> apenas verifica se tem credenciais salvas
+      //    (para mostrar o formulario pre-preenchido)
+      if (!verificarSessao()) {
+        const cred = carregarCredenciais();
+        if (!cancelado) setTemCredenciais(!!cred);
+        return;
+      }
+
+      // 2. Tem sessao salva -> re-validar com o servidor
+      //    (protege contra cliente removido/senha alterada pelo admin)
+      const cred = carregarCredenciais();
+      if (!cred) {
+        // Sessao sem credenciais -> estado inconsistente, limpa tudo
+        destruirSessao();
+        if (!cancelado) setTemCredenciais(false);
+        return;
+      }
+
+      const status = await revalidarSessao(cred);
+      if (cancelado) return;
+
+      if (status === "ok") {
+        // Credenciais validas no servidor -> mantem logado
+        onAutenticado();
+      } else if (status === "invalido") {
+        // Cliente foi removido ou senha alterada -> desloga + avisa
+        destruirSessao();
+        limparCredenciais();
+        setTemCredenciais(false);
+        toast.error(
+          "Sua conta nao foi encontrada no sistema. " +
+          "Ela pode ter sido removida pelo administrador. " +
+          "Faca login novamente ou crie uma nova conta."
+        );
+      } else {
+        // "offline" -> erro de rede ou servidor fora do ar
+        // Nao punir o usuario: mantem logado (sessao ja estava salva)
+        onAutenticado();
+      }
     }
-    const cred = carregarCredenciais();
-    setTemCredenciais(!!cred);
+
+    inicializar();
+    return () => { cancelado = true; };
   }, [onAutenticado]);
 
   const handleCriarConta = useCallback(async () => {
