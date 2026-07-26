@@ -129,7 +129,7 @@ export function EmpresaPanel() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <Building2 className="h-4 w-4 text-emerald-600" />
+            <Building2 className="h-4 w-4 text-primary" />
             Dados da Empresa
           </CardTitle>
         </CardHeader>
@@ -240,7 +240,7 @@ export function EmpresaPanel() {
             />
             <Button
               size="sm"
-              className="h-9 px-3 bg-emerald-600 hover:bg-emerald-700"
+              className="h-9 px-3 bg-primary hover:bg-primary/90"
               onClick={handleAdicionarChave}
             >
               <Plus className="h-4 w-4" />
@@ -254,7 +254,7 @@ export function EmpresaPanel() {
                   key={chave.id}
                   className={`flex items-center justify-between p-2 rounded-lg border text-xs cursor-pointer transition-colors ${
                     chave.ativa
-                      ? "border-emerald-400 bg-emerald-50 dark:bg-emerald-950/30"
+                      ? "border-primary/20 bg-primary/5 dark:bg-primary/20"
                       : "border-border hover:bg-muted/50"
                   }`}
                   onClick={() => definirChavePixAtiva(chave.id)}
@@ -263,7 +263,7 @@ export function EmpresaPanel() {
                     {chave.ativa && (
                       <Badge
                         variant="default"
-                        className="bg-emerald-600 text-[10px] px-1.5 py-0 shrink-0"
+                        className="bg-primary text-[10px] px-1.5 py-0 shrink-0"
                       >
                         ATIVA
                       </Badge>

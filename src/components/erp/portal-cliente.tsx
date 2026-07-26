@@ -167,7 +167,7 @@ export function PortalCliente() {
     if (status === "PAGO")
       return {
         label: "Pago",
-        cor: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
+        cor: "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/80",
         icone: CheckCircle2,
       };
     return {
@@ -189,7 +189,7 @@ export function PortalCliente() {
   // === TELA DE BUSCA ===
   if (!clienteSelecionado) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col">
         {/* Header Portal */}
         <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
           <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-3">
@@ -202,7 +202,7 @@ export function PortalCliente() {
             </div>
             <a
               href="/"
-              className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
+              className="text-xs text-primary dark:text-primary/80 hover:underline font-medium"
             >
               Acesso Admin
             </a>
@@ -214,8 +214,8 @@ export function PortalCliente() {
           <div className="w-full max-w-md space-y-6">
             {/* Hero */}
             <div className="text-center space-y-2">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 mb-3">
-                <Receipt className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 dark:bg-primary/30 mb-3">
+                <Receipt className="w-7 h-7 text-primary dark:text-primary/80" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Meus Pedidos
@@ -233,7 +233,7 @@ export function PortalCliente() {
                 placeholder="Digite seu nome, telefone ou CPF..."
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
-                className="pl-10 h-12 text-base rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus-visible:ring-emerald-500"
+                className="pl-10 h-12 text-base rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus-visible:ring-primary"
               />
             </div>
 
@@ -260,10 +260,10 @@ export function PortalCliente() {
                   <button
                     key={`${c.telefone}-${i}`}
                     onClick={() => setClienteSelecionado(c)}
-                    className="w-full flex items-center gap-3 p-3.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-sm transition-all text-left group"
+                    className="w-full flex items-center gap-3 p-3.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary/30 dark:hover:border-primary/30 hover:shadow-sm transition-all text-left group"
                   >
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 shrink-0">
-                      <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/30 shrink-0">
+                      <User className="w-5 h-5 text-primary dark:text-primary/80" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm text-gray-900 dark:text-white truncate">
@@ -273,7 +273,7 @@ export function PortalCliente() {
                         {c.telefone}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-emerald-500 transition-colors shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors shrink-0" />
                   </button>
                 ))}
               </div>
@@ -292,7 +292,7 @@ export function PortalCliente() {
     : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col">
       {/* Header */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="max-w-2xl mx-auto flex items-center gap-3 px-4 py-3">
@@ -308,8 +308,8 @@ export function PortalCliente() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
-              <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="w-9 h-9 rounded-full bg-primary/10 dark:bg-primary/30 flex items-center justify-center shrink-0">
+              <User className="w-4 h-4 text-primary dark:text-primary/80" />
             </div>
             <div className="min-w-0">
               <p className="font-bold text-sm text-gray-900 dark:text-white truncate">
@@ -330,7 +330,7 @@ export function PortalCliente() {
             <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
-                  <Wallet className="w-4 h-4 text-emerald-500" />
+                  <Wallet className="w-4 h-4 text-primary" />
                   <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">
                     Total Pago
                   </span>
@@ -386,14 +386,14 @@ export function PortalCliente() {
 
           {/* Próximo agendamento */}
           {dadosCliente.proxAgendamento && (
-            <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20">
+            <Card className="border-primary/20 dark:border-primary/40 bg-primary/5 dark:bg-primary/15">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0 mt-0.5">
-                    <CalendarCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/30 flex items-center justify-center shrink-0 mt-0.5">
+                    <CalendarCheck className="w-5 h-5 text-primary dark:text-primary/80" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider mb-1">
+                    <p className="text-xs font-semibold text-primary dark:text-primary/80 uppercase tracking-wider mb-1">
                       Proximo Agendamento
                     </p>
                     <p className="font-bold text-gray-900 dark:text-white text-sm">
@@ -446,7 +446,7 @@ export function PortalCliente() {
                     <button
                       key={venda.id}
                       onClick={() => setVendaDetalhe(venda)}
-                      className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-sm transition-all text-left group"
+                      className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-primary/30 dark:hover:border-primary/30 hover:shadow-sm transition-all text-left group"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
@@ -574,7 +574,7 @@ export function PortalCliente() {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2 text-base">
-                  <Receipt className="w-4 h-4 text-emerald-500" />
+                  <Receipt className="w-4 h-4 text-primary" />
                   Detalhes do Pedido
                 </DialogTitle>
               </DialogHeader>
@@ -656,7 +656,7 @@ export function PortalCliente() {
                     <span className="text-gray-900 dark:text-white">
                       Total
                     </span>
-                    <span className="text-emerald-600 dark:text-emerald-400">
+                    <span className="text-primary dark:text-primary/80">
                       {formatarMoeda(vendaDetalhe.total)}
                     </span>
                   </div>

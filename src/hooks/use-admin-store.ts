@@ -615,7 +615,7 @@ export const STATUS_SISTEMA: {
   {
     valor: "ATIVO",
     label: "Ativo",
-    cor: "bg-emerald-100 text-emerald-700",
+    cor: "bg-primary/10 text-primary",
   },
   {
     valor: "TRIAL",
@@ -668,7 +668,7 @@ export const TIPOS_LICENCA: {
     valor: "AQUISICAO",
     label: "Aquisicao",
     descricao: "Pagamento unico",
-    cor: "bg-emerald-100 text-emerald-700",
+    cor: "bg-primary/10 text-primary",
   },
 ];
 
@@ -688,7 +688,7 @@ export const STATUS_COBRANCA: {
   {
     valor: "PAGO",
     label: "Pago",
-    cor: "bg-emerald-100 text-emerald-700",
+    cor: "bg-primary/10 text-primary",
   },
   {
     valor: "PENDENTE",

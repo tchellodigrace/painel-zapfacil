@@ -137,7 +137,7 @@ export function PainelColaboradores() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Users className="h-4 w-4 text-emerald-600" />
+          <Users className="h-4 w-4 text-primary" />
           Equipe / Colaboradores
           <Badge variant="secondary" className="ml-auto text-[10px]">
             {ativos.length} ativos
@@ -225,7 +225,7 @@ export function PainelColaboradores() {
           </div>
           <div className="flex gap-2">
             <Button
-              className="flex-1 h-9 bg-emerald-600 hover:bg-emerald-700 text-xs font-bold"
+              className="flex-1 h-9 bg-primary hover:bg-primary/90 text-xs font-bold"
               onClick={() =>
                 editandoId ? handleEditar(editandoId) : handleAdicionar()
               }
@@ -267,7 +267,7 @@ export function PainelColaboradores() {
               key={c.id}
               className="flex items-center gap-2 p-2.5 rounded-lg border text-xs hover:bg-muted/30 transition-colors"
             >
-              <div className="h-8 w-8 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300 font-bold text-[10px] shrink-0">
+              <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary/30 flex items-center justify-center text-primary dark:text-primary/80 font-bold text-[10px] shrink-0">
                 {c.nome
                   .split(" ")
                   .map((n) => n[0])
@@ -278,7 +278,7 @@ export function PainelColaboradores() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-medium truncate">{c.nome}</span>
-                  <Badge variant="secondary" className="text-[9px] bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                  <Badge variant="secondary" className="text-[9px] bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60">
                     <UserCheck className="h-2.5 w-2.5 mr-0.5" />
                     Ativo
                   </Badge>
@@ -362,7 +362,7 @@ export function PainelColaboradores() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 w-7 p-0 text-emerald-600 shrink-0"
+                    className="h-7 w-7 p-0 text-primary shrink-0"
                     onClick={() => {
                       toggleColaboradorAtivo(c.id);
                       toast.info(`${c.nome} reativado.`);

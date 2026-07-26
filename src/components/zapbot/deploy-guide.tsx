@@ -49,10 +49,10 @@ function Passo({ num, titulo, children }: { num: number; titulo: string; childre
   return (
     <div className="flex gap-4">
       <div className="flex flex-col items-center">
-        <div className="h-9 w-9 rounded-full bg-emerald-600 text-white text-sm flex items-center justify-center font-bold shrink-0">
+        <div className="h-9 w-9 rounded-full bg-primary text-white text-sm flex items-center justify-center font-bold shrink-0">
           {num}
         </div>
-        {num < 6 && <div className="w-0.5 flex-1 bg-emerald-200 mt-2" />}
+        {num < 6 && <div className="w-0.5 flex-1 bg-primary/15 mt-2" />}
       </div>
       <div className="flex-1 pb-6">
         <h4 className="font-semibold text-gray-900 mb-2">{titulo}</h4>
@@ -131,9 +131,9 @@ https://SEU_DOMINIO/api/zapbot/webhook
 
       {/* Resumo */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="border-emerald-200 bg-emerald-50/50">
+        <Card className="border-primary/20 bg-primary/5">
           <CardContent className="p-4 text-center">
-            <DollarSign className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
+            <DollarSign className="h-8 w-8 text-primary mx-auto mb-2" />
             <h4 className="font-bold text-sm">100% Gratuito</h4>
             <p className="text-xs text-gray-500 mt-1">Oracle Cloud ARM com 24GB RAM, para sempre</p>
           </CardContent>
@@ -158,7 +158,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Server className="h-4 w-4 text-emerald-600" />
+            <Server className="h-4 w-4 text-primary" />
             Arquitetura do Projeto
           </CardTitle>
         </CardHeader>
@@ -168,7 +168,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
               <div className="flex items-center gap-2 flex-wrap justify-center">
                 <Badge className="bg-green-600 text-sm px-3 py-1">Cliente WhatsApp</Badge>
                 <span className="text-gray-400">→</span>
-                <Badge className="bg-emerald-600 text-sm px-3 py-1">Evolution API (Docker)</Badge>
+                <Badge className="bg-primary text-sm px-3 py-1">Evolution API (Docker)</Badge>
                 <span className="text-gray-400">→</span>
                 <Badge className="bg-amber-600 text-sm px-3 py-1">ZapBot Pro (Next.js)</Badge>
               </div>
@@ -184,7 +184,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Rocket className="h-4 w-4 text-emerald-600" />
+            <Rocket className="h-4 w-4 text-primary" />
             Passo a Passo
           </CardTitle>
           <CardDescription>
@@ -300,10 +300,10 @@ https://SEU_DOMINIO/api/zapbot/webhook
               <p className="text-sm text-gray-600 leading-relaxed">
                 Depois configure o chatbot na aba &quot;Chatbot&quot; e ative-o!
               </p>
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <div className="text-xs text-emerald-700">
+                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div className="text-xs text-primary">
                     <strong>Pronto!</strong> Seu WhatsApp esta automatizado. O chatbot vai responder 24h por dia, 7 dias por semana!
                   </div>
                 </div>
@@ -317,7 +317,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <FileText className="h-4 w-4 text-emerald-600" />
+            <FileText className="h-4 w-4 text-primary" />
             Configuracao de Webhooks
           </CardTitle>
           <CardDescription>
@@ -339,7 +339,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Cloud className="h-4 w-4 text-emerald-600" />
+            <Cloud className="h-4 w-4 text-primary" />
             Links Uteis
           </CardTitle>
         </CardHeader>
@@ -347,7 +347,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Button variant="outline" className="justify-start h-auto py-3" asChild>
               <a href="https://github.com/EvolutionAPI/evolution-api" target="_blank" rel="noopener noreferrer">
-                <Zap className="h-4 w-4 mr-2 text-emerald-600" />
+                <Zap className="h-4 w-4 mr-2 text-primary" />
                 <div className="text-left">
                   <p className="text-sm font-medium">Evolution API (GitHub)</p>
                   <p className="text-[10px] text-gray-400">Documentacao oficial</p>

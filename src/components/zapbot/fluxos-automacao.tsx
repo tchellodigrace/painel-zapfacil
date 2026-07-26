@@ -96,7 +96,7 @@ const TRIGGER_COLORS: Record<TriggerType, string> = {
   palavra_chave: "bg-purple-500/15 text-purple-700 dark:text-purple-400 border-purple-500/30",
   horario: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30",
   etapa_funil: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
-  nova_mensagem: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
+  nova_mensagem: "bg-primary/15 text-primary dark:text-primary/80 border-primary/30",
   sempre: "bg-gray-500/15 text-gray-700 dark:text-gray-400 border-gray-500/30",
 };
 
@@ -124,7 +124,7 @@ const ACTION_LABELS: Record<ActionType, string> = {
 };
 
 const ACTION_COLORS: Record<ActionType, string> = {
-  responder_mensagem: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
+  responder_mensagem: "bg-primary/15 text-primary dark:text-primary/80 border-primary/30",
   mover_funil: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30",
   adicionar_tag: "bg-purple-500/15 text-purple-700 dark:text-purple-400 border-purple-500/30",
   enviar_notificacao: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
@@ -653,8 +653,8 @@ export function ZapBotFluxos() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-emerald-500/15 p-2.5">
-                <Play className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <div className="rounded-lg bg-primary/15 p-2.5">
+                <Play className="h-5 w-5 text-primary dark:text-primary/80" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{activeFlows}</p>
@@ -733,12 +733,12 @@ export function ZapBotFluxos() {
                     <div
                       className={`rounded-lg p-2 shrink-0 ${
                         flow.enabled
-                          ? "bg-emerald-500/15"
+                          ? "bg-primary/15"
                           : "bg-muted"
                       }`}
                     >
                       {flow.enabled ? (
-                        <Play className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                        <Play className="h-4 w-4 text-primary dark:text-primary/80" />
                       ) : (
                         <Pause className="h-4 w-4 text-muted-foreground" />
                       )}

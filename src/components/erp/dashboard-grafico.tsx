@@ -144,8 +144,8 @@ export function DashboardGrafico() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <Card className="p-4">
           <div className="flex items-center gap-2 mb-1">
-            <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-950">
-              <DollarSign className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="p-1.5 rounded-md bg-primary/10 dark:bg-primary/25">
+              <DollarSign className="h-4 w-4 text-primary dark:text-primary/80" />
             </div>
           </div>
           <p className="text-lg font-black">{formatarMoeda(receitaPorDia.reduce((s, d) => s + d.total, 0))}</p>
@@ -180,11 +180,11 @@ export function DashboardGrafico() {
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-2 mb-1">
-            <div className={`p-1.5 rounded-md ${lucroMes.lucro >= 0 ? "bg-emerald-100 dark:bg-emerald-950" : "bg-red-100 dark:bg-red-950"}`}>
-              <Receipt className={`h-4 w-4 ${lucroMes.lucro >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`} />
+            <div className={`p-1.5 rounded-md ${lucroMes.lucro >= 0 ? "bg-primary/10 dark:bg-primary/25" : "bg-red-100 dark:bg-red-950"}`}>
+              <Receipt className={`h-4 w-4 ${lucroMes.lucro >= 0 ? "text-primary dark:text-primary/80" : "text-red-600 dark:text-red-400"}`} />
             </div>
           </div>
-          <p className={`text-lg font-black ${lucroMes.lucro >= 0 ? "text-emerald-700" : "text-red-600"}`}>{formatarMoeda(lucroMes.lucro)}</p>
+          <p className={`text-lg font-black ${lucroMes.lucro >= 0 ? "text-primary" : "text-red-600"}`}>{formatarMoeda(lucroMes.lucro)}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Lucro Liq. (Mes)</p>
         </Card>
         <Card className="p-4">
@@ -203,7 +203,7 @@ export function DashboardGrafico() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-emerald-600" />
+              <TrendingUp className="h-4 w-4 text-primary" />
               Receita dos Últimos 7 Dias
             </CardTitle>
           </CardHeader>
@@ -242,7 +242,7 @@ export function DashboardGrafico() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-emerald-600" />
+              <DollarSign className="h-4 w-4 text-primary" />
               Distribuição por Pagamento
             </CardTitle>
           </CardHeader>
@@ -359,7 +359,7 @@ export function DashboardGrafico() {
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-emerald-500 rounded-full transition-all"
+                          className="h-full bg-primary/50 rounded-full transition-all"
                           style={{ width: `${pct}%` }}
                         />
                       </div>

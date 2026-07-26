@@ -221,17 +221,17 @@ export default function MigrarSupabasePage() {
             </div>
 
             {concluido && (
-              <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4">
+              <div className="bg-primary/5 dark:bg-primary/15 border border-primary/20 dark:border-primary/40 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                  <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+                  <CheckCircle2 className="h-5 w-5 text-primary dark:text-primary/80" />
+                  <p className="text-sm font-semibold text-primary dark:text-white/80">
                     Migracao concluida!
                   </p>
                 </div>
                 <div className="grid grid-cols-3 gap-3 mt-3">
                   <div className="bg-white dark:bg-gray-800 rounded p-2 text-center">
                     <p className="text-xs text-gray-500 dark:text-gray-400">Sucesso</p>
-                    <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                    <p className="text-lg font-bold text-primary dark:text-primary/80">
                       {stats.success}
                     </p>
                   </div>
@@ -249,7 +249,7 @@ export default function MigrarSupabasePage() {
                   </div>
                 </div>
                 {stats.errors === 0 ? (
-                  <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-3">
+                  <p className="text-xs text-primary dark:text-primary/80 mt-3">
                     Tudo certo! Agora clientes podem logar de qualquer dispositivo.
                   </p>
                 ) : (
@@ -292,7 +292,7 @@ export default function MigrarSupabasePage() {
                       key={i}
                       className={
                         log.tipo === "success"
-                          ? "text-emerald-400"
+                          ? "text-primary/80"
                           : log.tipo === "error"
                           ? "text-red-400"
                           : log.tipo === "warn"
@@ -316,7 +316,7 @@ export default function MigrarSupabasePage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                <CheckCircle2 className="h-5 w-5 text-primary" />
                 Proximos passos
               </CardTitle>
             </CardHeader>
@@ -335,7 +335,7 @@ export default function MigrarSupabasePage() {
                 automaticamente com todos os dispositivos.
               </p>
               <Link href="/admin">
-                <Button className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+                <Button className="w-full mt-2 bg-primary hover:bg-primary/90 text-white">
                   Voltar para o painel admin
                 </Button>
               </Link>

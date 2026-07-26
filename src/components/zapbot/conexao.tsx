@@ -91,7 +91,7 @@ API Key: ${configEvolution.apiKey}`;
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Server className="h-4 w-4 text-emerald-600" />
+              <Server className="h-4 w-4 text-primary" />
               Configuracao da API
             </CardTitle>
             <CardDescription>
@@ -167,7 +167,7 @@ API Key: ${configEvolution.apiKey}`;
               <Button
                 onClick={salvarConfig}
                 disabled={salvando}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                className="flex-1 bg-primary hover:bg-primary/90"
               >
                 {salvando ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -187,7 +187,7 @@ API Key: ${configEvolution.apiKey}`;
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-base flex items-center gap-2">
-                  <QrCode className="h-4 w-4 text-emerald-600" />
+                  <QrCode className="h-4 w-4 text-primary" />
                   {conectado ? "Conectado" : "QR Code"}
                 </CardTitle>
                 <CardDescription className="mt-1">
@@ -201,7 +201,7 @@ API Key: ${configEvolution.apiKey}`;
               <Badge
                 className={
                   conectado
-                    ? "bg-emerald-100 text-emerald-700"
+                    ? "bg-primary/10 text-primary"
                     : statusConexao === "conectando"
                       ? "bg-yellow-100 text-yellow-700"
                       : statusConexao === "erro"
@@ -232,8 +232,8 @@ API Key: ${configEvolution.apiKey}`;
             {conectado ? (
               /* Connected state */
               <div className="text-center py-6">
-                <div className="h-20 w-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 className="h-10 w-10 text-emerald-600" />
+                <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 className="h-10 w-10 text-primary" />
                 </div>
                 <h3 className="font-bold text-lg text-gray-900">
                   WhatsApp Conectado!
@@ -258,7 +258,7 @@ API Key: ${configEvolution.apiKey}`;
               <div className="text-center py-6">
                 <Skeleton className="h-52 w-52 rounded-xl mx-auto mb-4" />
                 <div className="flex items-center justify-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   <span className="text-sm text-gray-500">
                     Gerando QR Code...
                   </span>
@@ -307,7 +307,7 @@ API Key: ${configEvolution.apiKey}`;
                   Configure a API e clique em conectar para comecar
                 </p>
                 <Button
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className="bg-primary hover:bg-primary/90"
                   onClick={handleConectar}
                 >
                   <Wifi className="h-4 w-4 mr-2" />
@@ -323,15 +323,15 @@ API Key: ${configEvolution.apiKey}`;
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Zap className="h-4 w-4 text-emerald-600" />
+            <Zap className="h-4 w-4 text-primary" />
             Como funciona a conexao?
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
-                <span className="text-emerald-700 font-bold text-lg">1</span>
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                <span className="text-primary font-bold text-lg">1</span>
               </div>
               <h4 className="font-semibold text-sm text-gray-900">
                 Instale a Evolution API
@@ -342,8 +342,8 @@ API Key: ${configEvolution.apiKey}`;
               </p>
             </div>
             <div className="text-center">
-              <div className="h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
-                <span className="text-emerald-700 font-bold text-lg">2</span>
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                <span className="text-primary font-bold text-lg">2</span>
               </div>
               <h4 className="font-semibold text-sm text-gray-900">
                 Configure e conecte
@@ -354,8 +354,8 @@ API Key: ${configEvolution.apiKey}`;
               </p>
             </div>
             <div className="text-center">
-              <div className="h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
-                <span className="text-emerald-700 font-bold text-lg">3</span>
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                <span className="text-primary font-bold text-lg">3</span>
               </div>
               <h4 className="font-semibold text-sm text-gray-900">
                 Ative o chatbot

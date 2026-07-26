@@ -210,7 +210,7 @@ export function PainelAgendamento() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <CalendarDays className="h-4 w-4 text-emerald-600" />
+            <CalendarDays className="h-4 w-4 text-primary" />
             Agenda de Compromissos
             <Badge variant="secondary" className="ml-auto text-[10px]">
               {statsHoje.total} hoje
@@ -228,9 +228,9 @@ export function PainelAgendamento() {
               <p className="text-sm font-black text-amber-700 dark:text-amber-400">{statsHoje.emAndamento}</p>
               <p className="text-[9px] text-amber-600 dark:text-amber-400 font-bold uppercase">Em Curso</p>
             </div>
-            <div className="bg-emerald-50 dark:bg-emerald-950/20 rounded-lg p-2 text-center border border-emerald-100 dark:border-emerald-900">
-              <p className="text-sm font-black text-emerald-700 dark:text-emerald-400">{statsHoje.concluidos}</p>
-              <p className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold uppercase">Concluidos</p>
+            <div className="bg-primary/5 dark:bg-primary/15 rounded-lg p-2 text-center border border-primary/15 dark:border-primary/40">
+              <p className="text-sm font-black text-primary dark:text-primary/80">{statsHoje.concluidos}</p>
+              <p className="text-[9px] text-primary dark:text-primary/80 font-bold uppercase">Concluidos</p>
             </div>
             <div className="bg-muted/50 rounded-lg p-2 text-center border">
               <p className="text-sm font-black">{statsHoje.total}</p>
@@ -239,8 +239,8 @@ export function PainelAgendamento() {
           </div>
 
           {/* Formulário de agendamento */}
-          <div className="bg-emerald-50 dark:bg-emerald-950/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-900 space-y-2">
-            <p className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">Novo Agendamento</p>
+          <div className="bg-primary/5 dark:bg-primary/15 p-3 rounded-lg border border-primary/15 dark:border-primary/40 space-y-2">
+            <p className="text-[10px] font-bold text-primary dark:text-white/80 uppercase tracking-wider">Novo Agendamento</p>
             <div className="grid grid-cols-2 gap-2">
               <Select value={clienteId} onValueChange={setClienteId}>
                 <SelectTrigger className="text-xs h-9">
@@ -311,7 +311,7 @@ export function PainelAgendamento() {
               placeholder="Observacoes (opcional)..."
             />
             <Button
-              className="w-full h-9 bg-emerald-600 hover:bg-emerald-700 text-xs font-bold"
+              className="w-full h-9 bg-primary hover:bg-primary/90 text-xs font-bold"
               onClick={handleAdicionar}
             >
               <Plus className="h-3.5 w-3.5 mr-1.5" />
@@ -415,7 +415,7 @@ export function PainelAgendamento() {
                         </p>
                       )}
                     </div>
-                    <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 shrink-0">
+                    <span className="text-xs font-bold text-primary dark:text-primary/80 shrink-0">
                       {formatarMoeda(ag.valor)}
                     </span>
                   </div>
@@ -432,7 +432,7 @@ export function PainelAgendamento() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-7 px-2 text-[10px] text-emerald-600"
+                        className="h-7 px-2 text-[10px] text-primary"
                         onClick={() => handleWhatsApp(ag.clienteTelefone, ag.clienteNome)}
                       >
                         <MessageCircle className="h-3 w-3" />
@@ -485,7 +485,7 @@ export function PainelAgendamento() {
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-sm">
-              <CalendarDays className="h-4 w-4 text-emerald-600" />
+              <CalendarDays className="h-4 w-4 text-primary" />
               Detalhes do Agendamento
             </DialogTitle>
           </DialogHeader>
@@ -513,7 +513,7 @@ export function PainelAgendamento() {
                   </div>
                   <div>
                     <span className="text-muted-foreground block text-[10px] uppercase">Valor</span>
-                    <span className="font-bold text-emerald-700 dark:text-emerald-400">{formatarMoeda(detalheAberto.valor)}</span>
+                    <span className="font-bold text-primary dark:text-primary/80">{formatarMoeda(detalheAberto.valor)}</span>
                   </div>
                   {detalheAberto.colaboradorNome && (
                     <div>
@@ -538,7 +538,7 @@ export function PainelAgendamento() {
               <div className="flex gap-2">
                 {STATUS_FLOW[detalheAberto.status] && (
                   <Button
-                    className="flex-1 h-9 bg-emerald-600 hover:bg-emerald-700 text-xs font-bold"
+                    className="flex-1 h-9 bg-primary hover:bg-primary/90 text-xs font-bold"
                     onClick={() => {
                       handleProximoStatus(detalheAberto);
                       setDetalheAberto(null);

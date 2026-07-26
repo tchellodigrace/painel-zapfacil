@@ -129,7 +129,7 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
         {/* Status Badge */}
         <div
           className={`text-center font-sans font-black text-[10px] py-1 rounded mb-3 tracking-widest text-white ${
-            isPago ? "bg-emerald-600" : "bg-amber-500 text-amber-950"
+            isPago ? "bg-primary" : "bg-amber-500 text-amber-950"
           }`}
         >
           {isPago ? "COMPROVANTE DE PAGAMENTO" : "FATURA DE SERVICO"}
@@ -232,8 +232,8 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
         {venda.formaPagamento === "PIX" && chavePixLimpa && (
           <>
             <div className="border-b border-dashed border-gray-400 my-2" />
-            <div className="bg-emerald-50 text-emerald-800 p-3 rounded border border-emerald-200 text-center space-y-2">
-              <span className="font-bold block text-[9px] text-emerald-600">
+            <div className="bg-primary/5 text-primary p-3 rounded border border-primary/20 text-center space-y-2">
+              <span className="font-bold block text-[9px] text-primary">
                 PAGUE VIA PIX
               </span>
               <div className="flex justify-center">
@@ -246,7 +246,7 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
                   includeMargin={false}
                 />
               </div>
-              <div className="text-[8px] text-emerald-700 font-mono break-all font-bold tracking-tight">
+              <div className="text-[8px] text-primary font-mono break-all font-bold tracking-tight">
                 {chavePixLimpa}
               </div>
             </div>

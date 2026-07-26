@@ -168,14 +168,14 @@ export function Historico({ onReemitir }: HistoricoProps) {
       <CardHeader className="pb-3">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <BarChart3 className="h-4 w-4 text-emerald-600" />
+            <BarChart3 className="h-4 w-4 text-primary" />
             Movimentações e Faturamento
           </CardTitle>
-          <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-lg px-4 py-2 text-right">
-            <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider block">
+          <div className="bg-primary/5 dark:bg-primary/20 border border-primary/20 dark:border-primary/40 rounded-lg px-4 py-2 text-right">
+            <span className="text-[10px] font-bold text-primary dark:text-primary/80 uppercase tracking-wider block">
               Total Faturado
             </span>
-            <p className="text-lg font-black text-emerald-700 dark:text-emerald-400">
+            <p className="text-lg font-black text-primary dark:text-primary/80">
               {formatarMoeda(stats.totalFaturado)}
             </p>
           </div>
@@ -191,12 +191,12 @@ export function Historico({ onReemitir }: HistoricoProps) {
             </div>
             <p className="text-sm font-black">{formatarMoeda(stats.totalFaturado)}</p>
           </div>
-          <div className="bg-emerald-50 dark:bg-emerald-950/20 rounded-lg p-3 text-center border border-emerald-100 dark:border-emerald-900">
-            <div className="flex items-center justify-center gap-1 text-[10px] text-emerald-700 dark:text-emerald-400 uppercase font-bold mb-1">
+          <div className="bg-primary/5 dark:bg-primary/15 rounded-lg p-3 text-center border border-primary/15 dark:border-primary/40">
+            <div className="flex items-center justify-center gap-1 text-[10px] text-primary dark:text-primary/80 uppercase font-bold mb-1">
               <CheckCircle2 className="h-3 w-3" />
               Recebido
             </div>
-            <p className="text-sm font-black text-emerald-700 dark:text-emerald-400">
+            <p className="text-sm font-black text-primary dark:text-primary/80">
               {formatarMoeda(stats.totalPagas)}
             </p>
           </div>
@@ -309,7 +309,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
                     variant={v.status === "PAGO" ? "default" : "secondary"}
                     className={`text-[10px] ${
                       v.status === "PAGO"
-                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
+                        ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60"
                         : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                     }`}
                   >
@@ -320,7 +320,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
               <div className="flex items-center justify-between">
                 <p className="text-[11px] text-gray-400">{v.data} {v.hora}</p>
                 <div className="flex gap-1">
-                  <Button variant="ghost" size="sm" className="h-8 text-[10px] text-emerald-600" onClick={() => onReemitir(v)}>
+                  <Button variant="ghost" size="sm" className="h-8 text-[10px] text-primary" onClick={() => onReemitir(v)}>
                     <Eye className="h-3 w-3 mr-0.5" /> Ver
                   </Button>
                   {v.status === "PENDENTE" && (
@@ -381,7 +381,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
                       variant={v.status === "PAGO" ? "default" : "secondary"}
                       className={`text-[10px] ${
                         v.status === "PAGO"
-                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
+                          ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60"
                           : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                       }`}
                     >
@@ -392,7 +392,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 px-2 text-emerald-600 text-[10px]"
+                      className="h-7 px-2 text-primary text-[10px]"
                       onClick={() => onReemitir(v)}
                     >
                       <Eye className="h-3 w-3 mr-1" />

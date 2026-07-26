@@ -176,6 +176,6 @@ export const STATUS_AGENDAMENTO: { valor: StatusAgendamento; label: string; cor:
   { valor: "AGENDADO", label: "Agendado", cor: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" },
   { valor: "CONFIRMADO", label: "Confirmado", cor: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200" },
   { valor: "EM_ANDAMENTO", label: "Em Andamento", cor: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200" },
-  { valor: "CONCLUIDO", label: "Concluído", cor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200" },
+  { valor: "CONCLUIDO", label: "Concluído", cor: "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60" },
   { valor: "CANCELADO", label: "Cancelado", cor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" },
 ];

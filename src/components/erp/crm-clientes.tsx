@@ -121,7 +121,7 @@ export function CRMClientes() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4 text-emerald-600" />
+            <Users className="h-4 w-4 text-primary" />
             CRM Clientes
             <Badge variant="secondary" className="ml-auto text-[10px]">
               {clientes.length}
@@ -212,7 +212,7 @@ export function CRMClientes() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 w-full text-emerald-600 text-[10px]"
+                      className="h-7 w-full text-primary text-[10px]"
                       onClick={() => handleEditar(c.id)}
                     >
                       <Check className="h-3 w-3 mr-1" /> Salvar
@@ -237,7 +237,7 @@ export function CRMClientes() {
                             : c.documento || c.telefone}
                         </p>
                       )}
-                      <p className="text-[9px] text-emerald-600 font-medium">
+                      <p className="text-[9px] text-primary font-medium">
                         Total: {formatarMoeda(obterTotalGasto(c.nome))}
                       </p>
                     </div>
@@ -254,7 +254,7 @@ export function CRMClientes() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-7 w-7 p-0 text-emerald-500 shrink-0"
+                        className="h-7 w-7 p-0 text-primary shrink-0"
                         onClick={() =>
                           handleWhatsAppCliente(c.telefone, c.nome)
                         }
@@ -304,7 +304,7 @@ export function CRMClientes() {
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Users className="h-5 w-5 text-emerald-600" />
+              <Users className="h-5 w-5 text-primary" />
               Ficha do Cliente
             </DialogTitle>
           </DialogHeader>
@@ -368,12 +368,12 @@ function FichaCliente({
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        <div className="bg-emerald-50 dark:bg-emerald-950/20 rounded-lg p-2.5 text-center border border-emerald-100 dark:border-emerald-900">
-          <div className="flex items-center justify-center gap-1 text-[10px] text-emerald-700 dark:text-emerald-400 font-bold mb-0.5">
+        <div className="bg-primary/5 dark:bg-primary/15 rounded-lg p-2.5 text-center border border-primary/15 dark:border-primary/40">
+          <div className="flex items-center justify-center gap-1 text-[10px] text-primary dark:text-primary/80 font-bold mb-0.5">
             <DollarSign className="h-3 w-3" />
             Total Gasto
           </div>
-          <p className="text-sm font-black text-emerald-700 dark:text-emerald-400">
+          <p className="text-sm font-black text-primary dark:text-primary/80">
             {formatarMoeda(totalGasto)}
           </p>
         </div>
@@ -384,11 +384,11 @@ function FichaCliente({
           </div>
           <p className="text-sm font-black">{qtdCompras}</p>
         </div>
-        <div className="bg-emerald-50 dark:bg-emerald-950/20 rounded-lg p-2.5 text-center border border-emerald-100 dark:border-emerald-900">
-          <div className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold mb-0.5">
+        <div className="bg-primary/5 dark:bg-primary/15 rounded-lg p-2.5 text-center border border-primary/15 dark:border-primary/40">
+          <div className="text-[10px] text-primary dark:text-primary/80 font-bold mb-0.5">
             Pagas
           </div>
-          <p className="text-sm font-black text-emerald-700 dark:text-emerald-400">
+          <p className="text-sm font-black text-primary dark:text-primary/80">
             {qtdPagas}
           </p>
         </div>
@@ -410,7 +410,7 @@ function FichaCliente({
       {cliente.telefone && (
         <Button
           variant="outline"
-          className="w-full bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 text-emerald-700 hover:bg-emerald-100 text-xs"
+          className="w-full bg-primary/5 dark:bg-primary/15 border-primary/20 dark:border-primary/40 text-primary hover:bg-primary/10 text-xs"
           onClick={onWhatsApp}
         >
           <MessageCircle className="h-3.5 w-3.5 mr-2" />
@@ -443,7 +443,7 @@ function FichaCliente({
                       variant="secondary"
                       className={`text-[9px] ${
                         v.status === "PAGO"
-                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
+                          ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60"
                           : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                       }`}
                     >
@@ -486,7 +486,7 @@ function FichaCliente({
                           variant="secondary"
                           className={`text-[9px] ${
                             v.status === "PAGO"
-                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
+                              ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60"
                               : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                           }`}
                         >

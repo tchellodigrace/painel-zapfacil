@@ -169,9 +169,9 @@ export default function ZapFacilPage() {
   // Aguardando verificação de sessão
   if (autenticado === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-primary/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
         <div className="animate-pulse flex flex-col items-center gap-3">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30" />
+          <div className="w-16 h-16 rounded-2xl bg-primary/10 dark:bg-primary/30" />
           <div className="h-4 w-32 bg-gray-200 dark:bg-gray-800 rounded" />
         </div>
       </div>
@@ -269,7 +269,7 @@ export default function ZapFacilPage() {
             {/* Tabs fixos do ERP */}
             <TabsTrigger
               value="lancamento"
-              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white"
             >
               <FileText className="h-3.5 w-3.5 mr-1" />
               <span className="hidden sm:inline">Lancar</span>
@@ -277,7 +277,7 @@ export default function ZapFacilPage() {
             </TabsTrigger>
             <TabsTrigger
               value="cadastros"
-              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white"
             >
               <Building2 className="h-3.5 w-3.5 mr-1" />
               <span className="hidden sm:inline">Cadastros</span>
@@ -285,7 +285,7 @@ export default function ZapFacilPage() {
             </TabsTrigger>
             <TabsTrigger
               value="agenda"
-              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white"
             >
               <CalendarDays className="h-3.5 w-3.5 mr-1" />
               <span className="hidden sm:inline">Agenda</span>
@@ -293,7 +293,7 @@ export default function ZapFacilPage() {
             </TabsTrigger>
             <TabsTrigger
               value="financeiro"
-              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white"
             >
               <Receipt className="h-3.5 w-3.5 mr-1" />
               <span className="hidden sm:inline">Financeiro</span>
@@ -345,21 +345,21 @@ export default function ZapFacilPage() {
             {/* Tabs fixas secundárias (hidden no mobile para caber) */}
             <TabsTrigger
               value="equipe"
-              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white hidden lg:inline-flex"
+              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white hidden lg:inline-flex"
             >
               <Users className="h-3.5 w-3.5 mr-1" />
               Equipe
             </TabsTrigger>
             <TabsTrigger
               value="dashboard"
-              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white hidden lg:inline-flex"
+              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white hidden lg:inline-flex"
             >
               <LayoutDashboard className="h-3.5 w-3.5 mr-1" />
               Dashboard
             </TabsTrigger>
             <TabsTrigger
               value="historico"
-              className="text-xs py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white hidden lg:inline-flex"
+              className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white hidden lg:inline-flex"
             >
               <BarChart3 className="h-3.5 w-3.5 mr-1" />
               Relatorios

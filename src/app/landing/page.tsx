@@ -67,7 +67,7 @@ const RECURSOS = [
     titulo: "Agendamento Integrado",
     descricao:
       "Cliente marca horário direto pelo WhatsApp, com lembrete automático antes do horário. Reduz faltas em até 70%.",
-    cor: "from-emerald-500 to-teal-500",
+    cor: "from-primary to-teal-500",
   },
   {
     icon: ShieldCheck,

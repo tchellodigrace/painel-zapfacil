@@ -53,32 +53,32 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed lg:sticky top-0 left-0 z-50 h-screen w-72 bg-emerald-950 text-white flex flex-col transition-transform duration-300 lg:translate-x-0",
+          "fixed lg:sticky top-0 left-0 z-50 h-screen w-72 bg-primary/25 text-white flex flex-col transition-transform duration-300 lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Logo */}
         <div className="p-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-primary/50 flex items-center justify-center">
               <Zap className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="font-bold text-lg leading-tight">ZapBot Pro</h1>
-              <p className="text-emerald-300 text-xs">Automacao WhatsApp</p>
+              <p className="text-white/80 text-xs">Automacao WhatsApp</p>
             </div>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden text-white hover:bg-emerald-800"
+            className="lg:hidden text-white hover:bg-primary/40"
             onClick={() => setSidebarOpen(false)}
           >
             <X className="h-5 w-5" />
           </Button>
         </div>
 
-        <Separator className="bg-emerald-800" />
+        <Separator className="bg-primary/40" />
 
         {/* Status */}
         <div className="px-5 py-4">
@@ -95,7 +95,7 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
                       : "bg-gray-500"
               )}
             />
-            <span className="text-sm text-emerald-200">
+            <span className="text-sm text-white/60">
               {statusConexao === "conectado"
                 ? "Conectado"
                 : statusConexao === "conectando"
@@ -109,16 +109,16 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
             <div
               className={cn(
                 "h-2.5 w-2.5 rounded-full",
-                chatbotAtivo ? "bg-emerald-400" : "bg-gray-600"
+                chatbotAtivo ? "bg-primary/60" : "bg-gray-600"
               )}
             />
-            <span className="text-sm text-emerald-200">
+            <span className="text-sm text-white/60">
               Chatbot: {chatbotAtivo ? "Ativo" : "Inativo"}
             </span>
           </div>
         </div>
 
-        <Separator className="bg-emerald-800" />
+        <Separator className="bg-primary/40" />
 
         {/* Nav */}
         <ScrollArea className="flex-1 px-3 py-2">
@@ -133,8 +133,8 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all w-full text-left",
                   paginaAtiva === item.id
-                    ? "bg-emerald-600 text-white shadow-lg"
-                    : "text-emerald-200 hover:bg-emerald-900/50 hover:text-white"
+                    ? "bg-primary text-white shadow-lg"
+                    : "text-white/60 hover:bg-primary/50 hover:text-white"
                 )}
               >
                 {item.icon}
@@ -150,19 +150,19 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
         </ScrollArea>
 
         {/* Footer stats */}
-        <div className="p-4 border-t border-emerald-800">
+        <div className="p-4 border-t border-primary/40">
           <div className="grid grid-cols-3 gap-2 text-center">
             <div>
-              <p className="text-emerald-400 text-lg font-bold">{totalEnviadas}</p>
-              <p className="text-emerald-400/70 text-[10px] uppercase tracking-wider">Enviadas</p>
+              <p className="text-primary/80 text-lg font-bold">{totalEnviadas}</p>
+              <p className="text-primary/70 text-[10px] uppercase tracking-wider">Enviadas</p>
             </div>
             <div>
-              <p className="text-emerald-400 text-lg font-bold">{totalRecebidas}</p>
-              <p className="text-emerald-400/70 text-[10px] uppercase tracking-wider">Recebidas</p>
+              <p className="text-primary/80 text-lg font-bold">{totalRecebidas}</p>
+              <p className="text-primary/70 text-[10px] uppercase tracking-wider">Recebidas</p>
             </div>
             <div>
-              <p className="text-emerald-400 text-lg font-bold">{conectado ? "ON" : "OFF"}</p>
-              <p className="text-emerald-400/70 text-[10px] uppercase tracking-wider">Status</p>
+              <p className="text-primary/80 text-lg font-bold">{conectado ? "ON" : "OFF"}</p>
+              <p className="text-primary/70 text-[10px] uppercase tracking-wider">Status</p>
             </div>
           </div>
         </div>
@@ -180,7 +180,7 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-emerald-600 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <Zap className="h-4 w-4 text-white" />
             </div>
             <h1 className="font-bold text-base">ZapBot Pro</h1>
@@ -212,7 +212,7 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
               className={cn(
                 "flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg transition-colors min-w-0 flex-1",
                 paginaAtiva === item.id
-                  ? "text-emerald-600"
+                  ? "text-primary"
                   : "text-gray-400 hover:text-gray-600"
               )}
             >

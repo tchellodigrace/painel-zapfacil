@@ -191,7 +191,7 @@ function DialogTrocarSenha({
             <Button variant="ghost" size="sm" className="text-xs" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button size="sm" className="text-xs bg-emerald-600 hover:bg-emerald-700" onClick={handleSalvar}>
+            <Button size="sm" className="text-xs bg-primary hover:bg-primary/90" onClick={handleSalvar}>
               Salvar
             </Button>
           </div>
@@ -252,23 +252,23 @@ function TelaPrimeiroAcesso({
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Lado esquerdo - branding */}
-      <div className="hidden lg:flex lg:w-[45%] bg-gradient-to-br from-sidebar via-sidebar to-primary/30 p-12 flex-col justify-between relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-emerald-500/30 blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-blue-500/20 blur-3xl" />
+      {/* Lado esquerdo - branding estilo Bitrix24 */}
+      <div className="hidden lg:flex lg:w-[44%] bg-primary relative overflow-hidden flex-col justify-between p-12">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-[28rem] h-[28rem] rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute bottom-0 -left-20 w-[24rem] h-[24rem] rounded-full bg-primary-foreground/10 blur-3xl" />
         </div>
         <div className="relative z-10">
-          <img src="/logo-admin.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
+          <img src="/logo-admin.png" alt="Logo" className="h-12 w-auto object-contain brightness-0 invert" />
         </div>
-        <div className="relative z-10 space-y-6">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5">
-            <span className="text-[10px] font-semibold text-emerald-300 uppercase tracking-wider">Primeiro Acesso</span>
+        <div className="relative z-10 space-y-5 max-w-md">
+          <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5">
+            <span className="text-[10px] font-semibold text-white uppercase tracking-wider">Primeiro Acesso</span>
           </div>
-          <h2 className="text-3xl font-bold text-white leading-tight">
-            Configure seu painel<br />de gestao.
-          </h2>
-          <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+          <h1 className="text-4xl font-bold text-white leading-tight tracking-tight">
+            Configure seu painel de gestao.
+          </h1>
+          <p className="text-white/80 text-base leading-relaxed">
             Preencha seus dados para personalizar o acesso ao painel administrativo. Essa configuracao sera necessaria apenas na primeira vez ou apos atualizacoes do sistema.
           </p>
         </div>
@@ -279,19 +279,19 @@ function TelaPrimeiroAcesso({
               <div key={i} className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                   etapa > i
-                    ? "bg-emerald-500 text-white"
+                    ? "bg-white text-primary"
                     : etapa === i
-                      ? "bg-white text-gray-900 ring-2 ring-emerald-400"
-                      : "bg-white/10 text-gray-500"
+                      ? "bg-white text-primary ring-2 ring-white/50"
+                      : "bg-white/15 text-white/60"
                 }`}>
                   {etapa > i ? <Check className="h-4 w-4" /> : i + 1}
                 </div>
                 {i < 2 && (
-                  <div className={`w-8 h-0.5 rounded ${etapa > i ? "bg-emerald-500" : "bg-white/10"}`} />
+                  <div className={`w-8 h-0.5 rounded ${etapa > i ? "bg-white" : "bg-white/15"}`} />
                 )}
               </div>
             ))}
-            <div className="ml-3 text-[11px] text-gray-400">
+            <div className="ml-3 text-[11px] text-white/70">
               {etapa === 0 && "Dados pessoais"}
               {etapa === 1 && "Credenciais"}
               {etapa === 2 && "Seguranca"}
@@ -301,17 +301,17 @@ function TelaPrimeiroAcesso({
       </div>
 
       {/* Lado direito - formulario */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md space-y-8">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
+        <div className="w-full max-w-md space-y-7">
           {/* Header mobile */}
           <div className="lg:hidden text-center space-y-4">
-            <img src="/logo-admin.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
+            <img src="/logo-admin.png" alt="Logo" className="h-16 w-auto mx-auto object-contain" />
             <div>
-              <div className="inline-flex items-center gap-2 bg-emerald-50 rounded-full px-3 py-1 mb-2">
-                <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">Primeiro Acesso</span>
+              <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-3 py-1 mb-2">
+                <span className="text-[10px] font-semibold text-primary uppercase tracking-wider">Primeiro Acesso</span>
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Configure seu painel</h2>
-              <p className="text-sm text-gray-500 mt-1">Etapa {etapa + 1} de 3</p>
+              <h2 className="text-xl font-bold text-foreground">Configure seu painel</h2>
+              <p className="text-sm text-muted-foreground mt-1">Etapa {etapa + 1} de 3</p>
             </div>
             {/* Mobile steps */}
             <div className="flex items-center justify-center gap-2">
@@ -319,14 +319,14 @@ function TelaPrimeiroAcesso({
                 <div key={i} className="flex items-center gap-2">
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                     etapa > i
-                      ? "bg-emerald-500 text-white"
+                      ? "bg-primary text-primary-foreground"
                       : etapa === i
-                        ? "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500"
-                        : "bg-gray-100 text-gray-400"
+                        ? "bg-primary/10 text-primary ring-2 ring-primary"
+                        : "bg-muted text-muted-foreground"
                   }`}>
                     {etapa > i ? <Check className="h-3.5 w-3.5" /> : i + 1}
                   </div>
-                  {i < 2 && <div className={`w-6 h-0.5 rounded ${etapa > i ? "bg-emerald-500" : "bg-gray-200"}`} />}
+                  {i < 2 && <div className={`w-6 h-0.5 rounded ${etapa > i ? "bg-primary" : "bg-border"}`} />}
                 </div>
               ))}
             </div>
@@ -379,7 +379,7 @@ function TelaPrimeiroAcesso({
                 <p className="text-[11px] text-gray-400">Apenas numeros, com DDD</p>
               </div>
               <Button
-                className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-sm font-semibold rounded-xl"
                 onClick={() => setEtapa(1)}
                 disabled={!podeAvancarEtapa0}
               >
@@ -455,7 +455,7 @@ function TelaPrimeiroAcesso({
                   Voltar
                 </Button>
                 <Button
-                  className="flex-1 h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+                  className="flex-1 h-12 bg-primary hover:bg-primary/90 text-sm font-semibold rounded-xl"
                   onClick={() => setEtapa(2)}
                   disabled={!podeAvancarEtapa1}
                 >
@@ -500,7 +500,7 @@ function TelaPrimeiroAcesso({
                 <button
                   type="button"
                   onClick={() => setEmailRecuperacao(email)}
-                  className="text-[11px] text-emerald-600 hover:text-emerald-700 font-medium"
+                  className="text-[11px] text-primary hover:text-primary/80 font-medium"
                 >
                   Usar o mesmo e-mail ({email})
                 </button>
@@ -510,7 +510,7 @@ function TelaPrimeiroAcesso({
                   Voltar
                 </Button>
                 <Button
-                  className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+                  className="flex-1 h-12 bg-primary hover:bg-primary/90 text-sm font-semibold rounded-xl"
                   onClick={handleConcluir}
                   disabled={carregando || !podeConcluir}
                 >
@@ -671,70 +671,83 @@ function TelaLoginAdmin({
   return (
     <>
       <div className="min-h-screen bg-background flex">
-        {/* Lado esquerdo */}
-        <div className="hidden lg:flex lg:w-[45%] bg-sidebar p-12 flex-col justify-between relative overflow-hidden border-r border-border">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-primary/30 blur-3xl" />
-            <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-primary/20 blur-3xl" />
+        {/* Lado esquerdo - branding estilo Bitrix24 */}
+        <div className="hidden lg:flex lg:w-[44%] bg-primary relative overflow-hidden flex-col justify-between p-12">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute -top-20 -right-20 w-[28rem] h-[28rem] rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute bottom-0 -left-20 w-[24rem] h-[24rem] rounded-full bg-primary-foreground/10 blur-3xl" />
           </div>
           <div className="relative z-10">
-            <img src="/logo-admin.png" alt="Logo" className="h-16 w-auto object-contain brightness-0 invert" />
+            <img src="/logo-admin.png" alt="Logo" className="h-12 w-auto object-contain brightness-0 invert" />
           </div>
-          <div className="relative z-10 space-y-4">
-            <h2 className="text-3xl font-bold text-white leading-tight">
+          <div className="relative z-10 space-y-5 max-w-md">
+            <h1 className="text-4xl font-bold text-white leading-tight tracking-tight">
               Painel do Gestor.
-            </h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+            </h1>
+            <p className="text-white/80 text-base leading-relaxed">
               Gerencie todos os sistemas vendidos, acompanhe clientes, controle licencas e receita em um so lugar.
             </p>
+            <ul className="space-y-2.5 pt-2">
+              {[
+                "Visao consolidada de todos os clientes",
+                "Controle de licencas e mensalidades",
+                "Suporte direto via WhatsApp",
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-3 text-white/90 text-sm">
+                  <span className="w-5 h-5 rounded-full bg-white/15 flex items-center justify-center shrink-0">
+                    <Check className="w-3 h-3 text-white" />
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="relative z-10 flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-gray-500" />
-            <span className="text-gray-600 text-[11px]">Acesso restrito ao administrador</span>
+          <div className="relative z-10 flex items-center gap-2 text-white/70 text-xs">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Acesso restrito ao administrador
           </div>
         </div>
 
-        {/* Lado direito */}
-        <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-          <div className="w-full max-w-sm space-y-8">
-            <div className="lg:hidden text-center space-y-4">
-              <img src="/logo-admin.png" alt="Logo" className="h-20 w-auto mx-auto object-contain" />
-              <h2 className="text-xl font-bold text-gray-900">Painel Admin</h2>
+        {/* Lado direito - formulário */}
+        <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
+          <div className="w-full max-w-sm space-y-7">
+            <div className="lg:hidden text-center">
+              <img src="/logo-admin.png" alt="Logo" className="h-16 w-auto mx-auto object-contain mb-6" />
             </div>
 
-            <div className="hidden lg:block space-y-1">
-              <h2 className="text-2xl font-bold text-gray-900">Entrar</h2>
-              <p className="text-sm text-gray-500">Acesso exclusivo do gestor do sistema</p>
+            <div className="space-y-1.5">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">Entrar</h2>
+              <p className="text-sm text-muted-foreground">Acesso exclusivo do gestor do sistema</p>
             </div>
 
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Usuario</Label>
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium text-foreground">Usuario</Label>
                 <Input
                   placeholder="admin"
                   value={usuario}
                   onChange={(e) => setUsuario(e.target.value)}
-                  className="h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
+                  className="h-11 text-sm rounded-lg border-border focus-visible:ring-primary"
                   onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                   autoFocus
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Senha</Label>
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium text-foreground">Senha</Label>
                 <div className="relative">
                   <Input
                     type={mostrarSenha ? "text" : "password"}
                     placeholder="Sua senha"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
-                    className="pr-11 h-12 text-sm rounded-xl border-gray-200 focus-visible:ring-gray-400"
+                    className="pr-11 h-11 text-sm rounded-lg border-border focus-visible:ring-primary"
                     onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                   />
                   <button
                     type="button"
                     onClick={() => setMostrarSenha(!mostrarSenha)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -742,7 +755,7 @@ function TelaLoginAdmin({
               </div>
 
               <Button
-                className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+                className="w-full h-11 text-sm font-semibold rounded-lg shadow-sm"
                 onClick={handleLogin}
                 disabled={carregando}
               >
@@ -758,32 +771,34 @@ function TelaLoginAdmin({
             </div>
 
             {/* Link de recuperacao */}
-            <div className="text-center space-y-1">
+            <div className="text-center space-y-1.5">
               <button
                 type="button"
                 onClick={() => setDialogRecuperar(true)}
-                className="text-sm text-gray-500 hover:text-gray-700 underline underline-offset-4 transition-colors"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Esqueceu a senha?
               </button>
-              <br />
               <button
                 type="button"
                 onClick={() => onPrimeiroAcesso()}
-                className="text-sm text-emerald-600 hover:text-emerald-700 underline underline-offset-4 transition-colors"
+                className="block w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                Primeiro acesso? Configurar perfil
+                Primeiro acesso?{" "}
+                <span className="text-primary hover:text-primary/80 font-semibold">
+                  Configurar perfil
+                </span>
               </button>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-3 space-y-1">
-              <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider text-center">Credenciais padrao</p>
+            <div className="bg-muted/60 rounded-lg p-3 space-y-1">
+              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider text-center">Credenciais padrao</p>
               <p className="text-center text-sm">
-                <span className="font-mono font-semibold text-gray-700">admin</span>
-                <span className="text-gray-300 mx-2">/</span>
-                <span className="font-mono font-semibold text-gray-700">zapfacil123</span>
+                <span className="font-mono font-semibold text-foreground">admin</span>
+                <span className="text-muted-foreground mx-2">/</span>
+                <span className="font-mono font-semibold text-foreground">zapfacil123</span>
               </p>
-              <p className="text-[10px] text-gray-400 text-center">Troque a senha apos o primeiro acesso pelo icone de chave no painel</p>
+              <p className="text-[10px] text-muted-foreground text-center">Troque a senha apos o primeiro acesso pelo icone de chave no painel</p>
             </div>
           </div>
         </div>
@@ -820,7 +835,7 @@ function TelaLoginAdmin({
               </div>
 
               <Button
-                className="w-full h-11 bg-gray-900 hover:bg-gray-800 text-sm font-semibold rounded-xl"
+                className="w-full h-11 bg-primary hover:bg-primary/90 text-sm font-semibold rounded-xl"
                 onClick={handleVerificarEmail}
                 disabled={carregandoRecuperacao}
               >
@@ -854,9 +869,9 @@ function TelaLoginAdmin({
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex items-start gap-2">
-                <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                <p className="text-xs text-emerald-700">
+              <div className="bg-primary/5 border-primary/20 rounded-lg p-3 flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                <p className="text-xs text-primary">
                   E-mail verificado com sucesso! Defina sua nova senha abaixo.
                 </p>
               </div>
@@ -898,7 +913,7 @@ function TelaLoginAdmin({
                   Cancelar
                 </Button>
                 <Button
-                  className="flex-1 h-11 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl"
+                  className="flex-1 h-11 bg-primary hover:bg-primary/90 text-sm font-semibold rounded-xl"
                   onClick={handleRedefinirSenha}
                   disabled={carregandoRecuperacao}
                 >
@@ -1211,16 +1226,16 @@ function FormularioSistema({
         </div>
         {/* Senha de acesso (somente novo cadastro) */}
         {ehNovoCadastro && (
-          <div className="sm:col-span-2 border border-dashed border-emerald-300 dark:border-emerald-700 rounded-lg p-3 bg-emerald-50/50 dark:bg-emerald-950/20 space-y-3">
+          <div className="sm:col-span-2 border border-dashed border-primary/30 dark:border-primary/40 rounded-lg p-3 bg-primary/5 dark:bg-primary/15 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <KeyRound className="h-4 w-4 text-emerald-600" />
-                <Label className="text-xs font-medium text-emerald-800 dark:text-emerald-300">Senha de Acesso do Cliente</Label>
+                <KeyRound className="h-4 w-4 text-primary" />
+                <Label className="text-xs font-medium text-primary dark:text-white/80">Senha de Acesso do Cliente</Label>
               </div>
               <button
                 type="button"
                 onClick={() => setMostrarSenhaForm(!mostrarSenhaForm)}
-                className="text-[10px] text-emerald-600 hover:text-emerald-800 underline"
+                className="text-[10px] text-primary hover:text-primary underline"
               >
                 {mostrarSenhaForm ? "Ocultar" : "Definir senha"}
               </button>
@@ -1284,8 +1299,8 @@ function FormularioSistema({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
-                  <Bot className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/30 flex items-center justify-center">
+                  <Bot className="h-4 w-4 text-primary dark:text-primary/80" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">ZapBot</p>
@@ -1357,7 +1372,7 @@ function FormularioSistema({
         <Button
           type="submit"
           size="sm"
-          className="text-xs bg-emerald-600 hover:bg-emerald-700"
+          className="text-xs bg-primary hover:bg-primary/90"
         >
           {sistema ? "Salvar Alteracoes" : "Cadastrar Sistema"}
         </Button>
@@ -1510,7 +1525,7 @@ function SecaoRecuperacoes() {
           onClick={() => setSubAba("enviar")}
           className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
             subAba === "enviar"
-              ? "bg-white dark:bg-gray-700 text-emerald-700 dark:text-emerald-400 shadow-sm"
+              ? "bg-white dark:bg-gray-700 text-primary dark:text-primary/80 shadow-sm"
               : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
@@ -1518,7 +1533,7 @@ function SecaoRecuperacoes() {
           Enviar Dados de Acesso
           {sistemas.length > 0 && (
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-              subAba === "enviar" ? "bg-emerald-100 text-emerald-700" : "bg-gray-200 dark:bg-gray-600 text-gray-500"
+              subAba === "enviar" ? "bg-primary/10 text-primary" : "bg-gray-200 dark:bg-gray-600 text-gray-500"
             }`}>{sistemas.length}</span>
           )}
         </button>
@@ -1599,15 +1614,15 @@ function SecaoRecuperacoes() {
                     key={sistema.id}
                     className={`cursor-pointer transition-all hover:shadow-md ${
                       isSelected
-                        ? "ring-2 ring-emerald-500 border-emerald-300 dark:border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/20"
-                        : "hover:border-emerald-200 dark:hover:border-emerald-800"
+                        ? "ring-2 ring-primary border-primary/30 dark:border-primary/50 bg-primary/5 dark:bg-primary/15"
+                        : "hover:border-primary/30 dark:hover:border-primary/40"
                     }`}
                     onClick={() => handleSelecionarCliente(sistema)}
                   >
                     <CardContent className="p-4">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-sm ${
-                          isSelected ? "bg-emerald-600" : "bg-gray-400 dark:bg-gray-600"
+                          isSelected ? "bg-primary" : "bg-gray-400 dark:bg-gray-600"
                         }`}>
                           {(nomeExibido || "?").charAt(0).toUpperCase()}
                         </div>
@@ -1616,7 +1631,7 @@ function SecaoRecuperacoes() {
                             <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">{nomeExibido}</span>
                             <Badge variant="outline" className="text-[10px]">{empresaExibida}</Badge>
                             <Badge className={`text-[10px] ${
-                              sistema.status === "ATIVO" ? "bg-emerald-100 text-emerald-700"
+                              sistema.status === "ATIVO" ? "bg-primary/10 text-primary"
                               : sistema.status === "TRIAL" ? "bg-blue-100 text-blue-700"
                               : sistema.status === "EXPIRADO" ? "bg-red-100 text-red-700"
                               : "bg-gray-100 text-gray-500"
@@ -1630,7 +1645,7 @@ function SecaoRecuperacoes() {
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           {temTelefone ? (
-                            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-xs h-8"
+                            <Button size="sm" className="bg-primary hover:bg-primary/90 text-xs h-8"
                               onClick={(e) => { e.stopPropagation(); handleSelecionarCliente(sistema); setDialogConfirmarEnvio(true); }}>
                               <MessageCircle className="h-3.5 w-3.5 mr-1" />Enviar WhatsApp
                             </Button>
@@ -1654,7 +1669,7 @@ function SecaoRecuperacoes() {
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-emerald-600" />
+                  <MessageCircle className="h-5 w-5 text-primary" />
                   Enviar Dados de Acesso
                 </DialogTitle>
               </DialogHeader>
@@ -1662,7 +1677,7 @@ function SecaoRecuperacoes() {
                 <div className="space-y-4">
                   <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300 font-bold text-sm">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 dark:bg-primary/30 flex items-center justify-center text-primary dark:text-white/80 font-bold text-sm">
                         {(clienteSelecionado.dadosRegistro?.usuario || clienteSelecionado.responsavel || "?").charAt(0).toUpperCase()}
                       </div>
                       <div>
@@ -1684,7 +1699,7 @@ function SecaoRecuperacoes() {
                       <div className="flex items-center gap-2 text-xs">
                         <ShieldCheck className="h-3.5 w-3.5 text-gray-400" />
                         <span className="text-gray-500">Status:</span>
-                        <Badge className="text-[10px] bg-emerald-100 text-emerald-700">{clienteSelecionado.status}</Badge>
+                        <Badge className="text-[10px] bg-primary/10 text-primary">{clienteSelecionado.status}</Badge>
                       </div>
                     </div>
                   </div>
@@ -1695,8 +1710,8 @@ function SecaoRecuperacoes() {
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Preview da mensagem</Label>
-                    <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
-                      <p className="text-xs text-emerald-800 dark:text-emerald-300 whitespace-pre-line leading-relaxed">
+                    <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
+                      <p className="text-xs text-primary dark:text-white/80 whitespace-pre-line leading-relaxed">
                         Ola {clienteSelecionado.dadosRegistro?.usuario || clienteSelecionado.responsavel}! Aqui e o suporte do ZapFacil Pro.
 
 Estamos enviando seus dados de acesso ao sistema da {clienteSelecionado.dadosRegistro?.nomeEmpresa || clienteSelecionado.empresa}.
@@ -1714,7 +1729,7 @@ Qualquer duvida, estou a disposicao!
                   </div>
                   <div className="flex gap-3 pt-2">
                     <Button variant="outline" className="flex-1 text-sm" onClick={() => setDialogConfirmarEnvio(false)}>Cancelar</Button>
-                    <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-sm" onClick={confirmarEnvioProativo} disabled={!telefoneEnvio.trim()}>
+                    <Button className="flex-1 bg-primary hover:bg-primary/90 text-sm" onClick={confirmarEnvioProativo} disabled={!telefoneEnvio.trim()}>
                       <MessageCircle className="h-4 w-4 mr-2" />Abrir WhatsApp
                     </Button>
                   </div>
@@ -1723,9 +1738,9 @@ Qualquer duvida, estou a disposicao!
             </DialogContent>
           </Dialog>
 
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
-            <MessageCircle className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
-            <div className="text-xs text-emerald-700 leading-relaxed">
+          <div className="bg-primary/5 border-primary/20 rounded-xl p-4 flex items-start gap-3">
+            <MessageCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+            <div className="text-xs text-primary leading-relaxed">
               <strong>Como enviar:</strong> Busque o cliente pelo nome, empresa ou e-mail. Clique em <strong>"Enviar WhatsApp"</strong> ao lado do cliente. O WhatsApp sera aberto com uma mensagem contendo o link de acesso e o e-mail de login. Voce pode editar o numero de destino antes de enviar.
             </div>
           </div>
@@ -1758,12 +1773,12 @@ Qualquer duvida, estou a disposicao!
                 <p className="text-[10px] text-amber-600 uppercase tracking-wider font-medium">Pendentes</p>
               </CardContent>
             </Card>
-            <Card className="bg-emerald-50 border-emerald-200">
+            <Card className="bg-primary/5 border border-primary/20">
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-emerald-700">
+                <p className="text-xl font-bold text-primary">
                   {pedidosRecuperacao.filter((p) => p.status === "ENVIADO").length}
                 </p>
-                <p className="text-[10px] text-emerald-600 uppercase tracking-wider font-medium">Enviados</p>
+                <p className="text-[10px] text-primary uppercase tracking-wider font-medium">Enviados</p>
               </CardContent>
             </Card>
             <Card className="bg-gray-50 border-gray-200">
@@ -1801,7 +1816,7 @@ Qualquer duvida, estou a disposicao!
                             {cliente?.empresa && <Badge variant="outline" className="text-[10px]">{cliente.empresa}</Badge>}
                             <Badge className={`text-[10px] ${
                               pedido.status === "PENDENTE" ? "bg-amber-100 text-amber-700"
-                              : pedido.status === "ENVIADO" ? "bg-emerald-100 text-emerald-700"
+                              : pedido.status === "ENVIADO" ? "bg-primary/10 text-primary"
                               : "bg-gray-100 text-gray-500"
                             }`}>
                               {pedido.status === "PENDENTE" ? "Pendente" : pedido.status === "ENVIADO" ? "Enviado" : "Ignorado"}
@@ -1822,7 +1837,7 @@ Qualquer duvida, estou a disposicao!
                         </div>
                         {isPendente && (
                           <div className="flex items-center gap-2 shrink-0">
-                            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-xs h-9" onClick={() => enviarCredenciaisWhatsApp(pedido)}>
+                            <Button size="sm" className="bg-primary hover:bg-primary/90 text-xs h-9" onClick={() => enviarCredenciaisWhatsApp(pedido)}>
                               <MessageCircle className="h-3.5 w-3.5 mr-1" />Enviar WhatsApp
                             </Button>
                             <Button variant="ghost" size="sm" className="text-xs h-9 text-gray-500 hover:text-gray-700"
@@ -1898,7 +1913,7 @@ function DialogEmailRecuperacaoForm() {
       <div className="flex gap-2 justify-end pt-1">
         <Button
           size="sm"
-          className="text-xs bg-emerald-600 hover:bg-emerald-700"
+          className="text-xs bg-primary hover:bg-primary/90"
           onClick={handleSalvar}
           disabled={salvando}
         >
@@ -1995,10 +2010,10 @@ function SecaoSistemas({
               <Card className="border-0 shadow-sm">
                 <CardContent className="p-3.5">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
-                    <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Ativos</span>
+                    <TrendingUp className="w-3.5 h-3.5 text-primary" />
+                    <span className="text-[10px] text-primary font-medium uppercase tracking-wider">Ativos</span>
                   </div>
-                  <p className="text-2xl font-black text-emerald-600">{stats.ativos}</p>
+                  <p className="text-2xl font-black text-primary">{stats.ativos}</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-sm">
@@ -2031,10 +2046,10 @@ function SecaoSistemas({
               <Card className="border-0 shadow-sm">
                 <CardContent className="p-3.5">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
-                    <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Receita/mes</span>
+                    <DollarSign className="w-3.5 h-3.5 text-primary" />
+                    <span className="text-[10px] text-primary font-medium uppercase tracking-wider">Receita/mes</span>
                   </div>
-                  <p className="text-lg font-black text-emerald-600">{formatarMoeda(stats.receitaMensal)}</p>
+                  <p className="text-lg font-black text-primary">{formatarMoeda(stats.receitaMensal)}</p>
                 </CardContent>
               </Card>
             </div>
@@ -2077,7 +2092,7 @@ function SecaoSistemas({
                 </SelectContent>
               </Select>
               <Button
-                className="h-9 bg-emerald-600 hover:bg-emerald-700 text-sm shrink-0"
+                className="h-9 bg-primary hover:bg-primary/90 text-sm shrink-0"
                 onClick={onNovo}
               >
                 <Plus className="h-4 w-4 mr-1.5" />
@@ -2120,7 +2135,7 @@ function SecaoSistemas({
                             <Badge className={`text-[10px] font-semibold ${st.cor}`}>{st.label}</Badge>
                             <Badge className={`text-[10px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
                             <Badge className={`text-[10px] font-semibold ${tl.cor}`}>{tl.label}</Badge>
-                            {s.zapbotAtivo && <Badge className="text-[9px] bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">Bot</Badge>}
+                            {s.zapbotAtivo && <Badge className="text-[9px] bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary/80">Bot</Badge>}
                             {s.disparoAtivo && <Badge className="text-[9px] bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">Disparo</Badge>}
                             {s.funilAtivo && <Badge className="text-[9px] bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">Funil</Badge>}
                             {s.fluxosAtivo && <Badge className="text-[9px] bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400">Fluxos</Badge>}
@@ -2128,19 +2143,19 @@ function SecaoSistemas({
                         </div>
                         <div className="flex items-center gap-3 text-[11px] text-gray-400 flex-wrap">
                           {s.cidade && <span>{s.cidade}</span>}
-                          {s.dadosRegistro && <span className="text-emerald-600 font-semibold">Cadastrado</span>}
+                          {s.dadosRegistro && <span className="text-primary font-semibold">Cadastrado</span>}
                           {s.tipoLicenca === "ALUGUEL" && (
                             <>
                               <span>Vence: {formatarData(s.dataVencimento)}</span>
                               {s.status === "ATIVO" && (
-                                <span className={dias <= 7 ? "text-amber-600 font-semibold" : "text-emerald-600"}>
+                                <span className={dias <= 7 ? "text-amber-600 font-semibold" : "text-primary"}>
                                   {dias}d restantes
                                 </span>
                               )}
                             </>
                           )}
                           {s.tipoLicenca === "AQUISICAO" && (
-                            <span className="text-emerald-600 font-semibold">
+                            <span className="text-primary font-semibold">
                               Aquisicao: {formatarMoeda(s.valorAquisicao)}
                             </span>
                           )}
@@ -2161,7 +2176,7 @@ function SecaoSistemas({
                             <Receipt className="h-3 w-3 mr-1" /> Cobrancas
                           </Button>
                           {(s.telefone || s.dadosRegistro?.telefone) && (
-                            <Button variant="ghost" size="sm" className="h-7 text-[10px] text-emerald-600" onClick={() => onWhatsApp(s.telefone || s.dadosRegistro?.telefone || "", s)}>
+                            <Button variant="ghost" size="sm" className="h-7 text-[10px] text-primary" onClick={() => onWhatsApp(s.telefone || s.dadosRegistro?.telefone || "", s)}>
                               <MessageCircle className="h-3 w-3" />
                             </Button>
                           )}
@@ -2215,12 +2230,12 @@ function SecaoSistemas({
                               {s.cidade && <p className="text-[11px] text-gray-400">{s.cidade}</p>}
                               <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                                 <Badge className={`text-[9px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
-                                {s.zapbotAtivo && <Badge className="text-[8px] bg-emerald-100 text-emerald-700">Bot</Badge>}
+                                {s.zapbotAtivo && <Badge className="text-[8px] bg-primary/10 text-primary">Bot</Badge>}
                                 {s.disparoAtivo && <Badge className="text-[8px] bg-blue-100 text-blue-700">Disparo</Badge>}
                                 {s.funilAtivo && <Badge className="text-[8px] bg-amber-100 text-amber-700">Funil</Badge>}
                                 {s.fluxosAtivo && <Badge className="text-[8px] bg-violet-100 text-violet-700">Fluxos</Badge>}
                                 {s.dadosRegistro && (
-                                  <span className="text-[9px] text-emerald-600 font-medium flex items-center gap-0.5">
+                                  <span className="text-[9px] text-primary font-medium flex items-center gap-0.5">
                                     <Check className="h-2.5 w-2.5" /> Cadastrado
                                   </span>
                                 )}
@@ -2250,7 +2265,7 @@ function SecaoSistemas({
                             <td className="py-3 px-4 text-gray-600 text-xs whitespace-nowrap">
                               {s.tipoLicenca === "ALUGUEL" ? formatarData(s.dataVencimento) : "N/A"}
                             </td>
-                            <td className="py-3 px-4 text-right font-semibold text-emerald-600 whitespace-nowrap">
+                            <td className="py-3 px-4 text-right font-semibold text-primary whitespace-nowrap">
                               {s.tipoLicenca === "ALUGUEL"
                                 ? formatarMoeda(s.valorMensal) + "/mes"
                                 : formatarMoeda(s.valorAquisicao)}
@@ -2296,7 +2311,7 @@ function SecaoSistemas({
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-emerald-500 hover:text-emerald-700" onClick={() => onWhatsApp(s.telefone || s.dadosRegistro?.telefone || "", s)}>
+                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-primary hover:text-primary" onClick={() => onWhatsApp(s.telefone || s.dadosRegistro?.telefone || "", s)}>
                                           <MessageCircle className="h-3.5 w-3.5" />
                                         </Button>
                                       </TooltipTrigger>
@@ -2628,7 +2643,7 @@ const handleSalvarNovo = useCallback(
             onClick={() => setAbaAtiva("sistemas")}
             className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "sistemas"
-                ? "bg-emerald-600 text-white shadow-sm"
+                ? "bg-primary text-white shadow-sm"
                 : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
           >
@@ -2646,7 +2661,7 @@ const handleSalvarNovo = useCallback(
             onClick={() => setAbaAtiva("cobrancas")}
             className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               abaAtiva === "cobrancas"
-                ? "bg-emerald-600 text-white shadow-sm"
+                ? "bg-primary text-white shadow-sm"
                 : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
           >
@@ -2719,7 +2734,7 @@ const handleSalvarNovo = useCallback(
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Plus className="h-5 w-5 text-emerald-600" />
+              <Plus className="h-5 w-5 text-primary" />
               Cadastrar Novo Sistema
             </DialogTitle>
           </DialogHeader>
@@ -2754,7 +2769,7 @@ const handleSalvarNovo = useCallback(
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Eye className="h-5 w-5 text-emerald-600" />
+              <Eye className="h-5 w-5 text-primary" />
               Detalhes do Sistema
             </DialogTitle>
           </DialogHeader>
@@ -2805,7 +2820,7 @@ const handleSalvarNovo = useCallback(
                     <>
                       <div>
                         <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Mensal</p>
-                        <p className="text-emerald-600 font-bold">{formatarMoeda(dialogDetalhe.valorMensal)}</p>
+                        <p className="text-primary font-bold">{formatarMoeda(dialogDetalhe.valorMensal)}</p>
                       </div>
                       <div>
                         <p className="text-[10px] text-gray-400 uppercase font-medium">Vencimento</p>
@@ -2824,7 +2839,7 @@ const handleSalvarNovo = useCallback(
                   ) : (
                     <div className="col-span-2">
                       <p className="text-[10px] text-gray-400 uppercase font-medium">Valor Aquisicao</p>
-                      <p className="text-emerald-600 font-bold text-lg">{formatarMoeda(dialogDetalhe.valorAquisicao)}</p>
+                      <p className="text-primary font-bold text-lg">{formatarMoeda(dialogDetalhe.valorAquisicao)}</p>
                       <p className="text-[10px] text-gray-400">Pagamento unico - licenca definitiva</p>
                     </div>
                   )}
@@ -2843,7 +2858,7 @@ const handleSalvarNovo = useCallback(
                 <div>
                   <p className="text-[10px] text-gray-400 uppercase font-medium mb-2">Recursos Premium Ativos</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {dialogDetalhe.zapbotAtivo && <Badge className="text-[10px] bg-emerald-100 text-emerald-700"><Bot className="h-3 w-3 mr-1" />ZapBot</Badge>}
+                    {dialogDetalhe.zapbotAtivo && <Badge className="text-[10px] bg-primary/10 text-primary"><Bot className="h-3 w-3 mr-1" />ZapBot</Badge>}
                     {dialogDetalhe.disparoAtivo && <Badge className="text-[10px] bg-blue-100 text-blue-700"><Send className="h-3 w-3 mr-1" />Disparo em Massa</Badge>}
                     {dialogDetalhe.funilAtivo && <Badge className="text-[10px] bg-amber-100 text-amber-700"><TrendingUp className="h-3 w-3 mr-1" />Funil de Leads</Badge>}
                     {dialogDetalhe.fluxosAtivo && <Badge className="text-[10px] bg-violet-100 text-violet-700"><GitBranch className="h-3 w-3 mr-1" />Fluxos</Badge>}
@@ -2865,11 +2880,11 @@ const handleSalvarNovo = useCallback(
                   <>
                     <Separator />
                     <div>
-                      <p className="text-[10px] text-emerald-600 uppercase font-semibold mb-2 flex items-center gap-1">
+                      <p className="text-[10px] text-primary uppercase font-semibold mb-2 flex items-center gap-1">
                         <Check className="h-3 w-3" />
                         Dados do Cadastro do Cliente
                       </p>
-                      <div className="grid grid-cols-2 gap-2 text-sm bg-emerald-50/50 rounded-lg p-3 border border-emerald-100">
+                      <div className="grid grid-cols-2 gap-2 text-sm bg-primary/5 rounded-lg p-3 border border-primary/15">
                         <div>
                           <p className="text-[10px] text-gray-400">Usuario criado</p>
                           <p className="text-gray-700 font-medium">{dialogDetalhe.dadosRegistro.usuario}</p>
@@ -2953,7 +2968,7 @@ const handleSalvarNovo = useCallback(
                     </div>
                     {dialogDetalhe.dadosRegistro?.senha ? (
                       <Button
-                        className="w-full h-9 bg-emerald-600 hover:bg-emerald-700 text-xs font-medium rounded-lg"
+                        className="w-full h-9 bg-primary hover:bg-primary/90 text-xs font-medium rounded-lg"
                         onClick={() => {
                           const emailLogin = dialogDetalhe.dadosRegistro?.email || dialogDetalhe.email || "";
                           const senhaCliente = dialogDetalhe.dadosRegistro?.senha || "";
@@ -2993,7 +3008,7 @@ const handleSalvarNovo = useCallback(
                 {(dialogDetalhe.telefone || dialogDetalhe.dadosRegistro?.telefone) && (
                   <Button
                     variant="outline"
-                    className="flex-1 bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 text-xs"
+                    className="flex-1 bg-primary/5 border border-primary/20 text-primary hover:bg-primary/10 text-xs"
                     onClick={() => handleWhatsApp(dialogDetalhe.telefone || dialogDetalhe.dadosRegistro?.telefone || "", dialogDetalhe)}
                   >
                     <MessageCircle className="h-3.5 w-3.5 mr-1.5" />

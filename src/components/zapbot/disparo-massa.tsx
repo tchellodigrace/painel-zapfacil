@@ -387,11 +387,11 @@ export function ZapBotDisparo() {
           </CardContent>
         </Card>
         {/* Selected */}
-        <Card className="bg-emerald-50 dark:bg-emerald-950/40">
+        <Card className="bg-primary/5 dark:bg-primary/25">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <UserPlus className="h-4 w-4 text-emerald-500" />
-              <p className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
+              <UserPlus className="h-4 w-4 text-primary" />
+              <p className="text-lg font-bold text-primary dark:text-primary/80">
                 {selecionados}
               </p>
             </div>
@@ -434,7 +434,7 @@ export function ZapBotDisparo() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            <FileText className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <FileText className="h-4 w-4 text-primary dark:text-primary/80" />
             Configuração da Campanha
           </CardTitle>
           <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
@@ -489,8 +489,8 @@ export function ZapBotDisparo() {
 
             {/* Preview */}
             {campaignMessage && (
-              <div className="mt-2 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50">
-                <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mb-1">
+              <div className="mt-2 p-3 rounded-lg bg-primary/5 dark:bg-primary/20 border border-primary/15 dark:border-primary/50">
+                <p className="text-[10px] text-primary dark:text-primary/80 font-medium mb-1">
                   Preview:
                 </p>
                 <p className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
@@ -509,7 +509,7 @@ export function ZapBotDisparo() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            <UserPlus className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <UserPlus className="h-4 w-4 text-primary dark:text-primary/80" />
             Adicionar Contatos
           </CardTitle>
           <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
@@ -524,7 +524,7 @@ export function ZapBotDisparo() {
               size="sm"
               className={
                 activeTab === "manual"
-                  ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                  ? "bg-primary hover:bg-primary/90 text-white"
                   : ""
               }
               onClick={() => setActiveTab("manual")}
@@ -537,7 +537,7 @@ export function ZapBotDisparo() {
               size="sm"
               className={
                 activeTab === "bulk"
-                  ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                  ? "bg-primary hover:bg-primary/90 text-white"
                   : ""
               }
               onClick={() => setActiveTab("bulk")}
@@ -576,7 +576,7 @@ export function ZapBotDisparo() {
               </div>
               <Button
                 size="sm"
-                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="bg-primary hover:bg-primary/90 text-white"
                 onClick={addContatoManual}
               >
                 <Plus className="h-4 w-4 mr-1" />
@@ -603,7 +603,7 @@ export function ZapBotDisparo() {
               </p>
               <Button
                 size="sm"
-                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="bg-primary hover:bg-primary/90 text-white"
                 onClick={addContatosBulk}
               >
                 <Users className="h-4 w-4 mr-1" />
@@ -620,11 +620,11 @@ export function ZapBotDisparo() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <Users className="h-4 w-4 text-primary dark:text-primary/80" />
                 Lista de Contatos
                 <Badge
                   variant="secondary"
-                  className="text-[10px] font-normal bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
+                  className="text-[10px] font-normal bg-primary/10 dark:bg-primary/50 text-primary dark:text-primary/80"
                 >
                   {totalContatos}
                 </Badge>
@@ -695,7 +695,7 @@ export function ZapBotDisparo() {
                       key={contato.id}
                       className={
                         contato.selecionado
-                          ? "bg-emerald-50/50 dark:bg-emerald-950/20"
+                          ? "bg-primary/5 dark:bg-primary/15"
                           : ""
                       }
                     >
@@ -744,7 +744,7 @@ export function ZapBotDisparo() {
         <Button
           size="lg"
           disabled={enviando || selecionados === 0}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50 min-w-[160px]"
+          className="bg-primary hover:bg-primary/90 text-white disabled:opacity-50 min-w-[160px]"
           onClick={enviarMensagens}
         >
           {enviando ? (
@@ -763,14 +763,14 @@ export function ZapBotDisparo() {
 
       {/* ---------- Progress bar while sending ---------- */}
       {enviando && (
-        <Card className="border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-950/20">
+        <Card className="border-primary/20 dark:border-primary/50 bg-primary/5 dark:bg-primary/15">
           <CardContent className="p-4 flex items-center gap-3">
-            <Loader2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400 animate-spin" />
+            <Loader2 className="h-5 w-5 text-primary dark:text-primary/80 animate-spin" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
+              <p className="text-sm font-medium text-primary dark:text-white/80">
                 Enviando mensagens...
               </p>
-              <p className="text-xs text-emerald-600 dark:text-emerald-400">
+              <p className="text-xs text-primary dark:text-primary/80">
                 {enviados + falharam} de {selecionados} — {enviados} enviados,{" "}
                 {falharam} falharam
               </p>
@@ -780,7 +780,7 @@ export function ZapBotDisparo() {
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   Taxa de sucesso
                 </p>
-                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                <p className="text-sm font-bold text-primary dark:text-primary/80">
                   {enviados + falharam > 0
                     ? Math.round((enviados / (enviados + falharam)) * 100)
                     : 0}
@@ -798,7 +798,7 @@ export function ZapBotDisparo() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            <History className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <History className="h-4 w-4 text-primary dark:text-primary/80" />
             Histórico de Campanhas
           </CardTitle>
           <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
@@ -883,7 +883,7 @@ export function ZapBotDisparo() {
                       <p className="text-xs text-gray-400 dark:text-gray-500">
                         Taxa
                       </p>
-                      <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                      <p className="text-sm font-bold text-primary dark:text-primary/80">
                         {camp.totalContatos > 0
                           ? Math.round(
                               (camp.enviados / camp.totalContatos) * 100,

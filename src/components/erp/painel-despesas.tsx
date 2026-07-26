@@ -187,23 +187,23 @@ export function PainelDespesas() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Receipt className="h-4 w-4 text-emerald-600" />
+          <Receipt className="h-4 w-4 text-primary" />
           Controle de Despesas
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* DRE Resumo */}
-        <div className="bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/30 dark:to-blue-950/30 rounded-lg p-4 border border-emerald-100 dark:border-emerald-900 space-y-3">
-          <p className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
+        <div className="bg-gradient-to-r from-primary to-blue-50 dark:from-primary/30 dark:to-blue-950/30 rounded-lg p-4 border border-primary/15 dark:border-primary/40 space-y-3">
+          <p className="text-[10px] font-bold text-primary dark:text-white/80 uppercase tracking-wider">
             DRE Resumo - Demonstrativo de Resultados
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-[10px] text-emerald-700 dark:text-emerald-400 font-bold mb-0.5">
+              <div className="flex items-center justify-center gap-1 text-[10px] text-primary dark:text-primary/80 font-bold mb-0.5">
                 <DollarSign className="h-3 w-3" />
                 Receita
               </div>
-              <p className="text-sm font-black text-emerald-700 dark:text-emerald-400">
+              <p className="text-sm font-black text-primary dark:text-primary/80">
                 {formatarMoeda(stats.totalReceita)}
               </p>
             </div>
@@ -217,11 +217,11 @@ export function PainelDespesas() {
               </p>
             </div>
             <div className="text-center">
-              <div className={`text-[10px] font-bold mb-0.5 flex items-center justify-center gap-1 ${stats.lucroLiquido >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
+              <div className={`text-[10px] font-bold mb-0.5 flex items-center justify-center gap-1 ${stats.lucroLiquido >= 0 ? "text-primary dark:text-primary/80" : "text-red-600 dark:text-red-400"}`}>
                 {stats.lucroLiquido >= 0 ? <DollarSign className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
                 Lucro
               </div>
-              <p className={`text-sm font-black ${stats.lucroLiquido >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
+              <p className={`text-sm font-black ${stats.lucroLiquido >= 0 ? "text-primary dark:text-primary/80" : "text-red-600 dark:text-red-400"}`}>
                 {formatarMoeda(stats.lucroLiquido)}
               </p>
               <p className="text-[9px] text-muted-foreground">
@@ -300,7 +300,7 @@ export function PainelDespesas() {
           />
           <div className="flex gap-2">
             <Button
-              className="flex-1 h-9 bg-emerald-600 hover:bg-emerald-700 text-xs font-bold"
+              className="flex-1 h-9 bg-primary hover:bg-primary/90 text-xs font-bold"
               onClick={() =>
                 editandoId ? handleEditar(editandoId) : handleAdicionar()
               }

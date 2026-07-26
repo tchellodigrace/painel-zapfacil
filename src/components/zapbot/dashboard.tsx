@@ -53,7 +53,7 @@ export function ZapBotDashboard() {
         <div className="flex items-center gap-2">
           <Badge
             variant={conectado ? "default" : "secondary"}
-            className={conectado ? "bg-emerald-600" : ""}
+            className={conectado ? "bg-primary" : ""}
           >
             {conectado ? (
               <Wifi className="h-3.5 w-3.5 mr-1" />
@@ -66,7 +66,7 @@ export function ZapBotDashboard() {
                 ? "Conectando..."
                 : "Offline"}
           </Badge>
-          <Badge variant={chatbotAtivo ? "default" : "outline"} className={chatbotAtivo ? "bg-emerald-600" : ""}>
+          <Badge variant={chatbotAtivo ? "default" : "outline"} className={chatbotAtivo ? "bg-primary" : ""}>
             <Bot className="h-3.5 w-3.5 mr-1" />
             Chatbot {chatbotAtivo ? "Ativo" : "Inativo"}
           </Badge>
@@ -75,15 +75,15 @@ export function ZapBotDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-emerald-200">
+        <Card className="border-primary/20">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Enviadas</p>
                 <p className="text-2xl font-bold text-gray-900">{totalEnviadas}</p>
               </div>
-              <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-                <Send className="h-5 w-5 text-emerald-600" />
+              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Send className="h-5 w-5 text-primary" />
               </div>
             </div>
           </CardContent>
@@ -137,7 +137,7 @@ export function ZapBotDashboard() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Zap className="h-4 w-4 text-emerald-600" />
+              <Zap className="h-4 w-4 text-primary" />
               Status da Conexao
             </CardTitle>
           </CardHeader>
@@ -147,7 +147,7 @@ export function ZapBotDashboard() {
               <Badge
                 className={
                   conectado
-                    ? "bg-emerald-100 text-emerald-700"
+                    ? "bg-primary/10 text-primary"
                     : "bg-gray-100 text-gray-600"
                 }
               >
@@ -173,7 +173,7 @@ export function ZapBotDashboard() {
               <Badge
                 className={
                   chatbotAtivo
-                    ? "bg-emerald-100 text-emerald-700"
+                    ? "bg-primary/10 text-primary"
                     : "bg-gray-100 text-gray-600"
                 }
               >
@@ -187,7 +187,7 @@ export function ZapBotDashboard() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Bot className="h-4 w-4 text-emerald-600" />
+              <Bot className="h-4 w-4 text-primary" />
               Menu do Chatbot
             </CardTitle>
           </CardHeader>
@@ -203,14 +203,14 @@ export function ZapBotDashboard() {
                     key={item.id}
                     className="flex items-center gap-3 p-2 rounded-lg bg-gray-50"
                   >
-                    <span className="h-7 w-7 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center font-bold shrink-0">
+                    <span className="h-7 w-7 rounded-full bg-primary text-white text-xs flex items-center justify-center font-bold shrink-0">
                       {item.numero}
                     </span>
                     <span className="text-sm font-medium flex-1 truncate">
                       {item.titulo}
                     </span>
                     {item.ativo ? (
-                      <Badge className="bg-emerald-100 text-emerald-700 text-[10px]">
+                      <Badge className="bg-primary/10 text-primary text-[10px]">
                         Ativo
                       </Badge>
                     ) : (
@@ -231,7 +231,7 @@ export function ZapBotDashboard() {
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
-              <Clock className="h-4 w-4 text-emerald-600" />
+              <Clock className="h-4 w-4 text-primary" />
               Mensagens Recentes
             </CardTitle>
             {mensagensRecentes.length > 0 && (
@@ -260,14 +260,14 @@ export function ZapBotDashboard() {
                   <div
                     className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${
                       msg.tipo === "enviada"
-                        ? "bg-emerald-100"
+                        ? "bg-primary/10"
                         : msg.tipo === "automatica"
                           ? "bg-amber-100"
                           : "bg-blue-100"
                     }`}
                   >
                     {msg.tipo === "enviada" ? (
-                      <Send className="h-3.5 w-3.5 text-emerald-600" />
+                      <Send className="h-3.5 w-3.5 text-primary" />
                     ) : msg.tipo === "automatica" ? (
                       <Bot className="h-3.5 w-3.5 text-amber-600" />
                     ) : (
@@ -291,7 +291,7 @@ export function ZapBotDashboard() {
                     variant="outline"
                     className={`text-[10px] shrink-0 ${
                       msg.tipo === "enviada"
-                        ? "border-emerald-200 text-emerald-600"
+                        ? "border-primary/20 text-primary"
                         : msg.tipo === "automatica"
                           ? "border-amber-200 text-amber-600"
                           : "border-blue-200 text-blue-600"
@@ -312,10 +312,10 @@ export function ZapBotDashboard() {
 
       {/* Quick start (when not connected) */}
       {!conectado && (
-        <Card className="border-emerald-300 bg-emerald-50/50">
+        <Card className="border-primary/30 bg-primary/5">
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-              <div className="h-14 w-14 rounded-2xl bg-emerald-600 flex items-center justify-center shrink-0">
+              <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center shrink-0">
                 <Zap className="h-7 w-7 text-white" />
               </div>
               <div className="flex-1">
@@ -326,7 +326,7 @@ export function ZapBotDashboard() {
                   Configure a conexao com a Evolution API, escaneie o QR Code e ative seu chatbot automatico de WhatsApp.
                 </p>
               </div>
-              <ArrowUpRight className="h-5 w-5 text-emerald-600 shrink-0 hidden sm:block" />
+              <ArrowUpRight className="h-5 w-5 text-primary shrink-0 hidden sm:block" />
             </div>
           </CardContent>
         </Card>

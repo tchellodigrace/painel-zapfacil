@@ -197,15 +197,15 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <FileText className="h-4 w-4 text-emerald-600" />
+          <FileText className="h-4 w-4 text-primary" />
           Lançar Atendimento
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Atalhos */}
-        <div className="grid grid-cols-2 gap-2 bg-emerald-50 dark:bg-emerald-950/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-900">
+        <div className="grid grid-cols-2 gap-2 bg-primary/5 dark:bg-primary/15 p-3 rounded-lg border border-primary/15 dark:border-primary/40">
           <div>
-            <Label className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 uppercase mb-1 block">
+            <Label className="text-[10px] font-bold text-primary dark:text-white/80 uppercase mb-1 block">
               <User className="h-3 w-3 inline mr-1" />
               Atalho CRM
             </Label>
@@ -223,7 +223,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
             </Select>
           </div>
           <div>
-            <Label className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 uppercase mb-1 block">
+            <Label className="text-[10px] font-bold text-primary dark:text-white/80 uppercase mb-1 block">
               <Wrench className="h-3 w-3 inline mr-1" />
               Atalho Catálogo
             </Label>
@@ -325,7 +325,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
             />
             <Button
               size="sm"
-              className="h-9 px-3 bg-emerald-600 hover:bg-emerald-700"
+              className="h-9 px-3 bg-primary hover:bg-primary/90"
               onClick={adicionarItem}
             >
               <Plus className="h-4 w-4" />
@@ -407,7 +407,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="PAGO" className="text-xs text-emerald-700">
+                <SelectItem value="PAGO" className="text-xs text-primary">
                   PAGO
                 </SelectItem>
                 <SelectItem value="PENDENTE" className="text-xs text-amber-700">
@@ -431,14 +431,14 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm font-bold">Total:</span>
-            <span className="text-lg font-black text-emerald-700 dark:text-emerald-400">
+            <span className="text-lg font-black text-primary dark:text-primary/80">
               {formatarMoeda(totalGeral)}
             </span>
           </div>
         </div>
 
         <Button
-          className="w-full bg-emerald-600 hover:bg-emerald-700 h-11 text-sm font-bold uppercase tracking-wider"
+          className="w-full bg-primary hover:bg-primary/90 h-11 text-sm font-bold uppercase tracking-wider"
           onClick={handleSubmit}
         >
           <FileText className="h-4 w-4 mr-2" />

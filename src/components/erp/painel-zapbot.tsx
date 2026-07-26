@@ -124,13 +124,13 @@ function SecaoConexao() {
   };
 
   return (
-    <Card className="border-2 border-dashed border-emerald-200 dark:border-emerald-800">
+    <Card className="border-2 border-dashed border-primary/20 dark:border-primary/40">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Server className="h-4 w-4 text-emerald-600" />
+          <Server className="h-4 w-4 text-primary" />
           Conexao Evolution API
           {conectado ? (
-            <Badge className="ml-auto bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 text-[10px]">
+            <Badge className="ml-auto bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60 text-[10px]">
               <Wifi className="h-3 w-3 mr-1" /> Online
             </Badge>
           ) : (
@@ -192,7 +192,7 @@ function SecaoConexao() {
               </div>
             </div>
             <Button
-              className="w-full h-9 bg-emerald-600 hover:bg-emerald-700 text-xs font-bold"
+              className="w-full h-9 bg-primary hover:bg-primary/90 text-xs font-bold"
               onClick={handleSalvar}
             >
               <Settings className="h-3.5 w-3.5 mr-1.5" />
@@ -223,7 +223,7 @@ function SecaoConexao() {
             </div>
             <div className="grid grid-cols-2 gap-2">
               <Button
-                className={`h-10 text-xs font-bold ${conectado ? "bg-red-500 hover:bg-red-600" : "bg-emerald-600 hover:bg-emerald-700"}`}
+                className={`h-10 text-xs font-bold ${conectado ? "bg-red-500 hover:bg-red-600" : "bg-primary hover:bg-primary/90"}`}
                 onClick={conectado ? handleDesconectar : handleConectar}
               >
                 {conectado ? (
@@ -268,7 +268,7 @@ function SecaoBoasVindas() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <MessageSquare className="h-4 w-4 text-emerald-600" />
+          <MessageSquare className="h-4 w-4 text-primary" />
           Mensagens Automaticas
         </CardTitle>
       </CardHeader>
@@ -294,8 +294,8 @@ function SecaoBoasVindas() {
           </p>
           {/* Preview */}
           {ativarBoasVindas && (
-            <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
-              <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase mb-1.5">Preview:</p>
+            <div className="bg-primary/5 dark:bg-primary/15 border border-primary/20 dark:border-primary/40 rounded-lg p-3">
+              <p className="text-[10px] font-bold text-primary dark:text-primary/80 uppercase mb-1.5">Preview:</p>
               <p className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-line">{preview}</p>
             </div>
           )}
@@ -459,7 +459,7 @@ function SecaoRespostas() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 text-[10px] text-emerald-600"
+                      className="h-6 text-[10px] text-primary"
                       onClick={() => handleEditar(r.id)}
                     >
                       <CheckCircle2 className="h-3 w-3 mr-0.5" /> Salvar
@@ -584,8 +584,8 @@ function SecaoMenu() {
 
             {/* Preview do menu */}
             {previewMenu && (
-              <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
-                <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase mb-1.5">
+              <div className="bg-primary/5 dark:bg-primary/15 border border-primary/20 dark:border-primary/40 rounded-lg p-3">
+                <p className="text-[10px] font-bold text-primary dark:text-primary/80 uppercase mb-1.5">
                   Preview do Menu:
                 </p>
                 <p className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-line">
@@ -653,7 +653,7 @@ function SecaoMenu() {
                         placeholder="Resposta"
                       />
                       <div className="flex gap-1">
-                        <Button variant="ghost" size="sm" className="h-6 text-[10px] text-emerald-600" onClick={() => handleEditar(item.id)}>
+                        <Button variant="ghost" size="sm" className="h-6 text-[10px] text-primary" onClick={() => handleEditar(item.id)}>
                           <CheckCircle2 className="h-3 w-3 mr-0.5" /> Salvar
                         </Button>
                         <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setEditId(null)}>
@@ -839,17 +839,17 @@ function SecaoLog() {
               key={msg.id}
               className={`flex items-start gap-2 p-2.5 rounded-lg border text-xs ${
                 msg.tipo === "enviada"
-                  ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900"
+                  ? "bg-primary/5 dark:bg-primary/15 border-primary/15 dark:border-primary/40"
                   : "bg-blue-50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900"
               }`}
             >
               <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
                 msg.tipo === "enviada"
-                  ? "bg-emerald-200 dark:bg-emerald-800"
+                  ? "bg-primary/15 dark:bg-primary/40"
                   : "bg-blue-200 dark:bg-blue-800"
               }`}>
                 {msg.tipo === "enviada" ? (
-                  <Send className="h-3 w-3 text-emerald-700 dark:text-emerald-300" />
+                  <Send className="h-3 w-3 text-primary dark:text-primary/80" />
                 ) : (
                   <MessageSquare className="h-3 w-3 text-blue-700 dark:text-blue-300" />
                 )}
@@ -884,12 +884,12 @@ export function PainelZapBot() {
       {/* Header stats */}
       <div className="grid grid-cols-3 gap-2">
         <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
-          <div className={`w-3 h-3 rounded-full mx-auto mb-1.5 ${conectado ? "bg-emerald-500 shadow-sm shadow-emerald-200" : "bg-gray-300"}`} />
+          <div className={`w-3 h-3 rounded-full mx-auto mb-1.5 ${conectado ? "bg-primary/50 shadow-sm shadow-primary" : "bg-gray-300"}`} />
           <p className="text-lg font-black">{conectado ? "Online" : "Offline"}</p>
           <p className="text-[9px] text-muted-foreground uppercase font-bold">Status</p>
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
-          <p className="text-lg font-black text-emerald-600">{regrasAtivas}</p>
+          <p className="text-lg font-black text-primary">{regrasAtivas}</p>
           <p className="text-[9px] text-muted-foreground uppercase font-bold">Regras Ativas</p>
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">

@@ -118,12 +118,12 @@ export function AcoesCupom({ vendaAtual }: AcoesCupomProps) {
 
       <div className="w-full max-w-[340px] space-y-2 mx-auto">
         {showPix && (
-          <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl p-3 text-center">
-            <span className="block text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase mb-1">
+          <div className="bg-primary/5 dark:bg-primary/20 border border-primary/20 dark:border-primary/40 rounded-xl p-3 text-center">
+            <span className="block text-[10px] font-bold text-primary dark:text-primary/80 uppercase mb-1">
               Chave Pix (toque para copiar)
             </span>
             <div
-              className="bg-white dark:bg-gray-900 border border-emerald-300 dark:border-emerald-700 rounded p-2 text-xs font-mono break-all select-all font-bold text-gray-800 dark:text-gray-200 cursor-pointer"
+              className="bg-white dark:bg-gray-900 border border-primary/30 dark:border-primary/40 rounded p-2 text-xs font-mono break-all select-all font-bold text-gray-800 dark:text-gray-200 cursor-pointer"
               onClick={handleCopiarPix}
             >
               {obterChavePixLimpa(chavePixAtual)}
@@ -145,7 +145,7 @@ export function AcoesCupom({ vendaAtual }: AcoesCupomProps) {
         <Button
           className={`w-full h-11 text-xs font-bold uppercase tracking-wider ${
             vendaAtual
-              ? "bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200 dark:shadow-emerald-900"
+              ? "bg-primary hover:bg-primary/90 shadow-lg shadow-primary dark:shadow-primary"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           }`}
           disabled={!vendaAtual}

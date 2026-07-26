@@ -77,7 +77,7 @@ const STAGES: { key: StageKey; label: string; color: string; bgClass: string; bo
   { key: "contatado", label: "Contatado", color: "cyan", bgClass: "bg-cyan-500/10", borderClass: "border-cyan-500/30", textClass: "text-cyan-600 dark:text-cyan-400", badgeClass: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300", dotClass: "bg-cyan-500" },
   { key: "interessado", label: "Interessado", color: "purple", bgClass: "bg-purple-500/10", borderClass: "border-purple-500/30", textClass: "text-purple-600 dark:text-purple-400", badgeClass: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300", dotClass: "bg-purple-500" },
   { key: "negociacao", label: "Negociação", color: "orange", bgClass: "bg-orange-500/10", borderClass: "border-orange-500/30", textClass: "text-orange-600 dark:text-orange-400", badgeClass: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300", dotClass: "bg-orange-500" },
-  { key: "fechado", label: "Fechado", color: "emerald", bgClass: "bg-emerald-500/10", borderClass: "border-emerald-500/30", textClass: "text-emerald-600 dark:text-emerald-400", badgeClass: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300", dotClass: "bg-emerald-500" },
+  { key: "fechado", label: "Fechado", color: "primary", bgClass: "bg-primary/10", borderClass: "border-primary/30", textClass: "text-primary dark:text-primary/80", badgeClass: "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/80", dotClass: "bg-primary" },
   { key: "perdido", label: "Perdido", color: "red", bgClass: "bg-red-500/10", borderClass: "border-red-500/30", textClass: "text-red-600 dark:text-red-400", badgeClass: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300", dotClass: "bg-red-500" },
 ];
 
@@ -330,8 +330,8 @@ export function FunilLeads() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-              <DollarSign className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            <div className="p-2 rounded-lg bg-primary/10 dark:bg-primary/30">
+              <DollarSign className="h-5 w-5 text-primary dark:text-primary/80" />
             </div>
             <div>
               <p className="text-xs font-medium text-muted-foreground">Pipeline</p>
@@ -526,8 +526,8 @@ export function FunilLeads() {
                           {/* Value */}
                           {lead.estimatedValue > 0 && (
                             <div className="flex items-center gap-1 pl-5">
-                              <DollarSign className="h-3 w-3 text-emerald-500" />
-                              <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                              <DollarSign className="h-3 w-3 text-primary" />
+                              <span className="text-xs font-medium text-primary dark:text-primary/80">
                                 {formatCurrency(lead.estimatedValue)}
                               </span>
                             </div>
@@ -685,7 +685,7 @@ export function FunilLeads() {
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       {lead.email && <span className="truncate">{lead.email}</span>}
                       {lead.estimatedValue > 0 && (
-                        <span className="font-medium text-emerald-600 dark:text-emerald-400 shrink-0">
+                        <span className="font-medium text-primary dark:text-primary/80 shrink-0">
                           {formatCurrency(lead.estimatedValue)}
                         </span>
                       )}

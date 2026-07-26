@@ -280,7 +280,7 @@ function FormularioCobranca({
         <Button
           type="submit"
           size="sm"
-          className="text-xs bg-emerald-600 hover:bg-emerald-700"
+          className="text-xs bg-primary hover:bg-primary/90"
         >
           {cobrancaEdit ? "Salvar Alteracoes" : "Gerar Cobranca"}
         </Button>
@@ -312,7 +312,7 @@ function FormularioPagamento({
         <p className="text-xs text-gray-500">{cobranca.descricao}</p>
         <div className="flex items-center justify-between pt-1">
           <span className="text-xs text-gray-400">Vencimento: {formatarData(cobranca.dataVencimento)}</span>
-          <span className="text-lg font-black text-emerald-600">{formatarMoeda(cobranca.valor)}</span>
+          <span className="text-lg font-black text-primary">{formatarMoeda(cobranca.valor)}</span>
         </div>
       </div>
 
@@ -349,7 +349,7 @@ function FormularioPagamento({
         </Button>
         <Button
           size="sm"
-          className="text-xs bg-emerald-600 hover:bg-emerald-700"
+          className="text-xs bg-primary hover:bg-primary/90"
           onClick={() => onConfirmar(dataPag, forma)}
         >
           <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
@@ -524,12 +524,12 @@ export function PainelCobranças() {
         <Card className="border-0 shadow-sm">
           <CardContent className="p-3.5">
             <div className="flex items-center gap-1.5 mb-1">
-              <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
+              <DollarSign className="w-3.5 h-3.5 text-primary" />
               <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
                 Recebido/mes
               </span>
             </div>
-            <p className="text-lg font-black text-emerald-600">
+            <p className="text-lg font-black text-primary">
               {formatarMoeda(stats.recebidoMes)}
             </p>
           </CardContent>
@@ -642,7 +642,7 @@ export function PainelCobranças() {
           </SelectContent>
         </Select>
         <Button
-          className="h-9 bg-emerald-600 hover:bg-emerald-700 text-sm shrink-0"
+          className="h-9 bg-primary hover:bg-primary/90 text-sm shrink-0"
           onClick={() => setDialogNova(true)}
         >
           <Plus className="h-4 w-4 mr-1.5" />
@@ -707,7 +707,7 @@ export function PainelCobranças() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-7 text-[10px] text-emerald-600"
+                          className="h-7 text-[10px] text-primary"
                           onClick={() => setDialogPagamento(c)}
                         >
                           <CheckCircle2 className="h-3 w-3 mr-0.5" /> Pagar
@@ -833,7 +833,7 @@ export function PainelCobranças() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-7 w-7 text-emerald-500 hover:text-emerald-700"
+                                    className="h-7 w-7 text-primary hover:text-primary"
                                     onClick={() => setDialogPagamento(c)}
                                   >
                                     <CheckCircle2 className="h-3.5 w-3.5" />
@@ -848,7 +848,7 @@ export function PainelCobranças() {
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <div className="h-7 w-7 flex items-center justify-center">
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-white/80" />
                                   </div>
                                 </TooltipTrigger>
                                 <TooltipContent>Pago</TooltipContent>
@@ -925,7 +925,7 @@ export function PainelCobranças() {
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Plus className="h-5 w-5 text-emerald-600" />
+              <Plus className="h-5 w-5 text-primary" />
               Gerar Nova Cobranca
             </DialogTitle>
           </DialogHeader>
@@ -941,7 +941,7 @@ export function PainelCobranças() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <CreditCard className="h-5 w-5 text-emerald-600" />
+              <CreditCard className="h-5 w-5 text-primary" />
               Registrar Pagamento
             </DialogTitle>
           </DialogHeader>
@@ -987,18 +987,18 @@ export function PainelCobranças() {
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Receipt className="h-5 w-5 text-emerald-600" />
+              <Receipt className="h-5 w-5 text-primary" />
               Historico de Cobrancas — {dialogHistorico?.empresa}
             </DialogTitle>
           </DialogHeader>
           {dialogHistorico && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-emerald-50 rounded-xl p-3 text-center">
-                  <p className="text-[10px] text-emerald-600 uppercase font-medium">
+                <div className="bg-primary/5 rounded-xl p-3 text-center">
+                  <p className="text-[10px] text-primary uppercase font-medium">
                     Total Pago
                   </p>
-                  <p className="text-lg font-black text-emerald-700">
+                  <p className="text-lg font-black text-primary">
                     {formatarMoeda(totalPagoHistorico)}
                   </p>
                 </div>
@@ -1032,7 +1032,7 @@ export function PainelCobranças() {
                 {dialogHistorico.tipoLicenca === "AQUISICAO" && (
                   <Button
                     size="sm"
-                    className="text-xs bg-emerald-600 hover:bg-emerald-700 flex-1"
+                    className="text-xs bg-primary hover:bg-primary/90 flex-1"
                     onClick={() => {
                       gerarCobrancaAquisicao(dialogHistorico.id);
                       toast.success("Cobranca de aquisicao gerada!");
@@ -1093,7 +1093,7 @@ export function PainelCobranças() {
                         <p className="text-[10px] text-gray-400">
                           Vence: {formatarData(c.dataVencimento)}
                           {c.dataPagamento && (
-                            <span className="text-emerald-600 ml-2">
+                            <span className="text-primary ml-2">
                               Pago: {formatarData(c.dataPagamento)}
                             </span>
                           )}

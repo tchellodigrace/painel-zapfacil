@@ -194,7 +194,7 @@ function MenuItemForm({ item, onSave, onCancel }: MenuItemFormProps) {
           Cancelar
         </Button>
         <Button
-          className="bg-emerald-600 hover:bg-emerald-700"
+          className="bg-primary hover:bg-primary/90"
           onClick={salvar}
         >
           <Zap className="h-4 w-4 mr-1" />
@@ -270,7 +270,7 @@ function SubMenuForm({ subItem, onSave, onCancel }: SubMenuFormProps) {
           Cancelar
         </Button>
         <Button
-          className="bg-emerald-600 hover:bg-emerald-700"
+          className="bg-primary hover:bg-primary/90"
           onClick={salvar}
         >
           {subItem ? "Salvar" : "Adicionar"}
@@ -348,7 +348,7 @@ export function ZapBotChatbot() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <MessageSquare className="h-4 w-4 text-emerald-600" />
+                <MessageSquare className="h-4 w-4 text-primary" />
                 Mensagem de Boas-Vindas
               </CardTitle>
               <CardDescription>
@@ -422,7 +422,7 @@ export function ZapBotChatbot() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base flex items-center gap-2">
-                <Menu className="h-4 w-4 text-emerald-600" />
+                <Menu className="h-4 w-4 text-primary" />
                 Itens do Menu
               </CardTitle>
               <CardDescription className="mt-1">
@@ -431,7 +431,7 @@ export function ZapBotChatbot() {
             </div>
             <Button
               size="sm"
-              className="bg-emerald-600 hover:bg-emerald-700"
+              className="bg-primary hover:bg-primary/90"
               onClick={() => setShowAddItem(true)}
             >
               <Plus className="h-4 w-4 mr-1" />
@@ -453,7 +453,7 @@ export function ZapBotChatbot() {
                 <div key={item.id} className="border border-gray-200 rounded-xl overflow-hidden">
                   {/* Menu item */}
                   <div className="flex items-center gap-3 p-3 bg-gray-50">
-                    <span className="h-8 w-8 rounded-full bg-emerald-600 text-white text-sm flex items-center justify-center font-bold shrink-0">
+                    <span className="h-8 w-8 rounded-full bg-primary text-white text-sm flex items-center justify-center font-bold shrink-0">
                       {item.numero}
                     </span>
                     <div className="flex-1 min-w-0">
@@ -508,7 +508,7 @@ export function ZapBotChatbot() {
                           key={sub.id}
                           className="flex items-center gap-3 p-2.5 pl-12 border-b border-gray-100 last:border-b-0"
                         >
-                          <span className="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded shrink-0">
+                          <span className="text-xs font-mono text-primary bg-primary/5 px-2 py-0.5 rounded shrink-0">
                             {sub.numero}
                           </span>
                           <span className="text-sm flex-1 truncate">{sub.titulo}</span>

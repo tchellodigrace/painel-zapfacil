@@ -54,7 +54,7 @@ export function CatalogoServicos() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Wrench className="h-4 w-4 text-emerald-600" />
+          <Wrench className="h-4 w-4 text-primary" />
           Catálogo de Serviços
           <Badge variant="secondary" className="ml-auto text-[10px]">
             {servicos.length}
@@ -81,7 +81,7 @@ export function CatalogoServicos() {
           />
           <Button
             size="sm"
-            className="h-9 px-3 bg-emerald-600 hover:bg-emerald-700"
+            className="h-9 px-3 bg-primary hover:bg-primary/90"
             onClick={handleAdicionar}
           >
             <Plus className="h-4 w-4" />
@@ -131,7 +131,7 @@ export function CatalogoServicos() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 w-7 p-0 text-emerald-600"
+                    className="h-7 w-7 p-0 text-primary"
                     onClick={() => handleEditar(s.id)}
                   >
                     <Check className="h-3 w-3" />
