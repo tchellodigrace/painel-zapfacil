@@ -191,15 +191,15 @@ export function PortalCliente() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10 dark:from-background dark:via-background dark:to-primary/5 flex flex-col">
         {/* Header Portal */}
-        <header className="bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-50 glass">
-          <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-3">
+        <header className="glass border-b border-border sticky top-0 z-50 shadow-sticky">
+          <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-2">
             <div className="flex items-center gap-3">
               <img
                 src="/logo-empresa.png"
                 alt="Logo"
                 width={400}
                 height={100}
-                className="h-9 w-[144px] sm:h-10 sm:w-[160px] object-contain"
+                className="h-[50px] w-[200px] sm:h-[60px] sm:w-[240px] md:h-[70px] md:w-[280px] lg:h-[80px] lg:w-[320px] xl:h-[100px] xl:w-[400px] object-contain"
               />
             </div>
             <a
@@ -296,8 +296,8 @@ export function PortalCliente() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10 dark:from-background dark:via-background dark:to-primary/5 flex flex-col">
       {/* Header */}
-      <header className="bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-50 glass">
-        <div className="max-w-2xl mx-auto flex items-center gap-3 px-4 py-3">
+      <header className="glass border-b border-border sticky top-0 z-50 shadow-sticky">
+        <div className="max-w-2xl mx-auto flex items-center gap-3 px-4 py-2">
           <Button
             variant="ghost"
             size="icon"

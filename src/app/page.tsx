@@ -189,14 +189,14 @@ export default function ZapFacilPage() {
       <InicializadorLogo />
       {/* Header com glass effect */}
       <header className="glass border-b border-border sticky top-0 z-50 shadow-sticky">
-        <div className="max-w-7xl mx-auto flex justify-between items-center px-3 sm:px-4 py-2">
+        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
           <div className="flex items-center gap-3">
             <img
               src="/logo-empresa.png"
               alt="Logo"
               width={400}
               height={100}
-              className="h-9 w-[144px] sm:h-11 sm:w-[176px] md:h-12 md:w-[192px] object-contain"
+              className="h-[50px] w-[200px] sm:h-[60px] sm:w-[240px] md:h-[70px] md:w-[280px] lg:h-[80px] lg:w-[320px] xl:h-[100px] xl:w-[400px] object-contain"
             />
             {nomeLogin && (
               <div className="hidden sm:flex flex-col">
