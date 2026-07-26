@@ -1,18 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Sun,
-  Moon,
   FileText,
   BarChart3,
   Building2,
@@ -20,13 +9,12 @@ import {
   CalendarDays,
   Receipt,
   Users,
-  LogOut,
   Bot,
   Send,
   TrendingUp,
   GitBranch,
-  Mail,
 } from "lucide-react";
+import { HeaderPadrao, BadgePro } from "@/components/erp/header-padrao";
 import { EmpresaPanel } from "@/components/erp/empresa-panel";
 import { CatalogoServicos } from "@/components/erp/catalogo-servicos";
 import { CRMClientes } from "@/components/erp/crm-clientes";
@@ -79,13 +67,11 @@ function carregarEmailLogin(): string {
 }
 
 export default function ZapFacilPage() {
-  const { theme, setTheme } = useTheme();
   const [autenticado, setAutenticado] = useState<boolean | null>(null);
   const [vendaAtual, setVendaAtual] = useState<Venda | null>(null);
   const [abaAtiva, setAbaAtiva] = useState("lancamento");
   const [nomeLogin, setNomeLogin] = useState("");
   const [emailLogin, setEmailLogin] = useState("");
-  const [mostrarCredenciais, setMostrarCredenciais] = useState(false);
 
   // Feature flags Premium (buscadas do Supabase)
   const [zapbotAtivo, setZapbotAtivo] = useState(false);
@@ -186,89 +172,15 @@ export default function ZapFacilPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <InicializadorLogo />
-      {/* Header com glass effect e sombra sticky (identico ao painel admin) */}
-      <header className="glass border-b border-border sticky top-0 z-50 shadow-sticky">
-        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-2">
-          <div className="flex items-center">
-            <img
-              src="/logo-cliente.png"
-              alt="Logo"
-              width={400} height={200}
-              className="h-[50px] w-[100px] sm:h-[60px] sm:w-[120px] md:h-[70px] md:w-[140px] lg:h-[80px] lg:w-[160px] xl:h-[100px] xl:w-[200px] object-contain shrink-0"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Dados do cliente logado - estilo admin (card clicavel) */}
-            <button
-              type="button"
-              onClick={() => setMostrarCredenciais(!mostrarCredenciais)}
-              className="flex items-center gap-2 bg-secondary hover:bg-secondary/80 border border-border rounded-lg px-3 py-1.5 transition-colors"
-            >
-              <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-                {(nomeLogin || "C").charAt(0).toUpperCase()}
-              </div>
-              <div className="text-left hidden md:block">
-                <p className="text-xs font-semibold text-foreground leading-tight">
-                  {nomeLogin || "Cliente"}
-                </p>
-                <p className="text-[10px] text-muted-foreground leading-tight flex items-center gap-1">
-                  {mostrarCredenciais ? (
-                    <span className="font-mono text-muted-foreground">
-                      {emailLogin || "—"}
-                    </span>
-                  ) : (
-                    <><Mail className="h-2.5 w-2.5 shrink-0" />{emailLogin || "—"}</>
-                  )}
-                </p>
-              </div>
-            </button>
-            <Badge
-              variant="outline"
-              className="text-success dark:text-success border-success/30 bg-success/10 font-semibold shrink-0"
-            >
-              PRO
-            </Badge>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground shrink-0"
-                    onClick={() =>
-                      setTheme(theme === "dark" ? "light" : "dark")
-                    }
-                  >
-                    {theme === "dark" ? (
-                      <Sun className="h-4 w-4 shrink-0" />
-                    ) : (
-                      <Moon className="h-4 w-4 shrink-0" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {theme === "dark" ? "Modo Claro" : "Modo Escuro"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 shrink-0"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-4 w-4 shrink-0" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Sair do Sistema</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-      </header>
+      {/* Header padrao unificado (mesmo componente do painel admin) */}
+      <HeaderPadrao
+        logoSrc="/logo-cliente.png"
+        logoAlt="Logo"
+        nomeUsuario={nomeLogin}
+        emailUsuario={emailLogin}
+        badge={<BadgePro />}
+        onLogout={handleLogout}
+      />
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 space-y-6">

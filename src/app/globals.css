@@ -340,3 +340,139 @@
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
 }
+
+/* ====== HEADER PADRÃO UNIFICADO (admin + cliente) ====== */
+/* Estrutura compartilhada entre painel-admin.tsx e app/page.tsx
+   Cores via tokens semânticos para funcionar em light/dark mode. */
+.header-padrao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 80rem; /* max-w-7xl */
+  margin: 0 auto;
+  padding: 8px 16px; /* py-2 px-4 */
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--background) 80%, transparent);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: var(--shadow-sticky);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.header-logo {
+  height: 50px;
+  width: 100px;
+  max-height: 100px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .header-logo {
+    height: 60px;
+    width: 120px;
+  }
+}
+
+@media (min-width: 768px) {
+  .header-logo {
+    height: 70px;
+    width: 140px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .header-logo {
+    height: 80px;
+    width: 160px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .header-logo {
+    height: 100px;
+    width: 200px;
+  }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Card clicavel do usuario (avatar + nome + email) */
+.usuario-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.usuario-card:hover {
+  background: color-mix(in srgb, var(--secondary) 80%, var(--primary) 5%);
+}
+
+.usuario-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.usuario-info-text {
+  text-align: left;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .usuario-info-text {
+    display: block;
+  }
+}
+
+.usuario-nome {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--foreground);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.usuario-email {
+  font-size: 10px;
+  color: var(--muted-foreground);
+  line-height: 1.1;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
