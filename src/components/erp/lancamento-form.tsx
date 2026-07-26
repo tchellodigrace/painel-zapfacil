@@ -383,7 +383,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
             />
           </div>
           <div>
-            <Label className="text-[10px] font-bold text-blue-600 uppercase mb-0.5 block">
+            <Label className="text-[10px] font-bold text-info uppercase mb-0.5 block">
               Taxa (R$)
             </Label>
             <Input
@@ -426,7 +426,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
               <span className="text-red-600">- {formatarMoeda(desc)}</span>
             )}
             {acr > 0 && (
-              <span className="text-blue-600">+ {formatarMoeda(acr)}</span>
+              <span className="text-info">+ {formatarMoeda(acr)}</span>
             )}
           </div>
           <div className="flex justify-between items-center">

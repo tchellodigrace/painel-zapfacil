@@ -178,8 +178,8 @@ export function DashboardGrafico() {
           label="Receita (7 dias)"
         />
         <MetricCard
-          icon={<TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
-          iconBg="bg-blue-100 dark:bg-blue-950"
+          icon={<TrendingUp className="h-4 w-4 text-info dark:text-info/80 shrink-0" />}
+          iconBg="bg-info/15 dark:bg-info/20"
           iconColor="blue"
           value={formatarMoeda(ticketMedio)}
           label="Ticket Médio"
@@ -211,8 +211,8 @@ export function DashboardGrafico() {
           label="Lucro Liq. (Mês)"
         />
         <MetricCard
-          icon={<CalendarDays className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />}
-          iconBg="bg-blue-100 dark:bg-blue-950"
+          icon={<CalendarDays className="h-4 w-4 text-info dark:text-info/80 shrink-0" />}
+          iconBg="bg-info/15 dark:bg-info/20"
           iconColor="blue"
           value={String(agendamentosHoje.length)}
           label="Agend. Hoje"

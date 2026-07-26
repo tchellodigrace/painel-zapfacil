@@ -559,7 +559,7 @@ function SecaoMenu() {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <List className="h-4 w-4 text-blue-500 shrink-0" />
+            <List className="h-4 w-4 text-info shrink-0" />
             Menu Interativo
           </CardTitle>
           <div className="flex items-center gap-2">
@@ -614,7 +614,7 @@ function SecaoMenu() {
                 />
                 <Button
                   size="sm"
-                  className="h-9 bg-blue-500 hover:bg-blue-600 text-xs"
+                  className="h-9 bg-info hover:bg-info/90 text-xs"
                   onClick={handleAdicionar}
                 >
                   <Plus className="h-3 w-3 mr-1 shrink-0" /> Adicionar
@@ -663,8 +663,8 @@ function SecaoMenu() {
                     </div>
                   ) : (
                     <>
-                      <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0 mt-0.5">
-                        <span className="text-[10px] font-black text-blue-600 dark:text-blue-400">{item.numero}</span>
+                      <div className="w-6 h-6 rounded-full bg-info/15 dark:bg-info/20 flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="text-[10px] font-black text-info dark:text-info/80">{item.numero}</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium truncate">{item.texto}</p>
@@ -840,18 +840,18 @@ function SecaoLog() {
               className={`flex items-start gap-2 p-2.5 rounded-lg border text-xs ${
                 msg.tipo === "enviada"
                   ? "bg-primary/5 dark:bg-primary/15 border-primary/15 dark:border-primary/40"
-                  : "bg-blue-50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900"
+                  : "bg-info/10 dark:bg-info/20 border-info/20 dark:border-info/30"
               }`}
             >
               <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
                 msg.tipo === "enviada"
                   ? "bg-primary/15 dark:bg-primary/40"
-                  : "bg-blue-200 dark:bg-blue-800"
+                  : "bg-info/25 dark:bg-info/30"
               }`}>
                 {msg.tipo === "enviada" ? (
                   <Send className="h-3 w-3 text-primary dark:text-primary/80 shrink-0" />
                 ) : (
-                  <MessageSquare className="h-3 w-3 text-blue-700 dark:text-blue-300 shrink-0" />
+                  <MessageSquare className="h-3 w-3 text-info dark:text-info/80 shrink-0" />
                 )}
               </div>
               <div className="flex-1 min-w-0">

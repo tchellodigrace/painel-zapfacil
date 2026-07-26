@@ -89,15 +89,15 @@ export function ZapBotDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-blue-200 min-w-0">
+        <Card className="border-info/30 min-w-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Recebidas</p>
                 <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{totalRecebidas}</p>
               </div>
-              <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                <MessageSquare className="h-5 w-5 text-blue-600 shrink-0" />
+              <div className="h-10 w-10 rounded-xl bg-info/15 flex items-center justify-center">
+                <MessageSquare className="h-5 w-5 text-info shrink-0" />
               </div>
             </div>
           </CardContent>
@@ -263,7 +263,7 @@ export function ZapBotDashboard() {
                         ? "bg-primary/10"
                         : msg.tipo === "automatica"
                           ? "bg-amber-100"
-                          : "bg-blue-100"
+                          : "bg-info/15"
                     }`}
                   >
                     {msg.tipo === "enviada" ? (
@@ -271,7 +271,7 @@ export function ZapBotDashboard() {
                     ) : msg.tipo === "automatica" ? (
                       <Bot className="h-3.5 w-3.5 text-amber-600" />
                     ) : (
-                      <MessageSquare className="h-3.5 w-3.5 text-blue-600" />
+                      <MessageSquare className="h-3.5 w-3.5 text-info" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -294,7 +294,7 @@ export function ZapBotDashboard() {
                         ? "border-primary/20 text-primary"
                         : msg.tipo === "automatica"
                           ? "border-amber-200 text-amber-600"
-                          : "border-blue-200 text-blue-600"
+                          : "border-info/30 text-info"
                     }`}
                   >
                     {msg.tipo === "enviada"

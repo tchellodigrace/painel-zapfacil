@@ -179,11 +179,11 @@ export default function MigrarSupabasePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 space-y-2">
-              <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">
+            <div className="bg-info/10 dark:bg-info/20 border border-info/30 dark:border-info/30 rounded-lg p-4 space-y-2">
+              <p className="text-sm font-semibold text-info dark:text-info/80">
                 Antes de migrar, certifique-se:
               </p>
-              <ul className="text-xs text-blue-700 dark:text-blue-400 list-disc pl-5 space-y-1">
+              <ul className="text-xs text-info dark:text-info/80 list-disc pl-5 space-y-1">
                 <li>O schema SQL foi executado no Supabase (SQL Editor)</li>
                 <li>As variaveis de ambiente estao configuradas no Vercel</li>
                 <li>O ultimo deploy no Vercel esta &quot;Ready&quot;</li>

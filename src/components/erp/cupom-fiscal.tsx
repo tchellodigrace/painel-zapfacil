@@ -211,7 +211,7 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
             </div>
           )}
           {venda.acrescimo > 0 && (
-            <div className="flex justify-between text-blue-600">
+            <div className="flex justify-between text-info">
               <span>(+) ACRESCIMO</span>
               <span>+ {formatarMoeda(venda.acrescimo)}</span>
             </div>

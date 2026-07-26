@@ -473,12 +473,12 @@ function TelaPrimeiroAcesso({
                 <h2 className="text-2xl font-bold text-gray-900">Seguranca</h2>
                 <p className="text-sm text-gray-500">Configure a recuperacao de senha</p>
               </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
+              <div className="bg-info/10 border border-info/30 rounded-xl p-4 space-y-2">
                 <div className="flex items-start gap-2">
-                  <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+                  <ShieldCheck className="h-5 w-5 text-info shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-blue-800">E-mail de recuperacao</p>
-                    <p className="text-xs text-blue-600 mt-0.5">
+                    <p className="text-sm font-medium text-info">E-mail de recuperacao</p>
+                    <p className="text-xs text-info mt-0.5">
                       Caso esqueca sua senha, voce podera redefini-la informando este e-mail na tela de login. Recomendamos usar um e-mail diferente do pessoal para maior seguranca.
                     </p>
                   </div>
@@ -1311,8 +1311,8 @@ function FormularioSistema({
             </div>
             <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
-                  <Send className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                <div className="w-8 h-8 rounded-lg bg-info/15 dark:bg-info/25 flex items-center justify-center">
+                  <Send className="h-4 w-4 text-info dark:text-info/80 shrink-0" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Disparo em Massa</p>
@@ -1632,7 +1632,7 @@ function SecaoRecuperacoes() {
                             <Badge variant="outline" className="text-[10px]">{empresaExibida}</Badge>
                             <Badge className={`text-[10px] ${
                               sistema.status === "ATIVO" ? "bg-primary/10 text-primary"
-                              : sistema.status === "TRIAL" ? "bg-blue-100 text-blue-700"
+                              : sistema.status === "TRIAL" ? "bg-info/15 text-info"
                               : sistema.status === "EXPIRADO" ? "bg-red-100 text-red-700"
                               : "bg-secondary text-muted-foreground"
                             }`}>{sistema.status}</Badge>
@@ -1854,9 +1854,9 @@ Qualquer duvida, estou a disposicao!
             </div>
           )}
 
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-            <MessageCircle className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
-            <div className="text-xs text-blue-700 leading-relaxed">
+          <div className="bg-info/10 border border-info/30 rounded-xl p-4 flex items-start gap-3">
+            <MessageCircle className="h-5 w-5 text-info shrink-0 mt-0.5" />
+            <div className="text-xs text-info leading-relaxed">
               <strong>Como funciona:</strong> Quando um cliente clica em "Esqueceu a senha?" na tela de login, ele informa o e-mail e opcionalmente o WhatsApp. O pedido aparece aqui com status "Pendente". Clique em "Enviar WhatsApp" para abrir o WhatsApp com a mensagem contendo o link de acesso e o e-mail do cliente.
             </div>
           </div>
@@ -2019,10 +2019,10 @@ function SecaoSistemas({
               <Card className="border-0 shadow-sm min-w-0">
                 <CardContent className="p-3.5">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <Monitor className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                    <span className="text-[10px] text-blue-600 font-medium uppercase tracking-wider truncate">Trial</span>
+                    <Monitor className="w-3.5 h-3.5 text-info shrink-0" />
+                    <span className="text-[10px] text-info font-medium uppercase tracking-wider truncate">Trial</span>
                   </div>
-                  <p className="text-xl sm:text-2xl font-black text-blue-600 font-display">{stats.trials}</p>
+                  <p className="text-xl sm:text-2xl font-black text-info font-display">{stats.trials}</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-sm min-w-0">
@@ -2136,7 +2136,7 @@ function SecaoSistemas({
                             <Badge className={`text-[10px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
                             <Badge className={`text-[10px] font-semibold ${tl.cor}`}>{tl.label}</Badge>
                             {s.zapbotAtivo && <Badge className="text-[9px] bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary/80">Bot</Badge>}
-                            {s.disparoAtivo && <Badge className="text-[9px] bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">Disparo</Badge>}
+                            {s.disparoAtivo && <Badge className="text-[9px] bg-info/15 text-info dark:bg-info/25 dark:text-info/80">Disparo</Badge>}
                             {s.funilAtivo && <Badge className="text-[9px] bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">Funil</Badge>}
                             {s.fluxosAtivo && <Badge className="text-[9px] bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400">Fluxos</Badge>}
                           </div>
@@ -2169,7 +2169,7 @@ function SecaoSistemas({
                           <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-500" onClick={() => onVerDetalhe(s)}>
                             <Eye className="h-3 w-3 mr-1 shrink-0" /> Ver
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-blue-600" onClick={() => onEditar(s)}>
+                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-info" onClick={() => onEditar(s)}>
                             <Pencil className="h-3 w-3 mr-1 shrink-0" /> Editar
                           </Button>
                           <Button variant="ghost" size="sm" className="h-7 text-[10px] text-purple-600" onClick={() => onMudarAba("cobrancas")}>
@@ -2231,7 +2231,7 @@ function SecaoSistemas({
                               <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                                 <Badge className={`text-[9px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
                                 {s.zapbotAtivo && <Badge className="text-[8px] bg-primary/10 text-primary">Bot</Badge>}
-                                {s.disparoAtivo && <Badge className="text-[8px] bg-blue-100 text-blue-700">Disparo</Badge>}
+                                {s.disparoAtivo && <Badge className="text-[8px] bg-info/15 text-info">Disparo</Badge>}
                                 {s.funilAtivo && <Badge className="text-[8px] bg-amber-100 text-amber-700">Funil</Badge>}
                                 {s.fluxosAtivo && <Badge className="text-[8px] bg-violet-100 text-violet-700">Fluxos</Badge>}
                                 {s.dadosRegistro && (
@@ -2290,7 +2290,7 @@ function SecaoSistemas({
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:text-blue-700 shrink-0" onClick={() => onEditar(s)}>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-info hover:text-info shrink-0" onClick={() => onEditar(s)}>
                                         <Pencil className="h-3.5 w-3.5" />
                                       </Button>
                                     </TooltipTrigger>
@@ -2608,7 +2608,7 @@ const handleSalvarNovo = useCallback(
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30 shrink-0"
+                    className="h-8 w-8 text-info hover:bg-info/10 dark:hover:bg-info/20 shrink-0"
                     onClick={() => setDialogEmailRecuperacao(true)}
                   >
                     <Mail className="h-4 w-4 shrink-0" />
@@ -2750,7 +2750,7 @@ const handleSalvarNovo = useCallback(
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Pencil className="h-5 w-5 text-blue-600 shrink-0" />
+              <Pencil className="h-5 w-5 text-info shrink-0" />
               Editar Sistema
             </DialogTitle>
           </DialogHeader>
@@ -2859,7 +2859,7 @@ const handleSalvarNovo = useCallback(
                   <p className="text-[10px] text-gray-400 uppercase font-medium mb-2">Recursos Premium Ativos</p>
                   <div className="flex flex-wrap gap-1.5">
                     {dialogDetalhe.zapbotAtivo && <Badge className="text-[10px] bg-primary/10 text-primary"><Bot className="h-3 w-3 mr-1 shrink-0" />ZapBot</Badge>}
-                    {dialogDetalhe.disparoAtivo && <Badge className="text-[10px] bg-blue-100 text-blue-700"><Send className="h-3 w-3 mr-1 shrink-0" />Disparo em Massa</Badge>}
+                    {dialogDetalhe.disparoAtivo && <Badge className="text-[10px] bg-info/15 text-info"><Send className="h-3 w-3 mr-1 shrink-0" />Disparo em Massa</Badge>}
                     {dialogDetalhe.funilAtivo && <Badge className="text-[10px] bg-amber-100 text-amber-700"><TrendingUp className="h-3 w-3 mr-1 shrink-0" />Funil de Leads</Badge>}
                     {dialogDetalhe.fluxosAtivo && <Badge className="text-[10px] bg-violet-100 text-violet-700"><GitBranch className="h-3 w-3 mr-1 shrink-0" />Fluxos</Badge>}
                     {!dialogDetalhe.zapbotAtivo && !dialogDetalhe.disparoAtivo && !dialogDetalhe.funilAtivo && !dialogDetalhe.fluxosAtivo && (
@@ -3067,17 +3067,17 @@ const handleSalvarNovo = useCallback(
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Mail className="h-5 w-5 text-blue-500 shrink-0" />
+              <Mail className="h-5 w-5 text-info shrink-0" />
               E-mail de Recuperacao
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
+            <div className="bg-info/10 border border-info/30 rounded-xl p-4 space-y-2">
               <div className="flex items-start gap-2">
-                <ShieldCheck className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+                <ShieldCheck className="h-5 w-5 text-info shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-blue-800">E-mail de recuperacao de senha</p>
-                  <p className="text-xs text-blue-600 mt-0.5">
+                  <p className="text-sm font-medium text-info">E-mail de recuperacao de senha</p>
+                  <p className="text-xs text-info mt-0.5">
                     Este e-mail sera usado para verificar a identidade do administrador caso ele precise redefinir a senha na tela de login.
                   </p>
                 </div>

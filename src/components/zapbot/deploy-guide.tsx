@@ -138,9 +138,9 @@ https://SEU_DOMINIO/api/zapbot/webhook
             <p className="text-xs text-gray-500 mt-1">Oracle Cloud ARM com 24GB RAM, para sempre</p>
           </CardContent>
         </Card>
-        <Card className="border-blue-200 bg-blue-50/50 min-w-0">
+        <Card className="border-info/30 bg-info/10 min-w-0">
           <CardContent className="p-4 text-center">
-            <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2 shrink-0" />
+            <Clock className="h-8 w-8 text-info mx-auto mb-2 shrink-0" />
             <h4 className="font-bold text-sm">30 minutos</h4>
             <p className="text-xs text-gray-500 mt-1">Tempo estimado de configuracao completa</p>
           </CardContent>
@@ -356,7 +356,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
             </Button>
             <Button variant="outline" className="justify-start h-auto py-3" asChild>
               <a href="https://doc.evolution-api.com" target="_blank" rel="noopener noreferrer">
-                <FileText className="h-4 w-4 mr-2 text-blue-600 shrink-0" />
+                <FileText className="h-4 w-4 mr-2 text-info shrink-0" />
                 <div className="text-left">
                   <p className="text-sm font-medium">Documentacao da API</p>
                   <p className="text-[10px] text-gray-400">Referencia completa</p>

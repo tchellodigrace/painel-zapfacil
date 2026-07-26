@@ -94,7 +94,7 @@ const TRIGGER_LABELS: Record<TriggerType, string> = {
 
 const TRIGGER_COLORS: Record<TriggerType, string> = {
   palavra_chave: "bg-purple-500/15 text-purple-700 dark:text-purple-400 border-purple-500/30",
-  horario: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30",
+  horario: "bg-info/15 text-info dark:text-info/80 border-info/30",
   etapa_funil: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
   nova_mensagem: "bg-primary/15 text-primary dark:text-primary/80 border-primary/30",
   sempre: "bg-gray-500/15 text-gray-700 dark:text-gray-400 border-gray-500/30",
@@ -125,7 +125,7 @@ const ACTION_LABELS: Record<ActionType, string> = {
 
 const ACTION_COLORS: Record<ActionType, string> = {
   responder_mensagem: "bg-primary/15 text-primary dark:text-primary/80 border-primary/30",
-  mover_funil: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30",
+  mover_funil: "bg-info/15 text-info dark:text-info/80 border-info/30",
   adicionar_tag: "bg-purple-500/15 text-purple-700 dark:text-purple-400 border-purple-500/30",
   enviar_notificacao: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
   pausar_bot: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30",

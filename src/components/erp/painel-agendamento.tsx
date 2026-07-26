@@ -220,9 +220,9 @@ export function PainelAgendamento() {
         <CardContent className="space-y-4">
           {/* Stats rápidos do dia */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-2 text-center border border-blue-100 dark:border-blue-900">
-              <p className="text-sm font-black text-blue-700 dark:text-blue-400">{statsHoje.pendentes}</p>
-              <p className="text-[9px] text-blue-600 dark:text-blue-400 font-bold uppercase">Pendentes</p>
+            <div className="bg-info/10 dark:bg-info/20 rounded-lg p-2 text-center border border-info/20 dark:border-info/30">
+              <p className="text-sm font-black text-info dark:text-info/80">{statsHoje.pendentes}</p>
+              <p className="text-[9px] text-info dark:text-info/80 font-bold uppercase">Pendentes</p>
             </div>
             <div className="bg-amber-50 dark:bg-amber-950/20 rounded-lg p-2 text-center border border-amber-100 dark:border-amber-900">
               <p className="text-sm font-black text-amber-700 dark:text-amber-400">{statsHoje.emAndamento}</p>
@@ -341,7 +341,7 @@ export function PainelAgendamento() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-9 text-xs text-blue-600"
+                className="h-9 text-xs text-info"
                 onClick={() => setFiltroData(hojeStr)}
               >
                 Hoje
@@ -442,7 +442,7 @@ export function PainelAgendamento() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-7 px-2 text-[10px] text-blue-600"
+                        className="h-7 px-2 text-[10px] text-info"
                         onClick={() => handleProximoStatus(ag)}
                       >
                         {STATUS_ICONS[ag.status]}

@@ -537,12 +537,12 @@ export function PainelCobranças() {
         <Card className="border-0 shadow-sm min-w-0">
           <CardContent className="p-3.5">
             <div className="flex items-center gap-1.5 mb-1">
-              <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
+              <TrendingUp className="w-3.5 h-3.5 text-info" />
               <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
                 Previsto/mes
               </span>
             </div>
-            <p className="text-base sm:text-lg font-black text-blue-600 font-display">
+            <p className="text-base sm:text-lg font-black text-info font-display">
               {formatarMoeda(stats.previstoMes)}
             </p>
           </CardContent>
@@ -1019,7 +1019,7 @@ export function PainelCobranças() {
                 {dialogHistorico.tipoLicenca === "ALUGUEL" && (
                   <Button
                     size="sm"
-                    className="text-xs bg-blue-600 hover:bg-blue-700 flex-1"
+                    className="text-xs bg-info hover:bg-info/90 flex-1"
                     onClick={() => {
                       gerarCobrancaMensal(dialogHistorico.id);
                       toast.success("Cobranca de mensalidade gerada!");

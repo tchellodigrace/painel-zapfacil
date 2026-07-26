@@ -244,7 +244,7 @@ export function CRMClientes() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 w-7 p-0 text-blue-500 shrink-0"
+                      className="h-7 w-7 p-0 text-info shrink-0"
                       onClick={() => setFichaAberta(c)}
                       title="Ver ficha"
                     >

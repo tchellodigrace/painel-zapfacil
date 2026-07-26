@@ -172,9 +172,9 @@ export function ZapBotMensagens() {
             <p className="text-[10px] text-gray-500 uppercase tracking-wider">Enviadas</p>
           </CardContent>
         </Card>
-        <Card className="bg-blue-50 min-w-0">
+        <Card className="bg-info/10 min-w-0">
           <CardContent className="p-3 text-center">
-            <p className="text-base sm:text-lg font-bold text-blue-700 font-display">{contagem.recebidas}</p>
+            <p className="text-base sm:text-lg font-bold text-info font-display">{contagem.recebidas}</p>
             <p className="text-[10px] text-gray-500 uppercase tracking-wider">Recebidas</p>
           </CardContent>
         </Card>
@@ -247,7 +247,7 @@ export function ZapBotMensagens() {
                         ? "bg-primary/10"
                         : msg.tipo === "automatica"
                           ? "bg-amber-100"
-                          : "bg-blue-100"
+                          : "bg-info/15"
                     }`}
                   >
                     {msg.tipo === "enviada" ? (
@@ -255,7 +255,7 @@ export function ZapBotMensagens() {
                     ) : msg.tipo === "automatica" ? (
                       <Bot className="h-4 w-4 text-amber-600 shrink-0" />
                     ) : (
-                      <MessageSquare className="h-4 w-4 text-blue-600 shrink-0" />
+                      <MessageSquare className="h-4 w-4 text-info shrink-0" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -280,7 +280,7 @@ export function ZapBotMensagens() {
                           ? "border-primary/20 text-primary"
                           : msg.tipo === "automatica"
                             ? "border-amber-200 text-amber-600"
-                            : "border-blue-200 text-blue-600"
+                            : "border-info/30 text-info"
                       }`}
                     >
                       {msg.tipo === "enviada"

@@ -620,7 +620,7 @@ export const STATUS_SISTEMA: {
   {
     valor: "TRIAL",
     label: "Trial",
-    cor: "bg-blue-100 text-blue-700",
+    cor: "bg-info/15 text-info",
   },
   {
     valor: "EXPIRADO",
@@ -662,7 +662,7 @@ export const TIPOS_LICENCA: {
     valor: "ALUGUEL",
     label: "Aluguel",
     descricao: "Mensalidade recorrente",
-    cor: "bg-blue-100 text-blue-700",
+    cor: "bg-info/15 text-info",
   },
   {
     valor: "AQUISICAO",

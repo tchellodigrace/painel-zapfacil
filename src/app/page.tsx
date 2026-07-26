@@ -314,7 +314,7 @@ export default function ZapFacilPage() {
             {disparoAtivo && (
               <TabsTrigger
                 value="disparo"
-                className="text-xs py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                className="text-xs py-2 data-[state=active]:bg-primary data-[state=active]:text-white"
               >
                 <Send className="h-3.5 w-3.5 mr-1" />
                 <span className="hidden sm:inline">Disparo</span>

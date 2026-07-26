@@ -173,9 +173,9 @@ export const CATEGORIAS_DESPESA: { valor: CategoriaDespesa; label: string }[] = 
 ];
 
 export const STATUS_AGENDAMENTO: { valor: StatusAgendamento; label: string; cor: string }[] = [
-  { valor: "AGENDADO", label: "Agendado", cor: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" },
-  { valor: "CONFIRMADO", label: "Confirmado", cor: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200" },
-  { valor: "EM_ANDAMENTO", label: "Em Andamento", cor: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200" },
-  { valor: "CONCLUIDO", label: "Concluído", cor: "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60" },
-  { valor: "CANCELADO", label: "Cancelado", cor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" },
+  { valor: "AGENDADO", label: "Agendado", cor: "bg-info/15 text-info dark:bg-info/25 dark:text-info/80" },
+  { valor: "CONFIRMADO", label: "Confirmado", cor: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300" },
+  { valor: "EM_ANDAMENTO", label: "Em Andamento", cor: "bg-warning/15 text-warning dark:bg-warning/25 dark:text-warning/80" },
+  { valor: "CONCLUIDO", label: "Concluído", cor: "bg-success/15 text-success dark:bg-success/25 dark:text-success/80" },
+  { valor: "CANCELADO", label: "Cancelado", cor: "bg-destructive/15 text-destructive dark:bg-destructive/25 dark:text-destructive/80" },
 ];
