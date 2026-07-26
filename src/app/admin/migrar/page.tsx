@@ -260,6 +260,27 @@ export default function MigrarSupabasePage() {
               </div>
             )}
 
+            {stats.errors > 0 && (
+              <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                <p className="text-sm font-semibold text-red-800 dark:text-red-300 mb-2">
+                  Diagnóstico de erro
+                </p>
+                <p className="text-xs text-red-700 dark:text-red-400 mb-3">
+                  Se a migração falhou com &quot;Erro interno do servidor&quot;, abra o
+                  link abaixo no navegador para ver o diagnóstico completo. Copie o JSON
+                  de resposta e envie para análise.
+                </p>
+                <a
+                  href="/api/debug-supabase"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-xs font-mono bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 px-3 py-2 rounded-md border border-red-300 dark:border-red-700"
+                >
+                  /api/debug-supabase ↗
+                </a>
+              </div>
+            )}
+
             {logs.length > 0 && (
               <div className="mt-4">
                 <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
