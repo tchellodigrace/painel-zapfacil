@@ -348,10 +348,10 @@ export function ZapBotDisparo() {
       {/* ---------- Header ---------- */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl font-bold text-foreground">
             Disparo em Massa
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             Envie mensagens em lote para seus contatos via WhatsApp
           </p>
         </div>
@@ -377,11 +377,11 @@ export function ZapBotDisparo() {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
               <Users className="h-4 w-4 text-gray-400 dark:text-gray-500 shrink-0" />
-              <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 font-display">
+              <p className="text-base sm:text-lg font-bold text-foreground font-display">
                 {totalContatos}
               </p>
             </div>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
               Total
             </p>
           </CardContent>
@@ -395,7 +395,7 @@ export function ZapBotDisparo() {
                 {selecionados}
               </p>
             </div>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
               Selecionados
             </p>
           </CardContent>
@@ -409,7 +409,7 @@ export function ZapBotDisparo() {
                 {enviados}
               </p>
             </div>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
               Enviados
             </p>
           </CardContent>
@@ -423,7 +423,7 @@ export function ZapBotDisparo() {
                 {falharam}
               </p>
             </div>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
               Falharam
             </p>
           </CardContent>
@@ -433,11 +433,11 @@ export function ZapBotDisparo() {
       {/* ---------- Campaign config ---------- */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+          <CardTitle className="text-base font-semibold flex items-center gap-2 text-foreground">
             <FileText className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
             Configuração da Campanha
           </CardTitle>
-          <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
+          <CardDescription className="text-xs text-muted-foreground">
             Defina o nome e a mensagem que sera enviada aos contatos selecionados
           </CardDescription>
         </CardHeader>
@@ -447,7 +447,7 @@ export function ZapBotDisparo() {
             <div className="space-y-1.5">
               <Label
                 htmlFor="campaign-name"
-                className="text-xs font-medium text-gray-700 dark:text-gray-300"
+                className="text-xs font-medium text-muted-foreground"
               >
                 Nome da Campanha
               </Label>
@@ -467,7 +467,7 @@ export function ZapBotDisparo() {
           <div className="space-y-1.5">
             <Label
               htmlFor="campaign-message"
-              className="text-xs font-medium text-gray-700 dark:text-gray-300"
+              className="text-xs font-medium text-muted-foreground"
             >
               Mensagem
             </Label>
@@ -481,7 +481,7 @@ export function ZapBotDisparo() {
             />
             <p className="text-[10px] text-gray-400 dark:text-gray-500">
               Use{" "}
-              <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-[10px] font-mono">
+              <code className="bg-secondary px-1 py-0.5 rounded text-[10px] font-mono">
                 {"{nome}"}
               </code>{" "}
               para personalizar com o nome do contato
@@ -493,7 +493,7 @@ export function ZapBotDisparo() {
                 <p className="text-[10px] text-primary dark:text-primary/80 font-medium mb-1">
                   Preview:
                 </p>
-                <p className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                <p className="text-xs text-muted-foreground whitespace-pre-wrap">
                   {campaignMessage.replace(
                     /\{nome\}/g,
                     contacts[0]?.nome || "João Silva",
@@ -508,11 +508,11 @@ export function ZapBotDisparo() {
       {/* ---------- Add contacts ---------- */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+          <CardTitle className="text-base font-semibold flex items-center gap-2 text-foreground">
             <UserPlus className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
             Adicionar Contatos
           </CardTitle>
-          <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
+          <CardDescription className="text-xs text-muted-foreground">
             Adicione contatos manualmente ou importe em lote
           </CardDescription>
         </CardHeader>
@@ -551,7 +551,7 @@ export function ZapBotDisparo() {
           {activeTab === "manual" && (
             <div className="flex flex-col sm:flex-row gap-3 items-end">
               <div className="flex-1 space-y-1.5 w-full">
-                <Label className="text-xs text-gray-700 dark:text-gray-300">
+                <Label className="text-xs text-muted-foreground">
                   Nome
                 </Label>
                 <Input
@@ -563,7 +563,7 @@ export function ZapBotDisparo() {
                 />
               </div>
               <div className="flex-1 space-y-1.5 w-full">
-                <Label className="text-xs text-gray-700 dark:text-gray-300">
+                <Label className="text-xs text-muted-foreground">
                   Telefone
                 </Label>
                 <Input
@@ -597,7 +597,7 @@ export function ZapBotDisparo() {
               />
               <p className="text-[10px] text-gray-400 dark:text-gray-500">
                 Um contato por linha no formato:{" "}
-                <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-[10px] font-mono">
+                <code className="bg-secondary px-1 py-0.5 rounded text-[10px] font-mono">
                   nome,telefone
                 </code>
               </p>
@@ -619,7 +619,7 @@ export function ZapBotDisparo() {
         <CardHeader className="pb-3">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+              <CardTitle className="text-base font-semibold flex items-center gap-2 text-foreground">
                 <Users className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
                 Lista de Contatos
                 <Badge
@@ -658,11 +658,11 @@ export function ZapBotDisparo() {
         <CardContent className="p-0">
           {contacts.length === 0 ? (
             <div className="text-center py-16">
-              <Users className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3 shrink-0" />
+              <Users className="h-12 w-12 text-muted-foreground/70 dark:text-gray-600 mx-auto mb-3 shrink-0" />
               <p className="text-sm text-gray-400 dark:text-gray-500">
                 Nenhum contato adicionado.
               </p>
-              <p className="text-xs text-gray-300 dark:text-gray-600 mt-1">
+              <p className="text-xs text-muted-foreground/70 dark:text-gray-600 mt-1">
                 Adicione contatos manualmente ou importe em lote acima.
               </p>
             </div>
@@ -677,13 +677,13 @@ export function ZapBotDisparo() {
                         onCheckedChange={toggleAll}
                       />
                     </TableHead>
-                    <TableHead className="text-xs text-gray-500 dark:text-gray-400">
+                    <TableHead className="text-xs text-muted-foreground">
                       Nome
                     </TableHead>
-                    <TableHead className="text-xs text-gray-500 dark:text-gray-400">
+                    <TableHead className="text-xs text-muted-foreground">
                       Telefone
                     </TableHead>
-                    <TableHead className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                    <TableHead className="text-xs text-muted-foreground text-center">
                       Status
                     </TableHead>
                     <TableHead className="w-10" />
@@ -705,10 +705,10 @@ export function ZapBotDisparo() {
                           onCheckedChange={() => toggleOne(contato.id)}
                         />
                       </TableCell>
-                      <TableCell className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <TableCell className="text-sm font-medium text-foreground">
                         {contato.nome}
                       </TableCell>
-                      <TableCell className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                      <TableCell className="text-xs text-muted-foreground font-mono">
                         {formatarTelefone(contato.telefone)}
                       </TableCell>
                       <TableCell className="text-center">
@@ -767,7 +767,7 @@ export function ZapBotDisparo() {
           <CardContent className="p-4 flex items-center gap-3">
             <Loader2 className="h-5 w-5 text-primary dark:text-primary/80 animate-spin" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-primary dark:text-white/80">
+              <p className="text-sm font-medium text-primary dark:text-foreground/80">
                 Enviando mensagens...
               </p>
               <p className="text-xs text-primary dark:text-primary/80">
@@ -777,7 +777,7 @@ export function ZapBotDisparo() {
             </div>
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-muted-foreground">
                   Taxa de sucesso
                 </p>
                 <p className="text-sm font-bold text-primary dark:text-primary/80">
@@ -797,18 +797,18 @@ export function ZapBotDisparo() {
       {/* ---------- Campaign history ---------- */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+          <CardTitle className="text-base font-semibold flex items-center gap-2 text-foreground">
             <History className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
             Histórico de Campanhas
           </CardTitle>
-          <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
+          <CardDescription className="text-xs text-muted-foreground">
             Campanhas enviadas anteriormente
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           {historico.length === 0 ? (
             <div className="text-center py-12">
-              <History className="h-10 w-10 text-gray-300 dark:text-gray-600 mx-auto mb-2 shrink-0" />
+              <History className="h-10 w-10 text-muted-foreground/70 dark:text-gray-600 mx-auto mb-2 shrink-0" />
               <p className="text-sm text-gray-400 dark:text-gray-500">
                 Nenhuma campanha enviada ainda.
               </p>
@@ -823,7 +823,7 @@ export function ZapBotDisparo() {
                   {/* Left: Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      <span className="text-sm font-semibold text-foreground">
                         {camp.nome}
                       </span>
                       <Badge
@@ -832,7 +832,7 @@ export function ZapBotDisparo() {
                             ? "bg-success/15 dark:bg-success/25 text-success dark:text-success/80"
                             : camp.status === "enviando"
                               ? "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300"
-                              : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                              : "bg-secondary text-muted-foreground"
                         }`}
                       >
                         {camp.status === "concluida"
@@ -842,7 +842,7 @@ export function ZapBotDisparo() {
                             : "Rascunho"}
                       </Badge>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                    <p className="text-xs text-muted-foreground mt-1 truncate">
                       {camp.mensagem}
                     </p>
                     <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1 flex items-center gap-1">
@@ -854,10 +854,10 @@ export function ZapBotDisparo() {
                   {/* Right: Stats */}
                   <div className="flex items-center gap-4 shrink-0">
                     <div className="text-center">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-muted-foreground">
                         Total
                       </p>
-                      <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                      <p className="text-sm font-bold text-foreground">
                         {camp.totalContatos}
                       </p>
                     </div>
@@ -913,7 +913,7 @@ function StatusBadge({ status }: { status: Contact["status"] }) {
       return (
         <Badge
           variant="outline"
-          className="text-[10px] border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400"
+          className="text-[10px] border-gray-300 dark:border-gray-700 text-muted-foreground"
         >
           Pendente
         </Badge>

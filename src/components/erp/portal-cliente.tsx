@@ -167,7 +167,7 @@ export function PortalCliente() {
     if (status === "PAGO")
       return {
         label: "Pago",
-        cor: "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/80",
+        cor: "bg-primary/10 text-primary dark:bg-primary/30 dark:text-foreground/80",
         icone: CheckCircle2,
       };
     return {

@@ -278,7 +278,7 @@ export function PainelColaboradores() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-medium truncate">{c.nome}</span>
-                  <Badge variant="secondary" className="text-[9px] bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60">
+                  <Badge variant="secondary" className="text-[9px] bg-primary/10 text-primary dark:bg-primary/30 dark:text-foreground/60">
                     <UserCheck className="h-2.5 w-2.5 mr-0.5" />
                     Ativo
                   </Badge>
@@ -343,7 +343,7 @@ export function PainelColaboradores() {
                   key={c.id}
                   className="flex items-center gap-2 p-2.5 rounded-lg border text-xs opacity-50"
                 >
-                  <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 font-bold text-[10px] shrink-0">
+                  <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-muted-foreground font-bold text-[10px] shrink-0">
                     {c.nome
                       .split(" ")
                       .map((n) => n[0])

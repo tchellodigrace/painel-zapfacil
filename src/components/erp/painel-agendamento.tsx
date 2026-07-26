@@ -240,7 +240,7 @@ export function PainelAgendamento() {
 
           {/* Formulário de agendamento */}
           <div className="bg-primary/5 dark:bg-primary/15 p-3 rounded-lg border border-primary/15 dark:border-primary/40 space-y-2">
-            <p className="text-[10px] font-bold text-primary dark:text-white/80 uppercase tracking-wider">Novo Agendamento</p>
+            <p className="text-[10px] font-bold text-primary dark:text-foreground/80 uppercase tracking-wider">Novo Agendamento</p>
             <div className="grid grid-cols-2 gap-2">
               <Select value={clienteId} onValueChange={setClienteId}>
                 <SelectTrigger className="text-xs h-9">

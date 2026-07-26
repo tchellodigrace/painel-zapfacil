@@ -47,8 +47,8 @@ export function ZapBotDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
-          <p className="text-gray-500 text-sm mt-1 capitalize">{hoje}</p>
+          <h2 className="text-2xl font-bold text-foreground">Dashboard</h2>
+          <p className="text-muted-foreground text-sm mt-1 capitalize">{hoje}</p>
         </div>
         <div className="flex items-center gap-2">
           <Badge
@@ -79,8 +79,8 @@ export function ZapBotDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Enviadas</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{totalEnviadas}</p>
+                <p className="text-sm text-muted-foreground">Enviadas</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground font-display">{totalEnviadas}</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
                 <Send className="h-5 w-5 text-primary shrink-0" />
@@ -93,8 +93,8 @@ export function ZapBotDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Recebidas</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{totalRecebidas}</p>
+                <p className="text-sm text-muted-foreground">Recebidas</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground font-display">{totalRecebidas}</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-info/15 flex items-center justify-center">
                 <MessageSquare className="h-5 w-5 text-info shrink-0" />
@@ -107,8 +107,8 @@ export function ZapBotDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Automaticas</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{totalAutomaticas}</p>
+                <p className="text-sm text-muted-foreground">Automaticas</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground font-display">{totalAutomaticas}</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center">
                 <Bot className="h-5 w-5 text-amber-600 shrink-0" />
@@ -121,8 +121,8 @@ export function ZapBotDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Taxa Resposta</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{taxaResposta}%</p>
+                <p className="text-sm text-muted-foreground">Taxa Resposta</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground font-display">{taxaResposta}%</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-purple-100 flex items-center justify-center">
                 <TrendingUp className="h-5 w-5 text-purple-600 shrink-0" />
@@ -143,12 +143,12 @@ export function ZapBotDashboard() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between py-2 border-b border-gray-100">
-              <span className="text-sm text-gray-500">Status</span>
+              <span className="text-sm text-muted-foreground">Status</span>
               <Badge
                 className={
                   conectado
                     ? "bg-primary/10 text-primary"
-                    : "bg-gray-100 text-gray-600"
+                    : "bg-muted text-muted-foreground"
                 }
               >
                 {statusConexao === "conectado"
@@ -161,20 +161,20 @@ export function ZapBotDashboard() {
               </Badge>
             </div>
             <div className="flex items-center justify-between py-2 border-b border-gray-100">
-              <span className="text-sm text-gray-500">Instancia</span>
+              <span className="text-sm text-muted-foreground">Instancia</span>
               <span className="text-sm font-medium">{configEvolution.instanceName}</span>
             </div>
             <div className="flex items-center justify-between py-2 border-b border-gray-100">
-              <span className="text-sm text-gray-500">API URL</span>
+              <span className="text-sm text-muted-foreground">API URL</span>
               <span className="text-sm font-mono text-xs">{configEvolution.apiUrl}</span>
             </div>
             <div className="flex items-center justify-between py-2">
-              <span className="text-sm text-gray-500">Chatbot</span>
+              <span className="text-sm text-muted-foreground">Chatbot</span>
               <Badge
                 className={
                   chatbotAtivo
                     ? "bg-primary/10 text-primary"
-                    : "bg-gray-100 text-gray-600"
+                    : "bg-muted text-muted-foreground"
                 }
               >
                 {chatbotAtivo ? "Ativo" : "Inativo"}
@@ -242,11 +242,11 @@ export function ZapBotDashboard() {
         <CardContent>
           {mensagensRecentes.length === 0 ? (
             <div className="text-center py-8">
-              <MessageSquare className="h-10 w-10 text-gray-300 mx-auto mb-3 shrink-0" />
+              <MessageSquare className="h-10 w-10 text-muted-foreground/70 mx-auto mb-3 shrink-0" />
               <p className="text-sm text-gray-400">
                 Nenhuma mensagem registrada ainda.
               </p>
-              <p className="text-xs text-gray-300 mt-1">
+              <p className="text-xs text-muted-foreground/70 mt-1">
                 As mensagens aparecerao aqui quando o bot estiver conectado.
               </p>
             </div>
@@ -283,7 +283,7 @@ export function ZapBotDashboard() {
                         {msg.data}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 truncate mt-0.5">
+                    <p className="text-xs text-muted-foreground truncate mt-0.5">
                       {msg.texto}
                     </p>
                   </div>
@@ -319,10 +319,10 @@ export function ZapBotDashboard() {
                 <Zap className="h-7 w-7 text-white shrink-0" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-gray-900">
+                <h3 className="font-bold text-foreground">
                   Pronto para comecar?
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Configure a conexao com a Evolution API, escaneie o QR Code e ative seu chatbot automatico de WhatsApp.
                 </p>
               </div>

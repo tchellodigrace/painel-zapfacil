@@ -300,16 +300,16 @@ export function Historico({ onReemitir }: HistoricoProps) {
             <div key={v.id} className="p-3 space-y-2">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-semibold text-sm text-gray-900 truncate">{v.cliente}</p>
+                  <p className="font-semibold text-sm text-foreground truncate">{v.cliente}</p>
                   <p className="text-[11px] text-gray-400 truncate">{v.itens.map((i) => i.servicoNome).join(", ")}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1 shrink-0">
-                  <p className="font-black text-sm text-gray-900">{formatarMoeda(v.total)}</p>
+                  <p className="font-black text-sm text-foreground">{formatarMoeda(v.total)}</p>
                   <Badge
                     variant={v.status === "PAGO" ? "default" : "secondary"}
                     className={`text-[10px] ${
                       v.status === "PAGO"
-                        ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60"
+                        ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-foreground/60"
                         : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                     }`}
                   >
@@ -381,7 +381,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
                       variant={v.status === "PAGO" ? "default" : "secondary"}
                       className={`text-[10px] ${
                         v.status === "PAGO"
-                          ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60"
+                          ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-foreground/60"
                           : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                       }`}
                     >

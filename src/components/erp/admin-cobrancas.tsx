@@ -308,8 +308,8 @@ function FormularioPagamento({
   return (
     <div className="space-y-4">
       <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-        <p className="text-sm font-semibold text-gray-900">{cobranca.sistemaNome}</p>
-        <p className="text-xs text-gray-500">{cobranca.descricao}</p>
+        <p className="text-sm font-semibold text-foreground">{cobranca.sistemaNome}</p>
+        <p className="text-xs text-muted-foreground">{cobranca.descricao}</p>
         <div className="flex items-center justify-between pt-1">
           <span className="text-xs text-gray-400">Vencimento: {formatarData(cobranca.dataVencimento)}</span>
           <span className="text-lg font-black text-primary">{formatarMoeda(cobranca.valor)}</span>
@@ -583,7 +583,7 @@ export function PainelCobranças() {
                 Total
               </span>
             </div>
-            <p className="text-xl sm:text-2xl font-black text-gray-900 font-display">
+            <p className="text-xl sm:text-2xl font-black text-foreground font-display">
               {stats.totalCobrancas}
             </p>
             <p className="text-[10px] text-gray-400 mt-0.5">cobranca(s)</p>
@@ -673,7 +673,7 @@ export function PainelCobranças() {
                 <div key={c.id} className="p-3 space-y-2">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="font-semibold text-sm text-gray-900 truncate">
+                      <p className="font-semibold text-sm text-foreground truncate">
                         {c.sistemaNome}
                       </p>
                       <p className="text-xs text-gray-400">{c.descricao}</p>
@@ -683,7 +683,7 @@ export function PainelCobranças() {
                     </Badge>
                   </div>
                   <div className="flex items-center gap-3 text-[11px] text-gray-400">
-                    <Badge className="text-[10px] bg-gray-100 text-gray-500">
+                    <Badge className="text-[10px] bg-muted text-muted-foreground">
                       {tp.label}
                     </Badge>
                     <span>Vence: {formatarData(c.dataVencimento)}</span>
@@ -699,7 +699,7 @@ export function PainelCobranças() {
                     )}
                   </div>
                   <div className="flex items-center justify-between">
-                    <p className="text-base font-black text-gray-900">
+                    <p className="text-base font-black text-foreground">
                       {formatarMoeda(c.valor)}
                     </p>
                     <div className="flex gap-1">
@@ -773,19 +773,19 @@ export function PainelCobranças() {
                   return (
                     <tr key={c.id} className="hover:bg-gray-50/80 transition-colors">
                       <td className="py-3 px-4">
-                        <p className="font-semibold text-gray-900">{c.sistemaNome}</p>
+                        <p className="font-semibold text-foreground">{c.sistemaNome}</p>
                       </td>
                       <td className="py-3 px-4">
-                        <p className="text-gray-600 text-xs max-w-[200px] truncate">
+                        <p className="text-muted-foreground text-xs max-w-[200px] truncate">
                           {c.descricao}
                         </p>
                       </td>
                       <td className="py-3 px-4 text-center">
-                        <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
                           {tp.label}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-gray-600 text-xs whitespace-nowrap">
+                      <td className="py-3 px-4 text-muted-foreground text-xs whitespace-nowrap">
                         {formatarData(c.dataVencimento)}
                         {c.status === "PENDENTE" && (
                           <span
@@ -800,7 +800,7 @@ export function PainelCobranças() {
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-4 text-right font-semibold text-gray-900 whitespace-nowrap">
+                      <td className="py-3 px-4 text-right font-semibold text-foreground whitespace-nowrap">
                         {formatarMoeda(c.valor)}
                       </td>
                       <td className="py-3 px-4 text-center">
@@ -811,7 +811,7 @@ export function PainelCobranças() {
                       <td className="py-3 px-4 text-xs whitespace-nowrap">
                         {c.status === "PAGO" && c.dataPagamento ? (
                           <div>
-                            <p className="text-gray-600">
+                            <p className="text-muted-foreground">
                               {formatarData(c.dataPagamento)}
                             </p>
                             {formaInfo && (
@@ -821,7 +821,7 @@ export function PainelCobranças() {
                             )}
                           </div>
                         ) : (
-                          <span className="text-gray-300">—</span>
+                          <span className="text-muted-foreground/70">—</span>
                         )}
                       </td>
                       <td className="py-3 px-4">
@@ -1087,7 +1087,7 @@ export function PainelCobranças() {
                       className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2"
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-medium text-gray-700 truncate">
+                        <p className="text-xs font-medium text-muted-foreground truncate">
                           {c.descricao}
                         </p>
                         <p className="text-[10px] text-gray-400">
@@ -1098,14 +1098,14 @@ export function PainelCobranças() {
                             </span>
                           )}
                           {c.formaPagamento && (
-                            <span className="text-gray-500 ml-1">
+                            <span className="text-muted-foreground ml-1">
                               ({getFormaInfo(c.formaPagamento)?.label})
                             </span>
                           )}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 ml-2 shrink-0">
-                        <span className="text-xs font-bold text-gray-900">
+                        <span className="text-xs font-bold text-foreground">
                           {formatarMoeda(c.valor)}
                         </span>
                         <Badge className={`text-[9px] font-semibold ${st.cor}`}>
@@ -1130,7 +1130,7 @@ export function PainelCobranças() {
           <DialogHeader>
             <DialogTitle className="text-base">Confirmar Remocao</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Tem certeza que deseja remover esta cobranca? Esta acao nao pode ser
             desfeita.
           </p>

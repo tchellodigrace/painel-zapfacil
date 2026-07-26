@@ -166,7 +166,7 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
         {/* Cliente */}
         <div className="bg-gray-50 p-2 rounded border border-gray-200 mb-2">
           <div className="text-[8px] text-gray-400">CLIENTE:</div>
-          <div className="font-black text-xs text-gray-900 tracking-wide break-words">
+          <div className="font-black text-xs text-foreground tracking-wide break-words">
             {venda.cliente}
           </div>
           {venda.docCliente && (
@@ -222,7 +222,7 @@ const CupomFiscal = forwardRef<CupomFiscalHandle, CupomFiscalProps>(
           </div>
 
           <div className="border-t border-dashed border-gray-300 my-1" />
-          <div className="flex justify-between text-xs font-black text-gray-900 pt-0.5">
+          <div className="flex justify-between text-xs font-black text-foreground pt-0.5">
             <span>TOTAL GERAL</span>
             <span className="text-sm">{formatarMoeda(venda.total)}</span>
           </div>

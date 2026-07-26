@@ -119,8 +119,8 @@ export function ZapBotMensagens() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Mensagens</h2>
-          <p className="text-gray-500 text-sm mt-1">
+          <h2 className="text-2xl font-bold text-foreground">Mensagens</h2>
+          <p className="text-muted-foreground text-sm mt-1">
             Log de todas as mensagens recebidas e enviadas
           </p>
         </div>
@@ -163,25 +163,25 @@ export function ZapBotMensagens() {
         <Card className="bg-gray-50 min-w-0">
           <CardContent className="p-3 text-center">
             <p className="text-base sm:text-lg font-bold font-display">{contagem.total}</p>
-            <p className="text-[10px] text-gray-500 uppercase tracking-wider">Total</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total</p>
           </CardContent>
         </Card>
         <Card className="bg-primary/5 min-w-0">
           <CardContent className="p-3 text-center">
             <p className="text-base sm:text-lg font-bold text-primary font-display">{contagem.enviadas}</p>
-            <p className="text-[10px] text-gray-500 uppercase tracking-wider">Enviadas</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Enviadas</p>
           </CardContent>
         </Card>
         <Card className="bg-info/10 min-w-0">
           <CardContent className="p-3 text-center">
             <p className="text-base sm:text-lg font-bold text-info font-display">{contagem.recebidas}</p>
-            <p className="text-[10px] text-gray-500 uppercase tracking-wider">Recebidas</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Recebidas</p>
           </CardContent>
         </Card>
         <Card className="bg-amber-50 min-w-0">
           <CardContent className="p-3 text-center">
             <p className="text-base sm:text-lg font-bold text-amber-700 font-display">{contagem.automaticas}</p>
-            <p className="text-[10px] text-gray-500 uppercase tracking-wider">Automaticas</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Automaticas</p>
           </CardContent>
         </Card>
       </div>
@@ -220,14 +220,14 @@ export function ZapBotMensagens() {
         <CardContent className="p-0">
           {mensagensFiltradas.length === 0 ? (
             <div className="text-center py-16">
-              <Inbox className="h-12 w-12 text-gray-300 mx-auto mb-3 shrink-0" />
+              <Inbox className="h-12 w-12 text-muted-foreground/70 mx-auto mb-3 shrink-0" />
               <p className="text-sm text-gray-400">
                 {mensagensLog.length === 0
                   ? "Nenhuma mensagem registrada."
                   : "Nenhuma mensagem encontrada com esse filtro."}
               </p>
               {mensagensLog.length === 0 && (
-                <p className="text-xs text-gray-300 mt-1">
+                <p className="text-xs text-muted-foreground/70 mt-1">
                   Clique em &quot;Simular&quot; para gerar mensagens de teste.
                 </p>
               )}
@@ -267,7 +267,7 @@ export function ZapBotMensagens() {
                         {msg.numero}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mt-0.5 whitespace-pre-wrap break-words">
+                    <p className="text-sm text-muted-foreground mt-0.5 whitespace-pre-wrap break-words">
                       {msg.texto}
                     </p>
                   </div>

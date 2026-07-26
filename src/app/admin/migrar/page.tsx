@@ -150,10 +150,10 @@ export default function MigrarSupabasePage() {
               <Database className="h-5 w-5 text-purple-600 dark:text-purple-400 shrink-0" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-xl font-bold text-foreground">
                 Migrar dados para Supabase
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-muted-foreground">
                 Migra sistemas e clientes do localStorage para o banco Supabase
               </p>
             </div>
@@ -224,25 +224,25 @@ export default function MigrarSupabasePage() {
               <div className="bg-primary/5 dark:bg-primary/15 border border-primary/20 dark:border-primary/40 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle2 className="h-5 w-5 text-primary dark:text-primary/80" />
-                  <p className="text-sm font-semibold text-primary dark:text-white/80">
+                  <p className="text-sm font-semibold text-primary dark:text-foreground/80">
                     Migracao concluida!
                   </p>
                 </div>
                 <div className="grid grid-cols-3 gap-3 mt-3">
-                  <div className="bg-white dark:bg-gray-800 rounded p-2 text-center">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Sucesso</p>
+                  <div className="bg-card rounded p-2 text-center">
+                    <p className="text-xs text-muted-foreground">Sucesso</p>
                     <p className="text-base sm:text-lg font-bold text-primary dark:text-primary/80 font-display">
                       {stats.success}
                     </p>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 rounded p-2 text-center">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Pulados</p>
+                  <div className="bg-card rounded p-2 text-center">
+                    <p className="text-xs text-muted-foreground">Pulados</p>
                     <p className="text-base sm:text-lg font-bold text-amber-600 dark:text-amber-400 font-display">
                       {stats.skipped}
                     </p>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 rounded p-2 text-center">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Erros</p>
+                  <div className="bg-card rounded p-2 text-center">
+                    <p className="text-xs text-muted-foreground">Erros</p>
                     <p className="text-base sm:text-lg font-bold text-red-600 dark:text-red-400 font-display">
                       {stats.errors}
                     </p>
@@ -283,7 +283,7 @@ export default function MigrarSupabasePage() {
 
             {logs.length > 0 && (
               <div className="mt-4">
-                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <p className="text-xs font-semibold text-muted-foreground mb-2">
                   Log de execucao:
                 </p>
                 <div className="bg-gray-900 dark:bg-black rounded-lg p-3 max-h-80 overflow-y-auto font-mono text-xs space-y-1">
@@ -297,7 +297,7 @@ export default function MigrarSupabasePage() {
                           ? "text-red-400"
                           : log.tipo === "warn"
                           ? "text-amber-400"
-                          : "text-gray-300"
+                          : "text-muted-foreground/70"
                       }
                     >
                       {log.tipo === "success" && "✓ "}
@@ -320,7 +320,7 @@ export default function MigrarSupabasePage() {
                 Proximos passos
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
               <p>
                 Seus dados estao agora no Supabase. Para validar, faca logout e login
                 novamente no admin — voce deve ver os mesmos sistemas.

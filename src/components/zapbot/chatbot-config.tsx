@@ -61,25 +61,25 @@ function PreviewMenu() {
       <CardContent className="p-3 space-y-2">
         <div className="max-w-[85%] ml-auto">
           <div className="bg-[#dcf8c6] rounded-xl rounded-tr-none p-3 shadow-sm">
-            <pre className="text-[13px] text-gray-800 whitespace-pre-wrap font-sans leading-relaxed">
+            <pre className="text-[13px] text-foreground whitespace-pre-wrap font-sans leading-relaxed">
               {msgCompleta || "Mensagem de boas-vindas nao configurada"}
             </pre>
           </div>
         </div>
 
-        <p className="text-[10px] text-center text-gray-500">- - - - - - - - -</p>
+        <p className="text-[10px] text-center text-muted-foreground">- - - - - - - - -</p>
 
         {menuAtivo.length > 0 && (
           <div className="max-w-[85%] mr-auto">
             <div className="bg-white rounded-xl rounded-tl-none p-3 shadow-sm">
-              <p className="text-[13px] text-gray-800">1</p>
+              <p className="text-[13px] text-foreground">1</p>
             </div>
           </div>
         )}
 
         <div className="max-w-[85%] ml-auto">
           <div className="bg-[#dcf8c6] rounded-xl rounded-tr-none p-3 shadow-sm">
-            <pre className="text-[13px] text-gray-800 whitespace-pre-wrap font-sans leading-relaxed">
+            <pre className="text-[13px] text-foreground whitespace-pre-wrap font-sans leading-relaxed">
               {menuAtivo[0]?.resposta || "..."}
             </pre>
           </div>
@@ -89,7 +89,7 @@ function PreviewMenu() {
           <>
             <div className="max-w-[85%] mr-auto">
               <div className="bg-white rounded-xl rounded-tl-none p-3 shadow-sm">
-                <p className="text-[13px] text-gray-800">
+                <p className="text-[13px] text-foreground">
                   {menuAtivo.find((m) => m.submenu.length > 0)?.submenu[0]
                     ?.numero || "3.1"}
                 </p>
@@ -97,7 +97,7 @@ function PreviewMenu() {
             </div>
             <div className="max-w-[85%] ml-auto">
               <div className="bg-[#dcf8c6] rounded-xl rounded-tr-none p-3 shadow-sm">
-                <pre className="text-[13px] text-gray-800 whitespace-pre-wrap font-sans leading-relaxed">
+                <pre className="text-[13px] text-foreground whitespace-pre-wrap font-sans leading-relaxed">
                   {menuAtivo.find((m) => m.submenu.length > 0)?.submenu[0]
                     ?.resposta || "..."}
                 </pre>
@@ -110,12 +110,12 @@ function PreviewMenu() {
           <>
             <div className="max-w-[85%] mr-auto">
               <div className="bg-white rounded-xl rounded-tl-none p-3 shadow-sm">
-                <p className="text-[13px] text-gray-800">xyz</p>
+                <p className="text-[13px] text-foreground">xyz</p>
               </div>
             </div>
             <div className="max-w-[85%] ml-auto">
               <div className="bg-[#dcf8c6] rounded-xl rounded-tr-none p-3 shadow-sm">
-                <pre className="text-[13px] text-gray-800 whitespace-pre-wrap font-sans leading-relaxed">
+                <pre className="text-[13px] text-foreground whitespace-pre-wrap font-sans leading-relaxed">
                   {mensagemPadrao}
                 </pre>
               </div>
@@ -316,8 +316,8 @@ export function ZapBotChatbot() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Chatbot de Menu</h2>
-          <p className="text-gray-500 text-sm mt-1">
+          <h2 className="text-2xl font-bold text-foreground">Chatbot de Menu</h2>
+          <p className="text-muted-foreground text-sm mt-1">
             Configure as respostas automaticas do seu WhatsApp
           </p>
         </div>
@@ -442,7 +442,7 @@ export function ZapBotChatbot() {
         <CardContent>
           {menuItems.length === 0 ? (
             <div className="text-center py-8">
-              <Menu className="h-10 w-10 text-gray-300 mx-auto mb-3 shrink-0" />
+              <Menu className="h-10 w-10 text-muted-foreground/70 mx-auto mb-3 shrink-0" />
               <p className="text-sm text-gray-400">
                 Nenhum item no menu. Adicione opcoes para o chatbot responder.
               </p>

@@ -113,60 +113,60 @@
   --sidebar-ring: #0093ce;
 }
 
-/* ====== TEMA ESCURO (versão dark do mesmo design) ====== */
+/* ====== TEMA ESCURO (cinza-escuro legivel, nao preto puro) ====== */
 .dark {
   --radius: 0.5rem;
 
-  /* Fundo mais escuro (estilo Bitrix24 dark) */
-  --background: #1a1a1a;
-  --foreground: #eaeaea;
+  /* Fundo cinza-escuro (nao preto) - leitura confortavel */
+  --background: #2b2b2e;
+  --foreground: #f3f4f6;
 
-  /* Cards um tom mais claro */
-  --card: #252525;
-  --card-foreground: #eaeaea;
+  /* Cards um tom mais claro que o fundo (contraste claro) */
+  --card: #353539;
+  --card-foreground: #f3f4f6;
 
-  --popover: #252525;
-  --popover-foreground: #eaeaea;
+  --popover: #353539;
+  --popover-foreground: #f3f4f6;
 
-  /* Azul Bitrix24 mantido no dark */
-  --primary: #2bb7ff;
-  --primary-foreground: #1a1a1a;
+  /* Azul Bitrix24 mais claro para visibilidade no dark */
+  --primary: #4cc4ff;
+  --primary-foreground: #0d1b2a;
 
-  --secondary: #2f2f2f;
-  --secondary-foreground: #eaeaea;
+  --secondary: #3f3f44;
+  --secondary-foreground: #f3f4f6;
 
-  --muted: #2f2f2f;
-  --muted-foreground: #9aa0a6;
+  --muted: #3f3f44;
+  --muted-foreground: #c4c7cc;
 
   --accent: #1e3a5f;
   --accent-foreground: #93c5fd;
 
-  --destructive: #ea4335;
-  --success: #2dbc5f;
-  --success-foreground: #ffffff;
-  --warning: #f5a623;
-  --warning-foreground: #1a1a1a;
-  --info: #2bb7ff;
-  --info-foreground: #1a1a1a;
+  --destructive: #f4756b;
+  --success: #4ade80;
+  --success-foreground: #0d1b2a;
+  --warning: #fbbf24;
+  --warning-foreground: #0d1b2a;
+  --info: #4cc4ff;
+  --info-foreground: #0d1b2a;
 
-  --border: #3a3a3a;
-  --input: #3a3a3a;
-  --ring: #2bb7ff;
+  --border: #4a4a50;
+  --input: #4a4a50;
+  --ring: #4cc4ff;
 
-  --chart-1: #2bb7ff;
-  --chart-2: #2dbc5f;
-  --chart-3: #f5a623;
-  --chart-4: #ea4335;
-  --chart-5: #9c5cff;
+  --chart-1: #4cc4ff;
+  --chart-2: #4ade80;
+  --chart-3: #fbbf24;
+  --chart-4: #f4756b;
+  --chart-5: #b888ff;
 
-  --sidebar: #1f1f1f;
-  --sidebar-foreground: #eaeaea;
-  --sidebar-primary: #2bb7ff;
-  --sidebar-primary-foreground: #1a1a1a;
-  --sidebar-accent: #2f2f2f;
-  --sidebar-accent-foreground: #eaeaea;
-  --sidebar-border: #3a3a3a;
-  --sidebar-ring: #2bb7ff;
+  --sidebar: #303034;
+  --sidebar-foreground: #f3f4f6;
+  --sidebar-primary: #4cc4ff;
+  --sidebar-primary-foreground: #0d1b2a;
+  --sidebar-accent: #3f3f44;
+  --sidebar-accent-foreground: #f3f4f6;
+  --sidebar-border: #4a4a50;
+  --sidebar-ring: #4cc4ff;
 }
 
 @layer base {

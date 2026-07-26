@@ -172,7 +172,7 @@ export default function ZapFacilPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-primary/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
         <div className="animate-pulse flex flex-col items-center gap-3">
           <div className="w-16 h-16 rounded-2xl bg-primary/10 dark:bg-primary/30" />
-          <div className="h-4 w-32 bg-gray-200 dark:bg-gray-800 rounded" />
+          <div className="h-4 w-32 bg-muted dark:bg-gray-800 rounded" />
         </div>
       </div>
     );
@@ -265,7 +265,7 @@ export default function ZapFacilPage() {
           onValueChange={setAbaAtiva}
           className="space-y-4"
         >
-          <TabsList className={`grid w-full ${gridColsClass} h-auto p-1 bg-white dark:bg-gray-900 border shadow-sm`}>
+          <TabsList className={`grid w-full ${gridColsClass} h-auto p-1 bg-card border shadow-sm`}>
             {/* Tabs fixos do ERP */}
             <TabsTrigger
               value="lancamento"
@@ -406,8 +406,8 @@ export default function ZapFacilPage() {
                     <Bot className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">ZapBot</h2>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Chatbot automatico para WhatsApp</p>
+                    <h2 className="text-lg font-bold text-foreground">ZapBot</h2>
+                    <p className="text-xs text-muted-foreground">Chatbot automatico para WhatsApp</p>
                   </div>
                 </div>
                 <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">

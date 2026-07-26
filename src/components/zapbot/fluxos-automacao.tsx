@@ -97,7 +97,7 @@ const TRIGGER_COLORS: Record<TriggerType, string> = {
   horario: "bg-info/15 text-info dark:text-info/80 border-info/30",
   etapa_funil: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30",
   nova_mensagem: "bg-primary/15 text-primary dark:text-primary/80 border-primary/30",
-  sempre: "bg-gray-500/15 text-gray-700 dark:text-gray-400 border-gray-500/30",
+  sempre: "bg-gray-500/15 text-muted-foreground dark:text-gray-400 border-gray-500/30",
 };
 
 const TRIGGER_ICONS: Record<TriggerType, React.ReactNode> = {
@@ -409,7 +409,7 @@ export function ZapBotFluxos() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
+          <h2 className="text-2xl font-bold text-foreground">
             Fluxos de Automa\u00e7\u00e3o
           </h2>
           <p className="text-muted-foreground text-sm mt-1">
@@ -668,7 +668,7 @@ export function ZapBotFluxos() {
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="rounded-lg bg-gray-500/15 p-2.5">
-                <Pause className="h-5 w-5 text-gray-600 dark:text-gray-400 shrink-0" />
+                <Pause className="h-5 w-5 text-muted-foreground shrink-0" />
               </div>
               <div>
                 <p className="text-xl sm:text-2xl font-bold font-display">{totalFlows - activeFlows}</p>

@@ -194,7 +194,7 @@ export function PainelDespesas() {
       <CardContent className="space-y-4">
         {/* DRE Resumo */}
         <div className="bg-gradient-to-r from-primary to-blue-50 dark:from-primary/30 dark:to-blue-950/30 rounded-lg p-4 border border-primary/15 dark:border-primary/40 space-y-3">
-          <p className="text-[10px] font-bold text-primary dark:text-white/80 uppercase tracking-wider">
+          <p className="text-[10px] font-bold text-primary dark:text-foreground/80 uppercase tracking-wider">
             DRE Resumo - Demonstrativo de Resultados
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">

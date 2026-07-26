@@ -205,7 +205,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
         {/* Atalhos */}
         <div className="grid grid-cols-2 gap-2 bg-primary/5 dark:bg-primary/15 p-3 rounded-lg border border-primary/15 dark:border-primary/40">
           <div>
-            <Label className="text-[10px] font-bold text-primary dark:text-white/80 uppercase mb-1 block">
+            <Label className="text-[10px] font-bold text-primary dark:text-foreground/80 uppercase mb-1 block">
               <User className="h-3 w-3 inline mr-1 shrink-0" />
               Atalho CRM
             </Label>
@@ -223,7 +223,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
             </Select>
           </div>
           <div>
-            <Label className="text-[10px] font-bold text-primary dark:text-white/80 uppercase mb-1 block">
+            <Label className="text-[10px] font-bold text-primary dark:text-foreground/80 uppercase mb-1 block">
               <Wrench className="h-3 w-3 inline mr-1 shrink-0" />
               Atalho Catálogo
             </Label>

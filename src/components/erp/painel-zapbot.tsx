@@ -130,7 +130,7 @@ function SecaoConexao() {
           <Server className="h-4 w-4 text-primary shrink-0" />
           Conexao Evolution API
           {conectado ? (
-            <Badge className="ml-auto bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60 text-[10px]">
+            <Badge className="ml-auto bg-primary/10 text-primary dark:bg-primary/30 dark:text-foreground/60 text-[10px]">
               <Wifi className="h-3 w-3 mr-1 shrink-0" /> Online
             </Badge>
           ) : (
@@ -296,7 +296,7 @@ function SecaoBoasVindas() {
           {ativarBoasVindas && (
             <div className="bg-primary/5 dark:bg-primary/15 border border-primary/20 dark:border-primary/40 rounded-lg p-3">
               <p className="text-[10px] font-bold text-primary dark:text-primary/80 uppercase mb-1.5">Preview:</p>
-              <p className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-line">{preview}</p>
+              <p className="text-xs text-muted-foreground whitespace-pre-line">{preview}</p>
             </div>
           )}
         </div>
@@ -437,8 +437,8 @@ function SecaoRespostas() {
               key={r.id}
               className={`flex items-start gap-2 p-2.5 rounded-lg border transition-colors ${
                 r.ativo
-                  ? "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
-                  : "bg-gray-50 dark:bg-gray-900/50 border-gray-100 dark:border-gray-800 opacity-60"
+                  ? "bg-card border-border"
+                  : "bg-gray-50 dark:bg-gray-900/50 border-border opacity-60"
               }`}
             >
               {editId === r.id ? (
@@ -486,7 +486,7 @@ function SecaoRespostas() {
                       <Badge variant="outline" className="text-[9px] font-mono shrink-0">
                         {r.gatilho}
                       </Badge>
-                      <p className="text-[11px] text-gray-600 dark:text-gray-400 truncate">
+                      <p className="text-[11px] text-muted-foreground truncate">
                         {r.resposta}
                       </p>
                     </div>
@@ -588,7 +588,7 @@ function SecaoMenu() {
                 <p className="text-[10px] font-bold text-primary dark:text-primary/80 uppercase mb-1.5">
                   Preview do Menu:
                 </p>
-                <p className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                <p className="text-xs text-muted-foreground whitespace-pre-line">
                   {previewMenu.replace(/\*/g, "")}
                 </p>
               </div>
@@ -634,8 +634,8 @@ function SecaoMenu() {
                   key={item.id}
                   className={`flex items-start gap-2 p-2.5 rounded-lg border transition-colors ${
                     item.ativo
-                      ? "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
-                      : "bg-gray-50 dark:bg-gray-900/50 border-gray-100 dark:border-gray-800 opacity-60"
+                      ? "bg-card border-border"
+                      : "bg-gray-50 dark:bg-gray-900/50 border-border opacity-60"
                   }`}
                 >
                   {editId === item.id ? (
@@ -803,7 +803,7 @@ function SecaoLog() {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <MessageSquare className="h-4 w-4 text-gray-500 shrink-0" />
+            <MessageSquare className="h-4 w-4 text-muted-foreground shrink-0" />
             Historico de Mensagens
             <Badge variant="secondary" className="ml-1 text-[10px]">
               {mensagens.length}
@@ -859,7 +859,7 @@ function SecaoLog() {
                   <span className="font-medium truncate">{msg.nome || msg.numero}</span>
                   <span className="text-[9px] text-muted-foreground shrink-0">{msg.data} {msg.hora}</span>
                 </div>
-                <p className="text-[11px] text-gray-600 dark:text-gray-400 line-clamp-2">{msg.conteudo}</p>
+                <p className="text-[11px] text-muted-foreground line-clamp-2">{msg.conteudo}</p>
               </div>
             </div>
           ))}
@@ -883,16 +883,16 @@ export function PainelZapBot() {
     <div className="space-y-6">
       {/* Header stats */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
+        <div className="bg-card rounded-lg p-3 border shadow-sm text-center">
           <div className={`w-3 h-3 rounded-full mx-auto mb-1.5 ${conectado ? "bg-primary/50 shadow-sm shadow-primary" : "bg-gray-300"}`} />
           <p className="text-base sm:text-lg font-black font-display">{conectado ? "Online" : "Offline"}</p>
           <p className="text-[9px] text-muted-foreground uppercase font-bold">Status</p>
         </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
+        <div className="bg-card rounded-lg p-3 border shadow-sm text-center">
           <p className="text-base sm:text-lg font-black text-primary font-display">{regrasAtivas}</p>
           <p className="text-[9px] text-muted-foreground uppercase font-bold">Regras Ativas</p>
         </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border shadow-sm text-center">
+        <div className="bg-card rounded-lg p-3 border shadow-sm text-center">
           <p className="text-base sm:text-lg font-black text-amber-600 font-display">{respostas.length}</p>
           <p className="text-[9px] text-muted-foreground uppercase font-bold">Respostas</p>
         </div>

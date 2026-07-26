@@ -140,7 +140,7 @@ function DialogTrocarSenha({
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base">
-            <KeyRound className="h-5 w-5 text-gray-600 shrink-0" />
+            <KeyRound className="h-5 w-5 text-muted-foreground shrink-0" />
             Alterar Senha
           </DialogTitle>
         </DialogHeader>
@@ -336,24 +336,24 @@ function TelaPrimeiroAcesso({
           {etapa === 0 && (
             <div className="space-y-5">
               <div className="hidden lg:block space-y-1">
-                <h2 className="text-2xl font-bold text-gray-900">Seus dados</h2>
-                <p className="text-sm text-gray-500">Informe seus dados de gestor</p>
+                <h2 className="text-2xl font-bold text-foreground">Seus dados</h2>
+                <p className="text-sm text-muted-foreground">Informe seus dados de gestor</p>
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Nome completo</Label>
+                <Label className="text-sm font-medium text-muted-foreground">Nome completo</Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
                     placeholder="Seu nome"
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
-                    className="pl-10 h-12 text-sm rounded-xl border-gray-200"
+                    className="pl-10 h-12 text-sm rounded-xl border-border"
                     autoFocus
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">E-mail</Label>
+                <Label className="text-sm font-medium text-muted-foreground">E-mail</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
@@ -361,19 +361,19 @@ function TelaPrimeiroAcesso({
                     placeholder="gestor@empresa.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 h-12 text-sm rounded-xl border-gray-200"
+                    className="pl-10 h-12 text-sm rounded-xl border-border"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">WhatsApp</Label>
+                <Label className="text-sm font-medium text-muted-foreground">WhatsApp</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
                     placeholder="11999999999"
                     value={telefone}
                     onChange={(e) => setTelefone(e.target.value.replace(/\D/g, ""))}
-                    className="pl-10 h-12 text-sm rounded-xl border-gray-200"
+                    className="pl-10 h-12 text-sm rounded-xl border-border"
                   />
                 </div>
                 <p className="text-[11px] text-gray-400">Apenas numeros, com DDD</p>
@@ -393,25 +393,25 @@ function TelaPrimeiroAcesso({
           {etapa === 1 && (
             <div className="space-y-5">
               <div className="hidden lg:block space-y-1">
-                <h2 className="text-2xl font-bold text-gray-900">Credenciais de acesso</h2>
-                <p className="text-sm text-gray-500">Defina usuario e senha para o painel</p>
+                <h2 className="text-2xl font-bold text-foreground">Credenciais de acesso</h2>
+                <p className="text-sm text-muted-foreground">Defina usuario e senha para o painel</p>
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Usuario de acesso</Label>
+                <Label className="text-sm font-medium text-muted-foreground">Usuario de acesso</Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
                     placeholder="admin"
                     value={usuario}
                     onChange={(e) => setUsuario(e.target.value.trim().toLowerCase())}
-                    className="pl-10 h-12 text-sm rounded-xl border-gray-200"
+                    className="pl-10 h-12 text-sm rounded-xl border-border"
                     autoFocus
                   />
                 </div>
                 <p className="text-[11px] text-gray-400">Minimo 3 caracteres. Sera usado para login.</p>
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Senha</Label>
+                <Label className="text-sm font-medium text-muted-foreground">Senha</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
@@ -419,7 +419,7 @@ function TelaPrimeiroAcesso({
                     placeholder="Minimo 6 caracteres"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
-                    className="pl-10 pr-10 h-12 text-sm rounded-xl border-gray-200"
+                    className="pl-10 pr-10 h-12 text-sm rounded-xl border-border"
                   />
                   <button
                     type="button"
@@ -431,7 +431,7 @@ function TelaPrimeiroAcesso({
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Confirmar senha</Label>
+                <Label className="text-sm font-medium text-muted-foreground">Confirmar senha</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
@@ -439,7 +439,7 @@ function TelaPrimeiroAcesso({
                     placeholder="Repita a senha"
                     value={confirmarSenha}
                     onChange={(e) => setConfirmarSenha(e.target.value)}
-                    className={`pl-10 h-12 text-sm rounded-xl border-gray-200 ${
+                    className={`pl-10 h-12 text-sm rounded-xl border-border ${
                       confirmarSenha && senha !== confirmarSenha ? "border-red-300 focus-visible:ring-red-400" : ""
                     }`}
                   />
@@ -470,8 +470,8 @@ function TelaPrimeiroAcesso({
           {etapa === 2 && (
             <div className="space-y-5">
               <div className="hidden lg:block space-y-1">
-                <h2 className="text-2xl font-bold text-gray-900">Seguranca</h2>
-                <p className="text-sm text-gray-500">Configure a recuperacao de senha</p>
+                <h2 className="text-2xl font-bold text-foreground">Seguranca</h2>
+                <p className="text-sm text-muted-foreground">Configure a recuperacao de senha</p>
               </div>
               <div className="bg-info/10 border border-info/30 rounded-xl p-4 space-y-2">
                 <div className="flex items-start gap-2">
@@ -485,7 +485,7 @@ function TelaPrimeiroAcesso({
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">E-mail de recuperacao</Label>
+                <Label className="text-sm font-medium text-muted-foreground">E-mail de recuperacao</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
@@ -493,7 +493,7 @@ function TelaPrimeiroAcesso({
                     placeholder="recuperacao@seuemail.com"
                     value={emailRecuperacao}
                     onChange={(e) => setEmailRecuperacao(e.target.value)}
-                    className="pl-10 h-12 text-sm rounded-xl border-gray-200"
+                    className="pl-10 h-12 text-sm rounded-xl border-border"
                     autoFocus
                   />
                 </div>
@@ -1230,7 +1230,7 @@ function FormularioSistema({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <KeyRound className="h-4 w-4 text-primary shrink-0" />
-                <Label className="text-xs font-medium text-primary dark:text-white/80">Senha de Acesso do Cliente</Label>
+                <Label className="text-xs font-medium text-primary dark:text-foreground/80">Senha de Acesso do Cliente</Label>
               </div>
               <button
                 type="button"
@@ -1243,7 +1243,7 @@ function FormularioSistema({
             {mostrarSenhaForm && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-medium text-gray-600">Senha *</Label>
+                  <Label className="text-[10px] font-medium text-muted-foreground">Senha *</Label>
                   <div className="relative">
                     <Input
                       type={mostrarSenhaVisivel ? "text" : "password"}
@@ -1262,7 +1262,7 @@ function FormularioSistema({
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-medium text-gray-600">Confirmar Senha *</Label>
+                  <Label className="text-[10px] font-medium text-muted-foreground">Confirmar Senha *</Label>
                   <Input
                     type="password"
                     value={confirmarSenhaAcesso}
@@ -1272,7 +1272,7 @@ function FormularioSistema({
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <p className="text-[10px] text-gray-500 leading-relaxed">
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">
                     Defina uma senha generica para o cliente. Ele podera altera-la apos o primeiro acesso.
                     Sem senha, o cliente precisara se cadastrar pelo link.
                   </p>
@@ -1297,49 +1297,49 @@ function FormularioSistema({
             <Label className="text-xs font-semibold text-purple-800 dark:text-purple-300 uppercase tracking-wider">Recursos Premium</Label>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between bg-card rounded-lg p-3 border border-border">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/30 flex items-center justify-center">
                   <Bot className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">ZapBot</p>
+                  <p className="text-xs font-semibold text-foreground">ZapBot</p>
                   <p className="text-[10px] text-gray-400">Chatbot automatico</p>
                 </div>
               </div>
               <Switch checked={zapbotAtivo} onCheckedChange={setZapbotAtivo} />
             </div>
-            <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between bg-card rounded-lg p-3 border border-border">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-info/15 dark:bg-info/25 flex items-center justify-center">
                   <Send className="h-4 w-4 text-info dark:text-info/80 shrink-0" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Disparo em Massa</p>
+                  <p className="text-xs font-semibold text-foreground">Disparo em Massa</p>
                   <p className="text-[10px] text-gray-400">Envio em lote</p>
                 </div>
               </div>
               <Switch checked={disparoAtivo} onCheckedChange={setDisparoAtivo} />
             </div>
-            <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between bg-card rounded-lg p-3 border border-border">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
                   <TrendingUp className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Funil de Leads</p>
+                  <p className="text-xs font-semibold text-foreground">Funil de Leads</p>
                   <p className="text-[10px] text-gray-400">Pipeline CRM</p>
                 </div>
               </div>
               <Switch checked={funilAtivo} onCheckedChange={setFunilAtivo} />
             </div>
-            <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between bg-card rounded-lg p-3 border border-border">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center">
                   <GitBranch className="h-4 w-4 text-violet-600 dark:text-violet-400 shrink-0" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Fluxos de Automacao</p>
+                  <p className="text-xs font-semibold text-foreground">Fluxos de Automacao</p>
                   <p className="text-[10px] text-gray-400">Regras SE/ENTAO</p>
                 </div>
               </div>
@@ -1510,30 +1510,30 @@ function SecaoRecuperacoes() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+        <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
           <KeyRound className="h-5 w-5 text-amber-500 shrink-0" />
           Recuperacao de Acesso
         </h2>
-        <p className="text-sm text-gray-500 mt-0.5">
+        <p className="text-sm text-muted-foreground mt-0.5">
           Envie dados de acesso para clientes ou atenda pedidos de recuperacao
         </p>
       </div>
 
       {/* Sub-abas */}
-      <div className="flex gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+      <div className="flex gap-2 bg-secondary rounded-lg p-1">
         <button
           onClick={() => setSubAba("enviar")}
           className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
             subAba === "enviar"
-              ? "bg-white dark:bg-gray-700 text-primary dark:text-primary/80 shadow-sm"
-              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              ? "bg-card text-primary dark:text-primary/80 shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           <MessageCircle className="h-4 w-4 shrink-0" />
           Enviar Dados de Acesso
           {sistemas.length > 0 && (
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-              subAba === "enviar" ? "bg-primary/10 text-primary" : "bg-gray-200 dark:bg-gray-600 text-gray-500"
+              subAba === "enviar" ? "bg-primary/10 text-primary" : "bg-muted dark:bg-gray-600 text-muted-foreground"
             }`}>{sistemas.length}</span>
           )}
         </button>
@@ -1541,8 +1541,8 @@ function SecaoRecuperacoes() {
           onClick={() => setSubAba("pedidos")}
           className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
             subAba === "pedidos"
-              ? "bg-white dark:bg-gray-700 text-amber-700 dark:text-amber-400 shadow-sm"
-              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              ? "bg-card text-amber-700 dark:text-amber-400 shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           <Clock className="h-4 w-4 shrink-0" />
@@ -1584,8 +1584,8 @@ function SecaoRecuperacoes() {
           {sistemas.length === 0 ? (
             <Card>
               <CardContent className="py-16 text-center">
-                <Users className="h-12 w-12 text-gray-300 mx-auto mb-3 shrink-0" />
-                <p className="text-sm text-gray-500 font-medium">Nenhum cliente cadastrado</p>
+                <Users className="h-12 w-12 text-muted-foreground/70 mx-auto mb-3 shrink-0" />
+                <p className="text-sm text-muted-foreground font-medium">Nenhum cliente cadastrado</p>
                 <p className="text-xs text-gray-400 mt-1">
                   Cadastre clientes na aba "Sistemas" para enviar dados de acesso.
                 </p>
@@ -1594,8 +1594,8 @@ function SecaoRecuperacoes() {
           ) : clientesFiltrados.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
-                <Search className="h-10 w-10 text-gray-300 mx-auto mb-3 shrink-0" />
-                <p className="text-sm text-gray-500 font-medium">Nenhum cliente encontrado</p>
+                <Search className="h-10 w-10 text-muted-foreground/70 mx-auto mb-3 shrink-0" />
+                <p className="text-sm text-muted-foreground font-medium">Nenhum cliente encontrado</p>
                 <p className="text-xs text-gray-400 mt-1">Tente buscar por outro termo.</p>
               </CardContent>
             </Card>
@@ -1628,7 +1628,7 @@ function SecaoRecuperacoes() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">{nomeExibido}</span>
+                            <span className="font-semibold text-sm text-foreground">{nomeExibido}</span>
                             <Badge variant="outline" className="text-[10px]">{empresaExibida}</Badge>
                             <Badge className={`text-[10px] ${
                               sistema.status === "ATIVO" ? "bg-primary/10 text-primary"
@@ -1637,7 +1637,7 @@ function SecaoRecuperacoes() {
                               : "bg-secondary text-muted-foreground"
                             }`}>{sistema.status}</Badge>
                           </div>
-                          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-muted-foreground">
                             <span className="flex items-center gap-1"><Mail className="h-3 w-3 shrink-0" />{emailLogin}</span>
                             {telExibido && <span className="flex items-center gap-1"><Phone className="h-3 w-3 shrink-0" />{telExibido}</span>}
                             {sistema.cidade && <span>{sistema.cidade}</span>}
@@ -1677,28 +1677,28 @@ function SecaoRecuperacoes() {
                 <div className="space-y-4">
                   <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 dark:bg-primary/30 flex items-center justify-center text-primary dark:text-white/80 font-bold text-sm">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 dark:bg-primary/30 flex items-center justify-center text-primary dark:text-foreground/80 font-bold text-sm">
                         {(clienteSelecionado.dadosRegistro?.usuario || clienteSelecionado.responsavel || "?").charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">
+                        <p className="font-semibold text-sm text-foreground">
                           {clienteSelecionado.dadosRegistro?.usuario || clienteSelecionado.responsavel}
                         </p>
-                        <p className="text-xs text-gray-500">{clienteSelecionado.dadosRegistro?.nomeEmpresa || clienteSelecionado.empresa}</p>
+                        <p className="text-xs text-muted-foreground">{clienteSelecionado.dadosRegistro?.nomeEmpresa || clienteSelecionado.empresa}</p>
                       </div>
                     </div>
                     <Separator />
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2 text-xs">
                         <Mail className="h-3.5 w-3.5 text-gray-400" />
-                        <span className="text-gray-500">E-mail de login:</span>
-                        <span className="font-medium text-gray-900 dark:text-gray-100">
+                        <span className="text-muted-foreground">E-mail de login:</span>
+                        <span className="font-medium text-foreground">
                           {clienteSelecionado.dadosRegistro?.email || clienteSelecionado.email}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
                         <ShieldCheck className="h-3.5 w-3.5 text-gray-400" />
-                        <span className="text-gray-500">Status:</span>
+                        <span className="text-muted-foreground">Status:</span>
                         <Badge className="text-[10px] bg-primary/10 text-primary">{clienteSelecionado.status}</Badge>
                       </div>
                     </div>
@@ -1711,7 +1711,7 @@ function SecaoRecuperacoes() {
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Preview da mensagem</Label>
                     <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
-                      <p className="text-xs text-primary dark:text-white/80 whitespace-pre-line leading-relaxed">
+                      <p className="text-xs text-primary dark:text-foreground/80 whitespace-pre-line leading-relaxed">
                         Ola {clienteSelecionado.dadosRegistro?.usuario || clienteSelecionado.responsavel}! Aqui e o suporte do ZapFacil Pro.
 
 Estamos enviando seus dados de acesso ao sistema da {clienteSelecionado.dadosRegistro?.nomeEmpresa || clienteSelecionado.empresa}.
@@ -1781,10 +1781,10 @@ Qualquer duvida, estou a disposicao!
                 <p className="text-[10px] text-primary uppercase tracking-wider font-medium">Enviados</p>
               </CardContent>
             </Card>
-            <Card className="bg-gray-50 border-gray-200 min-w-0">
+            <Card className="bg-gray-50 border-border min-w-0">
               <CardContent className="p-3 text-center">
-                <p className="text-xl font-bold text-gray-700">{pedidosRecuperacao.length}</p>
-                <p className="text-[10px] text-gray-500 uppercase tracking-wider font-medium">Total</p>
+                <p className="text-xl font-bold text-muted-foreground">{pedidosRecuperacao.length}</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Total</p>
               </CardContent>
             </Card>
           </div>
@@ -1792,8 +1792,8 @@ Qualquer duvida, estou a disposicao!
           {listaExibida.length === 0 ? (
             <Card>
               <CardContent className="py-16 text-center">
-                <KeyRound className="h-12 w-12 text-gray-300 mx-auto mb-3 shrink-0" />
-                <p className="text-sm text-gray-500 font-medium">Nenhum pedido de recuperacao</p>
+                <KeyRound className="h-12 w-12 text-muted-foreground/70 mx-auto mb-3 shrink-0" />
+                <p className="text-sm text-muted-foreground font-medium">Nenhum pedido de recuperacao</p>
                 <p className="text-xs text-gray-400 mt-1">
                   {mostrarResolvidos
                     ? "Todos os pedidos foram resolvidos e limpos."
@@ -1812,7 +1812,7 @@ Qualquer duvida, estou a disposicao!
                       <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                         <div className="flex-1 min-w-0 space-y-2">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-sm text-gray-900">{cliente?.nome || pedido.email}</span>
+                            <span className="font-semibold text-sm text-foreground">{cliente?.nome || pedido.email}</span>
                             {cliente?.empresa && <Badge variant="outline" className="text-[10px]">{cliente.empresa}</Badge>}
                             <Badge className={`text-[10px] ${
                               pedido.status === "PENDENTE" ? "bg-amber-100 text-amber-700"
@@ -1822,7 +1822,7 @@ Qualquer duvida, estou a disposicao!
                               {pedido.status === "PENDENTE" ? "Pendente" : pedido.status === "ENVIADO" ? "Enviado" : "Ignorado"}
                             </Badge>
                           </div>
-                          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                             <span className="flex items-center gap-1"><Mail className="h-3 w-3 shrink-0" />{pedido.email}</span>
                             {pedido.telefoneSolicitado && <span className="flex items-center gap-1"><Phone className="h-3 w-3 shrink-0" />{pedido.telefoneSolicitado}</span>}
                             <span className="flex items-center gap-1"><Clock className="h-3 w-3 shrink-0" />{formatarDataISO(pedido.dataPedido)}</span>
@@ -1840,7 +1840,7 @@ Qualquer duvida, estou a disposicao!
                             <Button size="sm" className="bg-primary hover:bg-primary/90 text-xs h-9" onClick={() => enviarCredenciaisWhatsApp(pedido)}>
                               <MessageCircle className="h-3.5 w-3.5 mr-1" />Enviar WhatsApp
                             </Button>
-                            <Button variant="ghost" size="sm" className="text-xs h-9 text-gray-500 hover:text-gray-700"
+                            <Button variant="ghost" size="sm" className="text-xs h-9 text-muted-foreground hover:text-foreground"
                               onClick={() => { resolverPedidoRecuperacao(pedido.id, "IGNORADO"); toast.info("Pedido marcado como ignorado."); }}>
                               Ignorar
                             </Button>
@@ -1907,7 +1907,7 @@ function DialogEmailRecuperacaoForm() {
       {emailRecuperacao && (
         <div className="bg-gray-50 rounded-lg px-3 py-2">
           <p className="text-[10px] text-gray-400">Atualmente configurado:</p>
-          <p className="text-xs text-gray-600 font-medium">{emailRecuperacao}</p>
+          <p className="text-xs text-muted-foreground font-medium">{emailRecuperacao}</p>
         </div>
       )}
       <div className="flex gap-2 justify-end pt-1">
@@ -2004,7 +2004,7 @@ function SecaoSistemas({
                     <Monitor className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                     <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider truncate">Total</span>
                   </div>
-                  <p className="text-xl sm:text-2xl font-black text-gray-900 font-display">{stats.total}</p>
+                  <p className="text-xl sm:text-2xl font-black text-foreground font-display">{stats.total}</p>
                 </CardContent>
               </Card>
               <Card className="border-0 shadow-sm min-w-0">
@@ -2062,11 +2062,11 @@ function SecaoSistemas({
                   placeholder="Buscar por empresa, responsavel, cidade, telefone..."
                   value={busca}
                   onChange={(e) => setBusca(e.target.value)}
-                  className="pl-10 h-9 text-sm bg-white border-gray-200"
+                  className="pl-10 h-9 text-sm bg-white border-border"
                 />
               </div>
               <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-                <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
+                <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-border">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -2079,7 +2079,7 @@ function SecaoSistemas({
                 </SelectContent>
               </Select>
               <Select value={filtroPlano} onValueChange={setFiltroPlano}>
-                <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-gray-200">
+                <SelectTrigger className="w-full sm:w-36 h-9 text-sm bg-white border-border">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -2128,7 +2128,7 @@ function SecaoSistemas({
                       <div key={s.id} className="p-3 space-y-2">
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
-                            <p className="font-semibold text-sm text-gray-900 truncate">{s.empresa}</p>
+                            <p className="font-semibold text-sm text-foreground truncate">{s.empresa}</p>
                             <p className="text-xs text-gray-400">{s.responsavel}</p>
                           </div>
                           <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
@@ -2166,7 +2166,7 @@ function SecaoSistemas({
                           )}
                         </div>
                         <div className="flex gap-1.5 pt-1">
-                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-500" onClick={() => onVerDetalhe(s)}>
+                          <Button variant="ghost" size="sm" className="h-7 text-[10px] text-muted-foreground" onClick={() => onVerDetalhe(s)}>
                             <Eye className="h-3 w-3 mr-1 shrink-0" /> Ver
                           </Button>
                           <Button variant="ghost" size="sm" className="h-7 text-[10px] text-info" onClick={() => onEditar(s)}>
@@ -2193,7 +2193,7 @@ function SecaoSistemas({
                 <div className="hidden sm:block overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-100 text-[10px] text-gray-400 uppercase tracking-wider bg-gray-50/50">
+                      <tr className="border-b border-border text-[10px] text-gray-400 uppercase tracking-wider bg-gray-50/50">
                         <th className="text-left py-3 px-4 font-semibold">Empresa</th>
                         <th className="text-left py-3 px-4 font-semibold">Responsavel</th>
                         <th className="text-left py-3 px-4 font-semibold">Contato</th>
@@ -2226,7 +2226,7 @@ function SecaoSistemas({
                         return (
                           <tr key={s.id} className="hover:bg-gray-50/80 transition-colors">
                             <td className="py-3 px-4">
-                              <p className="font-semibold text-gray-900">{s.empresa}</p>
+                              <p className="font-semibold text-foreground">{s.empresa}</p>
                               {s.cidade && <p className="text-[11px] text-gray-400">{s.cidade}</p>}
                               <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                                 <Badge className={`text-[9px] font-semibold ${pl.cor}`}>{pl.label}</Badge>
@@ -2246,9 +2246,9 @@ function SecaoSistemas({
                                 )}
                               </div>
                             </td>
-                            <td className="py-3 px-4 text-gray-600">{s.responsavel}</td>
+                            <td className="py-3 px-4 text-muted-foreground">{s.responsavel}</td>
                             <td className="py-3 px-4">
-                              {s.telefone && <p className="text-gray-600 text-xs">{s.telefone}</p>}
+                              {s.telefone && <p className="text-muted-foreground text-xs">{s.telefone}</p>}
                               {s.email && <p className="text-[11px] text-gray-400">{s.email}</p>}
                             </td>
                             <td className="py-3 px-4">
@@ -2262,7 +2262,7 @@ function SecaoSistemas({
                                 </p>
                               )}
                             </td>
-                            <td className="py-3 px-4 text-gray-600 text-xs whitespace-nowrap">
+                            <td className="py-3 px-4 text-muted-foreground text-xs whitespace-nowrap">
                               {s.tipoLicenca === "ALUGUEL" ? formatarData(s.dataVencimento) : "N/A"}
                             </td>
                             <td className="py-3 px-4 text-right font-semibold text-primary whitespace-nowrap">
@@ -2593,7 +2593,7 @@ const handleSalvarNovo = useCallback(
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 shrink-0"
+                    className="h-8 w-8 text-muted-foreground hover:bg-gray-100 dark:hover:bg-gray-800 shrink-0"
                     onClick={() => setDialogTrocarSenha(true)}
                   >
                     <KeyRound className="h-4 w-4 shrink-0" />
@@ -2778,8 +2778,8 @@ const handleSalvarNovo = useCallback(
               <div className="bg-gray-50 rounded-xl p-4 space-y-3">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-bold text-gray-900">{dialogDetalhe.empresa}</p>
-                    <p className="text-sm text-gray-500">{dialogDetalhe.responsavel}</p>
+                    <p className="font-bold text-foreground">{dialogDetalhe.empresa}</p>
+                    <p className="text-sm text-muted-foreground">{dialogDetalhe.responsavel}</p>
                   </div>
                   <div className="flex gap-1.5 flex-wrap justify-end">
                     <Badge className={`text-[10px] font-semibold ${getStatusInfo(dialogDetalhe.status).cor}`}>
@@ -2797,19 +2797,19 @@ const handleSalvarNovo = useCallback(
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <p className="text-[10px] text-gray-400 uppercase font-medium">Telefone</p>
-                    <p className="text-gray-700">{dialogDetalhe.telefone || "-"}</p>
+                    <p className="text-muted-foreground">{dialogDetalhe.telefone || "-"}</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-gray-400 uppercase font-medium">E-mail</p>
-                    <p className="text-gray-700">{dialogDetalhe.email || "-"}</p>
+                    <p className="text-muted-foreground">{dialogDetalhe.email || "-"}</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-gray-400 uppercase font-medium">Cidade</p>
-                    <p className="text-gray-700">{dialogDetalhe.cidade || "-"}</p>
+                    <p className="text-muted-foreground">{dialogDetalhe.cidade || "-"}</p>
                   </div>
                   <div>
                     <p className="text-[10px] text-gray-400 uppercase font-medium">Tipo de Licenca</p>
-                    <p className="text-gray-700">
+                    <p className="text-muted-foreground">
                       {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).label}
                       <span className="text-[10px] text-gray-400 block">
                         {getTipoLicencaInfo(dialogDetalhe.tipoLicenca).descricao}
@@ -2824,7 +2824,7 @@ const handleSalvarNovo = useCallback(
                       </div>
                       <div>
                         <p className="text-[10px] text-gray-400 uppercase font-medium">Vencimento</p>
-                        <p className={dialogDetalhe.status === "ATIVO" && diasRestantes(dialogDetalhe.dataVencimento) <= 7 ? "text-amber-600 font-bold" : "text-gray-700"}>
+                        <p className={dialogDetalhe.status === "ATIVO" && diasRestantes(dialogDetalhe.dataVencimento) <= 7 ? "text-amber-600 font-bold" : "text-muted-foreground"}>
                           {formatarData(dialogDetalhe.dataVencimento)}
                           {dialogDetalhe.status === "ATIVO" && (
                             <span className="block text-[11px]">
@@ -2845,12 +2845,12 @@ const handleSalvarNovo = useCallback(
                   )}
                   <div>
                     <p className="text-[10px] text-gray-400 uppercase font-medium">Instalacao</p>
-                    <p className="text-gray-700">{formatarData(dialogDetalhe.dataInstalacao)}</p>
+                    <p className="text-muted-foreground">{formatarData(dialogDetalhe.dataInstalacao)}</p>
                   </div>
                   {dialogDetalhe.taxaInstalacao > 0 && (
                     <div>
                       <p className="text-[10px] text-gray-400 uppercase font-medium">Taxa Instalacao</p>
-                      <p className="text-gray-700">{formatarMoeda(dialogDetalhe.taxaInstalacao)}</p>
+                      <p className="text-muted-foreground">{formatarMoeda(dialogDetalhe.taxaInstalacao)}</p>
                     </div>
                   )}
                 </div>
@@ -2872,7 +2872,7 @@ const handleSalvarNovo = useCallback(
                     <Separator />
                     <div>
                       <p className="text-[10px] text-gray-400 uppercase font-medium mb-1">Observacoes</p>
-                      <p className="text-sm text-gray-500">{dialogDetalhe.observacoes}</p>
+                      <p className="text-sm text-muted-foreground">{dialogDetalhe.observacoes}</p>
                     </div>
                   </>
                 )}
@@ -2887,27 +2887,27 @@ const handleSalvarNovo = useCallback(
                       <div className="grid grid-cols-2 gap-2 text-sm bg-primary/5 rounded-lg p-3 border border-primary/15">
                         <div>
                           <p className="text-[10px] text-gray-400">Usuario criado</p>
-                          <p className="text-gray-700 font-medium">{dialogDetalhe.dadosRegistro.usuario}</p>
+                          <p className="text-muted-foreground font-medium">{dialogDetalhe.dadosRegistro.usuario}</p>
                         </div>
                         <div>
                           <p className="text-[10px] text-gray-400">Empresa cadastrada</p>
-                          <p className="text-gray-700 font-medium">{dialogDetalhe.dadosRegistro.nomeEmpresa}</p>
+                          <p className="text-muted-foreground font-medium">{dialogDetalhe.dadosRegistro.nomeEmpresa}</p>
                         </div>
                         {dialogDetalhe.dadosRegistro.telefone && (
                           <div>
                             <p className="text-[10px] text-gray-400">Telefone</p>
-                            <p className="text-gray-700">{dialogDetalhe.dadosRegistro.telefone}</p>
+                            <p className="text-muted-foreground">{dialogDetalhe.dadosRegistro.telefone}</p>
                           </div>
                         )}
                         {dialogDetalhe.dadosRegistro.email && (
                           <div>
                             <p className="text-[10px] text-gray-400">E-mail</p>
-                            <p className="text-gray-700">{dialogDetalhe.dadosRegistro.email}</p>
+                            <p className="text-muted-foreground">{dialogDetalhe.dadosRegistro.email}</p>
                           </div>
                         )}
                         <div className="col-span-2">
                           <p className="text-[10px] text-gray-400">Registrado em</p>
-                          <p className="text-gray-700 text-xs">
+                          <p className="text-muted-foreground text-xs">
                             {new Date(dialogDetalhe.dadosRegistro.registradoEm).toLocaleString("pt-BR")}
                           </p>
                         </div>
@@ -2917,16 +2917,16 @@ const handleSalvarNovo = useCallback(
                 )}
 
                 {/* Credenciais de Acesso do Cliente */}
-                <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
-                  <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-semibold mb-3 flex items-center gap-1.5">
+                <div className="bg-gray-50 dark:bg-gray-900 border border-border rounded-xl p-4">
+                  <p className="text-[10px] text-muted-foreground uppercase font-semibold mb-3 flex items-center gap-1.5">
                     <KeyRound className="h-3.5 w-3.5" />
                     Credenciais de Acesso do Cliente
                   </p>
                   <div className="space-y-3">
                     <div>
-                      <p className="text-[10px] text-gray-500 dark:text-gray-500 mb-1">E-mail de login (usuario)</p>
-                      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
-                        <p className="text-sm font-mono font-semibold text-gray-900 dark:text-white truncate">
+                      <p className="text-[10px] text-muted-foreground dark:text-gray-500 mb-1">E-mail de login (usuario)</p>
+                      <div className="bg-card border border-border rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+                        <p className="text-sm font-mono font-semibold text-foreground truncate">
                           {dialogDetalhe.dadosRegistro?.email || dialogDetalhe.email || "-"}
                         </p>
                         <button
@@ -2936,16 +2936,16 @@ const handleSalvarNovo = useCallback(
                             navigator.clipboard.writeText(emailCopiar);
                             toast.success("E-mail copiado!");
                           }}
-                          className="shrink-0 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                          className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
                         >
                           <Copy className="h-4 w-4 shrink-0" />
                         </button>
                       </div>
                     </div>
                     <div>
-                      <p className="text-[10px] text-gray-500 dark:text-gray-500 mb-1">Senha</p>
-                      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
-                        <p className="text-sm font-mono font-semibold text-gray-900 dark:text-white">
+                      <p className="text-[10px] text-muted-foreground dark:text-gray-500 mb-1">Senha</p>
+                      <div className="bg-card border border-border rounded-lg px-3 py-2.5 flex items-center justify-between gap-2">
+                        <p className="text-sm font-mono font-semibold text-foreground">
                           {dialogDetalhe.dadosRegistro?.senha || "Senha nao definida"}
                         </p>
                         {dialogDetalhe.dadosRegistro?.senha && (
@@ -2955,16 +2955,16 @@ const handleSalvarNovo = useCallback(
                               navigator.clipboard.writeText(dialogDetalhe.dadosRegistro!.senha);
                               toast.success("Senha copiada!");
                             }}
-                            className="shrink-0 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                            className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
                           >
                             <Copy className="h-4 w-4 shrink-0" />
                           </button>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2">
-                      <span className="text-[10px] text-gray-500 dark:text-gray-400">Link de acesso:</span>
-                      <span className="text-[11px] text-gray-700 dark:text-gray-300 font-mono truncate flex-1">https://j1ewd51wcs60-d.space-z.ai/</span>
+                    <div className="flex items-center gap-2 bg-secondary border border-border rounded-lg px-3 py-2">
+                      <span className="text-[10px] text-muted-foreground">Link de acesso:</span>
+                      <span className="text-[11px] text-muted-foreground font-mono truncate flex-1">https://j1ewd51wcs60-d.space-z.ai/</span>
                     </div>
                     {dialogDetalhe.dadosRegistro?.senha ? (
                       <Button
@@ -2997,7 +2997,7 @@ const handleSalvarNovo = useCallback(
                         Envie o link de acesso via WhatsApp ou oriente o cliente a usar "Esqueceu a senha?" na tela de login.
                       </p>
                     ) : (
-                      <p className="text-[10px] text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-2.5 text-center leading-relaxed">
+                      <p className="text-[10px] text-muted-foreground bg-secondary border border-border rounded-lg p-2.5 text-center leading-relaxed">
                         Cliente cadastrado sem credenciais de acesso. Ele devera se registrar pelo link.
                       </p>
                     )}
@@ -3017,7 +3017,7 @@ const handleSalvarNovo = useCallback(
                 )}
                 <Button
                   variant="outline"
-                  className="flex-1 border-gray-200 text-gray-600 hover:bg-gray-50 text-xs"
+                  className="flex-1 border-border text-muted-foreground hover:bg-gray-50 text-xs"
                   onClick={() => {
                     setDialogDetalhe(null);
                     setDialogForm(dialogDetalhe);
@@ -3038,7 +3038,7 @@ const handleSalvarNovo = useCallback(
           <DialogHeader>
             <DialogTitle className="text-base">Confirmar Remocao</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Tem certeza que deseja remover este sistema e todas as suas cobrancas? Esta acao nao pode ser desfeita.
           </p>
           <div className="flex gap-2 justify-end pt-2">

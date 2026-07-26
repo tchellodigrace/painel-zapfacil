@@ -80,8 +80,8 @@ API Key: ${configEvolution.apiKey}`;
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Conexao WhatsApp</h2>
-        <p className="text-gray-500 text-sm mt-1">
+        <h2 className="text-2xl font-bold text-foreground">Conexao WhatsApp</h2>
+        <p className="text-muted-foreground text-sm mt-1">
           Configure a Evolution API e conecte seu WhatsApp via QR Code
         </p>
       </div>
@@ -206,7 +206,7 @@ API Key: ${configEvolution.apiKey}`;
                       ? "bg-yellow-100 text-yellow-700"
                       : statusConexao === "erro"
                         ? "bg-red-100 text-red-700"
-                        : "bg-gray-100 text-gray-600"
+                        : "bg-muted text-muted-foreground"
                 }
               >
                 {conectado ? (
@@ -235,13 +235,13 @@ API Key: ${configEvolution.apiKey}`;
                 <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <CheckCircle2 className="h-10 w-10 text-primary" />
                 </div>
-                <h3 className="font-bold text-lg text-gray-900">
+                <h3 className="font-bold text-lg text-foreground">
                   WhatsApp Conectado!
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Instancia: <strong>{configEvolution.instanceName}</strong>
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   API: <strong>{configEvolution.apiUrl}</strong>
                 </p>
                 <Button
@@ -259,7 +259,7 @@ API Key: ${configEvolution.apiKey}`;
                 <Skeleton className="h-52 w-52 rounded-xl mx-auto mb-4 shrink-0" />
                 <div className="flex items-center justify-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-muted-foreground">
                     Gerando QR Code...
                   </span>
                 </div>
@@ -274,7 +274,7 @@ API Key: ${configEvolution.apiKey}`;
                     className="w-52 h-52 mx-auto"
                   />
                 </div>
-                <p className="text-sm text-gray-600 font-medium">
+                <p className="text-sm text-muted-foreground font-medium">
                   Abra o WhatsApp no celular
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
@@ -297,10 +297,10 @@ API Key: ${configEvolution.apiKey}`;
             ) : (
               /* Disconnected state */
               <div className="text-center py-6">
-                <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
                   <QrCode className="h-10 w-10 text-gray-400 shrink-0" />
                 </div>
-                <h3 className="font-semibold text-gray-700">
+                <h3 className="font-semibold text-muted-foreground">
                   Nenhuma conexao ativa
                 </h3>
                 <p className="text-sm text-gray-400 mt-1 mb-6">
@@ -333,10 +333,10 @@ API Key: ${configEvolution.apiKey}`;
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                 <span className="text-primary font-bold text-lg">1</span>
               </div>
-              <h4 className="font-semibold text-sm text-gray-900">
+              <h4 className="font-semibold text-sm text-foreground">
                 Instale a Evolution API
               </h4>
-              <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
                 Rode a Evolution API via Docker no seu servidor (Oracle Cloud gratis).
                 Veja a aba &quot;Deploy&quot; para o guia completo.
               </p>
@@ -345,10 +345,10 @@ API Key: ${configEvolution.apiKey}`;
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                 <span className="text-primary font-bold text-lg">2</span>
               </div>
-              <h4 className="font-semibold text-sm text-gray-900">
+              <h4 className="font-semibold text-sm text-foreground">
                 Configure e conecte
               </h4>
-              <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
                 Preencha a URL da API, nome da instancia e API Key. Clique em
                 &quot;Conectar&quot; e escaneie o QR Code com seu WhatsApp.
               </p>
@@ -357,10 +357,10 @@ API Key: ${configEvolution.apiKey}`;
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                 <span className="text-primary font-bold text-lg">3</span>
               </div>
-              <h4 className="font-semibold text-sm text-gray-900">
+              <h4 className="font-semibold text-sm text-foreground">
                 Ative o chatbot
               </h4>
-              <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
                 Configure o menu de respostas automaticas na aba &quot;Chatbot&quot; e
                 ative-o. Seu WhatsApp vai responder automaticamente 24h!
               </p>

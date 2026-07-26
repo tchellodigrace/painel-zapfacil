@@ -55,7 +55,7 @@ function Passo({ num, titulo, children }: { num: number; titulo: string; childre
         {num < 6 && <div className="w-0.5 flex-1 bg-primary/15 mt-2" />}
       </div>
       <div className="flex-1 pb-6">
-        <h4 className="font-semibold text-gray-900 mb-2">{titulo}</h4>
+        <h4 className="font-semibold text-foreground mb-2">{titulo}</h4>
         {children}
       </div>
     </div>
@@ -123,8 +123,8 @@ https://SEU_DOMINIO/api/zapbot/webhook
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Guia de Deploy</h2>
-        <p className="text-gray-500 text-sm mt-1">
+        <h2 className="text-2xl font-bold text-foreground">Guia de Deploy</h2>
+        <p className="text-muted-foreground text-sm mt-1">
           Passo a passo para colocar o ZapBot Pro no ar 24h de graca
         </p>
       </div>
@@ -135,21 +135,21 @@ https://SEU_DOMINIO/api/zapbot/webhook
           <CardContent className="p-4 text-center">
             <DollarSign className="h-8 w-8 text-primary mx-auto mb-2 shrink-0" />
             <h4 className="font-bold text-sm">100% Gratuito</h4>
-            <p className="text-xs text-gray-500 mt-1">Oracle Cloud ARM com 24GB RAM, para sempre</p>
+            <p className="text-xs text-muted-foreground mt-1">Oracle Cloud ARM com 24GB RAM, para sempre</p>
           </CardContent>
         </Card>
         <Card className="border-info/30 bg-info/10 min-w-0">
           <CardContent className="p-4 text-center">
             <Clock className="h-8 w-8 text-info mx-auto mb-2 shrink-0" />
             <h4 className="font-bold text-sm">30 minutos</h4>
-            <p className="text-xs text-gray-500 mt-1">Tempo estimado de configuracao completa</p>
+            <p className="text-xs text-muted-foreground mt-1">Tempo estimado de configuracao completa</p>
           </CardContent>
         </Card>
         <Card className="border-purple-200 bg-purple-50/50 min-w-0">
           <CardContent className="p-4 text-center">
             <Shield className="h-8 w-8 text-purple-600 mx-auto mb-2 shrink-0" />
             <h4 className="font-bold text-sm">Seguro</h4>
-            <p className="text-xs text-gray-500 mt-1">Open-source, sem intermedirios, voce controla tudo</p>
+            <p className="text-xs text-muted-foreground mt-1">Open-source, sem intermedirios, voce controla tudo</p>
           </CardContent>
         </Card>
       </div>
@@ -172,7 +172,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
                 <span className="text-gray-400">→</span>
                 <Badge className="bg-amber-600 text-sm px-3 py-1">ZapBot Pro (Next.js)</Badge>
               </div>
-              <p className="text-xs text-gray-500 max-w-md">
+              <p className="text-xs text-muted-foreground max-w-md">
                 A Evolution API gerencia a conexao com o WhatsApp 24h. O ZapBot Pro processa as mensagens e envia respostas automaticas. Tudo roda na mesma VM do Oracle Cloud.
               </p>
             </div>
@@ -194,7 +194,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
         <CardContent>
           <Passo num={1} titulo="Criar conta no Oracle Cloud">
             <div className="space-y-3">
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Acesse o site da Oracle Cloud e crie sua conta gratuita. Voce precisara de um cartao de credito para validacao (nao sera cobrado). Escolha a regiao mais proxima do Brasil (ex: Sao Paulo).
               </p>
               <Button variant="outline" size="sm" asChild>
@@ -216,16 +216,16 @@ https://SEU_DOMINIO/api/zapbot/webhook
 
           <Passo num={2} titulo="Criar a VM (Compute Instance)">
             <div className="space-y-3">
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 No painel do Oracle Cloud, va em Compute &gt; Instances &gt; Create Instance. Escolha:
               </p>
-              <ul className="text-sm text-gray-600 space-y-1.5 list-disc pl-5">
+              <ul className="text-sm text-muted-foreground space-y-1.5 list-disc pl-5">
                 <li><strong>Image:</strong> Ubuntu 22.04 (Canonical)</li>
                 <li><strong>Shape:</strong> Ampere A1 (ARM) - 4 OCPUs, 24 GB RAM</li>
                 <li><strong>Boot volume:</strong> 50 GB</li>
                 <li><strong>SSH Key:</strong> Gere uma nova ou use uma existente</li>
               </ul>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 Anote o IP publico da VM (algo como 152.xx.xx.xx).
               </p>
             </div>
@@ -233,7 +233,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
 
           <Passo num={3} titulo="Acessar a VM e instalar Docker">
             <div className="space-y-3">
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Acesse a VM via SSH e execute os comandos abaixo. Este script instala o Docker e sobe a Evolution API automaticamente:
               </p>
               <CopyBlock
@@ -245,29 +245,29 @@ https://SEU_DOMINIO/api/zapbot/webhook
 
           <Passo num={4} titulo="Criar o docker-compose.yml">
             <div className="space-y-3">
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Crie o arquivo <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">docker-compose.yml</code> na pasta ~/zapbot-pro com o conteudo abaixo. Troque <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">sua_chave_secreta_aqui</code> por uma chave segura:
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Crie o arquivo <code className="bg-muted px-1.5 py-0.5 rounded text-xs">docker-compose.yml</code> na pasta ~/zapbot-pro com o conteudo abaixo. Troque <code className="bg-muted px-1.5 py-0.5 rounded text-xs">sua_chave_secreta_aqui</code> por uma chave segura:
               </p>
               <CopyBlock
                 label="docker-compose.yml"
                 code={dockerCompose}
               />
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Depois de salvar, execute:
               </p>
               <CopyBlock
                 label="Comando"
                 code="docker compose up -d"
               />
-              <p className="text-xs text-gray-500">
-                Acesse <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">http://SEU_IP:8080</code> no navegador - a Evolution API deve aparecer!
+              <p className="text-xs text-muted-foreground">
+                Acesse <code className="bg-muted px-1.5 py-0.5 rounded text-xs">http://SEU_IP:8080</code> no navegador - a Evolution API deve aparecer!
               </p>
             </div>
           </Passo>
 
           <Passo num={5} titulo="Criar instancia na Evolution API">
             <div className="space-y-3">
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Com a Evolution API rodando, crie a instancia WhatsApp:
               </p>
               <CopyBlock
@@ -281,7 +281,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
     "integration": "WHATSAPP-BAILEYS"
   }'`}
               />
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Isso vai retornar o QR Code para voce escanear com o WhatsApp do celular.
               </p>
             </div>
@@ -289,15 +289,15 @@ https://SEU_DOMINIO/api/zapbot/webhook
 
           <Passo num={6} titulo="Configurar o ZapBot Pro">
             <div className="space-y-3">
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 No painel do ZapBot Pro (aba Conexao), preencha:
               </p>
-              <ul className="text-sm text-gray-600 space-y-1.5 list-disc pl-5">
+              <ul className="text-sm text-muted-foreground space-y-1.5 list-disc pl-5">
                 <li><strong>URL da API:</strong> http://SEU_IP:8080</li>
                 <li><strong>Nome da instancia:</strong> zapbot-pro</li>
                 <li><strong>API Key:</strong> sua_chave_secreta_aqui</li>
               </ul>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Depois configure o chatbot na aba &quot;Chatbot&quot; e ative-o!
               </p>
               <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
@@ -325,7 +325,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-gray-600 leading-relaxed">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Os webhooks sao necessarios para que a Evolution API avise o ZapBot Pro quando uma mensagem chegar. Assim o bot pode processar e responder automaticamente:
           </p>
           <CopyBlock

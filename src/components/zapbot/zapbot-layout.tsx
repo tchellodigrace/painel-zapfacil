@@ -192,7 +192,7 @@ export function ZapBotLayout({ paginaAtiva, setPaginaAtiva, children }: ZapBotLa
                 conectado ? "bg-success" : "bg-gray-400"
               )}
             />
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-muted-foreground">
               {conectado ? "Online" : "Offline"}
             </span>
           </div>

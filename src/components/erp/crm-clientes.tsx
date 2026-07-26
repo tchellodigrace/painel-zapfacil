@@ -436,20 +436,20 @@ function FichaCliente({
                 <div key={v.id} className="p-2.5 flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <p className="text-[11px] text-gray-400 font-mono">{v.data}</p>
-                    <p className="text-xs text-gray-700 truncate">{v.itens.map((i) => i.servicoNome).join(", ")}</p>
+                    <p className="text-xs text-muted-foreground truncate">{v.itens.map((i) => i.servicoNome).join(", ")}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <Badge
                       variant="secondary"
                       className={`text-[9px] ${
                         v.status === "PAGO"
-                          ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60"
+                          ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-foreground/60"
                           : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                       }`}
                     >
                       {v.status}
                     </Badge>
-                    <p className="text-xs font-bold text-gray-900">{formatarMoeda(v.total)}</p>
+                    <p className="text-xs font-bold text-foreground">{formatarMoeda(v.total)}</p>
                   </div>
                 </div>
               ))}
@@ -486,7 +486,7 @@ function FichaCliente({
                           variant="secondary"
                           className={`text-[9px] ${
                             v.status === "PAGO"
-                              ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60"
+                              ? "bg-primary/10 text-primary dark:bg-primary/30 dark:text-foreground/60"
                               : "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                           }`}
                         >
