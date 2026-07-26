@@ -1,20 +1,17 @@
 
 ---
-Task ID: 6
+Task ID: 7
 Agent: Super Z (main)
-Task: Remover aba Stories IA do painel do cliente
+Task: Remover arquivos orfaos do Stories IA
 
 Work Log:
-- Identificou 4 referências a Stories IA em src/app/page.tsx (import, ícone Sparkles, TabsTrigger, TabsContent)
-- Removeu import do componente GeradorStories
-- Removeu import do ícone Sparkles (não usado em mais nenhum lugar)
-- Removeu TabsTrigger "Stories IA" (e variante mobile "IA") do TabsList
-- Removeu TabsContent "stories" que renderizava <GeradorStories />
-- Verificação TypeScript: zero erros em src/
-- Build Next.js: compilado com sucesso em 30.1s
-- Commit + push para origin/main → deploy automático Vercel
+- Verificou referencias restantes: apenas o proprio gerador-stories.tsx continha a string
+- Removeu src/components/erp/gerador-stories.tsx (componente)
+- Removeu src/app/api/gerar-story/route.ts (rota API)
+- Build Next.js com sucesso (10/10 paginas estaticas) — rota /api/gerar-story sumiu da lista
+- Commit + push para origin/main → deploy Vercel automatico
 
 Stage Summary:
-- Stories IA totalmente removido do painel do cliente (/)
-- Arquivo modificado: src/app/page.tsx (1 arquivo, 15 linhas removidas)
-- Deploy enviado para GitHub → my-project-rho-sooty.vercel.app
+- 2 arquivos deletados, 726 linhas removidas
+- Build limpo, sem erros
+- Painel do cliente agora sem qualquer rastro de Stories IA
