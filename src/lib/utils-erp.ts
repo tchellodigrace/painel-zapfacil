@@ -132,7 +132,7 @@ export function filtrarVendasPorPeriodo<T extends { timestamp: number }>(
 // WhatsApp com Logomarca (arquivo de imagem)
 // ============================================
 
-const LOGO_URL = "https://j1ewd51wcs60-d.space-z.ai/logo-empresa.png";
+const LOGO_URL = "/logo-empresa.png";
 
 /**
  * Gera imagem PNG branca com a logomarca no topo e mensagem de texto formatada.

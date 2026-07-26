@@ -259,7 +259,7 @@ function TelaPrimeiroAcesso({
           <div className="absolute bottom-0 -left-20 w-[24rem] h-[24rem] rounded-full bg-primary-foreground/10 blur-3xl" />
         </div>
         <div className="relative z-10">
-          <img src="/logo-admin.png" alt="Logo" className="h-12 w-auto object-contain brightness-0 invert" />
+          <img src="/logo-admin.png" alt="Logo" width={400} height={100} className="h-[60px] w-[240px] object-contain drop-shadow-lg" />
         </div>
         <div className="relative z-10 space-y-5 max-w-md">
           <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5">
@@ -305,7 +305,7 @@ function TelaPrimeiroAcesso({
         <div className="w-full max-w-md space-y-7">
           {/* Header mobile */}
           <div className="lg:hidden text-center space-y-4">
-            <img src="/logo-admin.png" alt="Logo" className="h-16 w-auto mx-auto object-contain" />
+            <img src="/logo-admin.png" alt="Logo" width={400} height={100} className="h-[60px] w-[240px] mx-auto object-contain" />
             <div>
               <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-3 py-1 mb-2">
                 <span className="text-[10px] font-semibold text-primary uppercase tracking-wider">Primeiro Acesso</span>
@@ -678,7 +678,7 @@ function TelaLoginAdmin({
             <div className="absolute bottom-0 -left-20 w-[24rem] h-[24rem] rounded-full bg-primary-foreground/10 blur-3xl" />
           </div>
           <div className="relative z-10">
-            <img src="/logo-admin.png" alt="Logo" className="h-12 w-auto object-contain brightness-0 invert" />
+            <img src="/logo-admin.png" alt="Logo" width={400} height={100} className="h-[60px] w-[240px] object-contain drop-shadow-lg" />
           </div>
           <div className="relative z-10 space-y-5 max-w-md">
             <h1 className="text-4xl font-bold text-white leading-tight tracking-tight">
@@ -712,7 +712,7 @@ function TelaLoginAdmin({
         <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
           <div className="w-full max-w-sm space-y-7">
             <div className="lg:hidden text-center">
-              <img src="/logo-admin.png" alt="Logo" className="h-16 w-auto mx-auto object-contain mb-6" />
+              <img src="/logo-admin.png" alt="Logo" width={400} height={100} className="h-[60px] w-[240px] mx-auto object-contain mb-6" />
             </div>
 
             <div className="space-y-1.5">
@@ -2538,7 +2538,9 @@ const handleSalvarNovo = useCallback(
             <img
               src="/logo-admin.png"
               alt="Logo Admin"
-              className="h-11 w-auto object-contain"
+              width={400}
+              height={100}
+              className="h-[50px] w-[200px] sm:h-[60px] sm:w-[240px] md:h-[70px] md:w-[280px] lg:h-[80px] lg:w-[320px] xl:h-[100px] xl:w-[400px] object-contain"
             />
           </div>
           <div className="flex items-center gap-2">

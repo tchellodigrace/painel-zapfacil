@@ -245,7 +245,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
   if (temCredenciais === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <img src="/logo-empresa.png" alt="" className="h-24 w-auto object-contain animate-pulse opacity-40" />
+        <img src="/logo-empresa.png" alt="" width={400} height={100} className="h-[80px] w-[320px] object-contain animate-pulse opacity-60" />
       </div>
     );
   }
@@ -263,12 +263,13 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
             <div className="absolute bottom-0 -left-20 w-[24rem] h-[24rem] rounded-full bg-primary-foreground/10 blur-3xl" />
           </div>
 
-          {/* Logo */}
           <div className="relative z-10">
             <img
               src="/logo-empresa.png"
               alt="Logo"
-              className="h-12 w-auto object-contain brightness-0 invert"
+              width={400}
+              height={100}
+              className="h-[60px] w-[240px] object-contain drop-shadow-lg"
             />
           </div>
 
@@ -308,12 +309,13 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
         {/* Painel direito - formulário de login */}
         <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
           <div className="w-full max-w-sm space-y-7">
-            {/* Logo mobile */}
             <div className="lg:hidden text-center">
               <img
                 src="/logo-empresa.png"
                 alt="Logo"
-                className="h-16 w-auto mx-auto object-contain mb-6"
+                width={400}
+                height={100}
+                className="h-[60px] w-[240px] mx-auto object-contain mb-6"
               />
             </div>
 
@@ -513,7 +515,9 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
           <img
             src="/logo-empresa.png"
             alt="Logo"
-            className="h-12 w-auto object-contain brightness-0 invert"
+            width={400}
+            height={100}
+            className="h-[60px] w-[240px] object-contain drop-shadow-lg"
           />
         </div>
 
@@ -555,7 +559,9 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
             <img
               src="/logo-empresa.png"
               alt="Logo"
-              className="h-16 w-auto mx-auto object-contain mb-4"
+              width={400}
+              height={100}
+              className="h-[60px] w-[240px] mx-auto object-contain mb-4"
             />
           </div>
 

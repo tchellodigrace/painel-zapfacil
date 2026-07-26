@@ -194,7 +194,9 @@ export default function ZapFacilPage() {
             <img
               src="/logo-empresa.png"
               alt="Logo"
-              className="h-9 sm:h-11 w-auto object-contain"
+              width={400}
+              height={100}
+              className="h-9 w-[144px] sm:h-11 sm:w-[176px] md:h-12 md:w-[192px] object-contain"
             />
             {nomeLogin && (
               <div className="hidden sm:flex flex-col">
