@@ -142,55 +142,55 @@ export function DashboardGrafico() {
     <div className="space-y-4">
       {/* Cards resumo rápido */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="p-1.5 rounded-md bg-primary/10 dark:bg-primary/25">
-              <DollarSign className="h-4 w-4 text-primary dark:text-primary/80" />
+        <Card className="p-3.5 gap-2 min-w-0">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-primary/10 dark:bg-primary/25 shrink-0">
+              <DollarSign className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
             </div>
           </div>
-          <p className="text-base sm:text-lg font-black font-display whitespace-nowrap">{formatarMoeda(receitaPorDia.reduce((s, d) => s + d.total, 0))}</p>
+          <p className="text-base sm:text-lg font-black font-display whitespace-nowrap overflow-hidden text-ellipsis">{formatarMoeda(receitaPorDia.reduce((s, d) => s + d.total, 0))}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Receita (7 dias)</p>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-950">
-              <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        <Card className="p-3.5 gap-2 min-w-0">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-950 shrink-0">
+              <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
             </div>
           </div>
-          <p className="text-base sm:text-lg font-black font-display whitespace-nowrap">{formatarMoeda(ticketMedio)}</p>
+          <p className="text-base sm:text-lg font-black font-display whitespace-nowrap overflow-hidden text-ellipsis">{formatarMoeda(ticketMedio)}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Ticket Medio</p>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="p-1.5 rounded-md bg-amber-100 dark:bg-amber-950">
-              <Trophy className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+        <Card className="p-3.5 gap-2 min-w-0">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-amber-100 dark:bg-amber-950 shrink-0">
+              <Trophy className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
             </div>
           </div>
           <p className="text-base sm:text-lg font-black truncate font-display">{topServicos[0]?.nome || "-"}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Servico Top</p>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="p-1.5 rounded-md bg-purple-100 dark:bg-purple-950">
-              <Users className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+        <Card className="p-3.5 gap-2 min-w-0">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-purple-100 dark:bg-purple-950 shrink-0">
+              <Users className="h-4 w-4 text-purple-600 dark:text-purple-400 shrink-0" />
             </div>
           </div>
           <p className="text-base sm:text-lg font-black truncate font-display">{topClientes[0]?.nome || "-"}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Cliente Top</p>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <div className={`p-1.5 rounded-md ${lucroMes.lucro >= 0 ? "bg-primary/10 dark:bg-primary/25" : "bg-red-100 dark:bg-red-950"}`}>
+        <Card className="p-3.5 gap-2 min-w-0">
+          <div className="flex items-center gap-2">
+            <div className={`p-1.5 rounded-md shrink-0 ${lucroMes.lucro >= 0 ? "bg-primary/10 dark:bg-primary/25" : "bg-red-100 dark:bg-red-950"}`}>
               <Receipt className={`h-4 w-4 ${lucroMes.lucro >= 0 ? "text-primary dark:text-primary/80" : "text-red-600 dark:text-red-400"}`} />
             </div>
           </div>
-          <p className={`text-base sm:text-lg font-black font-display whitespace-nowrap ${lucroMes.lucro >= 0 ? "text-primary" : "text-red-600"}`}>{formatarMoeda(lucroMes.lucro)}</p>
+          <p className={`text-base sm:text-lg font-black font-display whitespace-nowrap overflow-hidden text-ellipsis ${lucroMes.lucro >= 0 ? "text-primary" : "text-red-600"}`}>{formatarMoeda(lucroMes.lucro)}</p>
           <p className="text-[10px] text-muted-foreground font-medium">Lucro Liq. (Mes)</p>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-950">
-              <CalendarDays className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        <Card className="p-3.5 gap-2 min-w-0">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-950 shrink-0">
+              <CalendarDays className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
             </div>
           </div>
           <p className="text-base sm:text-lg font-black font-display">{agendamentosHoje.length}</p>
@@ -203,7 +203,7 @@ export function DashboardGrafico() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-primary" />
+              <TrendingUp className="h-4 w-4 text-primary shrink-0" />
               Receita dos Últimos 7 Dias
             </CardTitle>
           </CardHeader>
@@ -242,7 +242,7 @@ export function DashboardGrafico() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-primary" />
+              <DollarSign className="h-4 w-4 text-primary shrink-0" />
               Distribuição por Pagamento
             </CardTitle>
           </CardHeader>
@@ -328,7 +328,7 @@ export function DashboardGrafico() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-amber-500" />
+              <Trophy className="h-4 w-4 text-amber-500 shrink-0" />
               Top 5 Serviços
             </CardTitle>
           </CardHeader>
@@ -379,7 +379,7 @@ export function DashboardGrafico() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <Users className="h-4 w-4 text-purple-500" />
+              <Users className="h-4 w-4 text-purple-500 shrink-0" />
               Top 5 Clientes
             </CardTitle>
           </CardHeader>

@@ -75,7 +75,7 @@ export function ZapBotDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-primary/20">
+        <Card className="border-primary/20 min-w-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -83,13 +83,13 @@ export function ZapBotDashboard() {
                 <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{totalEnviadas}</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Send className="h-5 w-5 text-primary" />
+                <Send className="h-5 w-5 text-primary shrink-0" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-blue-200">
+        <Card className="border-blue-200 min-w-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -97,13 +97,13 @@ export function ZapBotDashboard() {
                 <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{totalRecebidas}</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                <MessageSquare className="h-5 w-5 text-blue-600" />
+                <MessageSquare className="h-5 w-5 text-blue-600 shrink-0" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-amber-200">
+        <Card className="border-amber-200 min-w-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -111,13 +111,13 @@ export function ZapBotDashboard() {
                 <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{totalAutomaticas}</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                <Bot className="h-5 w-5 text-amber-600" />
+                <Bot className="h-5 w-5 text-amber-600 shrink-0" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-purple-200">
+        <Card className="border-purple-200 min-w-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -125,7 +125,7 @@ export function ZapBotDashboard() {
                 <p className="text-xl sm:text-2xl font-bold text-gray-900 font-display">{taxaResposta}%</p>
               </div>
               <div className="h-10 w-10 rounded-xl bg-purple-100 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-purple-600" />
+                <TrendingUp className="h-5 w-5 text-purple-600 shrink-0" />
               </div>
             </div>
           </CardContent>
@@ -137,7 +137,7 @@ export function ZapBotDashboard() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Zap className="h-4 w-4 text-primary" />
+              <Zap className="h-4 w-4 text-primary shrink-0" />
               Status da Conexao
             </CardTitle>
           </CardHeader>
@@ -187,7 +187,7 @@ export function ZapBotDashboard() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Bot className="h-4 w-4 text-primary" />
+              <Bot className="h-4 w-4 text-primary shrink-0" />
               Menu do Chatbot
             </CardTitle>
           </CardHeader>
@@ -231,7 +231,7 @@ export function ZapBotDashboard() {
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
-              <Clock className="h-4 w-4 text-primary" />
+              <Clock className="h-4 w-4 text-primary shrink-0" />
               Mensagens Recentes
             </CardTitle>
             {mensagensRecentes.length > 0 && (
@@ -242,7 +242,7 @@ export function ZapBotDashboard() {
         <CardContent>
           {mensagensRecentes.length === 0 ? (
             <div className="text-center py-8">
-              <MessageSquare className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+              <MessageSquare className="h-10 w-10 text-gray-300 mx-auto mb-3 shrink-0" />
               <p className="text-sm text-gray-400">
                 Nenhuma mensagem registrada ainda.
               </p>
@@ -312,11 +312,11 @@ export function ZapBotDashboard() {
 
       {/* Quick start (when not connected) */}
       {!conectado && (
-        <Card className="border-primary/30 bg-primary/5">
+        <Card className="border-primary/30 bg-primary/5 min-w-0">
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
               <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center shrink-0">
-                <Zap className="h-7 w-7 text-white" />
+                <Zap className="h-7 w-7 text-white shrink-0" />
               </div>
               <div className="flex-1">
                 <h3 className="font-bold text-gray-900">

@@ -521,7 +521,7 @@ export function PainelCobranças() {
     <div className="space-y-6">
       {/* Cards de estatísticas */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-        <Card className="border-0 shadow-sm">
+        <Card className="border-0 shadow-sm min-w-0">
           <CardContent className="p-3.5">
             <div className="flex items-center gap-1.5 mb-1">
               <DollarSign className="w-3.5 h-3.5 text-primary" />
@@ -534,7 +534,7 @@ export function PainelCobranças() {
             </p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-sm">
+        <Card className="border-0 shadow-sm min-w-0">
           <CardContent className="p-3.5">
             <div className="flex items-center gap-1.5 mb-1">
               <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
@@ -547,7 +547,7 @@ export function PainelCobranças() {
             </p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-sm">
+        <Card className="border-0 shadow-sm min-w-0">
           <CardContent className="p-3.5">
             <div className="flex items-center gap-1.5 mb-1">
               <Clock className="w-3.5 h-3.5 text-amber-500" />
@@ -561,7 +561,7 @@ export function PainelCobranças() {
             </p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-sm">
+        <Card className="border-0 shadow-sm min-w-0">
           <CardContent className="p-3.5">
             <div className="flex items-center gap-1.5 mb-1">
               <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
@@ -575,7 +575,7 @@ export function PainelCobranças() {
             </p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-sm col-span-2 lg:col-span-1">
+        <Card className="border-0 shadow-sm col-span-2 lg:col-span-1 min-w-0">
           <CardContent className="p-3.5">
             <div className="flex items-center gap-1.5 mb-1">
               <Receipt className="w-3.5 h-3.5 text-gray-400" />
@@ -594,7 +594,7 @@ export function PainelCobranças() {
       {/* Barra de ações */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
           <Input
             placeholder="Buscar por sistema, descricao..."
             value={busca}
@@ -645,13 +645,13 @@ export function PainelCobranças() {
           className="h-9 bg-primary hover:bg-primary/90 text-sm shrink-0"
           onClick={() => setDialogNova(true)}
         >
-          <Plus className="h-4 w-4 mr-1.5" />
+          <Plus className="h-4 w-4 mr-1.5 shrink-0" />
           Nova Cobranca
         </Button>
       </div>
 
       {/* Tabela de cobranças */}
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-sm min-w-0">
         <CardContent className="p-0">
           {/* Mobile */}
           <div className="sm:hidden divide-y divide-gray-100">
@@ -720,7 +720,7 @@ export function PainelCobranças() {
                           className="h-7 text-[10px] text-green-600"
                           onClick={() => enviarLembreteWhatsApp(c)}
                         >
-                          <Send className="h-3 w-3" />
+                          <Send className="h-3 w-3 shrink-0" />
                         </Button>
                       )}
                       <Button
@@ -833,7 +833,7 @@ export function PainelCobranças() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-7 w-7 text-primary hover:text-primary"
+                                    className="h-7 w-7 text-primary hover:text-primary shrink-0"
                                     onClick={() => setDialogPagamento(c)}
                                   >
                                     <CheckCircle2 className="h-3.5 w-3.5" />
@@ -862,7 +862,7 @@ export function PainelCobranças() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-7 w-7 text-green-500 hover:text-green-700"
+                                    className="h-7 w-7 text-green-500 hover:text-green-700 shrink-0"
                                     onClick={() => enviarLembreteWhatsApp(c)}
                                   >
                                     <Send className="h-3.5 w-3.5" />
@@ -879,7 +879,7 @@ export function PainelCobranças() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-7 w-7 text-amber-500 hover:text-amber-700"
+                                    className="h-7 w-7 text-amber-500 hover:text-amber-700 shrink-0"
                                     onClick={() => setDialogEditCobranca(c)}
                                   >
                                     <FileText className="h-3.5 w-3.5" />
@@ -895,7 +895,7 @@ export function PainelCobranças() {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-7 w-7 text-red-400 hover:text-red-600"
+                                  className="h-7 w-7 text-red-400 hover:text-red-600 shrink-0"
                                   onClick={() => setConfirmaRemoverCob(c.id)}
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
@@ -925,7 +925,7 @@ export function PainelCobranças() {
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Plus className="h-5 w-5 text-primary" />
+              <Plus className="h-5 w-5 text-primary shrink-0" />
               Gerar Nova Cobranca
             </DialogTitle>
           </DialogHeader>
@@ -941,7 +941,7 @@ export function PainelCobranças() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <CreditCard className="h-5 w-5 text-primary" />
+              <CreditCard className="h-5 w-5 text-primary shrink-0" />
               Registrar Pagamento
             </DialogTitle>
           </DialogHeader>
@@ -965,7 +965,7 @@ export function PainelCobranças() {
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <FileText className="h-5 w-5 text-amber-600" />
+              <FileText className="h-5 w-5 text-amber-600 shrink-0" />
               Editar Cobranca
             </DialogTitle>
           </DialogHeader>
@@ -987,7 +987,7 @@ export function PainelCobranças() {
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Receipt className="h-5 w-5 text-primary" />
+              <Receipt className="h-5 w-5 text-primary shrink-0" />
               Historico de Cobrancas — {dialogHistorico?.empresa}
             </DialogTitle>
           </DialogHeader>

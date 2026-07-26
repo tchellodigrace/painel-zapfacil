@@ -50,10 +50,10 @@ function PreviewMenu() {
     .replace("{empresa}", "Minha Empresa");
 
   return (
-    <Card className="bg-[#e5ddd5] border-0 overflow-hidden">
+    <Card className="bg-[#e5ddd5] border-0 overflow-hidden min-w-0">
       <CardHeader className="bg-[#075e54] text-white py-3 px-4">
         <CardTitle className="text-sm font-normal flex items-center gap-2">
-          <Bot className="h-4 w-4" />
+          <Bot className="h-4 w-4 shrink-0" />
           Chatbot - Minha Empresa
           <span className="ml-auto text-[10px] opacity-70">online</span>
         </CardTitle>
@@ -197,7 +197,7 @@ function MenuItemForm({ item, onSave, onCancel }: MenuItemFormProps) {
           className="bg-primary hover:bg-primary/90"
           onClick={salvar}
         >
-          <Zap className="h-4 w-4 mr-1" />
+          <Zap className="h-4 w-4 mr-1 shrink-0" />
           {item ? "Salvar" : "Adicionar"}
         </Button>
       </div>
@@ -336,7 +336,7 @@ export function ZapBotChatbot() {
             size="sm"
             onClick={() => setShowPreview(!showPreview)}
           >
-            <Eye className="h-4 w-4 mr-1" />
+            <Eye className="h-4 w-4 mr-1 shrink-0" />
             Preview
           </Button>
         </div>
@@ -348,7 +348,7 @@ export function ZapBotChatbot() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <MessageSquare className="h-4 w-4 text-primary" />
+                <MessageSquare className="h-4 w-4 text-primary shrink-0" />
                 Mensagem de Boas-Vindas
               </CardTitle>
               <CardDescription>
@@ -383,7 +383,7 @@ export function ZapBotChatbot() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <Send className="h-4 w-4 text-gray-400" />
+                <Send className="h-4 w-4 text-gray-400 shrink-0" />
                 Mensagem Padrao
               </CardTitle>
               <CardDescription>
@@ -403,7 +403,7 @@ export function ZapBotChatbot() {
                 className="text-xs"
                 onClick={() => copiarMensagem(mensagemPadrao)}
               >
-                <Copy className="h-3 w-3 mr-1" />
+                <Copy className="h-3 w-3 mr-1 shrink-0" />
                 Copiar
               </Button>
             </CardContent>
@@ -422,7 +422,7 @@ export function ZapBotChatbot() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base flex items-center gap-2">
-                <Menu className="h-4 w-4 text-primary" />
+                <Menu className="h-4 w-4 text-primary shrink-0" />
                 Itens do Menu
               </CardTitle>
               <CardDescription className="mt-1">
@@ -434,7 +434,7 @@ export function ZapBotChatbot() {
               className="bg-primary hover:bg-primary/90"
               onClick={() => setShowAddItem(true)}
             >
-              <Plus className="h-4 w-4 mr-1" />
+              <Plus className="h-4 w-4 mr-1 shrink-0" />
               Adicionar
             </Button>
           </div>
@@ -442,7 +442,7 @@ export function ZapBotChatbot() {
         <CardContent>
           {menuItems.length === 0 ? (
             <div className="text-center py-8">
-              <Menu className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+              <Menu className="h-10 w-10 text-gray-300 mx-auto mb-3 shrink-0" />
               <p className="text-sm text-gray-400">
                 Nenhum item no menu. Adicione opcoes para o chatbot responder.
               </p>
@@ -473,7 +473,7 @@ export function ZapBotChatbot() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-8 w-8 shrink-0"
                         onClick={() => setShowAddSub(item.id)}
                       >
                         <Plus className="h-3.5 w-3.5" />
@@ -481,7 +481,7 @@ export function ZapBotChatbot() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-8 w-8 shrink-0"
                         onClick={() => setEditingItem(item)}
                       >
                         <Pencil className="h-3.5 w-3.5" />
@@ -489,7 +489,7 @@ export function ZapBotChatbot() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-red-500 hover:text-red-600"
+                        className="h-8 w-8 text-red-500 hover:text-red-600 shrink-0"
                         onClick={() => {
                           removeMenuItem(item.id);
                           toast.success("Item removido!");
@@ -515,17 +515,17 @@ export function ZapBotChatbot() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7"
+                            className="h-7 w-7 shrink-0"
                             onClick={() =>
                               setEditingSub({ menuId: item.id, sub })
                             }
                           >
-                            <Pencil className="h-3 w-3" />
+                            <Pencil className="h-3 w-3 shrink-0" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-red-400"
+                            className="h-7 w-7 text-red-400 shrink-0"
                             onClick={() => {
                               removeSubmenuItem(item.id, sub.id);
                               toast.success("Sub-item removido!");

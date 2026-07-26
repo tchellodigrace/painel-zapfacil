@@ -130,7 +130,7 @@ export function ZapBotMensagens() {
             size="sm"
             onClick={gerarMensagemTeste}
           >
-            <MessageSquare className="h-4 w-4 mr-1" />
+            <MessageSquare className="h-4 w-4 mr-1 shrink-0" />
             Simular 1
           </Button>
           <Button
@@ -138,7 +138,7 @@ export function ZapBotMensagens() {
             size="sm"
             onClick={gerarMultiplas}
           >
-            <RefreshCw className="h-4 w-4 mr-1" />
+            <RefreshCw className="h-4 w-4 mr-1 shrink-0" />
             Simular 5
           </Button>
           {mensagensLog.length > 0 && (
@@ -160,25 +160,25 @@ export function ZapBotMensagens() {
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-3">
-        <Card className="bg-gray-50">
+        <Card className="bg-gray-50 min-w-0">
           <CardContent className="p-3 text-center">
             <p className="text-base sm:text-lg font-bold font-display">{contagem.total}</p>
             <p className="text-[10px] text-gray-500 uppercase tracking-wider">Total</p>
           </CardContent>
         </Card>
-        <Card className="bg-primary/5">
+        <Card className="bg-primary/5 min-w-0">
           <CardContent className="p-3 text-center">
             <p className="text-base sm:text-lg font-bold text-primary font-display">{contagem.enviadas}</p>
             <p className="text-[10px] text-gray-500 uppercase tracking-wider">Enviadas</p>
           </CardContent>
         </Card>
-        <Card className="bg-blue-50">
+        <Card className="bg-blue-50 min-w-0">
           <CardContent className="p-3 text-center">
             <p className="text-base sm:text-lg font-bold text-blue-700 font-display">{contagem.recebidas}</p>
             <p className="text-[10px] text-gray-500 uppercase tracking-wider">Recebidas</p>
           </CardContent>
         </Card>
-        <Card className="bg-amber-50">
+        <Card className="bg-amber-50 min-w-0">
           <CardContent className="p-3 text-center">
             <p className="text-base sm:text-lg font-bold text-amber-700 font-display">{contagem.automaticas}</p>
             <p className="text-[10px] text-gray-500 uppercase tracking-wider">Automaticas</p>
@@ -191,7 +191,7 @@ export function ZapBotMensagens() {
         <CardContent className="p-3">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
               <Input
                 placeholder="Buscar por numero, nome ou conteudo..."
                 value={busca}
@@ -201,7 +201,7 @@ export function ZapBotMensagens() {
             </div>
             <Select value={filtroTipo} onValueChange={setFiltroTipo}>
               <SelectTrigger className="w-full sm:w-44">
-                <Filter className="h-4 w-4 mr-2" />
+                <Filter className="h-4 w-4 mr-2 shrink-0" />
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -220,7 +220,7 @@ export function ZapBotMensagens() {
         <CardContent className="p-0">
           {mensagensFiltradas.length === 0 ? (
             <div className="text-center py-16">
-              <Inbox className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+              <Inbox className="h-12 w-12 text-gray-300 mx-auto mb-3 shrink-0" />
               <p className="text-sm text-gray-400">
                 {mensagensLog.length === 0
                   ? "Nenhuma mensagem registrada."
@@ -251,11 +251,11 @@ export function ZapBotMensagens() {
                     }`}
                   >
                     {msg.tipo === "enviada" ? (
-                      <Send className="h-4 w-4 text-primary" />
+                      <Send className="h-4 w-4 text-primary shrink-0" />
                     ) : msg.tipo === "automatica" ? (
-                      <Bot className="h-4 w-4 text-amber-600" />
+                      <Bot className="h-4 w-4 text-amber-600 shrink-0" />
                     ) : (
-                      <MessageSquare className="h-4 w-4 text-blue-600" />
+                      <MessageSquare className="h-4 w-4 text-blue-600 shrink-0" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">

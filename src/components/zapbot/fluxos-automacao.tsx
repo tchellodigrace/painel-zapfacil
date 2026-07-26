@@ -423,7 +423,7 @@ export function ZapBotFluxos() {
         }}>
           <DialogTrigger asChild>
             <Button onClick={openCreateDialog} className="gap-2">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 shrink-0" />
               Novo Fluxo
             </Button>
           </DialogTrigger>
@@ -626,7 +626,7 @@ export function ZapBotFluxos() {
                 Cancelar
               </Button>
               <Button onClick={handleSave} className="gap-2">
-                <Zap className="h-4 w-4" />
+                <Zap className="h-4 w-4 shrink-0" />
                 {editingId ? "Salvar Altera\u00e7\u00f5es" : "Criar Fluxo"}
               </Button>
             </DialogFooter>
@@ -640,7 +640,7 @@ export function ZapBotFluxos() {
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="rounded-lg bg-muted p-2.5">
-                <GitBranch className="h-5 w-5 text-muted-foreground" />
+                <GitBranch className="h-5 w-5 text-muted-foreground shrink-0" />
               </div>
               <div>
                 <p className="text-xl sm:text-2xl font-bold font-display">{totalFlows}</p>
@@ -654,7 +654,7 @@ export function ZapBotFluxos() {
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="rounded-lg bg-primary/15 p-2.5">
-                <Play className="h-5 w-5 text-primary dark:text-primary/80" />
+                <Play className="h-5 w-5 text-primary dark:text-primary/80 shrink-0" />
               </div>
               <div>
                 <p className="text-xl sm:text-2xl font-bold font-display">{activeFlows}</p>
@@ -668,7 +668,7 @@ export function ZapBotFluxos() {
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="rounded-lg bg-gray-500/15 p-2.5">
-                <Pause className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                <Pause className="h-5 w-5 text-gray-600 dark:text-gray-400 shrink-0" />
               </div>
               <div>
                 <p className="text-xl sm:text-2xl font-bold font-display">{totalFlows - activeFlows}</p>
@@ -682,7 +682,7 @@ export function ZapBotFluxos() {
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="rounded-lg bg-amber-500/15 p-2.5">
-                <Zap className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                <Zap className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0" />
               </div>
               <div>
                 <p className="text-xl sm:text-2xl font-bold font-display">
@@ -704,7 +704,7 @@ export function ZapBotFluxos() {
       {flows.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <GitBranch className="h-12 w-12 text-muted-foreground/40 mb-4" />
+            <GitBranch className="h-12 w-12 text-muted-foreground/40 mb-4 shrink-0" />
             <h3 className="text-lg font-semibold text-muted-foreground">
               Nenhum fluxo criado
             </h3>
@@ -713,7 +713,7 @@ export function ZapBotFluxos() {
               respostas no WhatsApp.
             </p>
             <Button className="mt-4 gap-2" onClick={openCreateDialog}>
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 shrink-0" />
               Criar Fluxo
             </Button>
           </CardContent>
@@ -738,9 +738,9 @@ export function ZapBotFluxos() {
                       }`}
                     >
                       {flow.enabled ? (
-                        <Play className="h-4 w-4 text-primary dark:text-primary/80" />
+                        <Play className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
                       ) : (
-                        <Pause className="h-4 w-4 text-muted-foreground" />
+                        <Pause className="h-4 w-4 text-muted-foreground shrink-0" />
                       )}
                     </div>
                     <div className="min-w-0">
@@ -767,7 +767,7 @@ export function ZapBotFluxos() {
                       onClick={() => openEditDialog(flow)}
                       className="text-muted-foreground hover:text-foreground"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-4 w-4 shrink-0" />
                       <span className="sr-only">Editar</span>
                     </Button>
                     <Button

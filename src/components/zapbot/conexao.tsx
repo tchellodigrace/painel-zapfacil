@@ -91,7 +91,7 @@ API Key: ${configEvolution.apiKey}`;
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Server className="h-4 w-4 text-primary" />
+              <Server className="h-4 w-4 text-primary shrink-0" />
               Configuracao da API
             </CardTitle>
             <CardDescription>
@@ -148,7 +148,7 @@ API Key: ${configEvolution.apiKey}`;
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 shrink-0"
                   onClick={() => setShowKey(!showKey)}
                 >
                   {showKey ? (
@@ -175,7 +175,7 @@ API Key: ${configEvolution.apiKey}`;
                 Salvar Configuracao
               </Button>
               <Button variant="outline" size="icon" onClick={copiarConfig}>
-                <Copy className="h-4 w-4" />
+                <Copy className="h-4 w-4 shrink-0" />
               </Button>
             </div>
           </CardContent>
@@ -187,7 +187,7 @@ API Key: ${configEvolution.apiKey}`;
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-base flex items-center gap-2">
-                  <QrCode className="h-4 w-4 text-primary" />
+                  <QrCode className="h-4 w-4 text-primary shrink-0" />
                   {conectado ? "Conectado" : "QR Code"}
                 </CardTitle>
                 <CardDescription className="mt-1">
@@ -249,14 +249,14 @@ API Key: ${configEvolution.apiKey}`;
                   className="mt-6"
                   onClick={handleDesconectar}
                 >
-                  <WifiOff className="h-4 w-4 mr-2" />
+                  <WifiOff className="h-4 w-4 mr-2 shrink-0" />
                   Desconectar
                 </Button>
               </div>
             ) : statusConexao === "conectando" && !qrCodeBase64 ? (
               /* Loading state */
               <div className="text-center py-6">
-                <Skeleton className="h-52 w-52 rounded-xl mx-auto mb-4" />
+                <Skeleton className="h-52 w-52 rounded-xl mx-auto mb-4 shrink-0" />
                 <div className="flex items-center justify-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   <span className="text-sm text-gray-500">
@@ -298,7 +298,7 @@ API Key: ${configEvolution.apiKey}`;
               /* Disconnected state */
               <div className="text-center py-6">
                 <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                  <QrCode className="h-10 w-10 text-gray-400" />
+                  <QrCode className="h-10 w-10 text-gray-400 shrink-0" />
                 </div>
                 <h3 className="font-semibold text-gray-700">
                   Nenhuma conexao ativa
@@ -310,7 +310,7 @@ API Key: ${configEvolution.apiKey}`;
                   className="bg-primary hover:bg-primary/90"
                   onClick={handleConectar}
                 >
-                  <Wifi className="h-4 w-4 mr-2" />
+                  <Wifi className="h-4 w-4 mr-2 shrink-0" />
                   Conectar WhatsApp
                 </Button>
               </div>
@@ -323,7 +323,7 @@ API Key: ${configEvolution.apiKey}`;
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Zap className="h-4 w-4 text-primary" />
+            <Zap className="h-4 w-4 text-primary shrink-0" />
             Como funciona a conexao?
           </CardTitle>
         </CardHeader>

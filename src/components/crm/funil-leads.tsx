@@ -331,7 +331,7 @@ export function FunilLeads() {
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
             <div className="p-2 rounded-lg bg-primary/10 dark:bg-primary/30">
-              <DollarSign className="h-5 w-5 text-primary dark:text-primary/80" />
+              <DollarSign className="h-5 w-5 text-primary dark:text-primary/80 shrink-0" />
             </div>
             <div>
               <p className="text-xs font-medium text-muted-foreground">Pipeline</p>
@@ -342,7 +342,7 @@ export function FunilLeads() {
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
             <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-              <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0" />
             </div>
             <div>
               <p className="text-xs font-medium text-muted-foreground">Taxa de Conversão</p>
@@ -353,7 +353,7 @@ export function FunilLeads() {
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
             <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-              <Target className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <Target className="h-5 w-5 text-purple-600 dark:text-purple-400 shrink-0" />
             </div>
             <div>
               <p className="text-xs font-medium text-muted-foreground">Total de Leads</p>
@@ -366,7 +366,7 @@ export function FunilLeads() {
       {/* ── Toolbar ── */}
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
         <div className="relative flex-1 w-full sm:max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground shrink-0" />
           <Input
             placeholder="Buscar por nome, telefone ou email..."
             className="pl-9"
@@ -418,22 +418,22 @@ export function FunilLeads() {
             <Button
               variant={viewMode === "kanban" ? "default" : "ghost"}
               size="icon"
-              className="h-8 w-8 rounded-r-none"
+              className="h-8 w-8 rounded-r-none shrink-0"
               onClick={() => setViewMode("kanban")}
             >
-              <LayoutGrid className="h-4 w-4" />
+              <LayoutGrid className="h-4 w-4 shrink-0" />
             </Button>
             <Button
               variant={viewMode === "list" ? "default" : "ghost"}
               size="icon"
-              className="h-8 w-8 rounded-l-none"
+              className="h-8 w-8 rounded-l-none shrink-0"
               onClick={() => setViewMode("list")}
             >
-              <List className="h-4 w-4" />
+              <List className="h-4 w-4 shrink-0" />
             </Button>
           </div>
           <Button onClick={openAddDialog} size="sm" className="gap-1.5">
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4 shrink-0" />
             <span className="hidden sm:inline">Novo Lead</span>
           </Button>
         </div>
@@ -507,7 +507,7 @@ export function FunilLeads() {
                                 onClick={() => openEditDialog(lead)}
                                 className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                               >
-                                <Pencil className="h-3 w-3" />
+                                <Pencil className="h-3 w-3 shrink-0" />
                               </button>
                               <button
                                 onClick={() => handleDeleteLead(lead.id, lead.name)}
@@ -526,7 +526,7 @@ export function FunilLeads() {
                           {/* Value */}
                           {lead.estimatedValue > 0 && (
                             <div className="flex items-center gap-1 pl-5">
-                              <DollarSign className="h-3 w-3 text-primary" />
+                              <DollarSign className="h-3 w-3 text-primary shrink-0" />
                               <span className="text-xs font-medium text-primary dark:text-primary/80">
                                 {formatCurrency(lead.estimatedValue)}
                               </span>
@@ -551,14 +551,14 @@ export function FunilLeads() {
                               onClick={() => moveLead(lead.id, "left")}
                               className="p-1 rounded hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed text-muted-foreground hover:text-foreground transition-colors"
                             >
-                              <ArrowLeft className="h-3 w-3" />
+                              <ArrowLeft className="h-3 w-3 shrink-0" />
                             </button>
                             <button
                               disabled={stageIdx === STAGE_KEYS.length - 1}
                               onClick={() => moveLead(lead.id, "right")}
                               className="p-1 rounded hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed text-muted-foreground hover:text-foreground transition-colors"
                             >
-                              <ArrowRight className="h-3 w-3" />
+                              <ArrowRight className="h-3 w-3 shrink-0" />
                             </button>
                           </div>
                         </CardContent>
@@ -741,7 +741,7 @@ export function FunilLeads() {
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5" />
+              <Plus className="h-5 w-5 shrink-0" />
               Novo Lead
             </DialogTitle>
           </DialogHeader>
@@ -823,7 +823,7 @@ export function FunilLeads() {
                   size="icon"
                   onClick={() => addTagToForm(false)}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-4 w-4 shrink-0" />
                 </Button>
               </div>
               {addForm.tags.length > 0 && (
@@ -867,7 +867,7 @@ export function FunilLeads() {
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Pencil className="h-5 w-5" />
+              <Pencil className="h-5 w-5 shrink-0" />
               Editar Lead
             </DialogTitle>
           </DialogHeader>
@@ -949,7 +949,7 @@ export function FunilLeads() {
                   size="icon"
                   onClick={() => addTagToForm(true)}
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-4 w-4 shrink-0" />
                 </Button>
               </div>
               {editForm.tags.length > 0 && (

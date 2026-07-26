@@ -187,7 +187,7 @@ export function PainelDespesas() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Receipt className="h-4 w-4 text-primary" />
+          <Receipt className="h-4 w-4 text-primary shrink-0" />
           Controle de Despesas
         </CardTitle>
       </CardHeader>
@@ -200,7 +200,7 @@ export function PainelDespesas() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-[10px] text-primary dark:text-primary/80 font-bold mb-0.5">
-                <DollarSign className="h-3 w-3" />
+                <DollarSign className="h-3 w-3 shrink-0" />
                 Receita
               </div>
               <p className="text-sm font-black text-primary dark:text-primary/80">
@@ -209,7 +209,7 @@ export function PainelDespesas() {
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-[10px] text-red-600 dark:text-red-400 font-bold mb-0.5">
-                <TrendingDown className="h-3 w-3" />
+                <TrendingDown className="h-3 w-3 shrink-0" />
                 Despesas
               </div>
               <p className="text-sm font-black text-red-600 dark:text-red-400">
@@ -218,7 +218,7 @@ export function PainelDespesas() {
             </div>
             <div className="text-center">
               <div className={`text-[10px] font-bold mb-0.5 flex items-center justify-center gap-1 ${stats.lucroLiquido >= 0 ? "text-primary dark:text-primary/80" : "text-red-600 dark:text-red-400"}`}>
-                {stats.lucroLiquido >= 0 ? <DollarSign className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
+                {stats.lucroLiquido >= 0 ? <DollarSign className="h-3 w-3 shrink-0" /> : <AlertTriangle className="h-3 w-3 shrink-0" />}
                 Lucro
               </div>
               <p className={`text-sm font-black ${stats.lucroLiquido >= 0 ? "text-primary dark:text-primary/80" : "text-red-600 dark:text-red-400"}`}>

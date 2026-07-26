@@ -210,7 +210,7 @@ export function PainelAgendamento() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <CalendarDays className="h-4 w-4 text-primary" />
+            <CalendarDays className="h-4 w-4 text-primary shrink-0" />
             Agenda de Compromissos
             <Badge variant="secondary" className="ml-auto text-[10px]">
               {statsHoje.total} hoje
@@ -391,20 +391,20 @@ export function PainelAgendamento() {
                       </div>
                       <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-muted-foreground">
                         <span className="flex items-center gap-1">
-                          <CalendarDays className="h-3 w-3" />
+                          <CalendarDays className="h-3 w-3 shrink-0" />
                           {ag.data} {ag.hora}
                         </span>
                         <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
+                          <Clock className="h-3 w-3 shrink-0" />
                           {ag.duracaoMinutos}min
                         </span>
                         <span className="flex items-center gap-1">
-                          <Wrench className="h-3 w-3" />
+                          <Wrench className="h-3 w-3 shrink-0" />
                           {ag.servicoNome}
                         </span>
                         {ag.colaboradorNome && (
                           <span className="flex items-center gap-1">
-                            <User className="h-3 w-3" />
+                            <User className="h-3 w-3 shrink-0" />
                             {ag.colaboradorNome}
                           </span>
                         )}
@@ -426,7 +426,7 @@ export function PainelAgendamento() {
                       className="h-7 px-2 text-[10px] text-muted-foreground"
                       onClick={() => setDetalheAberto(ag)}
                     >
-                      <Eye className="h-3 w-3 mr-1" /> Detalhes
+                      <Eye className="h-3 w-3 mr-1 shrink-0" /> Detalhes
                     </Button>
                     {ag.clienteTelefone && (
                       <Button
@@ -435,7 +435,7 @@ export function PainelAgendamento() {
                         className="h-7 px-2 text-[10px] text-primary"
                         onClick={() => handleWhatsApp(ag.clienteTelefone, ag.clienteNome)}
                       >
-                        <MessageCircle className="h-3 w-3" />
+                        <MessageCircle className="h-3 w-3 shrink-0" />
                       </Button>
                     )}
                     {podeAvancar && (
@@ -456,7 +456,7 @@ export function PainelAgendamento() {
                         className="h-7 px-2 text-[10px] text-red-500"
                         onClick={() => handleCancelar(ag.id)}
                       >
-                        <XCircle className="h-3 w-3 mr-1" /> Cancelar
+                        <XCircle className="h-3 w-3 mr-1 shrink-0" /> Cancelar
                       </Button>
                     )}
                     <Button
@@ -485,7 +485,7 @@ export function PainelAgendamento() {
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-sm">
-              <CalendarDays className="h-4 w-4 text-primary" />
+              <CalendarDays className="h-4 w-4 text-primary shrink-0" />
               Detalhes do Agendamento
             </DialogTitle>
           </DialogHeader>

@@ -197,7 +197,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <FileText className="h-4 w-4 text-primary" />
+          <FileText className="h-4 w-4 text-primary shrink-0" />
           Lançar Atendimento
         </CardTitle>
       </CardHeader>
@@ -206,7 +206,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
         <div className="grid grid-cols-2 gap-2 bg-primary/5 dark:bg-primary/15 p-3 rounded-lg border border-primary/15 dark:border-primary/40">
           <div>
             <Label className="text-[10px] font-bold text-primary dark:text-white/80 uppercase mb-1 block">
-              <User className="h-3 w-3 inline mr-1" />
+              <User className="h-3 w-3 inline mr-1 shrink-0" />
               Atalho CRM
             </Label>
             <Select value={clienteId} onValueChange={handleClienteSelect}>
@@ -224,7 +224,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
           </div>
           <div>
             <Label className="text-[10px] font-bold text-primary dark:text-white/80 uppercase mb-1 block">
-              <Wrench className="h-3 w-3 inline mr-1" />
+              <Wrench className="h-3 w-3 inline mr-1 shrink-0" />
               Atalho Catálogo
             </Label>
             <Select value={servicoSelId} onValueChange={setServicoSelId}>
@@ -299,7 +299,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
         {/* Adicionar Itens */}
         <div className="space-y-2">
           <Label className="text-[10px] font-bold text-muted-foreground uppercase">
-            <ShoppingCart className="h-3 w-3 inline mr-1" />
+            <ShoppingCart className="h-3 w-3 inline mr-1 shrink-0" />
             Itens do Atendimento
           </Label>
           <div className="flex gap-1.5">
@@ -328,7 +328,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
               className="h-9 px-3 bg-primary hover:bg-primary/90"
               onClick={adicionarItem}
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 shrink-0" />
             </Button>
           </div>
 
@@ -355,7 +355,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 w-6 p-0 text-red-500"
+                      className="h-6 w-6 p-0 text-red-500 shrink-0"
                       onClick={() => removerItem(item.id)}
                     >
                       <Trash2 className="h-3 w-3" />
@@ -441,7 +441,7 @@ export function LancamentoForm({ onVendaCriada }: LancamentoFormProps) {
           className="w-full bg-primary hover:bg-primary/90 h-11 text-sm font-bold uppercase tracking-wider"
           onClick={handleSubmit}
         >
-          <FileText className="h-4 w-4 mr-2" />
+          <FileText className="h-4 w-4 mr-2 shrink-0" />
           {status === "PAGO" ? "Processar e Gerar Comprovante" : "Processar e Gerar Fatura"}
         </Button>
       </CardContent>

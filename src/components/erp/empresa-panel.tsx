@@ -146,7 +146,7 @@ export function EmpresaPanel() {
                 className="flex-1 text-xs h-9"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Plus className="h-3 w-3 mr-1" />
+                <Plus className="h-3 w-3 mr-1 shrink-0" />
                 Arquivo
               </Button>
               <input
@@ -166,13 +166,13 @@ export function EmpresaPanel() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-red-500 h-9 w-9 p-0"
+                    className="text-red-500 h-9 w-9 p-0 shrink-0"
                     onClick={() => {
                       removerLogo();
                       toast.success("Logo removida.");
                     }}
                   >
-                    <ImageOff className="h-4 w-4" />
+                    <ImageOff className="h-4 w-4 shrink-0" />
                   </Button>
                 </div>
               )}
@@ -243,7 +243,7 @@ export function EmpresaPanel() {
               className="h-9 px-3 bg-primary hover:bg-primary/90"
               onClick={handleAdicionarChave}
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 shrink-0" />
             </Button>
           </div>
 
@@ -307,7 +307,7 @@ export function EmpresaPanel() {
               className="text-xs h-9"
               onClick={handleExportarBackup}
             >
-              <Download className="h-3 w-3 mr-1" />
+              <Download className="h-3 w-3 mr-1 shrink-0" />
               Exportar Backup
             </Button>
             <Button
@@ -316,7 +316,7 @@ export function EmpresaPanel() {
               className="text-xs h-9"
               onClick={() => backupInputRef.current?.click()}
             >
-              <Upload className="h-3 w-3 mr-1" />
+              <Upload className="h-3 w-3 mr-1 shrink-0" />
               Importar Backup
             </Button>
             <input

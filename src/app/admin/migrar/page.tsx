@@ -147,7 +147,7 @@ export default function MigrarSupabasePage() {
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-              <Database className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <Database className="h-5 w-5 text-purple-600 dark:text-purple-400 shrink-0" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
@@ -160,7 +160,7 @@ export default function MigrarSupabasePage() {
           </div>
           <Link href="/admin">
             <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-1" />
+              <ArrowLeft className="h-4 w-4 mr-1 shrink-0" />
               Voltar
             </Button>
           </Link>
@@ -169,7 +169,7 @@ export default function MigrarSupabasePage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Database className="h-5 w-5 text-purple-600" />
+              <Database className="h-5 w-5 text-purple-600 shrink-0" />
               Migracao de dados
             </CardTitle>
             <CardDescription>
@@ -213,7 +213,7 @@ export default function MigrarSupabasePage() {
                   </>
                 ) : (
                   <>
-                    <Database className="h-4 w-4 mr-2" />
+                    <Database className="h-4 w-4 mr-2 shrink-0" />
                     Iniciar migracao
                   </>
                 )}

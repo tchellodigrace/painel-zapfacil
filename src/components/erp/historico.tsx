@@ -164,7 +164,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
   };
 
   return (
-    <Card className="col-span-full">
+    <Card className="col-span-full min-w-0">
       <CardHeader className="pb-3">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <CardTitle className="flex items-center gap-2 text-sm">
@@ -186,7 +186,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <div className="bg-muted/50 rounded-lg p-3 text-center border">
             <div className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground uppercase font-bold mb-1">
-              <TrendingUp className="h-3 w-3" />
+              <TrendingUp className="h-3 w-3 shrink-0" />
               Faturado
             </div>
             <p className="text-sm font-black">{formatarMoeda(stats.totalFaturado)}</p>
@@ -202,7 +202,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
           </div>
           <div className="bg-amber-50 dark:bg-amber-950/20 rounded-lg p-3 text-center border border-amber-100 dark:border-amber-900">
             <div className="flex items-center justify-center gap-1 text-[10px] text-amber-700 dark:text-amber-400 uppercase font-bold mb-1">
-              <Clock className="h-3 w-3" />
+              <Clock className="h-3 w-3 shrink-0" />
               Pendente
             </div>
             <p className="text-sm font-black text-amber-700 dark:text-amber-400">
@@ -226,7 +226,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
         {/* Filtros */}
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground shrink-0" />
             <Input
               placeholder="Buscar por cliente ou serviço..."
               value={busca}
@@ -275,7 +275,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
             className="h-9 text-xs"
             onClick={handleExportarCSV}
           >
-            <Download className="h-3 w-3 mr-1" />
+            <Download className="h-3 w-3 mr-1 shrink-0" />
             CSV
           </Button>
           <Button
@@ -284,7 +284,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
             className="h-9 text-xs bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
             onClick={handleCobrarTodosPendentes}
           >
-            <Send className="h-3 w-3 mr-1" />
+            <Send className="h-3 w-3 mr-1 shrink-0" />
             Cobrar Pendentes
           </Button>
         </div>
@@ -321,11 +321,11 @@ export function Historico({ onReemitir }: HistoricoProps) {
                 <p className="text-[11px] text-gray-400">{v.data} {v.hora}</p>
                 <div className="flex gap-1">
                   <Button variant="ghost" size="sm" className="h-8 text-[10px] text-primary" onClick={() => onReemitir(v)}>
-                    <Eye className="h-3 w-3 mr-0.5" /> Ver
+                    <Eye className="h-3 w-3 mr-0.5 shrink-0" /> Ver
                   </Button>
                   {v.status === "PENDENTE" && (
                     <Button variant="ghost" size="sm" className="h-8 text-[10px] text-amber-600" onClick={() => handleCobrarPendente(v)}>
-                      <MessageCircle className="h-3 w-3" />
+                      <MessageCircle className="h-3 w-3 shrink-0" />
                     </Button>
                   )}
                   <Button variant="ghost" size="sm" className="h-8 text-[10px] text-red-500" onClick={() => { if (confirm("Excluir?")) { removerVenda(v.id); toast.success("Registro excluído."); } }}>
@@ -395,7 +395,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
                       className="h-7 px-2 text-primary text-[10px]"
                       onClick={() => onReemitir(v)}
                     >
-                      <Eye className="h-3 w-3 mr-1" />
+                      <Eye className="h-3 w-3 mr-1 shrink-0" />
                       Ver
                     </Button>
                     {v.status === "PENDENTE" && (
@@ -406,7 +406,7 @@ export function Historico({ onReemitir }: HistoricoProps) {
                         onClick={() => handleCobrarPendente(v)}
                         title="Cobrar via WhatsApp"
                       >
-                        <MessageCircle className="h-3 w-3" />
+                        <MessageCircle className="h-3 w-3 shrink-0" />
                       </Button>
                     )}
                     <Button

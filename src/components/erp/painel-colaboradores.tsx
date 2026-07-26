@@ -137,7 +137,7 @@ export function PainelColaboradores() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Users className="h-4 w-4 text-primary" />
+          <Users className="h-4 w-4 text-primary shrink-0" />
           Equipe / Colaboradores
           <Badge variant="secondary" className="ml-auto text-[10px]">
             {ativos.length} ativos
@@ -149,14 +149,14 @@ export function PainelColaboradores() {
         {comissoes.length > 0 && (
           <div className="bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg border border-amber-100 dark:border-amber-900 space-y-2">
             <p className="text-[10px] font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider flex items-center gap-1">
-              <DollarSign className="h-3 w-3" />
+              <DollarSign className="h-3 w-3 shrink-0" />
               Resumo de Comissoes
             </p>
             <div className="space-y-1.5">
               {comissoes.map((c, i) => (
                 <div key={i} className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    {i === 0 && <Star className="h-3 w-3 text-amber-500" />}
+                    {i === 0 && <Star className="h-3 w-3 text-amber-500 shrink-0" />}
                     <span className="font-medium">{c.nome}</span>
                     <span className="text-[10px] text-muted-foreground">
                       ({c.qtdVendas} vendas, {c.percentual}%)
@@ -302,7 +302,7 @@ export function PainelColaboradores() {
                 className="h-7 w-7 p-0 text-muted-foreground shrink-0"
                 onClick={() => iniciarEdicao(c)}
               >
-                <Pencil className="h-3 w-3" />
+                <Pencil className="h-3 w-3 shrink-0" />
               </Button>
               <Button
                 variant="ghost"
@@ -314,7 +314,7 @@ export function PainelColaboradores() {
                 }}
                 title="Desativar"
               >
-                <UserX className="h-3 w-3" />
+                <UserX className="h-3 w-3 shrink-0" />
               </Button>
               <Button
                 variant="ghost"
@@ -369,7 +369,7 @@ export function PainelColaboradores() {
                     }}
                     title="Reativar"
                   >
-                    <UserCheck className="h-3 w-3" />
+                    <UserCheck className="h-3 w-3 shrink-0" />
                   </Button>
                   <Button
                     variant="ghost"

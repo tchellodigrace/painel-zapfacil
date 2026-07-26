@@ -124,18 +124,18 @@ function SecaoConexao() {
   };
 
   return (
-    <Card className="border-2 border-dashed border-primary/20 dark:border-primary/40">
+    <Card className="border-2 border-dashed border-primary/20 dark:border-primary/40 min-w-0">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Server className="h-4 w-4 text-primary" />
+          <Server className="h-4 w-4 text-primary shrink-0" />
           Conexao Evolution API
           {conectado ? (
             <Badge className="ml-auto bg-primary/10 text-primary dark:bg-primary/30 dark:text-white/60 text-[10px]">
-              <Wifi className="h-3 w-3 mr-1" /> Online
+              <Wifi className="h-3 w-3 mr-1 shrink-0" /> Online
             </Badge>
           ) : (
             <Badge variant="secondary" className="ml-auto text-[10px]">
-              <WifiOff className="h-3 w-3 mr-1" /> Offline
+              <WifiOff className="h-3 w-3 mr-1 shrink-0" /> Offline
             </Badge>
           )}
         </CardTitle>
@@ -145,7 +145,7 @@ function SecaoConexao() {
           <>
             <div className="space-y-2">
               <Label className="text-xs font-semibold flex items-center gap-1.5">
-                <Globe className="h-3 w-3" /> URL da API
+                <Globe className="h-3 w-3 shrink-0" /> URL da API
               </Label>
               <Input
                 placeholder="https://seu-servidor.com:8080"
@@ -160,7 +160,7 @@ function SecaoConexao() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold flex items-center gap-1.5">
-                  <Bot className="h-3 w-3" /> Nome da Instancia
+                  <Bot className="h-3 w-3 shrink-0" /> Nome da Instancia
                 </Label>
                 <Input
                   placeholder="minha-empresa"
@@ -171,7 +171,7 @@ function SecaoConexao() {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold flex items-center gap-1.5">
-                  <Key className="h-3 w-3" /> API Key
+                  <Key className="h-3 w-3 shrink-0" /> API Key
                 </Label>
                 <div className="relative">
                   <Input
@@ -210,7 +210,7 @@ function SecaoConexao() {
                   className="h-6 text-[10px]"
                   onClick={() => { navigator.clipboard.writeText(apiUrl); toast.success("URL copiada!"); }}
                 >
-                  <Copy className="h-3 w-3 mr-1" /> Copiar
+                  <Copy className="h-3 w-3 mr-1 shrink-0" /> Copiar
                 </Button>
               </div>
               <p className="text-xs font-mono break-all">{apiUrl}</p>
@@ -268,7 +268,7 @@ function SecaoBoasVindas() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <MessageSquare className="h-4 w-4 text-primary" />
+          <MessageSquare className="h-4 w-4 text-primary shrink-0" />
           Mensagens Automaticas
         </CardTitle>
       </CardHeader>
@@ -317,7 +317,7 @@ function SecaoBoasVindas() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
                   <Label className="text-[10px] text-muted-foreground flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> Inicio
+                    <Clock className="h-3 w-3 shrink-0" /> Inicio
                   </Label>
                   <Input
                     type="time"
@@ -328,7 +328,7 @@ function SecaoBoasVindas() {
                 </div>
                 <div className="space-y-1">
                   <Label className="text-[10px] text-muted-foreground flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> Fim
+                    <Clock className="h-3 w-3 shrink-0" /> Fim
                   </Label>
                   <Input
                     type="time"
@@ -387,7 +387,7 @@ function SecaoRespostas() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Zap className="h-4 w-4 text-amber-500" />
+          <Zap className="h-4 w-4 text-amber-500 shrink-0" />
           Respostas Automaticas
           <Badge variant="secondary" className="ml-auto text-[10px]">
             {ativas.length} ativa{ativas.length !== 1 ? "s" : ""}
@@ -417,7 +417,7 @@ function SecaoRespostas() {
               className="h-9 bg-amber-500 hover:bg-amber-600 text-xs"
               onClick={handleAdicionar}
             >
-              <Plus className="h-3 w-3 mr-1" /> Adicionar
+              <Plus className="h-3 w-3 mr-1 shrink-0" /> Adicionar
             </Button>
           </div>
           <p className="text-[10px] text-muted-foreground">
@@ -470,7 +470,7 @@ function SecaoRespostas() {
                       className="h-6 text-[10px]"
                       onClick={() => setEditId(null)}
                     >
-                      <XCircle className="h-3 w-3 mr-0.5" /> Cancelar
+                      <XCircle className="h-3 w-3 mr-0.5 shrink-0" /> Cancelar
                     </Button>
                   </div>
                 </div>
@@ -497,7 +497,7 @@ function SecaoRespostas() {
                     className="h-7 w-7 p-0 shrink-0"
                     onClick={() => { setEditId(r.id); setEditGatilho(r.gatilho); setEditRespostaVal(r.resposta); }}
                   >
-                    <Pencil className="h-3 w-3" />
+                    <Pencil className="h-3 w-3 shrink-0" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -559,7 +559,7 @@ function SecaoMenu() {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <List className="h-4 w-4 text-blue-500" />
+            <List className="h-4 w-4 text-blue-500 shrink-0" />
             Menu Interativo
           </CardTitle>
           <div className="flex items-center gap-2">
@@ -617,7 +617,7 @@ function SecaoMenu() {
                   className="h-9 bg-blue-500 hover:bg-blue-600 text-xs"
                   onClick={handleAdicionar}
                 >
-                  <Plus className="h-3 w-3 mr-1" /> Adicionar
+                  <Plus className="h-3 w-3 mr-1 shrink-0" /> Adicionar
                 </Button>
               </div>
             </div>
@@ -657,7 +657,7 @@ function SecaoMenu() {
                           <CheckCircle2 className="h-3 w-3 mr-0.5" /> Salvar
                         </Button>
                         <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setEditId(null)}>
-                          <XCircle className="h-3 w-3 mr-0.5" /> Cancelar
+                          <XCircle className="h-3 w-3 mr-0.5 shrink-0" /> Cancelar
                         </Button>
                       </div>
                     </div>
@@ -672,7 +672,7 @@ function SecaoMenu() {
                       </div>
                       <Switch checked={item.ativo} onCheckedChange={() => toggleItemMenu(item.id)} className="mt-1 shrink-0" />
                       <Button variant="ghost" size="sm" className="h-7 w-7 p-0 shrink-0" onClick={() => { setEditId(item.id); setEditTexto(item.texto); setEditResp(item.resposta); }}>
-                        <Pencil className="h-3 w-3" />
+                        <Pencil className="h-3 w-3 shrink-0" />
                       </Button>
                       <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-red-500 shrink-0" onClick={() => { removerItemMenu(item.id); toast.success("Opcao removida."); }}>
                         <Trash2 className="h-3 w-3" />
@@ -687,7 +687,7 @@ function SecaoMenu() {
 
         {!menuAtivo && (
           <div className="text-center py-6">
-            <MousePointerClick className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+            <MousePointerClick className="h-8 w-8 text-muted-foreground mx-auto mb-2 shrink-0" />
             <p className="text-xs text-muted-foreground">Ative o menu interativo para configurar as opcoes.</p>
           </div>
         )}
@@ -750,7 +750,7 @@ function SecaoDisparo() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Send className="h-4 w-4 text-purple-500" />
+          <Send className="h-4 w-4 text-purple-500 shrink-0" />
           Disparo em Massa
           <Badge variant="secondary" className="ml-auto text-[10px]">
             {clientes.filter((c) => c.telefone).length} contato(s)
@@ -776,9 +776,9 @@ function SecaoDisparo() {
             disabled={enviando || !msgDisparo.trim()}
           >
             {enviando ? (
-              <><RefreshCw className="h-3 w-3 mr-1 animate-spin" /> Enviando...</>
+              <><RefreshCw className="h-3 w-3 mr-1 animate-spin shrink-0" /> Enviando...</>
             ) : (
-              <><Send className="h-3 w-3 mr-1" /> Disparar para Todos</>
+              <><Send className="h-3 w-3 mr-1 shrink-0" /> Disparar para Todos</>
             )}
           </Button>
         </div>
@@ -803,7 +803,7 @@ function SecaoLog() {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <MessageSquare className="h-4 w-4 text-gray-500" />
+            <MessageSquare className="h-4 w-4 text-gray-500 shrink-0" />
             Historico de Mensagens
             <Badge variant="secondary" className="ml-1 text-[10px]">
               {mensagens.length}
@@ -825,7 +825,7 @@ function SecaoLog() {
         <div className="max-h-80 overflow-y-auto space-y-1.5">
           {mensagens.length === 0 && (
             <div className="text-center py-8">
-              <MessageSquare className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-30" />
+              <MessageSquare className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-30 shrink-0" />
               <p className="text-xs text-muted-foreground italic">
                 Nenhuma mensagem registrada ainda.
               </p>
@@ -849,9 +849,9 @@ function SecaoLog() {
                   : "bg-blue-200 dark:bg-blue-800"
               }`}>
                 {msg.tipo === "enviada" ? (
-                  <Send className="h-3 w-3 text-primary dark:text-primary/80" />
+                  <Send className="h-3 w-3 text-primary dark:text-primary/80 shrink-0" />
                 ) : (
-                  <MessageSquare className="h-3 w-3 text-blue-700 dark:text-blue-300" />
+                  <MessageSquare className="h-3 w-3 text-blue-700 dark:text-blue-300 shrink-0" />
                 )}
               </div>
               <div className="flex-1 min-w-0">

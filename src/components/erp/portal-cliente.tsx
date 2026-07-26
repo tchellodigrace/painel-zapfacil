@@ -228,7 +228,7 @@ export function PortalCliente() {
 
             {/* Campo busca */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
               <Input
                 placeholder="Digite seu nome, telefone ou CPF..."
                 value={busca}
@@ -305,7 +305,7 @@ export function PortalCliente() {
               setBusca("");
             }}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4 shrink-0" />
           </Button>
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-9 h-9 rounded-full bg-primary/10 dark:bg-primary/30 flex items-center justify-center shrink-0">
@@ -327,7 +327,7 @@ export function PortalCliente() {
         <main className="flex-1 max-w-2xl mx-auto w-full p-4 space-y-4">
           {/* Cards resumo */}
           <div className="grid grid-cols-2 gap-3">
-            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 min-w-0">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <Wallet className="w-4 h-4 text-primary" />
@@ -341,7 +341,7 @@ export function PortalCliente() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 min-w-0">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <ShoppingBag className="w-4 h-4 text-blue-500" />
@@ -355,7 +355,7 @@ export function PortalCliente() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 min-w-0">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <AlertCircle className="w-4 h-4 text-amber-500" />
@@ -369,7 +369,7 @@ export function PortalCliente() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+            <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 min-w-0">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <CalendarCheck className="w-4 h-4 text-purple-500" />
@@ -386,7 +386,7 @@ export function PortalCliente() {
 
           {/* Próximo agendamento */}
           {dadosCliente.proxAgendamento && (
-            <Card className="border-primary/20 dark:border-primary/40 bg-primary/5 dark:bg-primary/15">
+            <Card className="border-primary/20 dark:border-primary/40 bg-primary/5 dark:bg-primary/15 min-w-0">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-primary/30 flex items-center justify-center shrink-0 mt-0.5">
@@ -429,7 +429,7 @@ export function PortalCliente() {
             </h2>
 
             {dadosCliente.vendas.length === 0 ? (
-              <Card className="border-0 shadow-sm bg-white dark:bg-gray-900">
+              <Card className="border-0 shadow-sm bg-white dark:bg-gray-900 min-w-0">
                 <CardContent className="p-8 text-center">
                   <ShoppingBag className="w-10 h-10 text-gray-200 dark:text-gray-700 mx-auto mb-2" />
                   <p className="text-sm text-gray-400">
@@ -501,7 +501,7 @@ export function PortalCliente() {
                   return (
                     <Card
                       key={ag.id}
-                      className="border-0 shadow-sm bg-white dark:bg-gray-900"
+                      className="border-0 shadow-sm bg-white dark:bg-gray-900 min-w-0"
                     >
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between gap-3">

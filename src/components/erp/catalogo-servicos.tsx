@@ -54,7 +54,7 @@ export function CatalogoServicos() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <Wrench className="h-4 w-4 text-primary" />
+          <Wrench className="h-4 w-4 text-primary shrink-0" />
           Catálogo de Serviços
           <Badge variant="secondary" className="ml-auto text-[10px]">
             {servicos.length}
@@ -84,13 +84,13 @@ export function CatalogoServicos() {
             className="h-9 px-3 bg-primary hover:bg-primary/90"
             onClick={handleAdicionar}
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4 shrink-0" />
           </Button>
         </div>
 
         {servicos.length > 3 && (
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground shrink-0" />
             <Input
               placeholder="Buscar serviço..."
               value={busca}
@@ -131,15 +131,15 @@ export function CatalogoServicos() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 w-7 p-0 text-primary"
+                    className="h-7 w-7 p-0 text-primary shrink-0"
                     onClick={() => handleEditar(s.id)}
                   >
-                    <Check className="h-3 w-3" />
+                    <Check className="h-3 w-3 shrink-0" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 w-7 p-0"
+                    className="h-7 w-7 p-0 shrink-0"
                     onClick={() => setEditandoId(null)}
                   >
                     <X className="h-3 w-3" />
@@ -156,19 +156,19 @@ export function CatalogoServicos() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 w-7 p-0 text-muted-foreground"
+                    className="h-7 w-7 p-0 text-muted-foreground shrink-0"
                     onClick={() => {
                       setEditandoId(s.id);
                       setEditNome(s.nome);
                       setEditValor(String(s.valor));
                     }}
                   >
-                    <Pencil className="h-3 w-3" />
+                    <Pencil className="h-3 w-3 shrink-0" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 w-7 p-0 text-red-500"
+                    className="h-7 w-7 p-0 text-red-500 shrink-0"
                     onClick={() => {
                       removerServico(s.id);
                       toast.success("Serviço removido.");

@@ -365,7 +365,7 @@ export function ZapBotDisparo() {
             clearAllContacts();
           }}
         >
-          <MessageSquare className="h-4 w-4 mr-1" />
+          <MessageSquare className="h-4 w-4 mr-1 shrink-0" />
           Nova Campanha
         </Button>
       </div>
@@ -373,10 +373,10 @@ export function ZapBotDisparo() {
       {/* ---------- Stats ---------- */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {/* Total */}
-        <Card className="bg-gray-50 dark:bg-gray-900/50">
+        <Card className="bg-gray-50 dark:bg-gray-900/50 min-w-0">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <Users className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+              <Users className="h-4 w-4 text-gray-400 dark:text-gray-500 shrink-0" />
               <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 font-display">
                 {totalContatos}
               </p>
@@ -387,10 +387,10 @@ export function ZapBotDisparo() {
           </CardContent>
         </Card>
         {/* Selected */}
-        <Card className="bg-primary/5 dark:bg-primary/25">
+        <Card className="bg-primary/5 dark:bg-primary/25 min-w-0">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <UserPlus className="h-4 w-4 text-primary" />
+              <UserPlus className="h-4 w-4 text-primary shrink-0" />
               <p className="text-base sm:text-lg font-bold text-primary dark:text-primary/80 font-display">
                 {selecionados}
               </p>
@@ -401,10 +401,10 @@ export function ZapBotDisparo() {
           </CardContent>
         </Card>
         {/* Sent */}
-        <Card className="bg-green-50 dark:bg-green-950/40">
+        <Card className="bg-green-50 dark:bg-green-950/40 min-w-0">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <CheckCircle className="h-4 w-4 text-green-500" />
+              <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
               <p className="text-base sm:text-lg font-bold text-green-700 dark:text-green-400 font-display">
                 {enviados}
               </p>
@@ -415,10 +415,10 @@ export function ZapBotDisparo() {
           </CardContent>
         </Card>
         {/* Failed */}
-        <Card className="bg-red-50 dark:bg-red-950/40">
+        <Card className="bg-red-50 dark:bg-red-950/40 min-w-0">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <XCircle className="h-4 w-4 text-red-500" />
+              <XCircle className="h-4 w-4 text-red-500 shrink-0" />
               <p className="text-base sm:text-lg font-bold text-red-700 dark:text-red-400 font-display">
                 {falharam}
               </p>
@@ -434,7 +434,7 @@ export function ZapBotDisparo() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            <FileText className="h-4 w-4 text-primary dark:text-primary/80" />
+            <FileText className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
             Configuração da Campanha
           </CardTitle>
           <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
@@ -509,7 +509,7 @@ export function ZapBotDisparo() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            <UserPlus className="h-4 w-4 text-primary dark:text-primary/80" />
+            <UserPlus className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
             Adicionar Contatos
           </CardTitle>
           <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
@@ -579,7 +579,7 @@ export function ZapBotDisparo() {
                 className="bg-primary hover:bg-primary/90 text-white"
                 onClick={addContatoManual}
               >
-                <Plus className="h-4 w-4 mr-1" />
+                <Plus className="h-4 w-4 mr-1 shrink-0" />
                 Adicionar
               </Button>
             </div>
@@ -606,7 +606,7 @@ export function ZapBotDisparo() {
                 className="bg-primary hover:bg-primary/90 text-white"
                 onClick={addContatosBulk}
               >
-                <Users className="h-4 w-4 mr-1" />
+                <Users className="h-4 w-4 mr-1 shrink-0" />
                 Importar Contatos
               </Button>
             </div>
@@ -620,7 +620,7 @@ export function ZapBotDisparo() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                <Users className="h-4 w-4 text-primary dark:text-primary/80" />
+                <Users className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
                 Lista de Contatos
                 <Badge
                   variant="secondary"
@@ -658,7 +658,7 @@ export function ZapBotDisparo() {
         <CardContent className="p-0">
           {contacts.length === 0 ? (
             <div className="text-center py-16">
-              <Users className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+              <Users className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3 shrink-0" />
               <p className="text-sm text-gray-400 dark:text-gray-500">
                 Nenhum contato adicionado.
               </p>
@@ -718,7 +718,7 @@ export function ZapBotDisparo() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-7 w-7 p-0 text-gray-400 hover:text-red-500"
+                          className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 shrink-0"
                           onClick={() => removeOne(contato.id)}
                           disabled={enviando}
                         >
@@ -754,7 +754,7 @@ export function ZapBotDisparo() {
             </>
           ) : (
             <>
-              <Send className="h-4 w-4 mr-2" />
+              <Send className="h-4 w-4 mr-2 shrink-0" />
               Enviar ({selecionados})
             </>
           )}
@@ -763,7 +763,7 @@ export function ZapBotDisparo() {
 
       {/* ---------- Progress bar while sending ---------- */}
       {enviando && (
-        <Card className="border-primary/20 dark:border-primary/50 bg-primary/5 dark:bg-primary/15">
+        <Card className="border-primary/20 dark:border-primary/50 bg-primary/5 dark:bg-primary/15 min-w-0">
           <CardContent className="p-4 flex items-center gap-3">
             <Loader2 className="h-5 w-5 text-primary dark:text-primary/80 animate-spin" />
             <div className="flex-1 min-w-0">
@@ -798,7 +798,7 @@ export function ZapBotDisparo() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            <History className="h-4 w-4 text-primary dark:text-primary/80" />
+            <History className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
             Histórico de Campanhas
           </CardTitle>
           <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
@@ -808,7 +808,7 @@ export function ZapBotDisparo() {
         <CardContent className="p-0">
           {historico.length === 0 ? (
             <div className="text-center py-12">
-              <History className="h-10 w-10 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
+              <History className="h-10 w-10 text-gray-300 dark:text-gray-600 mx-auto mb-2 shrink-0" />
               <p className="text-sm text-gray-400 dark:text-gray-500">
                 Nenhuma campanha enviada ainda.
               </p>
@@ -846,7 +846,7 @@ export function ZapBotDisparo() {
                       {camp.mensagem}
                     </p>
                     <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1 flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
+                      <Clock className="h-3 w-3 shrink-0" />
                       {formatarData(camp.dataCriacao)}
                     </p>
                   </div>
@@ -863,7 +863,7 @@ export function ZapBotDisparo() {
                     </div>
                     <div className="text-center">
                       <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
-                        <CheckCircle className="h-3 w-3" />
+                        <CheckCircle className="h-3 w-3 shrink-0" />
                         Enviados
                       </p>
                       <p className="text-sm font-bold text-green-700 dark:text-green-400">
@@ -872,7 +872,7 @@ export function ZapBotDisparo() {
                     </div>
                     <div className="text-center">
                       <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-                        <XCircle className="h-3 w-3" />
+                        <XCircle className="h-3 w-3 shrink-0" />
                         Falharam
                       </p>
                       <p className="text-sm font-bold text-red-700 dark:text-red-400">
@@ -928,14 +928,14 @@ function StatusBadge({ status }: { status: Contact["status"] }) {
     case "enviado":
       return (
         <Badge className="text-[10px] bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 flex items-center gap-1">
-          <CheckCircle className="h-3 w-3" />
+          <CheckCircle className="h-3 w-3 shrink-0" />
           Enviado
         </Badge>
       );
     case "falhou":
       return (
         <Badge className="text-[10px] bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 flex items-center gap-1">
-          <XCircle className="h-3 w-3" />
+          <XCircle className="h-3 w-3 shrink-0" />
           Falhou
         </Badge>
       );

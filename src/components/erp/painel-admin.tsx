@@ -140,7 +140,7 @@ function DialogTrocarSenha({
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base">
-            <KeyRound className="h-5 w-5 text-gray-600" />
+            <KeyRound className="h-5 w-5 text-gray-600 shrink-0" />
             Alterar Senha
           </DialogTitle>
         </DialogHeader>
@@ -284,7 +284,7 @@ function TelaPrimeiroAcesso({
                       ? "bg-white text-primary ring-2 ring-white/50"
                       : "bg-white/15 text-white/60"
                 }`}>
-                  {etapa > i ? <Check className="h-4 w-4" /> : i + 1}
+                  {etapa > i ? <Check className="h-4 w-4 shrink-0" /> : i + 1}
                 </div>
                 {i < 2 && (
                   <div className={`w-8 h-0.5 rounded ${etapa > i ? "bg-white" : "bg-white/15"}`} />
@@ -342,7 +342,7 @@ function TelaPrimeiroAcesso({
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700">Nome completo</Label>
                 <div className="relative">
-                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
                     placeholder="Seu nome"
                     value={nome}
@@ -355,7 +355,7 @@ function TelaPrimeiroAcesso({
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700">E-mail</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
                     type="email"
                     placeholder="gestor@empresa.com"
@@ -368,7 +368,7 @@ function TelaPrimeiroAcesso({
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700">WhatsApp</Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
                     placeholder="11999999999"
                     value={telefone}
@@ -384,7 +384,7 @@ function TelaPrimeiroAcesso({
                 disabled={!podeAvancarEtapa0}
               >
                 Prosseguir
-                <ArrowRight className="h-4 w-4 ml-2" />
+                <ArrowRight className="h-4 w-4 ml-2 shrink-0" />
               </Button>
             </div>
           )}
@@ -399,7 +399,7 @@ function TelaPrimeiroAcesso({
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700">Usuario de acesso</Label>
                 <div className="relative">
-                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
                     placeholder="admin"
                     value={usuario}
@@ -413,7 +413,7 @@ function TelaPrimeiroAcesso({
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700">Senha</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
                     type={mostrarSenha ? "text" : "password"}
                     placeholder="Minimo 6 caracteres"
@@ -426,14 +426,14 @@ function TelaPrimeiroAcesso({
                     onClick={() => setMostrarSenha(!mostrarSenha)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {mostrarSenha ? <EyeOff className="h-4 w-4 shrink-0" /> : <Eye className="h-4 w-4 shrink-0" />}
                   </button>
                 </div>
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700">Confirmar senha</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
                     type="password"
                     placeholder="Repita a senha"
@@ -446,7 +446,7 @@ function TelaPrimeiroAcesso({
                 </div>
                 {confirmarSenha && senha !== confirmarSenha && (
                   <p className="text-[11px] text-red-500 flex items-center gap-1">
-                    <AlertTriangle className="h-3 w-3" /> As senhas nao conferem
+                    <AlertTriangle className="h-3 w-3 shrink-0" /> As senhas nao conferem
                   </p>
                 )}
               </div>
@@ -460,7 +460,7 @@ function TelaPrimeiroAcesso({
                   disabled={!podeAvancarEtapa1}
                 >
                   Prosseguir
-                  <ArrowRight className="h-4 w-4 ml-2" />
+                  <ArrowRight className="h-4 w-4 ml-2 shrink-0" />
                 </Button>
               </div>
             </div>
@@ -487,7 +487,7 @@ function TelaPrimeiroAcesso({
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700">E-mail de recuperacao</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                   <Input
                     type="email"
                     placeholder="recuperacao@seuemail.com"
@@ -521,7 +521,7 @@ function TelaPrimeiroAcesso({
                     </span>
                   ) : (
                     <>
-                      <Check className="h-4 w-4 mr-2" />
+                      <Check className="h-4 w-4 mr-2 shrink-0" />
                       Concluir configuracao
                     </>
                   )}
@@ -749,7 +749,7 @@ function TelaLoginAdmin({
                     onClick={() => setMostrarSenha(!mostrarSenha)}
                     className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {mostrarSenha ? <EyeOff className="h-4 w-4 shrink-0" /> : <Eye className="h-4 w-4 shrink-0" />}
                   </button>
                 </div>
               </div>
@@ -809,7 +809,7 @@ function TelaLoginAdmin({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <KeyRound className="h-5 w-5 text-amber-500" />
+              <KeyRound className="h-5 w-5 text-amber-500 shrink-0" />
               {etapaRecuperacao === "email" ? "Recuperar Senha" : "Redefinir Senha"}
             </DialogTitle>
           </DialogHeader>
@@ -860,7 +860,7 @@ function TelaLoginAdmin({
                 className="w-full h-10 text-sm rounded-xl"
                 onClick={handleEnviarEmailRecuperacao}
               >
-                <Mail className="h-4 w-4 mr-2" />
+                <Mail className="h-4 w-4 mr-2 shrink-0" />
                 Receber instrucoes por e-mail
               </Button>
               <p className="text-[11px] text-gray-400 text-center">
@@ -891,7 +891,7 @@ function TelaLoginAdmin({
                     onClick={() => setMostrarSenha(!mostrarSenha)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {mostrarSenha ? <EyeOff className="h-4 w-4 shrink-0" /> : <Eye className="h-4 w-4 shrink-0" />}
                   </button>
                 </div>
               </div>
@@ -1229,7 +1229,7 @@ function FormularioSistema({
           <div className="sm:col-span-2 border border-dashed border-primary/30 dark:border-primary/40 rounded-lg p-3 bg-primary/5 dark:bg-primary/15 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <KeyRound className="h-4 w-4 text-primary" />
+                <KeyRound className="h-4 w-4 text-primary shrink-0" />
                 <Label className="text-xs font-medium text-primary dark:text-white/80">Senha de Acesso do Cliente</Label>
               </div>
               <button
@@ -1293,14 +1293,14 @@ function FormularioSistema({
         {/* Recursos Premium */}
         <div className="sm:col-span-2 border border-purple-200 dark:border-purple-800 rounded-xl p-4 bg-purple-50/50 dark:bg-purple-950/20 space-y-4">
           <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400 shrink-0" />
             <Label className="text-xs font-semibold text-purple-800 dark:text-purple-300 uppercase tracking-wider">Recursos Premium</Label>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/30 flex items-center justify-center">
-                  <Bot className="h-4 w-4 text-primary dark:text-primary/80" />
+                  <Bot className="h-4 w-4 text-primary dark:text-primary/80 shrink-0" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">ZapBot</p>
@@ -1312,7 +1312,7 @@ function FormularioSistema({
             <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
-                  <Send className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <Send className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Disparo em Massa</p>
@@ -1324,7 +1324,7 @@ function FormularioSistema({
             <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
-                  <TrendingUp className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                  <TrendingUp className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Funil de Leads</p>
@@ -1336,7 +1336,7 @@ function FormularioSistema({
             <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center">
-                  <GitBranch className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                  <GitBranch className="h-4 w-4 text-violet-600 dark:text-violet-400 shrink-0" />
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Fluxos de Automacao</p>
@@ -1511,7 +1511,7 @@ function SecaoRecuperacoes() {
       {/* Header */}
       <div>
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <KeyRound className="h-5 w-5 text-amber-500" />
+          <KeyRound className="h-5 w-5 text-amber-500 shrink-0" />
           Recuperacao de Acesso
         </h2>
         <p className="text-sm text-gray-500 mt-0.5">
@@ -1529,7 +1529,7 @@ function SecaoRecuperacoes() {
               : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
-          <MessageCircle className="h-4 w-4" />
+          <MessageCircle className="h-4 w-4 shrink-0" />
           Enviar Dados de Acesso
           {sistemas.length > 0 && (
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
@@ -1545,7 +1545,7 @@ function SecaoRecuperacoes() {
               : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
-          <Clock className="h-4 w-4" />
+          <Clock className="h-4 w-4 shrink-0" />
           Pedidos de Recuperacao
           {pendentes.length > 0 && (
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
@@ -1564,7 +1564,7 @@ function SecaoRecuperacoes() {
           <Card>
             <CardContent className="p-4 space-y-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                 <Input
                   placeholder="Buscar por nome, empresa, e-mail ou telefone..."
                   value={buscaCliente}
@@ -1584,7 +1584,7 @@ function SecaoRecuperacoes() {
           {sistemas.length === 0 ? (
             <Card>
               <CardContent className="py-16 text-center">
-                <Users className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <Users className="h-12 w-12 text-gray-300 mx-auto mb-3 shrink-0" />
                 <p className="text-sm text-gray-500 font-medium">Nenhum cliente cadastrado</p>
                 <p className="text-xs text-gray-400 mt-1">
                   Cadastre clientes na aba "Sistemas" para enviar dados de acesso.
@@ -1594,7 +1594,7 @@ function SecaoRecuperacoes() {
           ) : clientesFiltrados.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
-                <Search className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+                <Search className="h-10 w-10 text-gray-300 mx-auto mb-3 shrink-0" />
                 <p className="text-sm text-gray-500 font-medium">Nenhum cliente encontrado</p>
                 <p className="text-xs text-gray-400 mt-1">Tente buscar por outro termo.</p>
               </CardContent>
@@ -1638,8 +1638,8 @@ function SecaoRecuperacoes() {
                             }`}>{sistema.status}</Badge>
                           </div>
                           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-                            <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{emailLogin}</span>
-                            {telExibido && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{telExibido}</span>}
+                            <span className="flex items-center gap-1"><Mail className="h-3 w-3 shrink-0" />{emailLogin}</span>
+                            {telExibido && <span className="flex items-center gap-1"><Phone className="h-3 w-3 shrink-0" />{telExibido}</span>}
                             {sistema.cidade && <span>{sistema.cidade}</span>}
                           </div>
                         </div>
@@ -1669,7 +1669,7 @@ function SecaoRecuperacoes() {
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-primary" />
+                  <MessageCircle className="h-5 w-5 text-primary shrink-0" />
                   Enviar Dados de Acesso
                 </DialogTitle>
               </DialogHeader>
@@ -1730,7 +1730,7 @@ Qualquer duvida, estou a disposicao!
                   <div className="flex gap-3 pt-2">
                     <Button variant="outline" className="flex-1 text-sm" onClick={() => setDialogConfirmarEnvio(false)}>Cancelar</Button>
                     <Button className="flex-1 bg-primary hover:bg-primary/90 text-sm" onClick={confirmarEnvioProativo} disabled={!telefoneEnvio.trim()}>
-                      <MessageCircle className="h-4 w-4 mr-2" />Abrir WhatsApp
+                      <MessageCircle className="h-4 w-4 mr-2 shrink-0" />Abrir WhatsApp
                     </Button>
                   </div>
                 </div>
@@ -1767,13 +1767,13 @@ Qualquer duvida, estou a disposicao!
           </div>
 
           <div className="grid grid-cols-3 gap-3">
-            <Card className="bg-amber-50 border-amber-200">
+            <Card className="bg-amber-50 border-amber-200 min-w-0">
               <CardContent className="p-3 text-center">
                 <p className="text-xl font-bold text-amber-700">{pendentes.length}</p>
                 <p className="text-[10px] text-amber-600 uppercase tracking-wider font-medium">Pendentes</p>
               </CardContent>
             </Card>
-            <Card className="bg-primary/5 border border-primary/20">
+            <Card className="bg-primary/5 border border-primary/20 min-w-0">
               <CardContent className="p-3 text-center">
                 <p className="text-xl font-bold text-primary">
                   {pedidosRecuperacao.filter((p) => p.status === "ENVIADO").length}
@@ -1781,7 +1781,7 @@ Qualquer duvida, estou a disposicao!
                 <p className="text-[10px] text-primary uppercase tracking-wider font-medium">Enviados</p>
               </CardContent>
             </Card>
-            <Card className="bg-gray-50 border-gray-200">
+            <Card className="bg-gray-50 border-gray-200 min-w-0">
               <CardContent className="p-3 text-center">
                 <p className="text-xl font-bold text-gray-700">{pedidosRecuperacao.length}</p>
                 <p className="text-[10px] text-gray-500 uppercase tracking-wider font-medium">Total</p>
@@ -1792,7 +1792,7 @@ Qualquer duvida, estou a disposicao!
           {listaExibida.length === 0 ? (
             <Card>
               <CardContent className="py-16 text-center">
-                <KeyRound className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <KeyRound className="h-12 w-12 text-gray-300 mx-auto mb-3 shrink-0" />
                 <p className="text-sm text-gray-500 font-medium">Nenhum pedido de recuperacao</p>
                 <p className="text-xs text-gray-400 mt-1">
                   {mostrarResolvidos
@@ -1823,9 +1823,9 @@ Qualquer duvida, estou a disposicao!
                             </Badge>
                           </div>
                           <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
-                            <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{pedido.email}</span>
-                            {pedido.telefoneSolicitado && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{pedido.telefoneSolicitado}</span>}
-                            <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatarDataISO(pedido.dataPedido)}</span>
+                            <span className="flex items-center gap-1"><Mail className="h-3 w-3 shrink-0" />{pedido.email}</span>
+                            {pedido.telefoneSolicitado && <span className="flex items-center gap-1"><Phone className="h-3 w-3 shrink-0" />{pedido.telefoneSolicitado}</span>}
+                            <span className="flex items-center gap-1"><Clock className="h-3 w-3 shrink-0" />{formatarDataISO(pedido.dataPedido)}</span>
                           </div>
                           {cliente && !cliente?.telefone && !pedido.telefoneSolicitado && isPendente && (
                             <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 flex items-start gap-2">
@@ -1893,7 +1893,7 @@ function DialogEmailRecuperacaoForm() {
       <div className="space-y-1.5">
         <Label className="text-xs font-medium">E-mail de recuperacao</Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
           <Input
             type="email"
             placeholder="recuperacao@seuemail.com"
@@ -1998,58 +1998,58 @@ function SecaoSistemas({
     <div className="space-y-6">
             {/* Cards de estatísticas - Sistemas */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              <Card className="border-0 shadow-sm">
+              <Card className="border-0 shadow-sm min-w-0">
                 <CardContent className="p-3.5">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <Monitor className="w-3.5 h-3.5 text-gray-400" />
-                    <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Total</span>
+                    <Monitor className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider truncate">Total</span>
                   </div>
                   <p className="text-xl sm:text-2xl font-black text-gray-900 font-display">{stats.total}</p>
                 </CardContent>
               </Card>
-              <Card className="border-0 shadow-sm">
+              <Card className="border-0 shadow-sm min-w-0">
                 <CardContent className="p-3.5">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <TrendingUp className="w-3.5 h-3.5 text-primary" />
-                    <span className="text-[10px] text-primary font-medium uppercase tracking-wider">Ativos</span>
+                    <TrendingUp className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <span className="text-[10px] text-primary font-medium uppercase tracking-wider truncate">Ativos</span>
                   </div>
                   <p className="text-xl sm:text-2xl font-black text-primary font-display">{stats.ativos}</p>
                 </CardContent>
               </Card>
-              <Card className="border-0 shadow-sm">
+              <Card className="border-0 shadow-sm min-w-0">
                 <CardContent className="p-3.5">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <Monitor className="w-3.5 h-3.5 text-blue-500" />
-                    <span className="text-[10px] text-blue-600 font-medium uppercase tracking-wider">Trial</span>
+                    <Monitor className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                    <span className="text-[10px] text-blue-600 font-medium uppercase tracking-wider truncate">Trial</span>
                   </div>
                   <p className="text-xl sm:text-2xl font-black text-blue-600 font-display">{stats.trials}</p>
                 </CardContent>
               </Card>
-              <Card className="border-0 shadow-sm">
+              <Card className="border-0 shadow-sm min-w-0">
                 <CardContent className="p-3.5">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
-                    <span className="text-[10px] text-red-600 font-medium uppercase tracking-wider">Expirados</span>
+                    <AlertTriangle className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                    <span className="text-[10px] text-red-600 font-medium uppercase tracking-wider truncate">Expirados</span>
                   </div>
                   <p className="text-xl sm:text-2xl font-black text-red-600 font-display">{stats.expirados}</p>
                 </CardContent>
               </Card>
-              <Card className="border-0 shadow-sm">
+              <Card className="border-0 shadow-sm min-w-0">
                 <CardContent className="p-3.5">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                    <span className="text-[10px] text-amber-600 font-medium uppercase tracking-wider">Vencendo</span>
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <span className="text-[10px] text-amber-600 font-medium uppercase tracking-wider truncate">Vencendo</span>
                   </div>
                   <p className="text-xl sm:text-2xl font-black text-amber-600 font-display">{stats.vencendo}</p>
                 </CardContent>
               </Card>
-              <Card className="border-0 shadow-sm">
+              <Card className="border-0 shadow-sm min-w-0">
                 <CardContent className="p-3.5">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <DollarSign className="w-3.5 h-3.5 text-primary" />
-                    <span className="text-[10px] text-primary font-medium uppercase tracking-wider">Receita/mes</span>
+                    <DollarSign className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <span className="text-[10px] text-primary font-medium uppercase tracking-wider truncate">Receita/mes</span>
                   </div>
-                  <p className="text-base sm:text-lg font-black text-primary font-display whitespace-nowrap">{formatarMoeda(stats.receitaMensal)}</p>
+                  <p className="text-base sm:text-lg font-black text-primary font-display whitespace-nowrap overflow-hidden text-ellipsis">{formatarMoeda(stats.receitaMensal)}</p>
                 </CardContent>
               </Card>
             </div>
@@ -2057,7 +2057,7 @@ function SecaoSistemas({
             {/* Barra de ações */}
             <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 shrink-0" />
                 <Input
                   placeholder="Buscar por empresa, responsavel, cidade, telefone..."
                   value={busca}
@@ -2095,13 +2095,13 @@ function SecaoSistemas({
                 className="h-9 bg-primary hover:bg-primary/90 text-sm shrink-0"
                 onClick={onNovo}
               >
-                <Plus className="h-4 w-4 mr-1.5" />
+                <Plus className="h-4 w-4 mr-1.5 shrink-0" />
                 Novo Sistema
               </Button>
             </div>
 
             {/* Tabela de sistemas */}
-            <Card className="border-0 shadow-sm">
+            <Card className="border-0 shadow-sm min-w-0">
               <CardContent className="p-0">
                 {/* Mobile cards */}
                 <div className="sm:hidden divide-y divide-gray-100">
@@ -2167,17 +2167,17 @@ function SecaoSistemas({
                         </div>
                         <div className="flex gap-1.5 pt-1">
                           <Button variant="ghost" size="sm" className="h-7 text-[10px] text-gray-500" onClick={() => onVerDetalhe(s)}>
-                            <Eye className="h-3 w-3 mr-1" /> Ver
+                            <Eye className="h-3 w-3 mr-1 shrink-0" /> Ver
                           </Button>
                           <Button variant="ghost" size="sm" className="h-7 text-[10px] text-blue-600" onClick={() => onEditar(s)}>
-                            <Pencil className="h-3 w-3 mr-1" /> Editar
+                            <Pencil className="h-3 w-3 mr-1 shrink-0" /> Editar
                           </Button>
                           <Button variant="ghost" size="sm" className="h-7 text-[10px] text-purple-600" onClick={() => onMudarAba("cobrancas")}>
-                            <Receipt className="h-3 w-3 mr-1" /> Cobrancas
+                            <Receipt className="h-3 w-3 mr-1 shrink-0" /> Cobrancas
                           </Button>
                           {(s.telefone || s.dadosRegistro?.telefone) && (
                             <Button variant="ghost" size="sm" className="h-7 text-[10px] text-primary" onClick={() => onWhatsApp(s.telefone || s.dadosRegistro?.telefone || "", s)}>
-                              <MessageCircle className="h-3 w-3" />
+                              <MessageCircle className="h-3 w-3 shrink-0" />
                             </Button>
                           )}
                           <Button variant="ghost" size="sm" className="h-7 text-[10px] text-red-500 ml-auto" onClick={() => onRemover(s.id)}>
@@ -2280,7 +2280,7 @@ function SecaoSistemas({
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-gray-700" onClick={() => onVerDetalhe(s)}>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-gray-700 shrink-0" onClick={() => onVerDetalhe(s)}>
                                         <Eye className="h-3.5 w-3.5" />
                                       </Button>
                                     </TooltipTrigger>
@@ -2290,7 +2290,7 @@ function SecaoSistemas({
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:text-blue-700" onClick={() => onEditar(s)}>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:text-blue-700 shrink-0" onClick={() => onEditar(s)}>
                                         <Pencil className="h-3.5 w-3.5" />
                                       </Button>
                                     </TooltipTrigger>
@@ -2300,7 +2300,7 @@ function SecaoSistemas({
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-purple-500 hover:text-purple-700" onClick={() => onMudarAba("cobrancas")}>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-purple-500 hover:text-purple-700 shrink-0" onClick={() => onMudarAba("cobrancas")}>
                                         <Receipt className="h-3.5 w-3.5" />
                                       </Button>
                                     </TooltipTrigger>
@@ -2311,7 +2311,7 @@ function SecaoSistemas({
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-primary hover:text-primary" onClick={() => onWhatsApp(s.telefone || s.dadosRegistro?.telefone || "", s)}>
+                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-primary hover:text-primary shrink-0" onClick={() => onWhatsApp(s.telefone || s.dadosRegistro?.telefone || "", s)}>
                                           <MessageCircle className="h-3.5 w-3.5" />
                                         </Button>
                                       </TooltipTrigger>
@@ -2322,7 +2322,7 @@ function SecaoSistemas({
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-600" onClick={() => onRemover(s.id)}>
+                                      <Button variant="ghost" size="icon" className="h-7 w-7 text-red-400 hover:text-red-600 shrink-0" onClick={() => onRemover(s.id)}>
                                         <Trash2 className="h-3.5 w-3.5" />
                                       </Button>
                                     </TooltipTrigger>
@@ -2572,13 +2572,13 @@ const handleSalvarNovo = useCallback(
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground shrink-0"
                     onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                   >
                     {theme === "dark" ? (
-                      <Sun className="h-4 w-4" />
+                      <Sun className="h-4 w-4 shrink-0" />
                     ) : (
-                      <Moon className="h-4 w-4" />
+                      <Moon className="h-4 w-4 shrink-0" />
                     )}
                   </Button>
                 </TooltipTrigger>
@@ -2593,10 +2593,10 @@ const handleSalvarNovo = useCallback(
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="h-8 w-8 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 shrink-0"
                     onClick={() => setDialogTrocarSenha(true)}
                   >
-                    <KeyRound className="h-4 w-4" />
+                    <KeyRound className="h-4 w-4 shrink-0" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Alterar Senha</TooltipContent>
@@ -2608,10 +2608,10 @@ const handleSalvarNovo = useCallback(
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                    className="h-8 w-8 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30 shrink-0"
                     onClick={() => setDialogEmailRecuperacao(true)}
                   >
-                    <Mail className="h-4 w-4" />
+                    <Mail className="h-4 w-4 shrink-0" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>E-mail de Recuperacao</TooltipContent>
@@ -2623,10 +2623,10 @@ const handleSalvarNovo = useCallback(
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+                    className="h-8 w-8 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 shrink-0"
                     onClick={handleLogout}
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className="h-4 w-4 shrink-0" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Sair</TooltipContent>
@@ -2734,7 +2734,7 @@ const handleSalvarNovo = useCallback(
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Plus className="h-5 w-5 text-primary" />
+              <Plus className="h-5 w-5 text-primary shrink-0" />
               Cadastrar Novo Sistema
             </DialogTitle>
           </DialogHeader>
@@ -2750,7 +2750,7 @@ const handleSalvarNovo = useCallback(
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Pencil className="h-5 w-5 text-blue-600" />
+              <Pencil className="h-5 w-5 text-blue-600 shrink-0" />
               Editar Sistema
             </DialogTitle>
           </DialogHeader>
@@ -2769,7 +2769,7 @@ const handleSalvarNovo = useCallback(
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Eye className="h-5 w-5 text-primary" />
+              <Eye className="h-5 w-5 text-primary shrink-0" />
               Detalhes do Sistema
             </DialogTitle>
           </DialogHeader>
@@ -2858,10 +2858,10 @@ const handleSalvarNovo = useCallback(
                 <div>
                   <p className="text-[10px] text-gray-400 uppercase font-medium mb-2">Recursos Premium Ativos</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {dialogDetalhe.zapbotAtivo && <Badge className="text-[10px] bg-primary/10 text-primary"><Bot className="h-3 w-3 mr-1" />ZapBot</Badge>}
-                    {dialogDetalhe.disparoAtivo && <Badge className="text-[10px] bg-blue-100 text-blue-700"><Send className="h-3 w-3 mr-1" />Disparo em Massa</Badge>}
-                    {dialogDetalhe.funilAtivo && <Badge className="text-[10px] bg-amber-100 text-amber-700"><TrendingUp className="h-3 w-3 mr-1" />Funil de Leads</Badge>}
-                    {dialogDetalhe.fluxosAtivo && <Badge className="text-[10px] bg-violet-100 text-violet-700"><GitBranch className="h-3 w-3 mr-1" />Fluxos</Badge>}
+                    {dialogDetalhe.zapbotAtivo && <Badge className="text-[10px] bg-primary/10 text-primary"><Bot className="h-3 w-3 mr-1 shrink-0" />ZapBot</Badge>}
+                    {dialogDetalhe.disparoAtivo && <Badge className="text-[10px] bg-blue-100 text-blue-700"><Send className="h-3 w-3 mr-1 shrink-0" />Disparo em Massa</Badge>}
+                    {dialogDetalhe.funilAtivo && <Badge className="text-[10px] bg-amber-100 text-amber-700"><TrendingUp className="h-3 w-3 mr-1 shrink-0" />Funil de Leads</Badge>}
+                    {dialogDetalhe.fluxosAtivo && <Badge className="text-[10px] bg-violet-100 text-violet-700"><GitBranch className="h-3 w-3 mr-1 shrink-0" />Fluxos</Badge>}
                     {!dialogDetalhe.zapbotAtivo && !dialogDetalhe.disparoAtivo && !dialogDetalhe.funilAtivo && !dialogDetalhe.fluxosAtivo && (
                       <p className="text-xs text-gray-400">Nenhum recurso Premium ativo</p>
                     )}
@@ -2881,7 +2881,7 @@ const handleSalvarNovo = useCallback(
                     <Separator />
                     <div>
                       <p className="text-[10px] text-primary uppercase font-semibold mb-2 flex items-center gap-1">
-                        <Check className="h-3 w-3" />
+                        <Check className="h-3 w-3 shrink-0" />
                         Dados do Cadastro do Cliente
                       </p>
                       <div className="grid grid-cols-2 gap-2 text-sm bg-primary/5 rounded-lg p-3 border border-primary/15">
@@ -2938,7 +2938,7 @@ const handleSalvarNovo = useCallback(
                           }}
                           className="shrink-0 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >
-                          <Copy className="h-4 w-4" />
+                          <Copy className="h-4 w-4 shrink-0" />
                         </button>
                       </div>
                     </div>
@@ -2957,7 +2957,7 @@ const handleSalvarNovo = useCallback(
                             }}
                             className="shrink-0 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                           >
-                            <Copy className="h-4 w-4" />
+                            <Copy className="h-4 w-4 shrink-0" />
                           </button>
                         )}
                       </div>
@@ -3067,7 +3067,7 @@ const handleSalvarNovo = useCallback(
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Mail className="h-5 w-5 text-blue-500" />
+              <Mail className="h-5 w-5 text-blue-500 shrink-0" />
               E-mail de Recuperacao
             </DialogTitle>
           </DialogHeader>

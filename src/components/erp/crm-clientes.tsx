@@ -121,7 +121,7 @@ export function CRMClientes() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4 text-primary" />
+            <Users className="h-4 w-4 text-primary shrink-0" />
             CRM Clientes
             <Badge variant="secondary" className="ml-auto text-[10px]">
               {clientes.length}
@@ -156,14 +156,14 @@ export function CRMClientes() {
               className="col-span-2 h-9 bg-gray-800 hover:bg-gray-900 text-xs"
               onClick={handleAdicionar}
             >
-              <Plus className="h-3 w-3 mr-1" />
+              <Plus className="h-3 w-3 mr-1 shrink-0" />
               Adicionar Cliente
             </Button>
           </div>
 
           {clientes.length > 3 && (
             <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground shrink-0" />
               <Input
                 placeholder="Buscar cliente..."
                 value={busca}
@@ -215,7 +215,7 @@ export function CRMClientes() {
                       className="h-7 w-full text-primary text-[10px]"
                       onClick={() => handleEditar(c.id)}
                     >
-                      <Check className="h-3 w-3 mr-1" /> Salvar
+                      <Check className="h-3 w-3 mr-1 shrink-0" /> Salvar
                     </Button>
                     <Button
                       variant="ghost"
@@ -248,7 +248,7 @@ export function CRMClientes() {
                       onClick={() => setFichaAberta(c)}
                       title="Ver ficha"
                     >
-                      <Eye className="h-3 w-3" />
+                      <Eye className="h-3 w-3 shrink-0" />
                     </Button>
                     {c.telefone && (
                       <Button
@@ -260,7 +260,7 @@ export function CRMClientes() {
                         }
                         title="WhatsApp"
                       >
-                        <MessageCircle className="h-3 w-3" />
+                        <MessageCircle className="h-3 w-3 shrink-0" />
                       </Button>
                     )}
                     <Button
@@ -275,7 +275,7 @@ export function CRMClientes() {
                         setEditEmail(c.email);
                       }}
                     >
-                      <Pencil className="h-3 w-3" />
+                      <Pencil className="h-3 w-3 shrink-0" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -304,7 +304,7 @@ export function CRMClientes() {
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Users className="h-5 w-5 text-primary" />
+              <Users className="h-5 w-5 text-primary shrink-0" />
               Ficha do Cliente
             </DialogTitle>
           </DialogHeader>
@@ -370,7 +370,7 @@ function FichaCliente({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <div className="bg-primary/5 dark:bg-primary/15 rounded-lg p-2.5 text-center border border-primary/15 dark:border-primary/40">
           <div className="flex items-center justify-center gap-1 text-[10px] text-primary dark:text-primary/80 font-bold mb-0.5">
-            <DollarSign className="h-3 w-3" />
+            <DollarSign className="h-3 w-3 shrink-0" />
             Total Gasto
           </div>
           <p className="text-sm font-black text-primary dark:text-primary/80">
@@ -379,7 +379,7 @@ function FichaCliente({
         </div>
         <div className="bg-muted/50 rounded-lg p-2.5 text-center border">
           <div className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground font-bold mb-0.5">
-            <ShoppingBag className="h-3 w-3" />
+            <ShoppingBag className="h-3 w-3 shrink-0" />
             Compras
           </div>
           <p className="text-sm font-black">{qtdCompras}</p>

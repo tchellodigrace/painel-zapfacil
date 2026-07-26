@@ -36,7 +36,7 @@ function CopyBlock({ code, label }: { code: string; label: string }) {
       <Button
         variant="secondary"
         size="icon"
-        className="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
         onClick={copiar}
       >
         <Copy className="h-3.5 w-3.5" />
@@ -131,23 +131,23 @@ https://SEU_DOMINIO/api/zapbot/webhook
 
       {/* Resumo */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="border-primary/20 bg-primary/5">
+        <Card className="border-primary/20 bg-primary/5 min-w-0">
           <CardContent className="p-4 text-center">
-            <DollarSign className="h-8 w-8 text-primary mx-auto mb-2" />
+            <DollarSign className="h-8 w-8 text-primary mx-auto mb-2 shrink-0" />
             <h4 className="font-bold text-sm">100% Gratuito</h4>
             <p className="text-xs text-gray-500 mt-1">Oracle Cloud ARM com 24GB RAM, para sempre</p>
           </CardContent>
         </Card>
-        <Card className="border-blue-200 bg-blue-50/50">
+        <Card className="border-blue-200 bg-blue-50/50 min-w-0">
           <CardContent className="p-4 text-center">
-            <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+            <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2 shrink-0" />
             <h4 className="font-bold text-sm">30 minutos</h4>
             <p className="text-xs text-gray-500 mt-1">Tempo estimado de configuracao completa</p>
           </CardContent>
         </Card>
-        <Card className="border-purple-200 bg-purple-50/50">
+        <Card className="border-purple-200 bg-purple-50/50 min-w-0">
           <CardContent className="p-4 text-center">
-            <Shield className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+            <Shield className="h-8 w-8 text-purple-600 mx-auto mb-2 shrink-0" />
             <h4 className="font-bold text-sm">Seguro</h4>
             <p className="text-xs text-gray-500 mt-1">Open-source, sem intermedirios, voce controla tudo</p>
           </CardContent>
@@ -158,7 +158,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Server className="h-4 w-4 text-primary" />
+            <Server className="h-4 w-4 text-primary shrink-0" />
             Arquitetura do Projeto
           </CardTitle>
         </CardHeader>
@@ -184,7 +184,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Rocket className="h-4 w-4 text-primary" />
+            <Rocket className="h-4 w-4 text-primary shrink-0" />
             Passo a Passo
           </CardTitle>
           <CardDescription>
@@ -317,7 +317,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <FileText className="h-4 w-4 text-primary" />
+            <FileText className="h-4 w-4 text-primary shrink-0" />
             Configuracao de Webhooks
           </CardTitle>
           <CardDescription>
@@ -339,7 +339,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Cloud className="h-4 w-4 text-primary" />
+            <Cloud className="h-4 w-4 text-primary shrink-0" />
             Links Uteis
           </CardTitle>
         </CardHeader>
@@ -347,7 +347,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Button variant="outline" className="justify-start h-auto py-3" asChild>
               <a href="https://github.com/EvolutionAPI/evolution-api" target="_blank" rel="noopener noreferrer">
-                <Zap className="h-4 w-4 mr-2 text-primary" />
+                <Zap className="h-4 w-4 mr-2 text-primary shrink-0" />
                 <div className="text-left">
                   <p className="text-sm font-medium">Evolution API (GitHub)</p>
                   <p className="text-[10px] text-gray-400">Documentacao oficial</p>
@@ -356,7 +356,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
             </Button>
             <Button variant="outline" className="justify-start h-auto py-3" asChild>
               <a href="https://doc.evolution-api.com" target="_blank" rel="noopener noreferrer">
-                <FileText className="h-4 w-4 mr-2 text-blue-600" />
+                <FileText className="h-4 w-4 mr-2 text-blue-600 shrink-0" />
                 <div className="text-left">
                   <p className="text-sm font-medium">Documentacao da API</p>
                   <p className="text-[10px] text-gray-400">Referencia completa</p>
@@ -365,7 +365,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
             </Button>
             <Button variant="outline" className="justify-start h-auto py-3" asChild>
               <a href="https://www.oracle.com/cloud/free/" target="_blank" rel="noopener noreferrer">
-                <Cloud className="h-4 w-4 mr-2 text-red-600" />
+                <Cloud className="h-4 w-4 mr-2 text-red-600 shrink-0" />
                 <div className="text-left">
                   <p className="text-sm font-medium">Oracle Cloud Free Tier</p>
                   <p className="text-[10px] text-gray-400">Criar conta gratuita</p>
@@ -374,7 +374,7 @@ https://SEU_DOMINIO/api/zapbot/webhook
             </Button>
             <Button variant="outline" className="justify-start h-auto py-3" asChild>
               <a href="https://hub.docker.com/r/atendai/evolution-api" target="_blank" rel="noopener noreferrer">
-                <Server className="h-4 w-4 mr-2 text-purple-600" />
+                <Server className="h-4 w-4 mr-2 text-purple-600 shrink-0" />
                 <div className="text-left">
                   <p className="text-sm font-medium">Docker Hub</p>
                   <p className="text-[10px] text-gray-400">Imagem oficial</p>
