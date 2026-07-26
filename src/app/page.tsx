@@ -193,8 +193,9 @@ export default function ZapFacilPage() {
             <img
               src="/logo-cliente.png"
               alt="Logo"
-              width={400} height={200}
-              className="h-[50px] w-[100px] sm:h-[60px] sm:w-[120px] md:h-[70px] md:w-[140px] lg:h-[80px] lg:w-[160px] xl:h-[100px] xl:w-[200px] object-contain shrink-0"
+              width={400}
+              height={100}
+              className="h-[50px] w-[200px] sm:h-[60px] sm:w-[240px] md:h-[70px] md:w-[280px] lg:h-[80px] lg:w-[320px] xl:h-[100px] xl:w-[400px] object-contain"
             />
           </div>
           <div className="flex items-center gap-2">
