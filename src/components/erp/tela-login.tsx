@@ -91,7 +91,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
     setTemCredenciais(!!cred);
   }, [onAutenticado]);
 
-  const handleCriarConta = useCallback(() => {
+  const handleCriarConta = useCallback(async () => {
     if (!nomeEmpresa.trim()) {
       toast.error("Informe o nome da empresa.");
       return;
@@ -113,153 +113,133 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
       return;
     }
 
-    const cred: Credenciais = {
-      email: email.trim().toLowerCase(),
-      senha,
-      nomeEmpresa: nomeEmpresa.trim(),
-      nomeResponsavel: nomeResponsavel.trim(),
-      telefone: telefone.trim(),
-    };
-    salvarCredenciais(cred);
-    criarSessao();
+    setCarregando(true);
 
-    // Salvar registro do cliente no localStorage (visivel pelo admin)
-    const registroCliente = {
-      usuario: nomeResponsavel.trim(),
-      nomeEmpresa: nomeEmpresa.trim(),
-      telefone: telefone.trim(),
-      email: email.trim().toLowerCase(),
-      senha,
-      registradoEm: new Date().toISOString(),
-    };
-
-    // Metodo 1: salvar direto no localStorage como sistema novo (fallback garantido)
-    const ADMIN_PREFIX = "zapfacil_admin_";
     try {
-      const sistemasRaw = localStorage.getItem(`${ADMIN_PREFIX}sistemas`);
-      const sistemas = sistemasRaw ? JSON.parse(sistemasRaw) : [];
-      const novoSistema = {
-        id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-        empresa: registroCliente.nomeEmpresa,
-        responsavel: registroCliente.usuario,
-        telefone: registroCliente.telefone,
-        email: registroCliente.email,
-        cidade: "",
-        dataInstalacao: new Date().toISOString().split("T")[0],
-        dataVencimento: "",
-        status: "TRIAL",
-        plano: "PRO",
-        tipoLicenca: "ALUGUEL",
-        valorMensal: 0,
-        valorAquisicao: 0,
-        taxaInstalacao: 0,
-        observacoes: "Registro automatico via link",
-        criadoEm: registroCliente.registradoEm,
-        dadosRegistro: registroCliente,
+      const res = await fetch("/api/auth/registrar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          senha,
+          nomeEmpresa: nomeEmpresa.trim(),
+          nomeResponsavel: nomeResponsavel.trim(),
+          telefone: telefone.trim(),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        toast.error(data.error || "Erro ao criar conta.");
+        setCarregando(false);
+        return;
+      }
+
+      // Salvar credenciais no localStorage (cache local p/ sessão)
+      const cred: Credenciais = {
+        email: data.cliente.email,
+        senha,
+        nomeEmpresa: data.cliente.nomeEmpresa,
+        nomeResponsavel: data.cliente.nomeResponsavel,
+        telefone: data.cliente.telefone || "",
       };
-      sistemas.unshift(novoSistema);
-      localStorage.setItem(`${ADMIN_PREFIX}sistemas`, JSON.stringify(sistemas));
+      salvarCredenciais(cred);
+      criarSessao();
+
+      toast.success("Conta criada com sucesso!");
+      onAutenticado();
     } catch (e) {
-      console.error("Erro ao salvar registro no admin store:", e);
+      console.error("[handleCriarConta] erro:", e);
+      toast.error("Erro de conexao. Tente novamente.");
+    } finally {
+      setCarregando(false);
     }
-
-    // Metodo 2: tentar via Zustand store (se disponivel)
-    try {
-      import("@/hooks/use-admin-store").then(({ useAdminStore }) => {
-        useAdminStore.getState().recarregarDados();
-      }).catch(() => {});
-    } catch {
-      // Admin store pode nao estar disponivel
-    }
-
-    toast.success("Conta criada com sucesso!");
-    onAutenticado();
   }, [email, senha, confirmarSenha, nomeEmpresa, nomeResponsavel, telefone, onAutenticado]);
 
-  const handleRecuperarSenha = useCallback(() => {
+  const handleRecuperarSenha = useCallback(async () => {
     if (!recuperarEmail.trim() || !recuperarEmail.includes("@")) {
       toast.error("Informe um e-mail valido.");
       return;
     }
     setEnviandoPedido(true);
-    setTimeout(() => {
-      import("@/hooks/use-admin-store").then(({ useAdminStore }) => {
-        useAdminStore.getState().criarPedidoRecuperacao(
-          recuperarEmail.trim(),
-          recuperarTelefone.trim()
-        );
-      }).catch(() => {});
+
+    try {
+      const res = await fetch("/api/auth/recuperar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: recuperarEmail.trim().toLowerCase(),
+          telefone: recuperarTelefone.trim(),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        toast.error(data.error || "Erro ao enviar pedido.");
+        setEnviandoPedido(false);
+        return;
+      }
+
       setEnviandoPedido(false);
       setDialogRecuperar(false);
       setRecuperarEmail("");
       setRecuperarTelefone("");
       toast.success(
-        "Pedido enviado ao administrador! Voce recebera seus dados de acesso pelo WhatsApp."
+        data.mensagem ||
+          "Pedido enviado ao administrador! Voce recebera seus dados de acesso pelo WhatsApp."
       );
-    }, 800);
+    } catch (e) {
+      console.error("[handleRecuperarSenha] erro:", e);
+      toast.error("Erro de conexao. Tente novamente.");
+      setEnviandoPedido(false);
+    }
   }, [recuperarEmail, recuperarTelefone]);
 
-  const handleLogin = useCallback(() => {
+  const handleLogin = useCallback(async () => {
     if (!email.trim() || !senha.trim()) {
       toast.error("Preencha e-mail e senha.");
       return;
     }
     setCarregando(true);
-    setTimeout(() => {
-      const emailNorm = email.trim().toLowerCase();
 
-      // 1. Verificar credenciais ja salvas no zapfacil_auth
-      const cred = carregarCredenciais();
-      if (
-        cred &&
-        cred.email === emailNorm &&
-        cred.senha === senha
-      ) {
-        criarSessao();
-        toast.success(`Bem-vindo, ${cred.nomeResponsavel}!`);
-        onAutenticado();
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          senha,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        toast.error(data.error || "E-mail ou senha incorretos.");
         setCarregando(false);
         return;
       }
 
-      // 2. Verificar credenciais definidas pelo admin em zapfacil_admin_sistemas
-      try {
-        const ADMIN_PREFIX = "zapfacil_admin_";
-        const sistemasRaw = localStorage.getItem(`${ADMIN_PREFIX}sistemas`);
-        if (sistemasRaw) {
-          const sistemas = JSON.parse(sistemasRaw);
-          const sistemaAdmin = sistemas.find(
-            (s: any) =>
-              s.dadosRegistro &&
-              s.dadosRegistro.email &&
-              s.dadosRegistro.email.toLowerCase() === emailNorm &&
-              s.dadosRegistro.senha === senha
-          );
-          if (sistemaAdmin && sistemaAdmin.dadosRegistro) {
-            // Encontrou! Salvar no zapfacil_auth para proximos logins
-            const novasCred: Credenciais = {
-              email: sistemaAdmin.dadosRegistro.email,
-              senha: sistemaAdmin.dadosRegistro.senha,
-              nomeEmpresa: sistemaAdmin.dadosRegistro.nomeEmpresa || sistemaAdmin.empresa,
-              nomeResponsavel: sistemaAdmin.dadosRegistro.usuario || sistemaAdmin.responsavel,
-              telefone: sistemaAdmin.dadosRegistro.telefone || sistemaAdmin.telefone || "",
-            };
-            salvarCredenciais(novasCred);
-            criarSessao();
-            toast.success(`Bem-vindo, ${novasCred.nomeResponsavel}!`);
-            onAutenticado();
-            setCarregando(false);
-            return;
-          }
-        }
-      } catch (e) {
-        console.error("Erro ao verificar credenciais admin:", e);
-      }
-
-      // 3. Nenhuma credencial encontrada
-      toast.error("E-mail ou senha incorretos.");
+      // Login OK — salvar credenciais no localStorage (cache p/ sessão)
+      const cred: Credenciais = {
+        email: data.cliente.email,
+        senha,
+        nomeEmpresa: data.cliente.nomeEmpresa,
+        nomeResponsavel: data.cliente.nomeResponsavel,
+        telefone: data.cliente.telefone || "",
+      };
+      salvarCredenciais(cred);
+      criarSessao();
+      toast.success(`Bem-vindo, ${cred.nomeResponsavel}!`);
+      onAutenticado();
+    } catch (e) {
+      console.error("[handleLogin] erro:", e);
+      toast.error("Erro de conexao. Tente novamente.");
+    } finally {
       setCarregando(false);
-    }, 800);
+    }
   }, [email, senha, onAutenticado]);
 
   // Loading

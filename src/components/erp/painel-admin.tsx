@@ -2339,7 +2339,7 @@ type AbaAdmin = "sistemas" | "cobrancas" | "recuperacoes" | "zapbot";
 
 function PainelAdminConteudo() {
   const { theme, setTheme } = useTheme();
-  const { sistemas, cobrancas, pedidosRecuperacao, adminCredenciais, dadosGestor, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos, recarregarDados } =
+  const { sistemas, cobrancas, pedidosRecuperacao, adminCredenciais, dadosGestor, adicionarSistema, editarSistema, removerSistema, getCobrancasBySistema, resolverPedidoRecuperacao, limparPedidosResolvidos, recarregarDados, sincronizarDoSupabase } =
     useAdminStore();
   const [abaAtiva, setAbaAtiva] = useState<AbaAdmin>("sistemas");
   const [dialogForm, setDialogForm] = useState<SistemaCliente | null>(null);
@@ -2353,55 +2353,116 @@ function PainelAdminConteudo() {
   // Recarregar dados do localStorage ao montar (para pegar cadastros de clientes)
   useEffect(() => {
     recarregarDados();
-  }, [recarregarDados]);
+    // Buscar dados mais recentes do Supabase (multi-device)
+    sincronizarDoSupabase();
+  }, [recarregarDados, sincronizarDoSupabase]);
 
   // Tambem recarregar quando a janela ganha foco (usuario voltou do painel cliente)
   useEffect(() => {
-    const handleFocus = () => recarregarDados();
+    const handleFocus = () => {
+      recarregarDados();
+      sincronizarDoSupabase();
+    };
     window.addEventListener("focus", handleFocus);
     return () => window.removeEventListener("focus", handleFocus);
-  }, [recarregarDados]);
+  }, [recarregarDados, sincronizarDoSupabase]);
 
 const handleSalvarNovo = useCallback(
-    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
+    async (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
       adicionarSistema(dados);
-      // Salvar feature flags no localStorage para o painel cliente ler
-      if (typeof window !== "undefined") {
-        localStorage.setItem("zapfacil_zapbot_habilitado", String(!!dados.zapbotAtivo));
-        localStorage.setItem("zapfacil_disparo_habilitado", String(!!dados.disparoAtivo));
-        localStorage.setItem("zapfacil_funil_habilitado", String(!!dados.funilAtivo));
-        localStorage.setItem("zapfacil_fluxos_habilitado", String(!!dados.fluxosAtivo));
+      // Sincronizar com Supabase (fonte centralizada multi-device)
+      try {
+        await fetch("/api/sistemas", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            empresa: dados.empresa,
+            responsavel: dados.responsavel,
+            telefone: dados.telefone,
+            email: dados.email,
+            cidade: dados.cidade,
+            dataInstalacao: dados.dataInstalacao,
+            dataVencimento: dados.dataVencimento,
+            status: dados.status,
+            plano: dados.plano,
+            tipoLicenca: dados.tipoLicenca,
+            valorMensal: dados.valorMensal,
+            valorAquisicao: dados.valorAquisicao,
+            taxaInstalacao: dados.taxaInstalacao,
+            observacoes: dados.observacoes,
+            zapbotAtivo: !!dados.zapbotAtivo,
+            disparoAtivo: !!dados.disparoAtivo,
+            funilAtivo: !!dados.funilAtivo,
+            fluxosAtivo: !!dados.fluxosAtivo,
+          }),
+        });
+      } catch (e) {
+        console.error("[handleSalvarNovo] erro sync Supabase:", e);
       }
       setDialogNovo(false);
       toast.success("Sistema cadastrado!");
+      // Re-sincronizar do Supabase para pegar o ID real
+      sincronizarDoSupabase();
     },
-    [adicionarSistema]
+    [adicionarSistema, sincronizarDoSupabase]
   );
 
   const handleSalvarEdicao = useCallback(
-    (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
+    async (dados: Omit<SistemaCliente, "id" | "criadoEm">) => {
       if (!dialogForm) return;
       editarSistema(dialogForm.id, dados);
-      // Salvar feature flags no localStorage para o painel cliente ler
-      if (typeof window !== "undefined") {
-        localStorage.setItem("zapfacil_zapbot_habilitado", String(!!dados.zapbotAtivo));
-        localStorage.setItem("zapfacil_disparo_habilitado", String(!!dados.disparoAtivo));
-        localStorage.setItem("zapfacil_funil_habilitado", String(!!dados.funilAtivo));
-        localStorage.setItem("zapfacil_fluxos_habilitado", String(!!dados.fluxosAtivo));
+      // Sincronizar com Supabase
+      try {
+        await fetch(`/api/sistemas?id=${encodeURIComponent(dialogForm.id)}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            empresa: dados.empresa,
+            responsavel: dados.responsavel,
+            telefone: dados.telefone,
+            email: dados.email,
+            cidade: dados.cidade,
+            dataInstalacao: dados.dataInstalacao,
+            dataVencimento: dados.dataVencimento,
+            status: dados.status,
+            plano: dados.plano,
+            tipoLicenca: dados.tipoLicenca,
+            valorMensal: dados.valorMensal,
+            valorAquisicao: dados.valorAquisicao,
+            taxaInstalacao: dados.taxaInstalacao,
+            observacoes: dados.observacoes,
+            zapbotAtivo: !!dados.zapbotAtivo,
+            disparoAtivo: !!dados.disparoAtivo,
+            funilAtivo: !!dados.funilAtivo,
+            fluxosAtivo: !!dados.fluxosAtivo,
+          }),
+        });
+      } catch (e) {
+        console.error("[handleSalvarEdicao] erro sync Supabase:", e);
       }
       setDialogForm(null);
       toast.success("Sistema atualizado!");
+      sincronizarDoSupabase();
     },
-    [dialogForm, editarSistema]
+    [dialogForm, editarSistema, sincronizarDoSupabase]
   );
 
   const handleRemover = useCallback(
-    (id: string) => {
+    async (id: string) => {
       removerSistema(id);
       setConfirmaRemover(null);
       toast.success("Sistema removido.");
+      // Sincronizar remoção com Supabase
+      try {
+        await fetch(`/api/sistemas?id=${encodeURIComponent(id)}`, {
+          method: "DELETE",
+        });
+        sincronizarDoSupabase();
+      } catch (e) {
+        console.error("[handleRemover] erro sync Supabase:", e);
+      }
     },
-    [removerSistema]
+    [removerSistema, sincronizarDoSupabase]
   );
 
   const handleWhatsApp = (telefone: string, sistema?: SistemaCliente) => {

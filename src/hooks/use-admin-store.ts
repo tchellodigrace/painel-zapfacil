@@ -144,6 +144,7 @@ interface AdminState {
   configurarPrimeiroAcesso: (dados: { usuario: string; senha: string; nome: string; email: string; telefone: string; emailRecuperacao: string }) => void;
   resetarPrimeiroAcesso: () => void;
   recarregarDados: () => void;
+  sincronizarDoSupabase: () => Promise<void>;
 
   // Ações - Sistemas
   configurarAdmin: (usuario: string, senha: string) => void;
@@ -496,6 +497,94 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       cobrancas: atualizarAtrasados(carregar<Cobranca[]>("cobrancas", [])),
       pedidosRecuperacao: carregar<PedidoRecuperacao[]>("pedidos_recuperacao", []),
     });
+  },
+
+  // === Sincronização Supabase ===
+  // Busca sistemas/cobranças do Supabase (fonte centralizada multi-device).
+  // Mantém cópia no localStorage para funcionamento offline.
+  sincronizarDoSupabase: async () => {
+    if (typeof window === "undefined") return;
+    try {
+      // Buscar sistemas
+      const resSistemas = await fetch("/api/sistemas", { cache: "no-store" });
+      if (resSistemas.ok) {
+        const json = await resSistemas.json();
+        if (json.ok && Array.isArray(json.sistemas)) {
+          const sistemasMigrados = json.sistemas.map((s: any): SistemaCliente => ({
+            id: s.id,
+            empresa: s.empresa || "",
+            responsavel: s.responsavel || "",
+            telefone: s.telefone || "",
+            email: s.email || "",
+            cidade: s.cidade || "",
+            dataInstalacao: s.data_instalacao || "",
+            dataVencimento: s.data_vencimento || "",
+            status: (s.status as StatusSistema) || "TRIAL",
+            plano: (s.plano as PlanoSistema) || "PRO",
+            tipoLicenca: (s.tipo_licenca as TipoLicenca) || "ALUGUEL",
+            valorMensal: Number(s.valor_mensal) || 0,
+            valorAquisicao: Number(s.valor_aquisicao) || 0,
+            taxaInstalacao: Number(s.taxa_instalacao) || 0,
+            observacoes: s.observacoes || "",
+            criadoEm: s.criado_em || new Date().toISOString(),
+            dadosRegistro: null,
+            zapbotAtivo: !!s.zapbot_ativo,
+            disparoAtivo: !!s.disparo_ativo,
+            funilAtivo: !!s.funil_ativo,
+            fluxosAtivo: !!s.fluxos_ativo,
+          }));
+          salvar("sistemas", sistemasMigrados);
+          set({ sistemas: sistemasMigrados });
+        }
+      }
+
+      // Buscar cobranças
+      const resCob = await fetch("/api/cobrancas", { cache: "no-store" });
+      if (resCob.ok) {
+        const json = await resCob.json();
+        if (json.ok && Array.isArray(json.cobrancas)) {
+          const cobrancasMigradas = json.cobrancas.map((c: any): Cobranca => ({
+            id: c.id,
+            sistemaId: c.sistema_id || "",
+            sistemaNome: c.descricao || "",
+            tipo: (c.tipo as TipoCobranca) || "MENSALIDADE",
+            descricao: c.descricao || "",
+            valor: Number(c.valor) || 0,
+            dataVencimento: c.vencimento || "",
+            dataPagamento: c.pago_em || null,
+            status: (c.status as StatusCobranca) || "PENDENTE",
+            formaPagamento: (c.forma_pagamento as FormaPagamentoAdmin) || null,
+            observacoes: c.observacoes || "",
+            criadoEm: c.criado_em || new Date().toISOString(),
+          }));
+          const atualizadas = atualizarAtrasados(cobrancasMigradas);
+          salvar("cobrancas", atualizadas);
+          set({ cobrancas: atualizadas });
+        }
+      }
+
+      // Atualiza feature flags no localStorage (bridge para o painel cliente)
+      const sistemasAtuais = get().sistemas;
+      sistemasAtuais.forEach((s) => {
+        if (s.email) {
+          const emailNorm = s.email.trim().toLowerCase();
+          if (s.zapbotAtivo) {
+            localStorage.setItem(`zapfacil_zapbot_${emailNorm}`, "true");
+          }
+          if (s.disparoAtivo) {
+            localStorage.setItem(`zapfacil_disparo_${emailNorm}`, "true");
+          }
+          if (s.funilAtivo) {
+            localStorage.setItem(`zapfacil_funil_${emailNorm}`, "true");
+          }
+          if (s.fluxosAtivo) {
+            localStorage.setItem(`zapfacil_fluxos_${emailNorm}`, "true");
+          }
+        }
+      });
+    } catch (e) {
+      console.error("[sincronizarDoSupabase] erro:", e);
+    }
   },
 }));
 

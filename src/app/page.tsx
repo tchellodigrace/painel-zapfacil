@@ -70,10 +70,17 @@ function carregarNomeLogin(): string {
   }
 }
 
-// === Leitura de feature flags do localStorage (escrito pelo admin) ===
-function verificarFlag(chave: string): boolean {
-  if (typeof window === "undefined") return false;
-  return localStorage.getItem(chave) === "true";
+// === Carrega email do cliente logado ===
+function carregarEmailLogin(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const item = localStorage.getItem(AUTH_KEY);
+    if (!item) return "";
+    const cred = JSON.parse(item);
+    return cred?.email || "";
+  } catch {
+    return "";
+  }
 }
 
 export default function ZapFacilPage() {
@@ -83,7 +90,7 @@ export default function ZapFacilPage() {
   const [abaAtiva, setAbaAtiva] = useState("lancamento");
   const [nomeLogin, setNomeLogin] = useState("");
 
-  // Feature flags Premium (via localStorage bridge do admin)
+  // Feature flags Premium (buscadas do Supabase)
   const [zapbotAtivo, setZapbotAtivo] = useState(false);
   const [disparoAtivo, setDisparoAtivo] = useState(false);
   const [funilAtivo, setFunilAtivo] = useState(false);
@@ -98,19 +105,35 @@ export default function ZapFacilPage() {
     mountedRef.current = true;
   }, []);
 
-  // Polling: verifica flags a cada 2s (admin pode alterar a qualquer momento)
+  // Buscar feature flags do Supabase (multi-device)
+  // Polling a cada 15s — admin pode alterar a qualquer momento
   useEffect(() => {
     if (!autenticado) return;
 
-    const pollFlags = () => {
-      setZapbotAtivo(verificarFlag("zapfacil_zapbot_habilitado"));
-      setDisparoAtivo(verificarFlag("zapfacil_disparo_habilitado"));
-      setFunilAtivo(verificarFlag("zapfacil_funil_habilitado"));
-      setFluxosAtivo(verificarFlag("zapfacil_fluxos_habilitado"));
+    const email = carregarEmailLogin();
+    if (!email) return;
+
+    const buscarFlags = async () => {
+      try {
+        const res = await fetch(
+          `/api/cliente/sistema?email=${encodeURIComponent(email)}`,
+          { cache: "no-store" }
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.ok && data.sistema) {
+          setZapbotAtivo(!!data.sistema.zapbotAtivo);
+          setDisparoAtivo(!!data.sistema.disparoAtivo);
+          setFunilAtivo(!!data.sistema.funilAtivo);
+          setFluxosAtivo(!!data.sistema.fluxosAtivo);
+        }
+      } catch (e) {
+        console.error("[buscarFlags] erro:", e);
+      }
     };
 
-    pollFlags();
-    const interval = setInterval(pollFlags, 2000);
+    buscarFlags();
+    const interval = setInterval(buscarFlags, 15000);
     return () => clearInterval(interval);
   }, [autenticado]);
 
