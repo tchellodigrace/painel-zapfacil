@@ -245,7 +245,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
   if (temCredenciais === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <img src="/logo-cliente.png" alt="" width={400} height={200} className="h-[80px] w-[160px] object-contain animate-pulse opacity-60" />
+        <img src="/logo-cliente.png" alt="" width={400} height={100} className="h-[80px] w-[160px] object-contain animate-pulse opacity-60" />
       </div>
     );
   }
@@ -267,7 +267,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
             <img
               src="/logo-cliente.png"
               alt="Logo"
-              width={400} height={200}
+              width={400} height={100}
               className="h-[60px] w-[120px] object-contain drop-shadow-lg"
             />
           </div>
@@ -312,7 +312,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
               <img
                 src="/logo-cliente.png"
                 alt="Logo"
-                width={400} height={200}
+                width={400} height={100}
                 className="h-[60px] w-[120px] mx-auto object-contain mb-6"
               />
             </div>
@@ -513,7 +513,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
           <img
             src="/logo-cliente.png"
             alt="Logo"
-            width={400} height={200}
+            width={400} height={100}
             className="h-[60px] w-[120px] object-contain drop-shadow-lg"
           />
         </div>
@@ -556,7 +556,7 @@ export function TelaLogin({ onAutenticado }: { onAutenticado: () => void }) {
             <img
               src="/logo-cliente.png"
               alt="Logo"
-              width={400} height={200}
+              width={400} height={100}
               className="h-[60px] w-[120px] mx-auto object-contain mb-4"
             />
           </div>
